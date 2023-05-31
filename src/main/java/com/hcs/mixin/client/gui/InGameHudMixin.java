@@ -307,20 +307,20 @@ public abstract class InGameHudMixin extends DrawableHelper {
         int saDeviation = 0, saShake = 0;
         if (this.ticks % (Math.round(sa * 20) * 3 + 1) == 0 && sa < 0.3F)
             saShake = Math.round((float) Math.random() * 2) - 1;
-        if (Math.abs(sa - sanLast) > 0.01) saTwinkleCoolDown = 5;
+        if (Math.abs(sa - sanLast) >= 0.01) saTwinkleCoolDown = 5;
         boolean saTwinkle = saTwinkleCoolDown > 0;
         if (saTwinkle) --saTwinkleCoolDown;
         this.drawHCSTexture(matrices, xx, yy + saShake, saTwinkle ? 16 : 0, 80, 16, 16);
         this.drawHCSTexture(matrices, xx, yy + (16 - saHeight) + saShake, 32 + saDeviation, 96 - saHeight, 16, saHeight);
-        if (Math.abs(saDifference) > 0 && saTwinkleCoolDown <= 0) {
+        if (Math.abs(saDifference) > 0.0F && saTwinkleCoolDown <= 0) {
             int devi;
-            if (saDifference < -0.006F) devi = 96;
-            else if (saDifference < -0.0007F) devi = 80;
+            if (saDifference < -0.01F) devi = 96;
+            else if (saDifference < -0.00015F) devi = 80;
             else if (saDifference < 0.0F) devi = 64;
-            else if (saDifference < 0.0007F) devi = 112;
-            else if (saDifference < 0.006F) devi = 128;
+            else if (saDifference < 0.00015F) devi = 112;
+            else if (saDifference < 0.001F) devi = 128;
             else devi = 144;
-            this.drawHCSTexture(matrices, xx, yy + saShake, devi, 96, 16, 16);
+            this.drawHCSTexture(matrices, xx, yy + saShake, devi, 80, 16, 16);
         }
         this.drawTextWithThickShadow(matrices, customNumberFormatter(sa < 0.1F ? " #%" : "##%", sa), xx + 2, yyy + 11, getColorByPercentage(sa), 0.75F);
         //TEMPERATURE

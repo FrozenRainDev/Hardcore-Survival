@@ -37,6 +37,7 @@ import net.minecraft.stat.Stats;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import net.minecraft.world.GameRules;
+import net.minecraft.world.LightType;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
 import org.spongepowered.asm.mixin.Final;
@@ -312,26 +313,25 @@ public abstract class PlayerEntityMixin extends LivingEntity implements StatAcce
 
     @Inject(method = "tick", at = @At("HEAD"))
     public void tick(CallbackInfo ci) {
-        if (!this.world.isClient) {
-            this.addExhaustion(0.001F);
-            this.statusManager.setRecentAttackTicks(Math.max(0, this.statusManager.getRecentAttackTicks() - 1));
-            this.statusManager.setRecentMiningTicks(Math.max(0, this.statusManager.getRecentMiningTicks() - 1));
-            this.statusManager.setRecentHasColdWaterBagTicks(Math.max(0, this.statusManager.getRecentHasColdWaterBagTicks() - 1));
-            this.statusManager.setRecentHasHotWaterBagTicks(Math.max(0, this.statusManager.getRecentHasHotWaterBagTicks() - 1));
-            this.statusManager.setRecentLittleOvereatenTicks(this.hungerManager.getFoodLevel() < 20 ? 0 : Math.max(0, this.statusManager.getRecentLittleOvereatenTicks() - 1));
-
-            if (this.experienceLevel > this.statusManager.getMaxExpLevelReached())
-                this.statusManager.setMaxExpLevelReached(this.experienceLevel);
-            int maxLvlReached = this.statusManager.getMaxExpLevelReached();
-            EntityAttributeInstance instance = this.getAttributeInstance(EntityAttributes.GENERIC_MAX_HEALTH);
-            if (instance != null) {
-                int limitedMaxHealth = Math.min(20, (int) Math.floor(maxLvlReached / 3.0) + 8);//Cut down max health when in low exp lvl
-                double currentMaxHealth = instance.getBaseValue();
-                if (limitedMaxHealth > currentMaxHealth || (limitedMaxHealth < currentMaxHealth && maxLvlReached < 36)) {
-                    instance.setBaseValue(limitedMaxHealth);
-                    if (limitedMaxHealth < this.getHealth()) this.setHealth((float) limitedMaxHealth);
-                } else if (maxLvlReached >= 36 && currentMaxHealth < 20) instance.setBaseValue(20);
-            }
+        if (this.world.isClient) return;
+        this.addExhaustion(0.001F);
+        this.statusManager.setRecentAttackTicks(Math.max(0, this.statusManager.getRecentAttackTicks() - 1));
+        this.statusManager.setRecentMiningTicks(Math.max(0, this.statusManager.getRecentMiningTicks() - 1));
+        this.statusManager.setRecentHasColdWaterBagTicks(Math.max(0, this.statusManager.getRecentHasColdWaterBagTicks() - 1));
+        this.statusManager.setRecentHasHotWaterBagTicks(Math.max(0, this.statusManager.getRecentHasHotWaterBagTicks() - 1));
+        this.statusManager.setRecentLittleOvereatenTicks(this.hungerManager.getFoodLevel() < 20 ? 0 : Math.max(0, this.statusManager.getRecentLittleOvereatenTicks() - 1));
+        //Set max health according to max exp level reached
+        if (this.experienceLevel > this.statusManager.getMaxExpLevelReached())
+            this.statusManager.setMaxExpLevelReached(this.experienceLevel);
+        int maxLvlReached = this.statusManager.getMaxExpLevelReached();
+        EntityAttributeInstance instance = this.getAttributeInstance(EntityAttributes.GENERIC_MAX_HEALTH);
+        if (instance != null) {
+            int limitedMaxHealth = Math.min(20, (int) Math.floor(maxLvlReached / 3.0) + 8);//Cut down max health when in low exp lvl
+            double currentMaxHealth = instance.getBaseValue();
+            if (limitedMaxHealth > currentMaxHealth || (limitedMaxHealth < currentMaxHealth && maxLvlReached < 36)) {
+                instance.setBaseValue(limitedMaxHealth);
+                if (limitedMaxHealth < this.getHealth()) this.setHealth((float) limitedMaxHealth);
+            } else if (maxLvlReached >= 36 && currentMaxHealth < 20) instance.setBaseValue(20);
         }
         if (!this.abilities.invulnerable) {
             if (this.getPos().distanceTo(this.staminaManager.getLastVecPos()) > 0.0001D) {
@@ -356,6 +356,17 @@ public abstract class PlayerEntityMixin extends LivingEntity implements StatAcce
                 else if (this.getThirstManager().get() > 0.3F && this.getHungerManager().getFoodLevel() > 6)
                     this.staminaManager.add(0.0025F, this);
                 else this.staminaManager.add(0.001F, this);
+            }
+            //Lose sanity in darkness
+            boolean isInCavelike = this.world.getLightLevel(LightType.SKY, this.getBlockPos()) < 1;
+            if (this.world.getTime() % 10 == 0) {
+                if ((this.world.isNight() || isInCavelike) && this.world.getTime() % 10 == 0) {
+                    float sanDecrement = 0.00005F;
+                    int blockBrightness = this.world.getLightLevel(LightType.BLOCK, this.getBlockPos());
+                    if (blockBrightness < 2) sanDecrement = 0.0003F;
+                    else if (blockBrightness < 8) sanDecrement = 0.0001F;
+                    this.sanityManager.add(-(isInCavelike ? sanDecrement : Math.max(sanDecrement, 0.00015F)));
+                }
             }
         }
         if (this.hasStatusEffect(StatusEffects.STRENGTH)) this.staminaManager.reset();

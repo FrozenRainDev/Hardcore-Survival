@@ -282,6 +282,7 @@ public class RotHelper {
                     player.addStatusEffect(new StatusEffectInstance(HcsEffects.DIARRHEA, 600));
                 }
                 case 2 -> {
+                    sanityManager.add(-0.01F);
                     if (food != null)
                         hungerManager.setFoodLevel(hungerManager.getFoodLevel() - (int) (Math.min(food.getHunger() - 1, food.getHunger() * 0.3)));
                 }
