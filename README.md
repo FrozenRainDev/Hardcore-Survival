@@ -5,4 +5,4 @@
 <a href="https://www.mcmod.cn/">[Wiki]</a></li>
 <li>For feedback and <b>help translating</b>, contact via email: mc1mc@qq.com
 <br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;PS: If you encountered bugs, you can report it in "issues", rather than emailing.</li>
-<li>Still incomplete (beta version), please understand that it needs to be enriched and polished.</li>
+<li>Still incomplete (alpha version), please understand that it needs to be enriched and polished.</li>
