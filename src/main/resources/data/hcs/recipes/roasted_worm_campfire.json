@@ -1,0 +1,9 @@
+{
+  "type": "minecraft:campfire_cooking",
+  "ingredient": [
+    {"item": "hcs:worm"}
+  ],
+  "result":"hcs:roasted_worm",
+  "experience":0.35,
+  "cookingtime":400
+}

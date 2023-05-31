@@ -1,0 +1,12 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+	"CCC",
+	"C C",
+    "C C"
+  ],
+  "key": {
+    "C": {"item": "minecraft:copper_ingot"}
+  },
+  "result": {"item": "hcs:copper_leggings"}
+}

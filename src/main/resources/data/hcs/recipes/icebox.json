@@ -1,0 +1,14 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+	"IRI",
+	"ICI",
+    "III"
+  ],
+  "key": {
+    "I": {"item": "minecraft:iron_ingot"},
+    "R": {"item": "minecraft:redstone_block"},
+    "C": {"item": "minecraft:chest"}
+  },
+  "result": {"item": "hcs:icebox"}
+}

@@ -1,0 +1,42 @@
+{
+  "schemaVersion": 1,
+  "id": "hcs",
+  "version": "0.0.1",
+
+  "name": "Hardcore Survival",
+  "description": "A Minecraft mod brings incredibly realistic and tough survival experience with ambitious playing goals",
+  "authors": [
+    "FrozenRain"
+  ],
+  "contact": {
+    "homepage": "http://hcs.coolpage.biz/",
+    "sources": "https://github.com/FrozenRainDev/hardcore-survival"
+  },
+
+  "license": "Apache License 2.0",
+  "icon": "assets/hcs/icon.png",
+
+  "environment": "*",
+  "entrypoints": {
+    "main": [
+      "com.hcs.main.Reg"
+    ],
+    "client": [
+      "com.hcs.main.Client"
+    ]
+  },
+  "mixins": [
+    "hcs.mixins.json"
+  ],
+
+  "depends": {
+    "fabricloader": ">=0.14.19",
+    "fabric-api": "*",
+    "minecraft": "~1.19.4",
+    "java": ">=17"
+  },
+  "accessWidener": "hcs.accesswidener",
+  "suggests": {
+    "another-mod": "*"
+  }
+}

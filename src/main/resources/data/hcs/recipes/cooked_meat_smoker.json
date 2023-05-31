@@ -1,0 +1,9 @@
+{
+  "type": "minecraft:smoking",
+  "ingredient": [
+    {"item": "hcs:raw_meat"}
+  ],
+  "result":"hcs:cooked_meat",
+  "experience":0.35,
+  "cookingtime":100
+}

@@ -1,0 +1,8 @@
+{
+	"variants": {
+		"facing=north": { "model": "hcs:block/drying_rack", "uvlock": false },
+		"facing=east":  { "model": "hcs:block/drying_rack", "y":  90, "uvlock": false },
+		"facing=south": { "model": "hcs:block/drying_rack", "y": 180, "uvlock": false },
+		"facing=west":  { "model": "hcs:block/drying_rack", "y": 270, "uvlock": false }
+	}
+}

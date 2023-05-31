@@ -1,0 +1,12 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+	" S",
+	"SG"
+  ],
+  "key": {
+    "G": {"item": "hcs:fiber_string"},
+    "S": {"item": "minecraft:stick"}
+  },
+  "result": {"item": "hcs:fire_bow"}
+}

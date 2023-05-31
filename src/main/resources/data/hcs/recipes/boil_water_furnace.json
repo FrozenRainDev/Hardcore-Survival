@@ -1,0 +1,9 @@
+{
+  "type": "minecraft:smelting",
+  "ingredient": [
+    {"item": "minecraft:potion"}
+  ],
+  "result":"hcs:purified_water_bottle",
+  "experience":0.1,
+  "cookingtime":200
+}

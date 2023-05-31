@@ -1,0 +1,9 @@
+{
+  "type": "minecraft:smoking",
+  "ingredient": [
+    {"item": "hcs:cactus_flesh"}
+  ],
+  "result":"hcs:cooked_cactus_flesh",
+  "experience":0.35,
+  "cookingtime":100
+}

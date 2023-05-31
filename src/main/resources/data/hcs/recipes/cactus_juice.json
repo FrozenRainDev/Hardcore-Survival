@@ -1,0 +1,8 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    {"item": "minecraft:cactus"},
+    {"item": "minecraft:glass_bottle"}
+  ],
+  "result": {"item": "hcs:cactus_juice"}
+}

@@ -1,0 +1,9 @@
+{
+  "type": "minecraft:campfire_cooking",
+  "ingredient": [
+    {"item": "hcs:bamboo_shoot"}
+  ],
+  "result":"hcs:cooked_bamboo_shoot",
+  "experience":0.35,
+  "cookingtime":400
+}
