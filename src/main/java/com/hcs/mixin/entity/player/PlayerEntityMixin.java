@@ -375,7 +375,7 @@ public abstract class PlayerEntityMixin extends LivingEntity implements StatAcce
 
     @Inject(method = "getXpToDrop", at = @At("HEAD"), cancellable = true)
     public void getXpToDrop(CallbackInfoReturnable<Integer> cir) {
-        //Drop all xp after death
+        //Drop nearly all xp after death
         if (!(this.world.getGameRules().getBoolean(GameRules.KEEP_INVENTORY) || this.isSpectator())) {
             int xpSum = 0;
             for (int i = this.experienceLevel; i >= 0; --i) {
