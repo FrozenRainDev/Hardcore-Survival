@@ -359,14 +359,12 @@ public abstract class PlayerEntityMixin extends LivingEntity implements StatAcce
             }
             //Lose sanity in darkness
             boolean isInCavelike = this.world.getLightLevel(LightType.SKY, this.getBlockPos()) < 1;
-            if (this.world.getTime() % 10 == 0) {
-                if ((this.world.isNight() || isInCavelike) && this.world.getTime() % 10 == 0) {
-                    float sanDecrement = 0.00005F;
-                    int blockBrightness = this.world.getLightLevel(LightType.BLOCK, this.getBlockPos());
-                    if (blockBrightness < 2) sanDecrement = 0.0003F;
-                    else if (blockBrightness < 8) sanDecrement = 0.0001F;
-                    this.sanityManager.add(-(isInCavelike ? sanDecrement : Math.max(sanDecrement, 0.00015F)));
-                }
+            if ((this.world.isNight() || isInCavelike) && this.world.getTime() % EntityHelper.SAN_FALL_INTERVAL == 0) {
+                float sanDecrement = 0.00005F;
+                int blockBrightness = this.world.getLightLevel(LightType.BLOCK, this.getBlockPos());
+                if (blockBrightness < 2) sanDecrement = 0.0003F;
+                else if (blockBrightness < 8) sanDecrement = 0.0001F;
+                this.sanityManager.add(-(isInCavelike ? sanDecrement : Math.max(sanDecrement, 0.00015F)));
             }
         }
         if (this.hasStatusEffect(StatusEffects.STRENGTH)) this.staminaManager.reset();

@@ -1,5 +1,6 @@
 package com.hcs.mixin.client.gui;
 
+import com.hcs.main.helper.EntityHelper;
 import com.hcs.main.manager.SanityManager;
 import com.hcs.main.manager.TemperatureManager;
 import com.hcs.misc.HcsEffects;
@@ -320,7 +321,7 @@ public abstract class InGameHudMixin extends DrawableHelper {
             else if (saDifference < 0.00015F) devi = 112;
             else if (saDifference < 0.001F) devi = 128;
             else devi = 144;
-            this.drawHCSTexture(matrices, xx, yy + saShake, devi, 80, 16, 16);
+            this.drawHCSTexture(matrices, xx, yy + saShake + this.ticks % 20 < 10 ? 1 : 0, devi, 80, 16, 16);
         }
         this.drawTextWithThickShadow(matrices, customNumberFormatter(sa < 0.1F ? " #%" : "##%", sa), xx + 2, yyy + 11, getColorByPercentage(sa), 0.75F);
         //TEMPERATURE
@@ -383,7 +384,7 @@ public abstract class InGameHudMixin extends DrawableHelper {
         } else displacement.put("mo", false);
         //this.client.getProfiler().pop();
         hpLast = hp;
-        sanLast = sa;
+        if (client.world != null && client.world.getTime() % EntityHelper.SAN_FALL_INTERVAL == 0) sanLast = sa;
         shouldRenderMountHealth = shouldRenderMountJumpBar = false;
     }
 
