@@ -22,7 +22,7 @@ public class SanityManager {
         }
         if (val > 1.0F) val = 1.0F;
         else if (val < 0.0F) val = 0.0F;
-        sanity = new BigDecimal(String.format("%.5f", val));
+        sanity = new BigDecimal(String.format("%.6f", val));
     }
 
     public void add(float val) {
@@ -30,7 +30,7 @@ public class SanityManager {
             new NumberFormatException("Val is NaN").printStackTrace();
             return;
         }
-        sanity = sanity.add(new BigDecimal(String.format("%.5f", val)));
+        sanity = sanity.add(new BigDecimal(String.format("%.6f", val)));
         if (sanity.compareTo(ONE) > 0) sanity = ONE;
         else if (sanity.compareTo(ZERO) < 0) sanity = ZERO;
     }

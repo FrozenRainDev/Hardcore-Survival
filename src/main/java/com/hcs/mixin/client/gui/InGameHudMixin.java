@@ -315,13 +315,13 @@ public abstract class InGameHudMixin extends DrawableHelper {
         this.drawHCSTexture(matrices, xx, yy + (16 - saHeight) + saShake, 32 + saDeviation, 96 - saHeight, 16, saHeight);
         if (Math.abs(saDifference) > 0.0F && saTwinkleCoolDown <= 0) {
             int devi;
-            if (saDifference < -0.01F) devi = 96;
-            else if (saDifference < -0.00015F) devi = 80;
-            else if (saDifference < 0.0F) devi = 64;
-            else if (saDifference < 0.00015F) devi = 112;
-            else if (saDifference < 0.001F) devi = 128;
+            if (saDifference < -0.001F) devi = 96;
+            else if (saDifference < -0.00002F) devi = 80;
+            else if (saDifference < 0.00F) devi = 64;
+            else if (saDifference < 0.00002F) devi = 112;
+            else if (saDifference < 0.0001F) devi = 128;
             else devi = 144;
-            this.drawHCSTexture(matrices, xx, yy + saShake + this.ticks % 20 < 10 ? 1 : 0, devi, 80, 16, 16);
+            this.drawHCSTexture(matrices, xx, yy + saShake + ((this.ticks % 20 < 10) ? 1 : 0), devi, 80, 16, 16);
         }
         this.drawTextWithThickShadow(matrices, customNumberFormatter(sa < 0.1F ? " #%" : "##%", sa), xx + 2, yyy + 11, getColorByPercentage(sa), 0.75F);
         //TEMPERATURE
@@ -384,7 +384,7 @@ public abstract class InGameHudMixin extends DrawableHelper {
         } else displacement.put("mo", false);
         //this.client.getProfiler().pop();
         hpLast = hp;
-        if (client.world != null && client.world.getTime() % EntityHelper.SAN_FALL_INTERVAL == 0) sanLast = sa;
+        sanLast = sa;
         shouldRenderMountHealth = shouldRenderMountJumpBar = false;
     }
 

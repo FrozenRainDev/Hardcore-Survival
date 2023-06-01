@@ -14,8 +14,10 @@ public class EntitySleepEvent {
                     //Add: recovery depends on how long a player slept; restore san
                     player.heal(20.0F);
                     ((StatAccessor) player).getStaminaManager().reset();
-                    ((StatAccessor) player).getThirstManager().add(-0.25F);
+                    ((StatAccessor) player).getThirstManager().addDirectly(-0.25F);
+                    ((StatAccessor) player).getSanityManager().reset();
                     HungerManager hungerManager = player.getHungerManager();
+                    hungerManager.setExhaustion(0.0F);
                     hungerManager.setFoodLevel(Math.max(0, hungerManager.getFoodLevel() - 4));
                     TemperatureManager temperatureManager = ((StatAccessor) player).getTemperatureManager();
                     //Warm oneself by sleeping
