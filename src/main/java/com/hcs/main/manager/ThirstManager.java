@@ -31,7 +31,7 @@ public class ThirstManager {
         }
         if (val > 1.0F) val = 1.0F;
         else if (val < 0.0F) val = 0.0F;
-        thirst = new BigDecimal(String.format("%.5f", val));
+        thirst = new BigDecimal(String.format("%.7f", val));
     }
 
     public void add(float val) {
@@ -57,13 +57,7 @@ public class ThirstManager {
     }
 
     public void addDirectly(float val) {
-        if (Float.isNaN(val)) {
-            new NumberFormatException("Val is NaN").printStackTrace();
-            return;
-        }
-        thirst = thirst.add(new BigDecimal(String.format("%.5f", val)));
-        if (thirst.compareTo(ONE) > 0) thirst = ONE;//>1
-        else if (thirst.compareTo(ZERO) < 0) thirst = ZERO;//<0
+        set(thirst.floatValue() + val);
     }
 
     public float getSaturation() {

@@ -18,9 +18,10 @@ public class ServerS2C {
     public static final Identifier TEMPERATURE_ID = new Identifier("hcs", "s2c_temperature");
     public static final Identifier STATUS_ID = new Identifier("hcs", "s2c_status");
     public static final Identifier SANITY_ID = new Identifier("hcs", "s2c_sanity");
+    public static final float TRANS_MULTIPLIER = 10000000.0F;
 
     public static int floatToInt(float val) {
-        return (int) (val * 100000);
+        return (int) (val * TRANS_MULTIPLIER);
     }
 
     public static int booleanToInt(boolean val) {
@@ -54,7 +55,7 @@ public class ServerS2C {
 
         PacketByteBuf buf5 = new PacketByteBuf(Unpooled.buffer());
         SanityManager sanityManager = ((StatAccessor) player).getSanityManager();
-        buf5.writeIntArray(new int[]{player.getId(), floatToInt(sanityManager.get())});
+        buf5.writeIntArray(new int[]{player.getId(), floatToInt(sanityManager.get()), floatToInt(sanityManager.getDifference())});
         player.networkHandler.sendPacket(new CustomPayloadS2CPacket(SANITY_ID, buf5));
     }
 }

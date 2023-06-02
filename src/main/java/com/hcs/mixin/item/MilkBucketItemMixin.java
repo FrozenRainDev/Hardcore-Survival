@@ -3,8 +3,6 @@ package com.hcs.mixin.item;
 import com.hcs.main.Reg;
 import com.hcs.main.helper.EntityHelper;
 import com.hcs.main.helper.RotHelper;
-import com.hcs.main.manager.StatusManager;
-import com.hcs.misc.HcsEffects;
 import com.hcs.misc.accessor.StatAccessor;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.HungerManager;
@@ -33,17 +31,18 @@ public class MilkBucketItemMixin {
         return new ItemStack(Items.AIR);
     }
 
-    @Inject(at = @At("HEAD"), method = "use")
+    @Inject(method = "use", at = @At("HEAD"))
     private void use(World world, @NotNull PlayerEntity user, Hand hand, CallbackInfoReturnable<TypedActionResult<ItemStack>> cir) {
         oriStack = judgeMilkStack(user.getMainHandStack(), user.getOffHandStack()).copy();
     }
 
-    @Inject(at = @At("RETURN"), method = "finishUsing")
+    @Inject(method = "finishUsing", at = @At("RETURN"))
     public void finishUsing(ItemStack stack, World world, LivingEntity user, CallbackInfoReturnable<ItemStack> cir) {
         if (user instanceof ServerPlayerEntity player) {
             HungerManager hm = player.getHungerManager();
             hm.setExhaustion(0.0F);
-            hm.setFoodLevel(Math.min(20, hm.getFoodLevel() + Math.min(RotHelper.getFreshLevel(RotHelper.getFresh(world, oriStack)), 3)));
+            int freshLevel = RotHelper.getFreshLevel(RotHelper.getFresh(world, oriStack));
+            hm.setFoodLevel(Math.min(20, hm.getFoodLevel() + Math.min(freshLevel * (freshLevel > 1 ? 2 : 1), 5)));
             ((StatAccessor) user).getThirstManager().add(1.0F);
             RotHelper.addDebuff(world, player, oriStack);
             EntityHelper.checkOvereaten(player, true);

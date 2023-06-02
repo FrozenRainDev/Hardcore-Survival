@@ -369,6 +369,7 @@ public abstract class PlayerEntityMixin extends LivingEntity implements StatAcce
         }
         if (this.hasStatusEffect(StatusEffects.STRENGTH)) this.staminaManager.reset();
         this.staminaManager.setLastVecPos(this.getPos());
+        this.sanityManager.updateDifference();
     }
 
     @Inject(method = "getXpToDrop", at = @At("HEAD"), cancellable = true)

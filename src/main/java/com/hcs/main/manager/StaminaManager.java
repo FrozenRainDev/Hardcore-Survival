@@ -29,7 +29,7 @@ public class StaminaManager {
         }
         if (val > 1.0F) val = 1.0F;
         else if (val < 0.0F) val = 0.0F;
-        stamina = new BigDecimal(String.format("%.5f", val));
+        stamina = new BigDecimal(String.format("%.7f", val));
     }
 
     public void add(float val, Entity entity) {
@@ -45,13 +45,7 @@ public class StaminaManager {
     }
 
     public void addDirectly(float val) {
-        if (Float.isNaN(val)) {
-            new NumberFormatException("Val is NaN").printStackTrace();
-            return;
-        }
-        stamina = stamina.add(new BigDecimal(String.format("%.5f", val)));
-        if (stamina.compareTo(ONE) > 0) stamina = ONE;
-        else if (stamina.compareTo(ZERO) < 0) stamina = ZERO;
+        set(stamina.floatValue() + val);
     }
 
     public void pauseRestoring() {

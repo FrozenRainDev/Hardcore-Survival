@@ -36,7 +36,7 @@ public class TemperatureManager {
         }
         if (val > 1.0F) val = 1.0F;
         else if (val < 0.0F) val = 0.0F;
-        temperature = new BigDecimal(String.format("%.5f", val));
+        temperature = new BigDecimal(String.format("%.7f", val));
     }
 
     public void add(float val) {
@@ -44,7 +44,7 @@ public class TemperatureManager {
             new NumberFormatException("Val is NaN").printStackTrace();
             return;
         }
-        BigDecimal expected = temperature.add(new BigDecimal(String.format("%.5f", val)));
+        BigDecimal expected = temperature.add(new BigDecimal(String.format("%.7f", val)));
         if (saturation > 0.0F && expected.compareTo(ONE) < 0 && expected.compareTo(ZERO) > 0)
             addSaturation(-Math.abs(val) * 2);
         else if (saturation < 0.0F) saturation = 0;

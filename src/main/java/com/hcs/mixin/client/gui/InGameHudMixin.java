@@ -1,7 +1,7 @@
 package com.hcs.mixin.client.gui;
 
-import com.hcs.main.helper.EntityHelper;
 import com.hcs.main.manager.SanityManager;
+import com.hcs.main.manager.StatusManager;
 import com.hcs.main.manager.TemperatureManager;
 import com.hcs.misc.HcsEffects;
 import com.hcs.misc.accessor.StatAccessor;
@@ -59,12 +59,11 @@ public abstract class InGameHudMixin extends DrawableHelper {
     @Shadow
     @Final
     private static Identifier POWDER_SNOW_OUTLINE;
-    private float hpLast = 0.0F;
-    private float sanLast = 1.0F;
+    private float hpLast = 0.0F, sanLast = 1.0F, saDifferenceLast = 0.0F;
     private final Map<String, Boolean> displacement = new HashMap<>();
     private Boolean shouldRenderMountHealth = false, shouldRenderMountJumpBar = false;
     private int renderExperienceBarX;
-    private int hpTwinkleCoolDown = 0, saTwinkleCoolDown = 0;
+    private int hpTwinkleCoolDown = 0, saTwinkleCoolDown = 0, saArrowDisplayTime = 0;
     private static final Identifier HCS_ICONS_TEXTURE = new Identifier("hcs", "textures/gui/hcs_stat.png");
     private static final Identifier EMPTY_TEXTURE = new Identifier("hcs", "textures/gui/empty.png");
     private static final Identifier HEATSTROKE_BLUR = new Identifier("hcs", "textures/misc/heatstroke_blur.png");
@@ -131,7 +130,7 @@ public abstract class InGameHudMixin extends DrawableHelper {
         G = Integer.toHexString(g);
         if (R.length() < 2) R = "0" + R;
         if (G.length() < 2) G = "0" + G;
-        return Integer.parseInt(R + "" + G + "00", 16);
+        return Integer.parseInt(R + G + "00", 16);
     }
 
     public double getTeForDisplay(float x) {
@@ -172,6 +171,7 @@ public abstract class InGameHudMixin extends DrawableHelper {
         for (Boolean displace : displacement.values()) {
             if (displace.equals(true)) xx -= 10;
         }
+        StatusManager statusManager = ((StatAccessor) player).getStatusManager();
         //EXP BAR
         if (shouldRenderMountJumpBar) {
             //this.client.getProfiler().push("jumpBar");
@@ -202,7 +202,7 @@ public abstract class InGameHudMixin extends DrawableHelper {
             //this.client.getProfiler().pop();
             if (this.client.player.experienceLevel > 0) {
                 //this.client.getProfiler().push("expLevel");
-                String string = "" + this.client.player.experienceLevel;
+                String string = String.valueOf(this.client.player.experienceLevel);
                 k = (this.scaledWidth - this.getTextRenderer().getWidth(string)) / 2;
                 l = this.scaledHeight - 31 + 4;//-4 originally or +3
                 this.drawTextWithThickShadow(matrices, string, k, l, 8453920, 1F);
@@ -218,7 +218,7 @@ public abstract class InGameHudMixin extends DrawableHelper {
             int arHeight = this.getDrawIconHeight(arPercentage);
             this.drawHCSTexture(matrices, xx, yy, 0, 32, 16, 16);
             this.drawHCSTexture(matrices, xx, yy + 16 - arHeight, 16, 48 - arHeight, 16, arHeight);
-            this.drawTextWithThickShadow(matrices, ar < 10 ? " " + ar : "" + ar, xx + 4, yyy + 11, getColorByPercentage(arPercentage), 0.75F);
+            this.drawTextWithThickShadow(matrices, ar < 10 ? " " + ar : String.valueOf(ar), xx + 4, yyy + 11, getColorByPercentage(arPercentage), 0.75F);
             xx += 20;
         } else displacement.put("ar", false);
         //HEALTH
@@ -284,7 +284,7 @@ public abstract class InGameHudMixin extends DrawableHelper {
         HungerManager huManager = player.getHungerManager();
         float hu = (float) huManager.getFoodLevel();
         float huSaturation = huManager.getSaturationLevel();
-        float huExhaustion = (huSaturation > 0 || ((StatAccessor) player).getStatusManager().hasDecimalFoodLevel()) ? 0.0F : ((StatAccessor) player).getStatusManager().getExhaustion();
+        float huExhaustion = (huSaturation > 0 || statusManager.hasDecimalFoodLevel()) ? 0.0F : statusManager.getExhaustion();
         float huPercentage = (hu - huExhaustion / 4.0F) / 20.0F;
         if (huPercentage < 0.0F) huPercentage = 0.0F;
         else if (huPercentage > 1.0F) huPercentage = 1.0F;
@@ -301,19 +301,25 @@ public abstract class InGameHudMixin extends DrawableHelper {
         xx += 20;
         SanityManager sanityManager = ((StatAccessor) player).getSanityManager();
         float sa = sanityManager.get();
-        float saDifference = sa - sanLast;
+        float saDifference = sanityManager.getDifference()/*sa - sanLast*/, saDifferenceAbs = Math.abs(saDifference);
         if (sa > 1.0F) sa = 1.0F;
         else if (sa < 0.0F) sa = 0.0F;
         int saHeight = this.getDrawIconHeight((float) Math.pow(sa, 0.6D));
         int saDeviation = 0, saShake = 0;
         if (this.ticks % (Math.round(sa * 20) * 3 + 1) == 0 && sa < 0.3F)
             saShake = Math.round((float) Math.random() * 2) - 1;
-        if (Math.abs(sa - sanLast) >= 0.01) saTwinkleCoolDown = 5;
+        if (saDifferenceAbs >= 0.01F) saTwinkleCoolDown = 5;
         boolean saTwinkle = saTwinkleCoolDown > 0;
         if (saTwinkle) --saTwinkleCoolDown;
         this.drawHCSTexture(matrices, xx, yy + saShake, saTwinkle ? 16 : 0, 80, 16, 16);
         this.drawHCSTexture(matrices, xx, yy + (16 - saHeight) + saShake, 32 + saDeviation, 96 - saHeight, 16, saHeight);
-        if (Math.abs(saDifference) > 0.0F && saTwinkleCoolDown <= 0) {
+        if (saDifferenceAbs > 0.0F) {
+            /*        if (saDifferenceAbs > 0.0F || this.saArrowDisplayTime > 0) {
+            if (this.saArrowDisplayTime <= 0) {
+                this.saArrowDisplayTime = 100;
+                this.saDifferenceLast = saDifference;
+            } else --this.saArrowDisplayTime;
+             */
             int devi;
             if (saDifference < -0.001F) devi = 96;
             else if (saDifference < -0.00002F) devi = 80;
@@ -321,7 +327,7 @@ public abstract class InGameHudMixin extends DrawableHelper {
             else if (saDifference < 0.00002F) devi = 112;
             else if (saDifference < 0.0001F) devi = 128;
             else devi = 144;
-            this.drawHCSTexture(matrices, xx, yy + saShake + ((this.ticks % 20 < 10) ? 1 : 0), devi, 80, 16, 16);
+            this.drawHCSTexture(matrices, xx, yy + saShake + ((this.ticks % 40 < 20) ? 1 : 0), devi, 80, 16, 16);
         }
         this.drawTextWithThickShadow(matrices, customNumberFormatter(sa < 0.1F ? " #%" : "##%", sa), xx + 2, yyy + 11, getColorByPercentage(sa), 0.75F);
         //TEMPERATURE
@@ -358,6 +364,7 @@ public abstract class InGameHudMixin extends DrawableHelper {
         //AIR
         //this.client.getProfiler().swap("air");
         int ai = player.getAir();
+
         if (ai < 0) ai = 0;
         int aiMax = player.getMaxAir();
         if (player.isSubmergedIn(FluidTags.WATER) || ai < aiMax) {
@@ -384,7 +391,7 @@ public abstract class InGameHudMixin extends DrawableHelper {
         } else displacement.put("mo", false);
         //this.client.getProfiler().pop();
         hpLast = hp;
-        sanLast = sa;
+        this.sanLast = sa;
         shouldRenderMountHealth = shouldRenderMountJumpBar = false;
     }
 

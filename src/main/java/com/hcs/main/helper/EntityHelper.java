@@ -43,7 +43,6 @@ import java.util.Optional;
 public class EntityHelper {
     public static final double[][] FIND_NEAREST = {{0, -1, 0}, {0, 1, 0}, {0, 2, 0}, {-1, 0, 0}, {-1, 1, 0}, {1, 0, 0}, {1, 1, 0}, {0, 0, 1}, {0, 1, 1}, {0, 0, -1}, {0, 1, -1}};
     public static final double ZOMBIE_SENSING_RANGE = 64.0D;
-    public static final int SAN_FALL_INTERVAL = 10;
     @Deprecated
     public static PlayerEntity thePlayer;
     @Deprecated

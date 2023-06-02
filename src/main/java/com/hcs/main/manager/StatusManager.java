@@ -4,7 +4,8 @@ public class StatusManager {
     private float exhaustion = 0.0F; //A field in HungerManager that needs to used in InGameHudMixin
     private int recentAttackTicks = 0; //Increase when player attacks an entity; Decrease over time
     private int recentMiningTicks = 0;
-    private int recentHasColdWaterBagTicks = 0, recentHasHotWaterBagTicks = 0;
+    private int recentHasColdWaterBagTicks = 0;
+    private int recentHasHotWaterBagTicks = 0;
     private int maxExpLevelReached = 0;
     private int recentLittleOvereatenTicks = 0;
     private boolean hasDecimalFoodLevel = false;
@@ -82,5 +83,6 @@ public class StatusManager {
     public void setHasDecimalFoodLevel(boolean val) {
         hasDecimalFoodLevel = val;
     }
+
 
 }

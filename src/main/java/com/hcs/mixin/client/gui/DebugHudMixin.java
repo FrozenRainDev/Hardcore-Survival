@@ -52,7 +52,8 @@ public abstract class DebugHudMixin {
         list.add("Time: tick=" + world.getTime() + ", lunar=of_day=" + world.getLunarTime());
         list.add("Thirst: value=" + thirstManager.get() + ", saturation=" + thirstManager.getSaturation() + ", rate=" + thirstManager.getThirstRateAffectedByTemp());
         list.add("Hunger: level=" + hungerManager.getFoodLevel() + ", saturation=" + hungerManager.getSaturationLevel() + ", exhaustion=" + ((StatAccessor) player).getStatusManager().getExhaustion());
-        list.add("Stamina: " + staminaManager.get() + ", Sanity: " + sanityManager.get());
+        list.add("Stamina: " + staminaManager.get());
+        list.add("Sanity: " + sanityManager.get() + ", difference=" + sanityManager.getDifference());
         list.add("Temperature: biome=" + biome.getTemperature() + ", env=[real: " + String.format("%.5f", TemperatureHelper.getTemp(player)) + " ,feel:" + String.format("%.5f", TemperatureHelper.getFeelingTemp(player, TemperatureHelper.getTemp(player), biomeName, player.world.getLightLevel(LightType.SKY, player.getBlockPos()))) + "]" + ", value=" + String.format("%.5f", temperatureManager.get()) + ", satu=" + String.format("%.5f", temperatureManager.getSaturation()) + ", trend=" + temperatureManager.getTrendType());
         list.add("");
     }

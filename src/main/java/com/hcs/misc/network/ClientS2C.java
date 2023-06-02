@@ -13,7 +13,7 @@ import static com.hcs.misc.network.ServerS2C.*;
 @Environment(EnvType.CLIENT)
 public class ClientS2C {
     public static float intToFloat(int val) {
-        return (float) val / 100000.0F;
+        return (float) val / TRANS_MULTIPLIER;
     }
 
     public static boolean intToBoolean(int val) {
@@ -94,6 +94,7 @@ public class ClientS2C {
                     if (player != null) {
                         SanityManager sanityManager = ((StatAccessor) player).getSanityManager();
                         sanityManager.set(intToFloat(bufArr[1]));
+                        sanityManager.setDifference(intToFloat(bufArr[2]));
                     }
                 }
             });
