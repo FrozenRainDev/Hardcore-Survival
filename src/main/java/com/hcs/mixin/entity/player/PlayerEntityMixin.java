@@ -358,9 +358,9 @@ public abstract class PlayerEntityMixin extends LivingEntity implements StatAcce
                 else this.staminaManager.add(0.001F, this);
             }
             //Lose sanity in darkness
-            boolean isInCavelike = this.world.getLightLevel(LightType.SKY, this.getBlockPos()) < 1;
-            if (this.world.isNight() || isInCavelike) {
-                float sanDecrement = 0.000003F;
+            boolean isInCavelike = this.world.getLightLevel(LightType.SKY, this.getBlockPos()) < 5 && this.world.getDimension().hasSkyLight();
+            if (this.world.isNight() || isInCavelike || !this.world.getDimension().bedWorks() || this.world.getRegistryKey() == World.NETHER/*avoid mods conflict as sleeping in the nether is set to permissive*/) {
+                float sanDecrement = 0.000001F;
                 int blockBrightness = this.world.getLightLevel(LightType.BLOCK, this.getBlockPos());
                 if (blockBrightness < 2 && isInCavelike) sanDecrement = 0.00003F;
                 else if (blockBrightness < 8 || isInCavelike) sanDecrement = 0.00001F;
