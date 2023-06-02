@@ -8,6 +8,7 @@ import static java.math.BigDecimal.ZERO;
 public class SanityManager {
     private BigDecimal sanity = new BigDecimal("1.0");
     private float lastSanity = 1.0F;
+    //Don't calculate difference between sanity and lastSanity when in InGameHud as it refreshes much faster than ticks() in PlayerEntity and cause twinkle of arrow which indicates trend of rising and falling
     private float sanDifference = 0.0F;
     public static final String SANITY_NBT = "hcs_sanity";
 
