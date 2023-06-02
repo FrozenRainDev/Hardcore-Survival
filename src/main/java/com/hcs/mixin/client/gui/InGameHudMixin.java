@@ -59,11 +59,11 @@ public abstract class InGameHudMixin extends DrawableHelper {
     @Shadow
     @Final
     private static Identifier POWDER_SNOW_OUTLINE;
-    private float hpLast = 0.0F, sanLast = 1.0F, saDifferenceLast = 0.0F;
+    private float hpLast = 0.0F;
     private final Map<String, Boolean> displacement = new HashMap<>();
     private Boolean shouldRenderMountHealth = false, shouldRenderMountJumpBar = false;
     private int renderExperienceBarX;
-    private int hpTwinkleCoolDown = 0, saTwinkleCoolDown = 0, saArrowDisplayTime = 0;
+    private int hpTwinkleCoolDown = 0, saTwinkleCoolDown = 0;
     private static final Identifier HCS_ICONS_TEXTURE = new Identifier("hcs", "textures/gui/hcs_stat.png");
     private static final Identifier EMPTY_TEXTURE = new Identifier("hcs", "textures/gui/empty.png");
     private static final Identifier HEATSTROKE_BLUR = new Identifier("hcs", "textures/misc/heatstroke_blur.png");
@@ -301,7 +301,7 @@ public abstract class InGameHudMixin extends DrawableHelper {
         xx += 20;
         SanityManager sanityManager = ((StatAccessor) player).getSanityManager();
         float sa = sanityManager.get();
-        float saDifference = sanityManager.getDifference()/*sa - sanLast*/, saDifferenceAbs = Math.abs(saDifference);
+        float saDifference = sanityManager.getDifference(), saDifferenceAbs = Math.abs(saDifference);
         if (sa > 1.0F) sa = 1.0F;
         else if (sa < 0.0F) sa = 0.0F;
         int saHeight = this.getDrawIconHeight((float) Math.pow(sa, 0.6D));
@@ -314,12 +314,6 @@ public abstract class InGameHudMixin extends DrawableHelper {
         this.drawHCSTexture(matrices, xx, yy + saShake, saTwinkle ? 16 : 0, 80, 16, 16);
         this.drawHCSTexture(matrices, xx, yy + (16 - saHeight) + saShake, 32 + saDeviation, 96 - saHeight, 16, saHeight);
         if (saDifferenceAbs > 0.0F) {
-            /*        if (saDifferenceAbs > 0.0F || this.saArrowDisplayTime > 0) {
-            if (this.saArrowDisplayTime <= 0) {
-                this.saArrowDisplayTime = 100;
-                this.saDifferenceLast = saDifference;
-            } else --this.saArrowDisplayTime;
-             */
             int devi;
             if (saDifference < -0.001F) devi = 96;
             else if (saDifference < -0.00002F) devi = 80;
@@ -391,7 +385,6 @@ public abstract class InGameHudMixin extends DrawableHelper {
         } else displacement.put("mo", false);
         //this.client.getProfiler().pop();
         hpLast = hp;
-        this.sanLast = sa;
         shouldRenderMountHealth = shouldRenderMountJumpBar = false;
     }
 
