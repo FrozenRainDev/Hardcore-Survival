@@ -314,23 +314,23 @@ public abstract class InGameHudMixin extends DrawableHelper {
         this.drawHCSTexture(matrices, xx, yy + saShake, saTwinkle ? 16 : 0, 80, 16, 16);
         this.drawHCSTexture(matrices, xx, yy + (16 - saHeight) + saShake, 32 + saDeviation, 96 - saHeight, 16, saHeight);
         if (saDifferenceAbs > 0.0F) {
-            int devi, shakeInterval = 20;
+            int devi, shakeInterval = 30;
             if (saDifference <= -0.00008F) {
                 devi = 96;
                 shakeInterval = 5;
             } else if (saDifference <= -0.00004F) {
                 devi = 80;
-                shakeInterval = 10;
+                shakeInterval = 15;
             } else if (saDifference < 0.00F) devi = 64;
             else if (saDifference <= 0.00004F) devi = 112;
             else if (saDifference <= 0.00008F) {
                 devi = 128;
-                shakeInterval = 10;
+                shakeInterval = 15;
             } else {
                 devi = 144;
                 shakeInterval = 5;
             }
-            this.drawHCSTexture(matrices, xx, yy + saShake + ((this.ticks % shakeInterval * 2 < shakeInterval) ? 1 : 0), devi, 80, 16, 16);
+            this.drawHCSTexture(matrices, xx, yy + saShake + ((this.ticks % (shakeInterval * 2) < shakeInterval) ? 1 : 0), devi, 80, 16, 16);
         }
         this.drawTextWithThickShadow(matrices, customNumberFormatter(sa < 0.1F ? " #%" : "##%", sa), xx + 2, yyy + 11, getColorByPercentage(sa), 0.75F);
         //TEMPERATURE
