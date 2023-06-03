@@ -320,6 +320,10 @@ public abstract class PlayerEntityMixin extends LivingEntity implements StatAcce
         this.statusManager.setRecentHasColdWaterBagTicks(Math.max(0, this.statusManager.getRecentHasColdWaterBagTicks() - 1));
         this.statusManager.setRecentHasHotWaterBagTicks(Math.max(0, this.statusManager.getRecentHasHotWaterBagTicks() - 1));
         this.statusManager.setRecentLittleOvereatenTicks(this.hungerManager.getFoodLevel() < 20 ? 0 : Math.max(0, this.statusManager.getRecentLittleOvereatenTicks() - 1));
+        if (this.sanityManager.getPanicTicks() > 0) {
+            this.sanityManager.add(-0.0001F);
+            this.sanityManager.setPanicTicks(this.sanityManager.getPanicTicks() - 1);
+        }
         //Set max health according to max exp level reached
         if (this.experienceLevel > this.statusManager.getMaxExpLevelReached())
             this.statusManager.setMaxExpLevelReached(this.experienceLevel);

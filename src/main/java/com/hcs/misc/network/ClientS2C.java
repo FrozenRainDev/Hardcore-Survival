@@ -95,6 +95,7 @@ public class ClientS2C {
                         SanityManager sanityManager = ((StatAccessor) player).getSanityManager();
                         sanityManager.set(intToFloat(bufArr[1]));
                         sanityManager.setDifference(intToFloat(bufArr[2]));
+                        sanityManager.setPanicTicks(bufArr[3]);
                     }
                 }
             });

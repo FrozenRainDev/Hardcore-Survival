@@ -31,14 +31,4 @@ public abstract class ZombieEntityMixin extends HostileEntity {
         //Zombies will attack animals spontaneously
         if (!this.isBaby()) this.targetSelector.add(5, new ActiveTargetGoal<>(this, AnimalEntity.class, false));
     }
-
-    /*
-    @Inject(method = "damage", at = @At("HEAD"))
-    public void damage(DamageSource source, float amount, CallbackInfoReturnable<Boolean> cir) {
-        //On death
-        if ((this.getHealth() - amount) <= 0.0F && this.getHealth() > 0.0F) {
-            EntityHelper.dropItem(this, Items.BONE, 1 + (int) Math.round(Math.random()));
-        }
-    }
-     */
 }

@@ -315,7 +315,7 @@ public abstract class InGameHudMixin extends DrawableHelper {
         this.drawHCSTexture(matrices, xx, yy + (16 - saHeight) + saShake, 32 + saDeviation, 96 - saHeight, 16, saHeight);
         if (saDifferenceAbs > 0.0F) {
             int devi;
-            if (saDifference < -0.001F) devi = 96;
+            if (saDifference < -0.0001F) devi = 96;
             else if (saDifference < -0.00002F) devi = 80;
             else if (saDifference < 0.00F) devi = 64;
             else if (saDifference < 0.00002F) devi = 112;

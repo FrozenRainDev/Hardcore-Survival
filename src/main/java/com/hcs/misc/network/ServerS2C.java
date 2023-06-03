@@ -55,7 +55,7 @@ public class ServerS2C {
 
         PacketByteBuf buf5 = new PacketByteBuf(Unpooled.buffer());
         SanityManager sanityManager = ((StatAccessor) player).getSanityManager();
-        buf5.writeIntArray(new int[]{player.getId(), floatToInt(sanityManager.get()), floatToInt(sanityManager.getDifference())});
+        buf5.writeIntArray(new int[]{player.getId(), floatToInt(sanityManager.get()), floatToInt(sanityManager.getDifference()),sanityManager.getPanicTicks()});
         player.networkHandler.sendPacket(new CustomPayloadS2CPacket(SANITY_ID, buf5));
     }
 }
