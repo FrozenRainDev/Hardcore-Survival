@@ -40,11 +40,13 @@ public abstract class MobEntityMixin extends LivingEntity {
     @Inject(method = "tick", at = @At("HEAD"))
     public void tick(CallbackInfo ci) {
         if (!this.world.isClient && (Object) this instanceof HostileEntity) {
+            /*
             for (PlayerEntity player : this.world.getPlayers()) {
                 if (this.canSee(player)) {
                     ((StatAccessor) player).getSanityManager().setPanicTicks(20);
                 }
             }
+             */
             if (this.getTarget() instanceof PlayerEntity player) {
                 ((StatAccessor) player).getSanityManager().setPanicTicks(20);
             }
