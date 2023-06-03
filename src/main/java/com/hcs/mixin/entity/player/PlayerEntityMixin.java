@@ -370,7 +370,6 @@ public abstract class PlayerEntityMixin extends LivingEntity implements StatAcce
                 if (!isInUnpleasantDimension) {
                     if (blockBrightness < 2 && isInCavelike) sanDecrement = 0.00006F;
                     else if (blockBrightness < 8) sanDecrement = 0.00002F;
-                    else if (isInCavelike) sanDecrement = 0.000014F;
                 }
                 this.sanityManager.add(-sanDecrement);
             }
