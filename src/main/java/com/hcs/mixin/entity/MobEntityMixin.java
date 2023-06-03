@@ -47,7 +47,7 @@ public abstract class MobEntityMixin extends LivingEntity {
                 }
             }
              */
-            if (this.getTarget() instanceof PlayerEntity player) {
+            if (this.getTarget() instanceof PlayerEntity player && this.distanceTo(player) < 8) {
                 ((StatAccessor) player).getSanityManager().setPanicTicks(20);
             }
         }

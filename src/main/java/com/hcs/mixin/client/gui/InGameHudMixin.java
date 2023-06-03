@@ -315,15 +315,15 @@ public abstract class InGameHudMixin extends DrawableHelper {
         this.drawHCSTexture(matrices, xx, yy + (16 - saHeight) + saShake, 32 + saDeviation, 96 - saHeight, 16, saHeight);
         if (saDifferenceAbs > 0.0F) {
             int devi, shakeInterval = 20;
-            if (saDifference < -0.00004F) {
+            if (saDifference <= -0.00008F) {
                 devi = 96;
                 shakeInterval = 5;
-            } else if (saDifference < -0.00002F) {
+            } else if (saDifference <= -0.00004F) {
                 devi = 80;
                 shakeInterval = 10;
             } else if (saDifference < 0.00F) devi = 64;
-            else if (saDifference < 0.00002F) devi = 112;
-            else if (saDifference < 0.00004F) {
+            else if (saDifference <= 0.00004F) devi = 112;
+            else if (saDifference <= 0.00008F) {
                 devi = 128;
                 shakeInterval = 10;
             } else {
