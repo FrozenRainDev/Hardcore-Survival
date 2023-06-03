@@ -308,27 +308,27 @@ public abstract class InGameHudMixin extends DrawableHelper {
         int saDeviation = 0, saShake = 0;
         if (this.ticks % (Math.round(sa * 20) * 3 + 1) == 0 && sa < 0.3F)
             saShake = Math.round((float) Math.random() * 2) - 1;
-        if (saDifferenceAbs >= 0.01F) saTwinkleCoolDown = 5;
+        if (saDifferenceAbs > 0.0049F) saTwinkleCoolDown = 5;
         boolean saTwinkle = saTwinkleCoolDown > 0;
         if (saTwinkle) --saTwinkleCoolDown;
         this.drawHCSTexture(matrices, xx, yy + saShake, saTwinkle ? 16 : 0, 80, 16, 16);
         this.drawHCSTexture(matrices, xx, yy + (16 - saHeight) + saShake, 32 + saDeviation, 96 - saHeight, 16, saHeight);
-        if (saDifferenceAbs > 0.0F) {
-            int devi, shakeInterval = 30;
-            if (saDifference <= -0.00008F) {
+        if (saDifferenceAbs > 0.0F && saTwinkleCoolDown < 5) {
+            int devi, shakeInterval = 24;
+            if (saDifference < -0.000079F) {
                 devi = 96;
-                shakeInterval = 5;
-            } else if (saDifference <= -0.00004F) {
+                shakeInterval = 6;
+            } else if (saDifference < -0.000039F) {
                 devi = 80;
-                shakeInterval = 15;
-            } else if (saDifference < 0.00F) devi = 64;
-            else if (saDifference <= 0.00004F) devi = 112;
-            else if (saDifference <= 0.00008F) {
+                shakeInterval = 16;
+            } else if (saDifference < 0.0F) devi = 64;
+            else if (saDifference < 0.000039F) devi = 112;
+            else if (saDifference < 0.000079F) {
                 devi = 128;
-                shakeInterval = 15;
+                shakeInterval = 16;
             } else {
                 devi = 144;
-                shakeInterval = 5;
+                shakeInterval = 6;
             }
             this.drawHCSTexture(matrices, xx, yy + saShake + ((this.ticks % (shakeInterval * 2) < shakeInterval) ? 1 : 0), devi, 80, 16, 16);
         }
@@ -367,7 +367,6 @@ public abstract class InGameHudMixin extends DrawableHelper {
         //AIR
         //this.client.getProfiler().swap("air");
         int ai = player.getAir();
-
         if (ai < 0) ai = 0;
         int aiMax = player.getMaxAir();
         if (player.isSubmergedIn(FluidTags.WATER) || ai < aiMax) {

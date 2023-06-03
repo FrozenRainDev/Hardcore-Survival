@@ -43,6 +43,7 @@
     "item.BlockItemMixin",
     "item.BowItemMixin",
     "item.CrossbowItemMixin",
+    "item.EnderPearlItemMixin",
     "item.FishingRodItemMixin",
     "item.FoodComponentMixin",
     "item.GlassBottleItemMixin",
