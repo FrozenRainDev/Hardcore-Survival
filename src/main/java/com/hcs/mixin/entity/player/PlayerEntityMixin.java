@@ -368,8 +368,8 @@ public abstract class PlayerEntityMixin extends LivingEntity implements StatAcce
                 float sanDecrement = 0.00001F;
                 int blockBrightness = this.world.getLightLevel(LightType.BLOCK, this.getBlockPos());
                 if (!isInUnpleasantDimension) {
-                    if (blockBrightness < 2 && isInCavelike) sanDecrement = 0.00006F;
-                    else if (blockBrightness < 8) sanDecrement = 0.00002F;
+                    if (blockBrightness < 2 && isInCavelike) sanDecrement = 0.00004F;
+                    else if (blockBrightness < 8) sanDecrement = 0.000015F;
                 }
                 this.sanityManager.add(-sanDecrement);
             }
