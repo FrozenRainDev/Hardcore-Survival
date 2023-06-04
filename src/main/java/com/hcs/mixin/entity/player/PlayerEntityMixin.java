@@ -31,11 +31,13 @@ import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtElement;
 import net.minecraft.registry.tag.BlockTags;
 import net.minecraft.registry.tag.FluidTags;
+import net.minecraft.registry.tag.ItemTags;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.sound.BlockSoundGroup;
 import net.minecraft.stat.Stats;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.GameRules;
 import net.minecraft.world.LightType;
 import net.minecraft.world.World;
@@ -107,6 +109,10 @@ public abstract class PlayerEntityMixin extends LivingEntity implements StatAcce
     public int experienceLevel;
     @Shadow
     protected HungerManager hungerManager;
+
+    @Shadow
+    public abstract boolean isCreative();
+
     ThirstManager thirstManager = new ThirstManager();
     StaminaManager staminaManager = new StaminaManager();
     TemperatureManager temperatureManager = new TemperatureManager();
@@ -206,11 +212,7 @@ public abstract class PlayerEntityMixin extends LivingEntity implements StatAcce
             if (block.getSoundGroup(state) == BlockSoundGroup.GRAVEL || block == Blocks.GRASS_BLOCK || block == Blocks.MYCELIUM || block == Blocks.DIRT_PATH || block == Blocks.MUD) {
                 //Soil,Clay
                 f /= 30.0F;
-                /*
-                if((Object)this instanceof PlayerEntity){
-                    ((PlayerEntity)(Object)this).damage(DamageSource.CACTUS,0.0001F);
-                }
-                */
+//                if((Object)this instanceof PlayerEntity)((PlayerEntity)(Object)this).damage(DamageSource.CACTUS,0.0001F);
             } else if (block == Reg.ICEBOX || block == Reg.DRYING_RACK) f = 0.3F;
             else f = -1.0F;
         }
@@ -238,6 +240,7 @@ public abstract class PlayerEntityMixin extends LivingEntity implements StatAcce
     }
 
 
+    @SuppressWarnings("all")
     @Inject(method = "eatFood", at = @At("HEAD"))
     public void eatFood(World world, ItemStack stack, CallbackInfoReturnable<ItemStack> cir) {
         if ((Object) this instanceof ServerPlayerEntity player && !stack.isEmpty()) {
@@ -246,7 +249,20 @@ public abstract class PlayerEntityMixin extends LivingEntity implements StatAcce
             FoodComponent food = item.getFoodComponent();
             EntityHelper.checkOvereaten(player, false);
             if (food != null) {
-                RotHelper.addDebuff(world, player, stack);
+                int freshLevel = RotHelper.addDebuff(world, player, stack);
+                if (item == Items.GOLDEN_APPLE || item == Items.ENCHANTED_GOLDEN_APPLE) this.sanityManager.add(1.0F);
+                else if (freshLevel > 2) {
+                    if (item == Items.PUMPKIN_PIE || item == Items.RABBIT_STEW || item == Items.GOLDEN_CARROT)
+                        this.sanityManager.add(0.15F);
+                    else if (item == Items.MUSHROOM_STEW || item == Reg.COOKED_CACTUS_FLESH || item == Items.BEETROOT_SOUP)
+                        this.sanityManager.add(0.07F);
+                    else if (item == Items.DRIED_KELP) this.sanityManager.add(0.05F);
+                    else if (item == Items.COOKIE) this.sanityManager.add(0.03F);
+                    else if (name.contains("cooked_") || name.contains("roasted_") || name.contains("baked_") || item == Items.BREAD)
+                        this.sanityManager.add(0.01F);
+                    else if (item == Items.POISONOUS_POTATO || item == Items.SPIDER_EYE || item == Items.CHORUS_FRUIT)
+                        this.sanityManager.add(-0.07F);
+                }
                 if (item == Items.WHEAT || item == Items.SUGAR || item == Items.SUGAR_CANE || item == Reg.POTHERB || item == Reg.ROASTED_SEEDS)
                     this.hungerManager.setFoodLevel(Math.min(this.hungerManager.getFoodLevel() + 1, 20));
                 else if ((name.contains("seeds") && food.getHunger() == 0) || item == Reg.COOKED_SWEET_BERRIES || item == Reg.ROT)
@@ -337,7 +353,7 @@ public abstract class PlayerEntityMixin extends LivingEntity implements StatAcce
                 if (limitedMaxHealth < this.getHealth()) this.setHealth((float) limitedMaxHealth);
             } else if (maxLvlReached >= 36 && currentMaxHealth < 20) instance.setBaseValue(20);
         }
-        if (!this.abilities.invulnerable) {
+        if (!this.isCreative() && !this.isSpectator()) {
             if (this.getPos().distanceTo(this.staminaManager.getLastVecPos()) > 0.0001D) {
                 //Player is moving this.getVelocity() and this.speed are useless
                 if (!this.hasVehicle()) {
@@ -361,12 +377,16 @@ public abstract class PlayerEntityMixin extends LivingEntity implements StatAcce
                     this.staminaManager.add(0.0025F, this);
                 else this.staminaManager.add(0.001F, this);
             }
+            //Gain sanity when being exposed in the sun with flower in hand
+            if (this.world.isDay() && (this.getMainHandStack().isIn(ItemTags.FLOWERS) || this.getOffHandStack().isIn(ItemTags.FLOWERS)))
+                this.sanityManager.add(0.000008F);
             //Lose sanity in darkness
-            boolean isInCavelike = this.world.getLightLevel(LightType.SKY, this.getBlockPos()) < 5 && this.world.getDimension().hasSkyLight();
+            BlockPos headPos = this.getBlockPos().up();
+            boolean isInCavelike = this.world.getLightLevel(LightType.SKY, headPos) < 5 && this.world.getDimension().hasSkyLight();
             boolean isInUnpleasantDimension = !this.world.getDimension().bedWorks() || this.world.getRegistryKey() == World.NETHER;//Avoid mods conflict as sleeping in the nether is set to permissive
             if (((this.world.isNight() || isInCavelike) && !this.hasStatusEffect(StatusEffects.NIGHT_VISION)) || isInUnpleasantDimension) {
                 float sanDecrement = 0.00001F;
-                int blockBrightness = this.world.getLightLevel(LightType.BLOCK, this.getBlockPos());
+                int blockBrightness = this.world.getLightLevel(LightType.BLOCK, headPos);
                 if (!isInUnpleasantDimension) {
                     if (blockBrightness < 2 && isInCavelike) sanDecrement = 0.00004F;
                     else if (blockBrightness < 8) sanDecrement = 0.000015F;

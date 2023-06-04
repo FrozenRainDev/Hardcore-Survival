@@ -4,6 +4,7 @@ import com.hcs.misc.accessor.StatAccessor;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.entity.effect.StatusEffects;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.HoneyBottleItem;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
@@ -18,8 +19,11 @@ public class HoneyBottleItemMixin {
     @Inject(at = @At("RETURN"), method = "finishUsing")
     public void finishUsing(ItemStack stack, @NotNull World world, LivingEntity user, CallbackInfoReturnable<ItemStack> cir) {
         if (!world.isClient) {
-            ((StatAccessor) user).getThirstManager().add(0.2F);
             user.addStatusEffect(new StatusEffectInstance(StatusEffects.REGENERATION, 20 * 5, 0));
+            if (user instanceof PlayerEntity player) {
+                ((StatAccessor) player).getThirstManager().add(0.1F);
+                ((StatAccessor) player).getSanityManager().add(0.1F);
+            }
         }
     }
 }

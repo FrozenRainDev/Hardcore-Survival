@@ -5,6 +5,7 @@ import com.hcs.main.Reg;
 import com.hcs.main.helper.RotHelper;
 import net.minecraft.inventory.Inventory;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.Items;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.recipe.AbstractCookingRecipe;
 import net.minecraft.recipe.Ingredient;
@@ -38,10 +39,11 @@ public class AbstractCookingRecipeMixin {
         this.output = output;
     }
 
-    @Inject(method = "matches", at = @At("HEAD"))
+    @Inject(method = "matches", at = @At("HEAD"), cancellable = true)
     private void matches(@NotNull Inventory inventory, World world, CallbackInfoReturnable<Boolean> cir) {
         theWorld = world;
         stackIn = inventory.getStack(0);
+        if (stackIn.isOf(Items.KELP)) cir.setReturnValue(false);
     }
 
     @Inject(method = "getOutput", at = @At("HEAD"), cancellable = true)

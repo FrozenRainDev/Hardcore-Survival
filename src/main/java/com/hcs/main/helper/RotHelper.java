@@ -249,21 +249,23 @@ public class RotHelper {
         tooltip.add(getModifierText(world, stack));
     }
 
-    public static void addDebuff(World world, PlayerEntity player, ItemStack stack) {
+    public static int addDebuff(World world, PlayerEntity player, ItemStack stack) {
+        int freshLevel = 3;
         if (player == null || stack == null) {
             Reg.LOGGER.error("RotHelper/addDebuff;player==null||stack==null");
-            return;
+            return freshLevel;
         }
         if (world.isClient()) {
             Reg.LOGGER.warn("RotHelper/addDebuff;world is client");
-            return;
+            return freshLevel;
         }
         HungerManager hungerManager = player.getHungerManager();
         SanityManager sanityManager = ((StatAccessor) player).getSanityManager();
         Item item = stack.getItem();
         FoodComponent food = item.getFoodComponent();
+        freshLevel = getFreshLevel(getFresh(world, stack));
         if (canRot(item) || item == Reg.ROT) {
-            switch (item == Reg.ROT ? 0 : getFreshLevel(getFresh(world, stack))) {
+            switch (item == Reg.ROT ? 0 : freshLevel) {
                 case 0 -> {
                     hungerManager.setSaturationLevel(0);
                     sanityManager.add(-0.1F);
@@ -288,6 +290,7 @@ public class RotHelper {
                 }
             }
         }
+        return freshLevel;
     }
 
 }
