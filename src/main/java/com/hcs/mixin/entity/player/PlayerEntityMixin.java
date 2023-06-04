@@ -378,11 +378,12 @@ public abstract class PlayerEntityMixin extends LivingEntity implements StatAcce
                 else this.staminaManager.add(0.001F, this);
             }
             //Gain sanity when being exposed in the sun with flower in hand
-            if (this.world.isDay() && (this.getMainHandStack().isIn(ItemTags.FLOWERS) || this.getOffHandStack().isIn(ItemTags.FLOWERS)))
+            BlockPos headPos = this.getBlockPos().up();
+            int skyBrightness = this.world.getLightLevel(LightType.SKY, headPos);
+            if (this.world.isDay() && skyBrightness >= LightType.SKY.value && (this.getMainHandStack().isIn(ItemTags.FLOWERS) || this.getOffHandStack().isIn(ItemTags.FLOWERS)))
                 this.sanityManager.add(0.000008F);
             //Lose sanity in darkness
-            BlockPos headPos = this.getBlockPos().up();
-            boolean isInCavelike = this.world.getLightLevel(LightType.SKY, headPos) < 5 && this.world.getDimension().hasSkyLight();
+            boolean isInCavelike = skyBrightness < 5 && this.world.getDimension().hasSkyLight();
             boolean isInUnpleasantDimension = !this.world.getDimension().bedWorks() || this.world.getRegistryKey() == World.NETHER;//Avoid mods conflict as sleeping in the nether is set to permissive
             if (((this.world.isNight() || isInCavelike) && !this.hasStatusEffect(StatusEffects.NIGHT_VISION)) || isInUnpleasantDimension) {
                 float sanDecrement = 0.00001F;
