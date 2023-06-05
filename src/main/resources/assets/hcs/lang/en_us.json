@@ -157,5 +157,6 @@
   "item.hcs.hot_water_bottle.tooltip.temp.2": "warm",
   "item.hcs.hot_water_bottle.tooltip.temp.3": "hot",
   "item.hcs.hot_water_bottle.tooltip.temp.4": "very hot",
-  "item.hcs.hot_water_bottle.tooltip.temp.5": "boiling"
+  "item.hcs.hot_water_bottle.tooltip.temp.5": "boiling",
+  "item.hcs.cooked_kelp": "Cooked Kelp"
 }

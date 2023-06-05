@@ -20,7 +20,6 @@ import net.minecraft.entity.effect.StatusEffectUtil;
 import net.minecraft.entity.effect.StatusEffects;
 import net.minecraft.entity.mob.SpiderEntity;
 import net.minecraft.entity.player.HungerManager;
-import net.minecraft.entity.player.PlayerAbilities;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.FoodComponent;
@@ -42,7 +41,6 @@ import net.minecraft.world.GameRules;
 import net.minecraft.world.LightType;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
-import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
@@ -91,10 +89,6 @@ public abstract class PlayerEntityMixin extends LivingEntity implements StatAcce
 
     @Shadow
     public abstract void addExhaustion(float exhaustion);
-
-    @Shadow
-    @Final
-    private PlayerAbilities abilities;
 
     @Shadow
     public abstract void tick();
@@ -257,15 +251,17 @@ public abstract class PlayerEntityMixin extends LivingEntity implements StatAcce
                     else if (item == Items.MUSHROOM_STEW || item == Reg.COOKED_CACTUS_FLESH || item == Items.BEETROOT_SOUP)
                         this.sanityManager.add(0.07F);
                     else if (item == Items.DRIED_KELP) this.sanityManager.add(0.05F);
-                    else if (item == Items.COOKIE) this.sanityManager.add(0.03F);
+                    else if (item == Items.COOKIE || item == Items.APPLE || item == Reg.ORANGE)
+                        this.sanityManager.add(0.03F);
                     else if (name.contains("cooked_") || name.contains("roasted_") || name.contains("baked_") || item == Items.BREAD)
                         this.sanityManager.add(0.01F);
                     else if (item == Items.POISONOUS_POTATO || item == Items.SPIDER_EYE || item == Items.CHORUS_FRUIT)
                         this.sanityManager.add(-0.07F);
+                    else if (item == Items.KELP) this.sanityManager.add(-0.04F);
                 }
                 if (item == Items.WHEAT || item == Items.SUGAR || item == Items.SUGAR_CANE || item == Reg.POTHERB || item == Reg.ROASTED_SEEDS)
                     this.hungerManager.setFoodLevel(Math.min(this.hungerManager.getFoodLevel() + 1, 20));
-                else if ((name.contains("seeds") && food.getHunger() == 0) || item == Reg.COOKED_SWEET_BERRIES || item == Reg.ROT)
+                else if ((name.contains("seeds") && food.getHunger() == 0) || item == Reg.COOKED_SWEET_BERRIES || item == Reg.ROT || item == Items.KELP)
                     EntityHelper.addDecimalFoodLevel(player, 0.4F, false);
                 if (!name.contains("dried") && !name.contains("jerky") && !name.contains("seeds") && item != Items.COOKIE && item != Items.BREAD && item != Items.SUGAR) {
                     if (name.contains("stew") || name.contains("soup"))

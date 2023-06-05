@@ -157,5 +157,6 @@
   "item.hcs.hot_water_bottle.tooltip.temp.2": "温热",
   "item.hcs.hot_water_bottle.tooltip.temp.3": "热",
   "item.hcs.hot_water_bottle.tooltip.temp.4": "很热",
-  "item.hcs.hot_water_bottle.tooltip.temp.5": "滚烫"
+  "item.hcs.hot_water_bottle.tooltip.temp.5": "滚烫",
+  "item.hcs.cooked_kelp": "熟海带"
 }

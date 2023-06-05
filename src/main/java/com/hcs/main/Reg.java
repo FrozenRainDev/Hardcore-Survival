@@ -142,6 +142,8 @@ public class Reg implements ModInitializer {
     public static final Item WOOLEN_COAT = new ArmorItem(WOOLEN_ARMOR_MATERIAL, ArmorItem.Type.CHESTPLATE, new Item.Settings());
     public static final Item WOOLEN_TROUSERS = new ArmorItem(WOOLEN_ARMOR_MATERIAL, ArmorItem.Type.LEGGINGS, new Item.Settings());
     public static final Item WOOLEN_BOOTS = new ArmorItem(WOOLEN_ARMOR_MATERIAL, ArmorItem.Type.BOOTS, new Item.Settings());
+    //See cooking output modification at AbstractCookingRecipeMixin/getOutPut
+    public static final Item COOKED_KELP = new Item(new Item.Settings().food(new FoodComponent.Builder().hunger(1).saturationModifier(1.0F).build()));
 
     public static final EntityType<RockProjectileEntity> ROCK_PROJECTILE_ENTITY = FabricEntityTypeBuilder.<RockProjectileEntity>create(SpawnGroup.MISC, RockProjectileEntity::new).dimensions(new EntityDimensions(0.25F, 0.25F, true)).build();
     public static final BlockEntityType<IceboxBlockEntity> ICEBOX_BLOCK_ENTITY = FabricBlockEntityTypeBuilder.create(IceboxBlockEntity::new, ICEBOX).build();
@@ -219,6 +221,7 @@ public class Reg implements ModInitializer {
             content.add(new ItemStack(COOKED_CARROT));
             content.add(new ItemStack(COOKED_SWEET_BERRIES));
             content.add(new ItemStack(FRIED_EGG));
+            content.add(new ItemStack(COOKED_KELP));
             content.add(new ItemStack(POTHERB));
             content.add(new ItemStack(ORANGE));
             content.add(new ItemStack(PETALS_SALAD));
@@ -307,6 +310,7 @@ public class Reg implements ModInitializer {
         Registry.register(Registries.ITEM, new Identifier("hcs", "woolen_trousers"), WOOLEN_TROUSERS);
         Registry.register(Registries.ITEM, new Identifier("hcs", "woolen_boots"), WOOLEN_BOOTS);
         Registry.register(Registries.ITEM, new Identifier("hcs", "hot_water_bottle"), HOT_WATER_BOTTLE);
+        Registry.register(Registries.ITEM, new Identifier("hcs", "cooked_kelp"), COOKED_KELP);
 
         Registry.register(Registries.BLOCK, new Identifier("hcs", "icebox"), ICEBOX);
         Registry.register(Registries.ITEM, new Identifier("hcs", "icebox"), ICEBOX_ITEM);

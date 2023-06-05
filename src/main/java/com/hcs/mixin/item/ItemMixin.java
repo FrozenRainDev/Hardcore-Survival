@@ -38,7 +38,7 @@ public class ItemMixin {
     private static final FoodComponent RED_MUSHROOM = new FoodComponent.Builder().hunger(1).saturationModifier(1.0f).statusEffect(new StatusEffectInstance(StatusEffects.NAUSEA, 200), 1).statusEffect(new StatusEffectInstance(StatusEffects.POISON, 600), 1).build();
     private static final FoodComponent CRIMSON_FUNGUS = new FoodComponent.Builder().hunger(1).saturationModifier(1.0f).statusEffect(new StatusEffectInstance(StatusEffects.NAUSEA, 200), 1).statusEffect(new StatusEffectInstance(StatusEffects.POISON, 600), 1).build();
     private static final FoodComponent WARPED_FUNGUS = new FoodComponent.Builder().hunger(1).saturationModifier(1.0f).statusEffect(new StatusEffectInstance(StatusEffects.NAUSEA, 200), 1).statusEffect(new StatusEffectInstance(StatusEffects.POISON, 600), 1).build();
-    private static final FoodComponent KELP = new FoodComponent.Builder().hunger(0).saturationModifier(1.0f).build();
+    private static final FoodComponent KELP = new FoodComponent.Builder().hunger(0).saturationModifier(0.0f).build();
     private static final FoodComponent SEAGRASS = new FoodComponent.Builder().hunger(0).saturationModifier(1.0f).build();
     private static final FoodComponent SEA_PICKLE = new FoodComponent.Builder().hunger(0).saturationModifier(1.0f).build();
     private static final FoodComponent ROTTEN_FLESH = new FoodComponent.Builder().hunger(1).saturationModifier(1.0f).statusEffect(new StatusEffectInstance(StatusEffects.NAUSEA, 200), 1).statusEffect(new StatusEffectInstance(StatusEffects.POISON, 300), 1).statusEffect(new StatusEffectInstance(StatusEffects.HUNGER, 600), 1).statusEffect(new StatusEffectInstance(HcsEffects.DIARRHEA, 600, 1), 1).build();

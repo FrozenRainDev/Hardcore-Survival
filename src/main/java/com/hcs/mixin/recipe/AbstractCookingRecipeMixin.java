@@ -39,16 +39,16 @@ public class AbstractCookingRecipeMixin {
         this.output = output;
     }
 
-    @Inject(method = "matches", at = @At("HEAD"), cancellable = true)
+    @Inject(method = "matches", at = @At("HEAD"))
     private void matches(@NotNull Inventory inventory, World world, CallbackInfoReturnable<Boolean> cir) {
         theWorld = world;
         stackIn = inventory.getStack(0);
-        if (stackIn.isOf(Items.KELP)) cir.setReturnValue(false);
     }
 
     @Inject(method = "getOutput", at = @At("HEAD"), cancellable = true)
     private void getOutPut(CallbackInfoReturnable<ItemStack> cir) {
         ItemStack stackOut = this.output.copy();
+        if (stackOut.isOf(Items.DRIED_KELP)) stackOut = Reg.COOKED_KELP.getDefaultStack();
         if (RotHelper.canRot(stackOut.getItem()) && theWorld != null && stackIn != null) {
             RotHelper.setFresh(theWorld, stackOut, RotHelper.getFreshCooked(RotHelper.getFresh(theWorld, stackIn)));
             cir.setReturnValue(stackOut);
