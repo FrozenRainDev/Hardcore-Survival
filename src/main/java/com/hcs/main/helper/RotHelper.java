@@ -71,7 +71,8 @@ public class RotHelper {
         if (item == null) return 7;
         String name = item.getTranslationKey();//item.getName().toString();
         int packageType = getPackageType(name);
-        if (item == Reg.POTHERB || item == Reg.ROASTED_SEEDS || item == Items.PUMPKIN_PIE) return 10;
+        if (item == Reg.POTHERB || item == Reg.ROASTED_SEEDS || item == Items.PUMPKIN_PIE || item == Items.KELP)
+            return 10;
         if (item == Items.WHEAT || name.contains("seeds")) return 500;
         if (item == Items.MILK_BUCKET || item == Reg.CACTUS_JUICE) return 2.5F;
         if (item == Items.MELON_SLICE) return 2;

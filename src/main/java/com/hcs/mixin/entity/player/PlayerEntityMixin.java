@@ -245,6 +245,7 @@ public abstract class PlayerEntityMixin extends LivingEntity implements StatAcce
             if (food != null) {
                 int freshLevel = RotHelper.addDebuff(world, player, stack);
                 if (item == Items.GOLDEN_APPLE || item == Items.ENCHANTED_GOLDEN_APPLE) this.sanityManager.add(1.0F);
+                else if (item == Items.KELP) this.sanityManager.add(-0.04F);
                 else if (freshLevel > 2) {
                     if (item == Items.PUMPKIN_PIE || item == Items.RABBIT_STEW || item == Items.GOLDEN_CARROT)
                         this.sanityManager.add(0.15F);
@@ -257,7 +258,6 @@ public abstract class PlayerEntityMixin extends LivingEntity implements StatAcce
                         this.sanityManager.add(0.01F);
                     else if (item == Items.POISONOUS_POTATO || item == Items.SPIDER_EYE || item == Items.CHORUS_FRUIT)
                         this.sanityManager.add(-0.07F);
-                    else if (item == Items.KELP) this.sanityManager.add(-0.04F);
                 }
                 if (item == Items.WHEAT || item == Items.SUGAR || item == Items.SUGAR_CANE || item == Reg.POTHERB || item == Reg.ROASTED_SEEDS)
                     this.hungerManager.setFoodLevel(Math.min(this.hungerManager.getFoodLevel() + 1, 20));
