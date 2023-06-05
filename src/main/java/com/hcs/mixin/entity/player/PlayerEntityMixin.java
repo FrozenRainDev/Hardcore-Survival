@@ -246,6 +246,8 @@ public abstract class PlayerEntityMixin extends LivingEntity implements StatAcce
                 int freshLevel = RotHelper.addDebuff(world, player, stack);
                 if (item == Items.GOLDEN_APPLE || item == Items.ENCHANTED_GOLDEN_APPLE) this.sanityManager.add(1.0F);
                 else if (item == Items.KELP) this.sanityManager.add(-0.04F);
+                else if (item == Items.RED_MUSHROOM || item == Items.CRIMSON_FUNGUS || item == Items.WARPED_FUNGUS)
+                    this.sanityManager.add(-1.0F);
                 else if (freshLevel > 2) {
                     if (item == Items.PUMPKIN_PIE || item == Items.RABBIT_STEW || item == Items.GOLDEN_CARROT)
                         this.sanityManager.add(0.15F);
