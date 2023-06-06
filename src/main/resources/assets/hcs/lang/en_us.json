@@ -26,6 +26,7 @@
   "effect.hcs.chilly_wind.description": "Feeling colder than it actually is",
   "effect.hcs.overeaten": "Overeaten",
   "effect.hcs.insanity": "Insanity",
+  "effect.hcs.insanity.description": "Suffering from hallucination for a devastated mind",
 
   "hcs.food_info.fresh": "Fresh",
   "hcs.food_info.stale": "Stale",

@@ -67,6 +67,7 @@ public abstract class InGameHudMixin extends DrawableHelper {
     private static final Identifier HCS_ICONS_TEXTURE = new Identifier("hcs", "textures/gui/hcs_stat.png");
     private static final Identifier EMPTY_TEXTURE = new Identifier("hcs", "textures/gui/empty.png");
     private static final Identifier HEATSTROKE_BLUR = new Identifier("hcs", "textures/misc/heatstroke_blur.png");
+    private static final Identifier INSANITY_OUTLINE = new Identifier("hcs", "textures/misc/insanity_outline.png");
 
     public void drawHCSTexture(MatrixStack matrices, int x, int y, int u, int v, int width, int height) {
         //(u,v) is the coordinate of texture
@@ -141,6 +142,8 @@ public abstract class InGameHudMixin extends DrawableHelper {
     @Inject(method = "render", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/network/ClientPlayerEntity;getFrozenTicks()I"))
     public void render(MatrixStack matrices, float tickDelta, CallbackInfo ci) {
         if (this.client.player != null) {
+            float san = ((StatAccessor) this.client.player).getSanityManager().get();
+            if (san < 0.3F) this.renderOverlay(matrices, INSANITY_OUTLINE, 1.0F - san / 0.3F);
             TemperatureManager temperatureManager = ((StatAccessor) this.client.player).getTemperatureManager();
             float temp = temperatureManager.get();
             float opacity = Math.min(1.0F, 0.2F + temperatureManager.getSaturationPercentage());
