@@ -59,11 +59,11 @@ public abstract class InGameHudMixin extends DrawableHelper {
     @Shadow
     @Final
     private static Identifier POWDER_SNOW_OUTLINE;
-    private float hpLast = 0.0F;
+    private float heaLast = 0.0F;
     private final Map<String, Boolean> displacement = new HashMap<>();
     private Boolean shouldRenderMountHealth = false, shouldRenderMountJumpBar = false;
     private int renderExperienceBarX;
-    private int hpTwinkleCoolDown = 0, saTwinkleCoolDown = 0;
+    private int heaTwinkleCoolDown = 0, sanTwinkleCoolDown = 0;
     private static final Identifier HCS_ICONS_TEXTURE = new Identifier("hcs", "textures/gui/hcs_stat.png");
     private static final Identifier EMPTY_TEXTURE = new Identifier("hcs", "textures/gui/empty.png");
     private static final Identifier HEATSTROKE_BLUR = new Identifier("hcs", "textures/misc/heatstroke_blur.png");
@@ -134,7 +134,7 @@ public abstract class InGameHudMixin extends DrawableHelper {
         return Integer.parseInt(R + G + "00", 16);
     }
 
-    public double getTeForDisplay(float x) {
+    public double getTempForDisplay(float x) {
         if (x <= 0.5F) return 0.5 - Math.pow(0.5 - x, 1.6) * 1.5;
         return Math.pow(x - 0.5, 1.6) * 1.5 + 0.5;
     }
@@ -214,150 +214,151 @@ public abstract class InGameHudMixin extends DrawableHelper {
         }
         //ARMOR
         //this.client.getProfiler().push("armor");
-        int ar = player.getArmor();
-        float arPercentage = (float) ar / 20;//NOTE: Math.round(int/int)==0
-        if (ar > 0) {
-            displacement.put("ar", true);
-            int arHeight = this.getDrawIconHeight(arPercentage);
+        int arm = player.getArmor();
+        float armPercentage = (float) arm / 20;//NOTE: Math.round(int/int)==0
+        if (arm > 0) {
+            displacement.put("arm", true);
+            int armHeight = this.getDrawIconHeight(armPercentage);
             this.drawHCSTexture(matrices, xx, yy, 0, 32, 16, 16);
-            this.drawHCSTexture(matrices, xx, yy + 16 - arHeight, 16, 48 - arHeight, 16, arHeight);
-            this.drawTextWithThickShadow(matrices, ar < 10 ? " " + ar : String.valueOf(ar), xx + 4, yyy + 11, getColorByPercentage(arPercentage), 0.75F);
+            this.drawHCSTexture(matrices, xx, yy + 16 - armHeight, 16, 48 - armHeight, 16, armHeight);
+            this.drawTextWithThickShadow(matrices, arm < 10 ? " " + arm : String.valueOf(arm), xx + 4, yyy + 11, getColorByPercentage(armPercentage), 0.75F);
             xx += 20;
-        } else displacement.put("ar", false);
+        } else displacement.put("arm", false);
         //HEALTH
         //this.client.getProfiler().swap("health");
-        displacement.put("hp", true);
+        displacement.put("hea", true);
         TemperatureManager temperatureManager = ((StatAccessor) player).getTemperatureManager();
-        float te = temperatureManager.get();
-        float hp = player.getHealth();
-        float hpMax = player.getMaxHealth();
-        float hpPercentage = hp / hpMax;
-        int hpHeight = this.getDrawIconHeight((float) Math.pow(hpPercentage, 0.8D));//(float)(Math.log1p(((double)hpPercentage)*1.2D)/(Math.log1p(1.2D))
-        int hpDeviation = 0;
-        int hpShake = 0;
-        float hpAbsorption = player.getAbsorptionAmount();
-        if (Math.floor(hp) - Math.floor(hpLast) != 0 || hpLast > hp) hpTwinkleCoolDown = 5;
-        boolean hpTwinkle = hpTwinkleCoolDown > 0;
-        if (hp <= 4 && this.ticks % 3 == 0) hpShake = Math.round((float) Math.random() * 2) - 1;
+        float tem = temperatureManager.get();
+        float hea = player.getHealth();
+        float heaMax = player.getMaxHealth();
+        float heaPercentage = hea / heaMax;
+        int heaHeight = this.getDrawIconHeight((float) Math.pow(heaPercentage, 0.8D));//(float)(Math.log1p(((double)heaPercentage)*1.2D)/(Math.log1p(1.2D))
+        int heaDeviation = 0;
+        int heaShake = 0;
+        float heaAbsorption = player.getAbsorptionAmount();
+        if (Math.floor(hea) - Math.floor(heaLast) != 0 || heaLast > hea) heaTwinkleCoolDown = 5;
+        boolean heaTwinkle = heaTwinkleCoolDown > 0;
+        if (hea <= 4 && this.ticks % 3 == 0) heaShake = Math.round((float) Math.random() * 2) - 1;
         if (player.hasStatusEffect(StatusEffects.POISON)) {
-            hpDeviation = 16;
-            if (hp > 0 && hp < 1) hpHeight = 2;
-        } else if (player.hasStatusEffect(StatusEffects.WITHER)) hpDeviation = 32;
-        else if (player.hasStatusEffect(StatusEffects.ABSORPTION)) hpDeviation = 48;
-        else if (player.isFrozen()) hpDeviation = 80;
-        else if (te >= 1.0F) hpDeviation = 64;
-        this.drawHCSTexture(matrices, xx, yy + hpShake, hpTwinkle ? 16 : 0, 0, 16, 16);//layer 1(background)
-        if (hpTwinkle) --hpTwinkleCoolDown;
-        this.drawHCSTexture(matrices, xx, yy + (16 - hpHeight) + hpShake, 32 + hpDeviation, 16 - hpHeight, 16, hpHeight);//layer 2
+            heaDeviation = 16;
+            if (hea > 0 && hea < 1) heaHeight = 2;
+        } else if (player.hasStatusEffect(StatusEffects.WITHER)) heaDeviation = 32;
+        else if (player.hasStatusEffect(StatusEffects.ABSORPTION)) heaDeviation = 48;
+        else if (player.isFrozen()) heaDeviation = 80;
+        else if (tem >= 1.0F) heaDeviation = 64;
+        this.drawHCSTexture(matrices, xx, yy + heaShake, heaTwinkle ? 16 : 0, 0, 16, 16);//layer 1(background)
+        if (heaTwinkle) --heaTwinkleCoolDown;
+        this.drawHCSTexture(matrices, xx, yy + (16 - heaHeight) + heaShake, 32 + heaDeviation, 16 - heaHeight, 16, heaHeight);//layer 2
         if (player.world.getLevelProperties().isHardcore())
-            this.drawHCSTexture(matrices, xx, yy + (16 - hpHeight) + hpShake, hpDeviation > 0 ? 144 : 128, 16 - hpHeight, 16, hpHeight);
-        this.drawTextWithThickShadow(matrices, String.format("%.1f", hp > 0 ? Math.max(hp, 0.1F) : Math.max(hp, 0.0F)), xx, yyy + 11, getColorByPercentage(hpPercentage), 0.75F);//\n is invalid
-        this.drawTextWithThickShadow(matrices, (hpAbsorption >= 1.0F ? "+" + String.format("%.1f", hpAbsorption) : "") + "/" + String.format("%.1f", hpMax), xx, yyy + 17, getColorByPercentage(hpPercentage), 0.5F);
+            this.drawHCSTexture(matrices, xx, yy + (16 - heaHeight) + heaShake, heaDeviation > 0 ? 144 : 128, 16 - heaHeight, 16, heaHeight);
+        this.drawTextWithThickShadow(matrices, String.format("%.1f", hea > 0 ? Math.max(hea, 0.1F) : Math.max(hea, 0.0F)), xx, yyy + 11, getColorByPercentage(heaPercentage), 0.75F);//\n is invalid
+        this.drawTextWithThickShadow(matrices, (heaAbsorption >= 1.0F ? "+" + String.format("%.1f", heaAbsorption) : "") + "/" + String.format("%.1f", heaMax), xx, yyy + 17, getColorByPercentage(heaPercentage), 0.5F);
         //STAMINA
-        float st = ((StatAccessor) player).getStaminaManager().get();
-        displacement.put("st", true);
+        float str = ((StatAccessor) player).getStaminaManager().get();
+        displacement.put("str", true);
         xx += 20;
-        int stHeight = this.getDrawIconHeight((float) Math.pow(st, 0.8D));
-        int stDeviation = 0, stShake = 0;
-        if (this.ticks % (Math.round(st * 20) + 1) == 0 && st < 0.3F)
-            stShake = Math.round((float) Math.random() * 2) - 1;
-        this.drawHCSTexture(matrices, xx, yy + stShake, 0, 112, 16, 16);
-        this.drawHCSTexture(matrices, xx, yy + (16 - stHeight) + stShake, 16 + stDeviation, 128 - stHeight, 16, stHeight);
-        this.drawTextWithThickShadow(matrices, customNumberFormatter(st < 0.1 ? " #%" : "##%", st), xx + 2, yyy + 11, getColorByPercentage(st), 0.75F);
+        int strHeight = this.getDrawIconHeight((float) Math.pow(str, 0.8D));
+        int strDeviation = 0, strShake = 0;
+        if (this.ticks % (Math.round(str * 20) + 1) == 0 && str < 0.3F)
+            strShake = Math.round((float) Math.random() * 2) - 1;
+        this.drawHCSTexture(matrices, xx, yy + strShake, 0, 112, 16, 16);
+        this.drawHCSTexture(matrices, xx, yy + (16 - strHeight) + strShake, 16 + strDeviation, 128 - strHeight, 16, strHeight);
+        this.drawTextWithThickShadow(matrices, customNumberFormatter(str < 0.1 ? " #%" : "##%", str), xx + 2, yyy + 11, getColorByPercentage(str), 0.75F);
         //THIRST
-        displacement.put("th", true);
+        displacement.put("thi", true);
         xx += 20;
-        float th = ((StatAccessor) player).getThirstManager().get();
-        int thHeight = this.getDrawIconHeight(th, 1, 1);//(float)Math.pow(th,1.18D)
-        if (thHeight < 0) thHeight = 0;
-        else if (th > 0.05F && thHeight <= 1) thHeight = 2;
-        int thDeviation = 0, thShake = 0;
+        float thi = ((StatAccessor) player).getThirstManager().get();
+        int thiHeight = this.getDrawIconHeight(thi, 1, 1);//(float)Math.pow(thi,1.18D)
+        if (thiHeight < 0) thiHeight = 0;
+        else if (thi > 0.05F && thiHeight <= 1) thiHeight = 2;
+        int thiDeviation = 0, thiShake = 0;
         //Note that int%0 will throw java.lang.ArithmeticException: / by zero
-        if (this.ticks % (Math.round(th * 20) * 3 + 1) == 0 && th < 0.3F)
-            thShake = Math.round((float) Math.random() * 2) - 1;
+        if (this.ticks % (Math.round(thi * 20) * 3 + 1) == 0 && thi < 0.3F)
+            thiShake = Math.round((float) Math.random() * 2) - 1;
         if (player.hasStatusEffect(HcsEffects.THIRST) || player.hasStatusEffect(HcsEffects.DIARRHEA))
-            thDeviation = 16;
-        this.drawHCSTexture(matrices, xx, yy + thShake, 0, 48, 16, 16);
-        this.drawHCSTexture(matrices, xx, yy + (16 - thHeight) + thShake, 16 + thDeviation, 64 - thHeight, 16, thHeight);
-        this.drawTextWithThickShadow(matrices, customNumberFormatter(th < 0.1 ? " #%" : "##%", th), xx + 2, yyy + 11, getColorByPercentage(th), 0.75F);
+            thiDeviation = 16;
+        this.drawHCSTexture(matrices, xx, yy + thiShake, 0, 48, 16, 16);
+        this.drawHCSTexture(matrices, xx, yy + (16 - thiHeight) + thiShake, 16 + thiDeviation, 64 - thiHeight, 16, thiHeight);
+        this.drawTextWithThickShadow(matrices, customNumberFormatter(thi < 0.1 ? " #%" : "##%", thi), xx + 2, yyy + 11, getColorByPercentage(thi), 0.75F);
         //HUNGER
         //this.client.getProfiler().swap("food");
-        displacement.put("hu", true);
+        displacement.put("hun", true);
         xx += 20;
-        HungerManager huManager = player.getHungerManager();
-        float hu = (float) huManager.getFoodLevel();
-        float huSaturation = huManager.getSaturationLevel();
-        float huExhaustion = (huSaturation > 0 || statusManager.hasDecimalFoodLevel()) ? 0.0F : statusManager.getExhaustion();
-        float huPercentage = (hu - huExhaustion / 4.0F) / 20.0F;
-        if (huPercentage < 0.0F) huPercentage = 0.0F;
-        else if (huPercentage > 1.0F) huPercentage = 1.0F;
-        int huHeight = this.getDrawIconHeight(huPercentage * 1.1F, 4, 0);
-        int huDeviation = 0, huShake = 0;
-        if (huSaturation <= 0.0F && this.ticks % (hu * 3 + 1) == 0) huShake = Math.round((float) Math.random() * 2) - 1;
+        HungerManager hunManager = player.getHungerManager();
+        float hun = (float) hunManager.getFoodLevel();
+        float hunSaturation = hunManager.getSaturationLevel();
+        float hunExhaustion = (hunSaturation > 0 || statusManager.hasDecimalFoodLevel()) ? 0.0F : statusManager.getExhaustion();
+        float hunPercentage = (hun - hunExhaustion / 4.0F) / 20.0F;
+        if (hunPercentage < 0.0F) hunPercentage = 0.0F;
+        else if (hunPercentage > 1.0F) hunPercentage = 1.0F;
+        int hunHeight = this.getDrawIconHeight(hunPercentage * 1.1F, 4, 0);
+        int hunDeviation = 0, hunShake = 0;
+        if (hunSaturation <= 0.0F && this.ticks % (hun * 3 + 1) == 0)
+            hunShake = Math.round((float) Math.random() * 2) - 1;
         if (player.hasStatusEffect(StatusEffects.HUNGER) || player.hasStatusEffect(HcsEffects.DIARRHEA))
-            huDeviation = 16;
-        this.drawHCSTexture(matrices, xx, yy + huShake, 0, 16, 16, 16);
-        this.drawHCSTexture(matrices, xx, yy + (16 - huHeight) + huShake, 16 + huDeviation, 32 - huHeight, 16, huHeight);
-        this.drawTextWithThickShadow(matrices, customNumberFormatter(huPercentage < 0.1 ? " #%" : "##%", huPercentage), xx + 2, yyy + 11, getColorByPercentage(huPercentage), 0.75F);
+            hunDeviation = 16;
+        this.drawHCSTexture(matrices, xx, yy + hunShake, 0, 16, 16, 16);
+        this.drawHCSTexture(matrices, xx, yy + (16 - hunHeight) + hunShake, 16 + hunDeviation, 32 - hunHeight, 16, hunHeight);
+        this.drawTextWithThickShadow(matrices, customNumberFormatter(hunPercentage < 0.1 ? " #%" : "##%", hunPercentage), xx + 2, yyy + 11, getColorByPercentage(hunPercentage), 0.75F);
         //SANITY
-        displacement.put("sa", true);
+        displacement.put("san", true);
         xx += 20;
         SanityManager sanityManager = ((StatAccessor) player).getSanityManager();
-        float sa = sanityManager.get();
-        float saDifference = sanityManager.getDifference(), saDifferenceAbs = Math.abs(saDifference);
-        if (sa > 1.0F) sa = 1.0F;
-        else if (sa < 0.0F) sa = 0.0F;
-        int saHeight = this.getDrawIconHeight((float) Math.pow(sa, 0.6D));
-        int saDeviation = 0, saShake = 0;
-        if (this.ticks % (Math.round(sa * 20) * 3 + 1) == 0 && sa < 0.3F)
-            saShake = Math.round((float) Math.random() * 2) - 1;
-        if (saDifferenceAbs > 0.0049F) saTwinkleCoolDown = 5;
-        boolean saTwinkle = saTwinkleCoolDown > 0;
-        if (saTwinkle) --saTwinkleCoolDown;
-        this.drawHCSTexture(matrices, xx, yy + saShake, saTwinkle ? 16 : 0, 80, 16, 16);
-        this.drawHCSTexture(matrices, xx, yy + (16 - saHeight) + saShake, 32 + saDeviation, 96 - saHeight, 16, saHeight);
-        if (saDifferenceAbs > 0.0F && saTwinkleCoolDown < 5) {
+        float san = sanityManager.get();
+        float sanDifference = sanityManager.getDifference(), sanDifferenceAbs = Math.abs(sanDifference);
+        if (san > 1.0F) san = 1.0F;
+        else if (san < 0.0F) san = 0.0F;
+        int sanHeight = this.getDrawIconHeight((float) Math.pow(san, 0.6D));
+        int sanDeviation = 0, sanShake = 0;
+        if (this.ticks % (Math.round(san * 20) * 3 + 1) == 0 && san < 0.3F)
+            sanShake = Math.round((float) Math.random() * 2) - 1;
+        if (sanDifferenceAbs > 0.0049F) sanTwinkleCoolDown = 5;
+        boolean sanTwinkle = sanTwinkleCoolDown > 0;
+        if (sanTwinkle) --sanTwinkleCoolDown;
+        this.drawHCSTexture(matrices, xx, yy + sanShake, sanTwinkle ? 16 : 0, 80, 16, 16);
+        this.drawHCSTexture(matrices, xx, yy + (16 - sanHeight) + sanShake, 32 + sanDeviation, 96 - sanHeight, 16, sanHeight);
+        if (sanDifferenceAbs > 0.0F && sanTwinkleCoolDown < 5) {
             int devi, shakeInterval = 24;
-            if (saDifference < -0.000079F) {
+            if (sanDifference < -0.000079F) {
                 devi = 96;
                 shakeInterval = 6;
-            } else if (saDifference < -0.000039F) {
+            } else if (sanDifference < -0.000039F) {
                 devi = 80;
                 shakeInterval = 12;
-            } else if (saDifference < 0.0F) devi = 64;
-            else if (saDifference < 0.000039F) devi = 112;
-            else if (saDifference < 0.000079F) {
+            } else if (sanDifference < 0.0F) devi = 64;
+            else if (sanDifference < 0.000039F) devi = 112;
+            else if (sanDifference < 0.000079F) {
                 devi = 128;
                 shakeInterval = 12;
             } else {
                 devi = 144;
                 shakeInterval = 6;
             }
-            this.drawHCSTexture(matrices, xx, yy + saShake + (((this.ticks % (shakeInterval * 2)) < shakeInterval) ? 1 : 0), devi, 80, 16, 16);
+            this.drawHCSTexture(matrices, xx, yy + sanShake + (((this.ticks % (shakeInterval * 2)) < shakeInterval) ? 1 : 0), devi, 80, 16, 16);
         }
-        this.drawTextWithThickShadow(matrices, customNumberFormatter(sa < 0.1F ? " #%" : "##%", sa), xx + 2, yyy + 11, getColorByPercentage(sa), 0.75F);
+        this.drawTextWithThickShadow(matrices, customNumberFormatter(san < 0.1F ? " #%" : "##%", san), xx + 2, yyy + 11, getColorByPercentage(san), 0.75F);
         //TEMPERATURE
-        displacement.put("te", true);
+        displacement.put("tem", true);
         xx += 20;
         //The time before get damaged for too hot or too cold
-        float teSaturationPercentage = temperatureManager.getSaturationPercentage();
-        int teShake = 0;
-        if (this.ticks % 3 == 0) teShake = Math.round((float) Math.random() * 2) - 1;
-        int teHeight = this.getDrawIconHeight(teSaturationPercentage);
-        if (te <= 0.0F) {//Cold
-            this.drawHCSTexture(matrices, xx, yy + teShake, 0, 64, 16, 16);
-            this.drawHCSTexture(matrices, xx, yy + (16 - teHeight) + teShake, 16, 80 - teHeight, 16, teHeight);
-        } else if (te >= 1.0F) {//Hot
-            this.drawHCSTexture(matrices, xx + teShake, yy, 208, 64, 16, 16);
-            this.drawHCSTexture(matrices, xx, yy + (16 - teHeight) + teShake, 224, 80 - teHeight, 16, teHeight);
+        float temSaturationPercentage = temperatureManager.getSaturationPercentage();
+        int temShake = 0;
+        if (this.ticks % 3 == 0) temShake = Math.round((float) Math.random() * 2) - 1;
+        int temHeight = this.getDrawIconHeight(temSaturationPercentage);
+        if (tem <= 0.0F) {//Cold
+            this.drawHCSTexture(matrices, xx, yy + temShake, 0, 64, 16, 16);
+            this.drawHCSTexture(matrices, xx, yy + (16 - temHeight) + temShake, 16, 80 - temHeight, 16, temHeight);
+        } else if (tem >= 1.0F) {//Hot
+            this.drawHCSTexture(matrices, xx + temShake, yy, 208, 64, 16, 16);
+            this.drawHCSTexture(matrices, xx, yy + (16 - temHeight) + temShake, 224, 80 - temHeight, 16, temHeight);
         } else {
-            int teDeviation = (int) Math.floor(getTeForDisplay(te) * 12) * 16;
-            if (teDeviation <= 0) teDeviation = 16;
-            else if (teDeviation > 176) teDeviation = 176;
-            this.drawHCSTexture(matrices, xx, yy, 16 + teDeviation, 64, 16, 16);
+            int temDeviation = (int) Math.floor(getTempForDisplay(tem) * 12) * 16;
+            if (temDeviation <= 0) temDeviation = 16;
+            else if (temDeviation > 176) temDeviation = 176;
+            this.drawHCSTexture(matrices, xx, yy, 16 + temDeviation, 64, 16, 16);
         }
         //WETNESS
-        float we = 0.0F;
+        /*float we = 0.0F;
         if (we > 0.0F) {
             xx += 20;
             displacement.put("we", true);
@@ -366,7 +367,8 @@ public abstract class InGameHudMixin extends DrawableHelper {
             this.drawHCSTexture(matrices, xx, yy + weShake, 0, 128, 16, 16);
             this.drawHCSTexture(matrices, xx, yy + (16 - weHeight) + weShake, 16, 144 - weHeight, 16, weHeight);
             this.drawTextWithThickShadow(matrices, customNumberFormatter(we < 0.1 ? " #%" : "##%", we), xx + 2, yyy + 11, getColorByPercentage(we), 0.75F);
-        } else displacement.put("we", false);
+        } else*/
+        displacement.put("we", false);
         //AIR
         //this.client.getProfiler().swap("air");
         int ai = player.getAir();
@@ -395,7 +397,7 @@ public abstract class InGameHudMixin extends DrawableHelper {
             this.drawTextWithThickShadow(matrices, "/" + String.format("%.1f", moMax), xx, yyy + 17, getColorByPercentage(moPercentage), 0.5F);
         } else displacement.put("mo", false);
         //this.client.getProfiler().pop();
-        hpLast = hp;
+        heaLast = hea;
         shouldRenderMountHealth = shouldRenderMountJumpBar = false;
     }
 
