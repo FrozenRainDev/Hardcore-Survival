@@ -358,43 +358,43 @@ public abstract class InGameHudMixin extends DrawableHelper {
             this.drawHCSTexture(matrices, xx, yy, 16 + temDeviation, 64, 16, 16);
         }
         //WETNESS
-        /*float we = 0.0F;
-        if (we > 0.0F) {
+        /*float wet = 0.0F;
+        if (wet > 0.0F) {
             xx += 20;
-            displacement.put("we", true);
-            int weHeight = this.getDrawIconHeight(we);
-            int weShake = 0;
-            this.drawHCSTexture(matrices, xx, yy + weShake, 0, 128, 16, 16);
-            this.drawHCSTexture(matrices, xx, yy + (16 - weHeight) + weShake, 16, 144 - weHeight, 16, weHeight);
-            this.drawTextWithThickShadow(matrices, customNumberFormatter(we < 0.1 ? " #%" : "##%", we), xx + 2, yyy + 11, getColorByPercentage(we), 0.75F);
+            displacement.put("wet", true);
+            int wetHeight = this.getDrawIconHeight(wet);
+            int wetShake = 0;
+            this.drawHCSTexture(matrices, xx, yy + wetShake, 0, 128, 16, 16);
+            this.drawHCSTexture(matrices, xx, yy + (16 - wetHeight) + wetShake, 16, 144 - wetHeight, 16, wetHeight);
+            this.drawTextWithThickShadow(matrices, customNumberFormatter(wet < 0.1 ? " #%" : "##%", wet), xx + 2, yyy + 11, getColorByPercentage(wet), 0.75F);
         } else*/
-        displacement.put("we", false);
+        displacement.put("wet", false);
         //AIR
         //this.client.getProfiler().swap("air");
-        int ai = player.getAir();
-        if (ai < 0) ai = 0;
-        int aiMax = player.getMaxAir();
-        if (player.isSubmergedIn(FluidTags.WATER) || ai < aiMax) {
-            displacement.put("ai", true);
+        int air = player.getAir();
+        if (air < 0) air = 0;
+        int airMax = player.getMaxAir();
+        if (player.isSubmergedIn(FluidTags.WATER) || air < airMax) {
+            displacement.put("air", true);
             xx += 20;
-            int aiShake = 0;
-            float aiPercentage = (float) ai / aiMax;
-            if (ai <= (aiMax / 3) && this.ticks % 3 == 0) aiShake = Math.round((float) Math.random() * 2) - 1;
-            this.drawHCSTexture(matrices, xx, yy + aiShake, 32, 32, 16, 16);//, Math.max((float)Math.pow(aiPercentage,0.67F),0.33F)
-            this.drawTextWithThickShadow(matrices, customNumberFormatter(aiPercentage < 0.1 ? " #%" : "##%", aiPercentage), xx + 2, yyy + 11, getColorByPercentage(aiPercentage), 0.75F);
-        } else displacement.put("ai", false);
+            int airShake = 0;
+            float airPercentage = (float) air / airMax;
+            if (air <= (airMax / 3) && this.ticks % 3 == 0) airShake = Math.round((float) Math.random() * 2) - 1;
+            this.drawHCSTexture(matrices, xx, yy + airShake, 32, 32, 16, 16);//, Math.max((float)Math.pow(airPercentage,0.67F),0.33F)
+            this.drawTextWithThickShadow(matrices, customNumberFormatter(airPercentage < 0.1 ? " #%" : "##%", airPercentage), xx + 2, yyy + 11, getColorByPercentage(airPercentage), 0.75F);
+        } else displacement.put("air", false);
         //MOUNT HEALTH
         if (shouldRenderMountHealth && livingEntity != null) {
-            displacement.put("mo", true);
+            displacement.put("mou", true);
             xx += 20;
-            float mo = livingEntity.getHealth();
-            float moMax = livingEntity.getMaxHealth();
-            float moPercentage = mo / moMax;
-            int moHeight = getDrawIconHeight(moPercentage);
+            float mou = livingEntity.getHealth();
+            float mouMax = livingEntity.getMaxHealth();
+            float mouPercentage = mou / mouMax;
+            int mouHeight = getDrawIconHeight(mouPercentage);
             this.drawHCSTexture(matrices, xx, yy, 0, 0, 16, 16);
-            this.drawHCSTexture(matrices, xx, yy + (16 - moHeight), 48, 48 - moHeight, 16, moHeight);
-            this.drawTextWithThickShadow(matrices, String.format("%.1f", mo > 0 ? Math.max(mo, 0.1F) : Math.max(mo, 0.0F)), xx, yyy + 11, getColorByPercentage(moPercentage), 0.75F);
-            this.drawTextWithThickShadow(matrices, "/" + String.format("%.1f", moMax), xx, yyy + 17, getColorByPercentage(moPercentage), 0.5F);
+            this.drawHCSTexture(matrices, xx, yy + (16 - mouHeight), 48, 48 - mouHeight, 16, mouHeight);
+            this.drawTextWithThickShadow(matrices, String.format("%.1f", mou > 0 ? Math.max(mou, 0.1F) : Math.max(mou, 0.0F)), xx, yyy + 11, getColorByPercentage(mouPercentage), 0.75F);
+            this.drawTextWithThickShadow(matrices, "/" + String.format("%.1f", mouMax), xx, yyy + 17, getColorByPercentage(mouPercentage), 0.5F);
         } else displacement.put("mo", false);
         //this.client.getProfiler().pop();
         heaLast = hea;
