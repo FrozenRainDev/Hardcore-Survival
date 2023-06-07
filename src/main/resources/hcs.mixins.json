@@ -71,7 +71,8 @@
     "client.gui.AbstractInventoryScreenMixin",
     "client.gui.DebugHudMixin",
     "client.gui.InGameHudMixin",
-    "client.gui.InventoryScreenMixin"
+    "client.gui.InventoryScreenMixin",
+    "entity.player.ClientPlayerEntityMixin"
   ],
   "server": [
   ],
