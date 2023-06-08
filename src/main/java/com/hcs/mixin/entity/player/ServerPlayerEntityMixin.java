@@ -115,7 +115,7 @@ public abstract class ServerPlayerEntityMixin extends PlayerEntity {
                 EntityHelper.addHcsDebuff(this, HcsEffects.CHILLY_WIND, windchillLevel - 1);
             //Debuff for insanity
             float san = ((StatAccessor) this).getSanityManager().get();
-            if (san < 0.3F) EntityHelper.addHcsDebuff(this, HcsEffects.INSANITY, san < 0.01F ? 1 : 0);
+            if (san < 0.3F) EntityHelper.addHcsDebuff(this, HcsEffects.INSANITY, san < 0.15F ? 1 : 0);
         }
     }
 }

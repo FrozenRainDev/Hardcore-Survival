@@ -50,9 +50,10 @@ public abstract class MinecraftClientMixin extends ReentrantThreadExecutor<Runna
     }
 
     /*
-    The code below is from https://github.com/Kelvin285/MITE-Reborn
+    The code of doAttack is from https://github.com/Kelvin285/MITE-Reborn
+    license:
     Copyright (C) 2020 Kelvin285
-    license: https://mit-license.org/
+    https://mit-license.org/
     */
 
     @Inject(method = "doAttack", at = @At("HEAD"), cancellable = true)
