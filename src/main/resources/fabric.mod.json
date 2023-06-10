@@ -13,7 +13,7 @@
     "sources": "https://github.com/FrozenRainDev/hardcore-survival"
   },
 
-  "license": "Apache License 2.0",
+  "license": "MIT License",
   "icon": "assets/hcs/icon.png",
 
   "environment": "*",
