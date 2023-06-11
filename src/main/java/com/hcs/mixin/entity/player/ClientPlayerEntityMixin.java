@@ -37,6 +37,8 @@ public abstract class ClientPlayerEntityMixin extends PlayerEntity {
     @Inject(method = "tick", at = @At("TAIL"))
     public void tick(CallbackInfo ci) {
         if (((StatAccessor) this).getSanityManager().get() < 0.15F) {
+            for (SoundCategory cate : new SoundCategory[]{SoundCategory.BLOCKS, SoundCategory.HOSTILE, SoundCategory.MUSIC, SoundCategory.NEUTRAL, SoundCategory.RECORDS, SoundCategory.VOICE, SoundCategory.WEATHER})
+                this.client.getSoundManager().stopSounds(null, cate);
             if (this.world.getTime() % 30 == 0)
                 this.world.playSound(this.getX(), this.getY(), this.getZ(), HALLU_AMBIENT_SOUNDS[(int) (HALLU_AMBIENT_SOUNDS.length * Math.random())], SoundCategory.AMBIENT, 13, -13, false);
             else if (this.world.getTime() % 60 == 0)
