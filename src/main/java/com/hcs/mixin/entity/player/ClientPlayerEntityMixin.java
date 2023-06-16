@@ -38,10 +38,10 @@ public abstract class ClientPlayerEntityMixin extends PlayerEntity {
     public void tick(CallbackInfo ci) {
         if (((StatAccessor) this).getSanityManager().get() < 0.15F) {
             for (SoundCategory cate : new SoundCategory[]{SoundCategory.BLOCKS, SoundCategory.HOSTILE, SoundCategory.MUSIC, SoundCategory.NEUTRAL, SoundCategory.RECORDS, SoundCategory.VOICE, SoundCategory.WEATHER})
-                this.client.getSoundManager().stopSounds(null, cate);
+                this.client.getSoundManager().updateSoundVolume(cate, 0);//.stopSounds(null, cate);
             if (this.world.getTime() % 30 == 0)
                 this.world.playSound(this.getX(), this.getY(), this.getZ(), HALLU_AMBIENT_SOUNDS[(int) (HALLU_AMBIENT_SOUNDS.length * Math.random())], SoundCategory.AMBIENT, 13, -13, false);
-            else if (this.world.getTime() % 60 == 0)
+            if (this.world.getTime() % 60 == 0)
                 this.world.playSound(this.getX(), this.getY(), this.getZ(), HALLU_SOUNDS[(int) (HALLU_SOUNDS.length * Math.random())], SoundCategory.AMBIENT, 13, -13, false);
 //                this.client.getSoundManager().play(new BiomeEffectSoundPlayer.MusicLoop(SOUND_EVENTS[(int) (SOUND_EVENTS.length * Math.random())]));
         }
