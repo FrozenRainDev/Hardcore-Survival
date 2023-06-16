@@ -62,8 +62,7 @@
     "recipe.BrewingRecipeRegistryMixin",
     "recipe.ShapedRecipeMixin",
     "recipe.ShapelessRecipeMixin",
-    "server.PlayerManagerMixin",
-    "world.ClientWorldMixin"
+    "server.PlayerManagerMixin"
   ],
   "client": [
     "client.ClientPlayerInteractionManagerMixin",
