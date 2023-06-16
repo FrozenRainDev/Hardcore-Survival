@@ -18,6 +18,7 @@ import net.minecraft.entity.player.HungerManager;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.registry.tag.FluidTags;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.math.MathHelper;
 import org.jetbrains.annotations.NotNull;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
@@ -143,15 +144,15 @@ public abstract class InGameHudMixin extends DrawableHelper {
     public void render(MatrixStack matrices, float tickDelta, CallbackInfo ci) {
         if (this.client.player != null) {
             float san = ((StatAccessor) this.client.player).getSanityManager().get();
-            if (san < 0.3F) this.renderOverlay(matrices, INSANITY_OUTLINE, 1.0F - san / 0.3F);
+            if (this.client.player.hasStatusEffect(HcsEffects.INSANITY))
+                this.renderOverlay(matrices, INSANITY_OUTLINE, Math.min(1.0F, Math.max(0.3F, 1.0F - san / 0.3F + 0.3F * (1.0F - san / 0.6F) * MathHelper.sin((float) this.ticks * (float) Math.PI / 20.0f))));
             TemperatureManager temperatureManager = ((StatAccessor) this.client.player).getTemperatureManager();
             float temp = temperatureManager.get();
             float opacity = Math.min(1.0F, 0.2F + temperatureManager.getSaturationPercentage());
-            if (!getCameraPlayer().getAbilities().invulnerable) {
-                if (temp >= 1.0F) this.renderOverlay(matrices, HEATSTROKE_BLUR, opacity);
-                else if (temp <= 0.0F && this.client.player.getFrozenTicks() <= 0)
-                    this.renderOverlay(matrices, POWDER_SNOW_OUTLINE, opacity);
-            }
+            if (temp >= 1.0F && this.client.player.hasStatusEffect(HcsEffects.HEATSTROKE))
+                this.renderOverlay(matrices, HEATSTROKE_BLUR, opacity);
+            else if (temp <= 0.0F && this.client.player.getFrozenTicks() <= 0 && this.client.player.hasStatusEffect(HcsEffects.HYPOTHERMIA))
+                this.renderOverlay(matrices, POWDER_SNOW_OUTLINE, opacity);
         }
     }
 
@@ -334,7 +335,7 @@ public abstract class InGameHudMixin extends DrawableHelper {
                 devi = 144;
                 shakeInterval = 6;
             }
-            this.drawHCSTexture(matrices, xx, yy + sanShake + (((this.ticks % (shakeInterval * 2)) < shakeInterval) ? 1 : 0), devi, 80, 16, 16);
+            this.drawHCSTexture(matrices, xx, yy /*+ sanShake*/ + (((this.ticks % (shakeInterval * 2)) < shakeInterval) ? 1 : 0), devi, 80, 16, 16);
         }
         this.drawTextWithThickShadow(matrices, customNumberFormatter(san < 0.1F ? " #%" : "##%", san), xx + 2, yyy + 11, getColorByPercentage(san), 0.75F);
         //TEMPERATURE

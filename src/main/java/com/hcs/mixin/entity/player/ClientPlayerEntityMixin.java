@@ -1,5 +1,6 @@
 package com.hcs.mixin.entity.player;
 
+import com.hcs.misc.HcsEffects;
 import com.hcs.misc.accessor.StatAccessor;
 import com.mojang.authlib.GameProfile;
 import net.fabricmc.api.EnvType;
@@ -36,7 +37,7 @@ public abstract class ClientPlayerEntityMixin extends PlayerEntity {
 
     @Inject(method = "tick", at = @At("TAIL"))
     public void tick(CallbackInfo ci) {
-        if (((StatAccessor) this).getSanityManager().get() < 0.15F) {
+        if (((StatAccessor) this).getSanityManager().get() < 0.15F && this.hasStatusEffect(HcsEffects.INSANITY)) {
             for (SoundCategory cate : new SoundCategory[]{SoundCategory.BLOCKS, SoundCategory.HOSTILE, SoundCategory.MUSIC, SoundCategory.NEUTRAL, SoundCategory.RECORDS, SoundCategory.VOICE, SoundCategory.WEATHER, SoundCategory.PLAYERS})
                 this.client.getSoundManager().stopSounds(null, cate);
             if (this.world.getTime() % 30 == 0)
