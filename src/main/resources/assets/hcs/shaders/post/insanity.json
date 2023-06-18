@@ -29,11 +29,11 @@
             "uniforms": [
                 {
                     "name": "Resolution",
-                    "values": [ 16.0 ]
+                    "values": [ 24.0 ]
                 },
                 {
                     "name": "MosaicSize",
-                    "values": [ 4.0 ]
+                    "values": [ 2.5 ]
                 }
             ]
         }
