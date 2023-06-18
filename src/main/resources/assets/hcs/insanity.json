@@ -10,15 +10,30 @@
             "uniforms": [
                 {
                     "name": "RedMatrix",
-                    "values": [ 0.0, 0.0, 0.0 ]
+                    "values": [ 0.2, 0.4, 0.1 ]
                 },
                 {
                     "name": "GreenMatrix",
-                    "values": [ 0.3, 0.59, 0.11 ]
+                    "values": [ 0.2, 0.4, 0.1 ]
                 },
                 {
                     "name": "BlueMatrix",
                     "values": [ 0.0, 0.0, 0.0 ]
+                }
+            ]
+        },
+        {
+            "name": "bits",
+            "intarget": "swap",
+            "outtarget": "minecraft:main",
+            "uniforms": [
+                {
+                    "name": "Resolution",
+                    "values": [ 16.0 ]
+                },
+                {
+                    "name": "MosaicSize",
+                    "values": [ 4.0 ]
                 }
             ]
         }

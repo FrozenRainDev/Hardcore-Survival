@@ -1,5 +1,6 @@
 package com.hcs.mixin.entity.player;
 
+import com.hcs.main.manager.SanityManager;
 import com.hcs.misc.HcsEffects;
 import com.hcs.misc.accessor.StatAccessor;
 import com.mojang.authlib.GameProfile;
@@ -38,17 +39,22 @@ public abstract class ClientPlayerEntityMixin extends PlayerEntity {
 
     @Inject(method = "tick", at = @At("TAIL"))
     public void tick(CallbackInfo ci) {
-        if (((StatAccessor) this).getSanityManager().get() < 0.15F && this.hasStatusEffect(HcsEffects.INSANITY)) {
-            if (this.client.gameRenderer.getPostProcessor() != null)
-                this.client.gameRenderer.getPostProcessor().close();
-            this.client.gameRenderer.loadPostProcessor(new Identifier("hcs", "creeper.json"));
+        SanityManager sanityManager = ((StatAccessor) this).getSanityManager();
+        boolean hasInsanityRenderEffect = this.client.gameRenderer.getPostProcessor() != null && this.client.gameRenderer.getPostProcessor().getName().contains("insanity") && !sanityManager.hasShutInsanityRendererEffect();
+        if (sanityManager.get() < 0.15F && this.hasStatusEffect(HcsEffects.INSANITY)) {
+            if (!hasInsanityRenderEffect) {
+                this.client.gameRenderer.loadPostProcessor(new Identifier("hcs", "insanity.json"));
+                sanityManager.setHasShutInsanityRendererEffect(false);
+            }
             for (SoundCategory cate : new SoundCategory[]{SoundCategory.BLOCKS, SoundCategory.HOSTILE, SoundCategory.MUSIC, SoundCategory.NEUTRAL, SoundCategory.RECORDS, SoundCategory.VOICE, SoundCategory.WEATHER, SoundCategory.PLAYERS})
                 this.client.getSoundManager().stopSounds(null, cate);
             if (this.world.getTime() % 30 == 0)
                 this.world.playSound(this.getX(), this.getY(), this.getZ(), HALLU_AMBIENT_SOUNDS[(int) (HALLU_AMBIENT_SOUNDS.length * Math.random())], SoundCategory.AMBIENT, 26, -13, false);
             if (this.world.getTime() % 60 == 0)
                 this.world.playSound(this.getX(), this.getY(), this.getZ(), HALLU_SOUNDS[(int) (HALLU_SOUNDS.length * Math.random())], SoundCategory.AMBIENT, 13, -26, false);
-//                this.client.getSoundManager().play(new BiomeEffectSoundPlayer.MusicLoop(SOUND_EVENTS[(int) (SOUND_EVENTS.length * Math.random())]));
+        } else if (hasInsanityRenderEffect) {
+            this.client.gameRenderer.getPostProcessor().close();
+            sanityManager.setHasShutInsanityRendererEffect(true);
         }
     }
 }
