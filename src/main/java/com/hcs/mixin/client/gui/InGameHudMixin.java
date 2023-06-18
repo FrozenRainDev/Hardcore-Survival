@@ -144,8 +144,12 @@ public abstract class InGameHudMixin extends DrawableHelper {
     public void render(MatrixStack matrices, float tickDelta, CallbackInfo ci) {
         if (this.client.player != null) {
             float san = ((StatAccessor) this.client.player).getSanityManager().get();
-            if (this.client.player.hasStatusEffect(HcsEffects.INSANITY))
+            if (this.client.player.hasStatusEffect(HcsEffects.INSANITY)) {
                 this.renderOverlay(matrices, INSANITY_OUTLINE, Math.min(1.0F, Math.max(0.3F, 1.0F - san / 0.3F + 0.3F * (1.0F - san / 0.6F) * MathHelper.sin((float) this.ticks * (float) Math.PI / 20.0f))));
+                RenderSystem.colorMask(false, false, false, true);
+                RenderSystem.depthMask(true);
+                //                RenderSystem.setShaderColor(0.0F, 0.0F, 0.0F, 1.0F);
+            }
             TemperatureManager temperatureManager = ((StatAccessor) this.client.player).getTemperatureManager();
             float temp = temperatureManager.get();
             float opacity = Math.min(1.0F, 0.2F + temperatureManager.getSaturationPercentage());

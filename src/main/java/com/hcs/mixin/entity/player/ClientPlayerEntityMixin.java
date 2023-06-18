@@ -3,7 +3,6 @@ package com.hcs.mixin.entity.player;
 import com.hcs.misc.HcsEffects;
 import com.hcs.misc.accessor.StatAccessor;
 import com.mojang.authlib.GameProfile;
-import com.mojang.blaze3d.systems.RenderSystem;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.MinecraftClient;
@@ -11,6 +10,7 @@ import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvent;
+import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import org.spongepowered.asm.mixin.Final;
@@ -39,8 +39,9 @@ public abstract class ClientPlayerEntityMixin extends PlayerEntity {
     @Inject(method = "tick", at = @At("TAIL"))
     public void tick(CallbackInfo ci) {
         if (((StatAccessor) this).getSanityManager().get() < 0.15F && this.hasStatusEffect(HcsEffects.INSANITY)) {
-            RenderSystem.setShaderColor(0.0F, 0.0F, 0.0F, 1.0F);
-//            this.client.gameRenderer.loadPostProcessor(new Identifier("hcs","creeper.json"));
+            if (this.client.gameRenderer.getPostProcessor() != null)
+                this.client.gameRenderer.getPostProcessor().close();
+            this.client.gameRenderer.loadPostProcessor(new Identifier("hcs", "creeper.json"));
             for (SoundCategory cate : new SoundCategory[]{SoundCategory.BLOCKS, SoundCategory.HOSTILE, SoundCategory.MUSIC, SoundCategory.NEUTRAL, SoundCategory.RECORDS, SoundCategory.VOICE, SoundCategory.WEATHER, SoundCategory.PLAYERS})
                 this.client.getSoundManager().stopSounds(null, cate);
             if (this.world.getTime() % 30 == 0)
