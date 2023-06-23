@@ -9,16 +9,8 @@
             "outtarget": "swap",
             "uniforms": [
                 {
-                    "name": "RedMatrix",
-                    "values": [ 0.2, 0.4, 0.1 ]
-                },
-                {
-                    "name": "GreenMatrix",
-                    "values": [ 0.2, 0.4, 0.1 ]
-                },
-                {
-                    "name": "BlueMatrix",
-                    "values": [ 0.0, 0.0, 0.0 ]
+                    "name": "Saturation",
+                    "values": [ 0.04 ]
                 }
             ]
         },
@@ -33,7 +25,7 @@
                 },
                 {
                     "name": "MosaicSize",
-                    "values": [ 2.5 ]
+                    "values": [ 2 ]
                 }
             ]
         }

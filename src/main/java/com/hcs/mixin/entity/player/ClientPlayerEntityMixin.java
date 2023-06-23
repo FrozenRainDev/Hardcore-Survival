@@ -40,22 +40,23 @@ public abstract class ClientPlayerEntityMixin extends PlayerEntity {
     @Inject(method = "tick", at = @At("TAIL"))
     public void tick(CallbackInfo ci) {
         SanityManager sanityManager = ((StatAccessor) this).getSanityManager();
-        boolean hasInsanityRenderEffect = this.client.gameRenderer.getPostProcessor() != null && sanityManager.getHasRenderedInsanityEffect();
-        if (sanityManager.get() < 0.15F && this.hasStatusEffect(HcsEffects.INSANITY)) {
-            if (!hasInsanityRenderEffect) {
-                this.client.gameRenderer.loadPostProcessor(new Identifier("hcs", "shaders/post/insanity.json"));
-                sanityManager.setHasRenderedInsanityEffect(true);
+        if (sanityManager.get() < 0.65F) {
+            int insanityEffectId = Math.min(12, Math.max(0, (int) (sanityManager.get() * 20.0F)));
+            if (sanityManager.getRenderedInsanityEffectId() != insanityEffectId) {
+                this.client.gameRenderer.loadPostProcessor(new Identifier("hcs", "shaders/post/insanity_" + insanityEffectId + ".json"));
+                sanityManager.setRenderedInsanityEffectId(insanityEffectId);
             }
-            for (SoundCategory cate : new SoundCategory[]{SoundCategory.BLOCKS, SoundCategory.HOSTILE, SoundCategory.MUSIC, SoundCategory.NEUTRAL, SoundCategory.RECORDS, SoundCategory.VOICE, SoundCategory.WEATHER, SoundCategory.PLAYERS})
-                this.client.getSoundManager().stopSounds(null, cate);
-            if (this.world.getTime() % 30 == 0)
-                this.world.playSound(this.getX(), this.getY(), this.getZ(), HALLU_AMBIENT_SOUNDS[(int) (HALLU_AMBIENT_SOUNDS.length * Math.random())], SoundCategory.AMBIENT, 26, -13, false);
-            if (this.world.getTime() % 60 == 0)
-                this.world.playSound(this.getX(), this.getY(), this.getZ(), HALLU_SOUNDS[(int) (HALLU_SOUNDS.length * Math.random())], SoundCategory.AMBIENT, 13, -26, false);
-        } else if (hasInsanityRenderEffect || !sanityManager.getHasRenderedInsanityEffect()) {
-            if (this.client.gameRenderer.getPostProcessor() != null)
-                this.client.gameRenderer.getPostProcessor().close();
-            sanityManager.setHasRenderedInsanityEffect(false);
+            if (sanityManager.get() < 0.15F && this.hasStatusEffect(HcsEffects.INSANITY)) {
+                for (SoundCategory cate : new SoundCategory[]{SoundCategory.BLOCKS, SoundCategory.HOSTILE, SoundCategory.MUSIC, SoundCategory.NEUTRAL, SoundCategory.RECORDS, SoundCategory.VOICE, SoundCategory.WEATHER, SoundCategory.PLAYERS})
+                    this.client.getSoundManager().stopSounds(null, cate);
+                if (this.world.getTime() % 30 == 0)
+                    this.world.playSound(this.getX(), this.getY(), this.getZ(), HALLU_AMBIENT_SOUNDS[(int) (HALLU_AMBIENT_SOUNDS.length * Math.random())], SoundCategory.AMBIENT, 26, -13, false);
+                if (this.world.getTime() % 60 == 0)
+                    this.world.playSound(this.getX(), this.getY(), this.getZ(), HALLU_SOUNDS[(int) (HALLU_SOUNDS.length * Math.random())], SoundCategory.AMBIENT, 13, -26, false);
+            }
+        } else if (this.client.gameRenderer.getPostProcessor() != null) {
+            this.client.gameRenderer.getPostProcessor().close();
+            sanityManager.setRenderedInsanityEffectId(-1);
         }
     }
 }

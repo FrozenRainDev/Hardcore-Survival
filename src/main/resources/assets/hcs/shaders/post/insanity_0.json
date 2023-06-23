@@ -1,0 +1,33 @@
+{
+    "targets": [
+        "swap"
+    ],
+    "passes": [
+        {
+            "name": "color_convolve",
+            "intarget": "minecraft:main",
+            "outtarget": "swap",
+            "uniforms": [
+                {
+                    "name": "Saturation",
+                    "values": [ 0.01 ]
+                }
+            ]
+        },
+        {
+            "name": "bits",
+            "intarget": "swap",
+            "outtarget": "minecraft:main",
+            "uniforms": [
+                {
+                    "name": "Resolution",
+                    "values": [ 24.0 ]
+                },
+                {
+                    "name": "MosaicSize",
+                    "values": [ 2.5 ]
+                }
+            ]
+        }
+    ]
+}

@@ -11,7 +11,7 @@ public class SanityManager {
     //Don't calculate difference between sanity and lastSanity when in InGameHud as it refreshes much faster than ticks() in PlayerEntity and cause twinkle of arrow which indicates trend of rising and falling
     private float sanDifference = 0.0F;
     private int panicTicks = 0;
-    private boolean hasRenderedInsanityEffect = false; //Client only
+    private int renderedInsanityEffectId = -1; //Client only
     public static final String SANITY_NBT = "hcs_sanity";
 
     public float get() {
@@ -38,7 +38,7 @@ public class SanityManager {
         add(1.0F);
         lastSanity = 1.0F;
         updateDifference();
-        hasRenderedInsanityEffect = false;
+        renderedInsanityEffectId = 1;
     }
 
     public float getDifference() {
@@ -62,12 +62,12 @@ public class SanityManager {
         panicTicks = val;
     }
 
-    public boolean getHasRenderedInsanityEffect() {
-        return hasRenderedInsanityEffect;
+    public int getRenderedInsanityEffectId() {
+        return renderedInsanityEffectId;
     }
 
-    public void setHasRenderedInsanityEffect(boolean val) {
-        hasRenderedInsanityEffect = val;
+    public void setRenderedInsanityEffectId(int val) {
+        renderedInsanityEffectId = val;
     }
 
 
