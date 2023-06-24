@@ -46,12 +46,13 @@ public abstract class ClientPlayerEntityMixin extends PlayerEntity {
                 this.client.gameRenderer.loadPostProcessor(new Identifier("hcs", "shaders/post/insanity_" + insanityEffectId + ".json"));
                 sanityManager.setRenderedInsanityEffectId(insanityEffectId);
             }
-            if (sanityManager.get() < 0.15F && this.hasStatusEffect(HcsEffects.INSANITY)) {
-                for (SoundCategory cate : new SoundCategory[]{SoundCategory.BLOCKS, SoundCategory.HOSTILE, SoundCategory.MUSIC, SoundCategory.NEUTRAL, SoundCategory.RECORDS, SoundCategory.VOICE, SoundCategory.WEATHER, SoundCategory.PLAYERS})
-                    this.client.getSoundManager().stopSounds(null, cate);
-                if (this.world.getTime() % 30 == 0)
+            if (this.hasStatusEffect(HcsEffects.INSANITY)) {
+                if (sanityManager.get() < 0.15F)
+                    for (SoundCategory cate : new SoundCategory[]{SoundCategory.BLOCKS, SoundCategory.HOSTILE, SoundCategory.MUSIC, SoundCategory.NEUTRAL, SoundCategory.RECORDS, SoundCategory.VOICE, SoundCategory.WEATHER, SoundCategory.PLAYERS})
+                        this.client.getSoundManager().stopSounds(null, cate);
+                if (this.world.getTime() % (sanityManager.get() < 0.15F ? 30 : 600) == 0)
                     this.world.playSound(this.getX(), this.getY(), this.getZ(), HALLU_AMBIENT_SOUNDS[(int) (HALLU_AMBIENT_SOUNDS.length * Math.random())], SoundCategory.AMBIENT, 26, -13, false);
-                if (this.world.getTime() % 60 == 0)
+                if (this.world.getTime() % (sanityManager.get() < 0.15F ? 60 : 1200) == 0)
                     this.world.playSound(this.getX(), this.getY(), this.getZ(), HALLU_SOUNDS[(int) (HALLU_SOUNDS.length * Math.random())], SoundCategory.AMBIENT, 13, -26, false);
             }
         } else if (this.client.gameRenderer.getPostProcessor() != null) {

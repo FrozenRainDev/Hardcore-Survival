@@ -15,9 +15,19 @@
             ]
         },
         {
-            "name": "blit",
+            "name": "bits",
             "intarget": "swap",
-            "outtarget": "minecraft:main"
+            "outtarget": "minecraft:main",
+            "uniforms": [
+                {
+                    "name": "Resolution",
+                    "values": [ 24.0 ]
+                },
+                {
+                    "name": "MosaicSize",
+                    "values": [ 1.2 ]
+                }
+            ]
         }
     ]
 }
