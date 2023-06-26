@@ -51,6 +51,7 @@ public class HcsEffects {
             if (entity instanceof ServerPlayerEntity player && !entity.isSpectator()) {
                 ((ServerPlayerEntity) entity).getHungerManager().addExhaustion(0.01F * (float) (amplifier + 1));
                 ((StatAccessor) player).getThirstManager().add(-0.00015F * (float) (amplifier + 1));
+                ((StatAccessor) player).getSanityManager().add(-0.00001F * (float) (amplifier + 1));
             }
         }
     };
@@ -63,7 +64,10 @@ public class HcsEffects {
 
         @Override
         public void applyUpdateEffect(LivingEntity entity, int amplifier) {
-            if (entity instanceof ServerPlayerEntity && !entity.isInvisible()) entity.setSprinting(false);
+            if (entity instanceof ServerPlayerEntity player && !entity.isInvisible()) {
+                entity.setSprinting(false);
+                ((StatAccessor) player).getSanityManager().add(-0.00001F * (float) (amplifier + 1));
+            }
         }
     }.addAttributeModifier(EntityAttributes.GENERIC_ATTACK_DAMAGE, "22653B89-116E-49DC-9B6B-9971489B5BE5", 0.0, EntityAttributeModifier.Operation.ADDITION)
             .addAttributeModifier(EntityAttributes.GENERIC_MOVEMENT_SPEED, "7107DE5E-7CE8-4030-940E-514C1F160890", -0.15f, EntityAttributeModifier.Operation.MULTIPLY_TOTAL)
@@ -118,7 +122,7 @@ public class HcsEffects {
             if (entity instanceof ServerPlayerEntity player && !entity.isSpectator() && !entity.isInvulnerable()) {
                 //Accelerate water losing and decrease sanity
                 ((StatAccessor) player).getThirstManager().add(-0.0001F * (float) (amplifier + 1));
-                ((StatAccessor) player).getSanityManager().add(-0.00002F * (float) (amplifier + 1));
+                ((StatAccessor) player).getSanityManager().add(-0.00003F * (float) (amplifier + 1));
                 if (amplifier > 0) {
                     player.setSprinting(false);
                     if (player.world != null && player.world.getTime() % 60 == 0) {

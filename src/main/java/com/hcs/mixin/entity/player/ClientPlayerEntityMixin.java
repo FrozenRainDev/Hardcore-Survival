@@ -8,6 +8,10 @@ import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.ClientPlayerEntity;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityType;
+import net.minecraft.entity.mob.BlazeEntity;
+import net.minecraft.entity.mob.EndermanEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvent;
@@ -30,7 +34,6 @@ public abstract class ClientPlayerEntityMixin extends PlayerEntity {
     @Final
     protected MinecraftClient client;
     private static final SoundEvent[] HALLU_SOUNDS = {ENTITY_ENDERMAN_DEATH, ENTITY_ENDERMAN_HURT, ENTITY_ENDERMAN_AMBIENT, ENTITY_HUSK_DEATH, ENTITY_ENDERMITE_DEATH, ENTITY_BLAZE_AMBIENT, ENTITY_BLAZE_DEATH, ENTITY_PIG_DEATH, ENTITY_DROWNED_DEATH, ENTITY_STRAY_DEATH, BLOCK_ROOTED_DIRT_BREAK, BLOCK_BONE_BLOCK_HIT, BLOCK_FIRE_AMBIENT, BLOCK_VINE_PLACE, ENTITY_LIGHTNING_BOLT_THUNDER, ENTITY_GHAST_SCREAM, ENTITY_GENERIC_EXPLODE, ENTITY_ZOMBIE_ATTACK_IRON_DOOR, ENTITY_ZOMBIE_ATTACK_WOODEN_DOOR, ENTITY_SKELETON_AMBIENT, ENTITY_CREEPER_PRIMED, ENTITY_SPIDER_AMBIENT};
-
     private static final SoundEvent[] HALLU_AMBIENT_SOUNDS = {AMBIENT_CAVE.value(), AMBIENT_UNDERWATER_LOOP_ADDITIONS_ULTRA_RARE, AMBIENT_BASALT_DELTAS_MOOD.value(), AMBIENT_WARPED_FOREST_MOOD.value(), AMBIENT_BASALT_DELTAS_MOOD.value(), AMBIENT_SOUL_SAND_VALLEY_MOOD.value(), AMBIENT_UNDERWATER_LOOP, AMBIENT_BASALT_DELTAS_ADDITIONS.value(), AMBIENT_NETHER_WASTES_LOOP.value(), AMBIENT_NETHER_WASTES_ADDITIONS.value()};
 
     public ClientPlayerEntityMixin(World world, BlockPos pos, float yaw, GameProfile gameProfile) {
@@ -47,9 +50,11 @@ public abstract class ClientPlayerEntityMixin extends PlayerEntity {
                 sanityManager.setRenderedInsanityEffectId(insanityEffectId);
             }
             if (this.hasStatusEffect(HcsEffects.INSANITY)) {
-                if (sanityManager.get() < 0.15F)
+                if (sanityManager.get() < 0.15F) {
                     for (SoundCategory cate : new SoundCategory[]{SoundCategory.BLOCKS, SoundCategory.HOSTILE, SoundCategory.MUSIC, SoundCategory.NEUTRAL, SoundCategory.RECORDS, SoundCategory.VOICE, SoundCategory.WEATHER, SoundCategory.PLAYERS})
                         this.client.getSoundManager().stopSounds(null, cate);
+                    this.world.spawnEntity(new BlazeEntity(EntityType.BLAZE, this.world));
+                }
                 if (this.world.getTime() % (sanityManager.get() < 0.15F ? 30 : 600) == 0)
                     this.world.playSound(this.getX(), this.getY(), this.getZ(), HALLU_AMBIENT_SOUNDS[(int) (HALLU_AMBIENT_SOUNDS.length * Math.random())], SoundCategory.AMBIENT, 26, -13, false);
                 if (this.world.getTime() % (sanityManager.get() < 0.15F ? 60 : 1200) == 0)

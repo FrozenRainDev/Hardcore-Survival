@@ -273,7 +273,7 @@ public abstract class InGameHudMixin extends DrawableHelper {
         if (thiHeight < 0) thiHeight = 0;
         else if (thi > 0.05F && thiHeight <= 1) thiHeight = 2;
         int thiDeviation = 0, thiShake = 0;
-        //Note that int%0 will throw java.lang.ArithmeticException: / by zero
+        //Note that int % 0 will throw java.lang.ArithmeticException: / by zero
         if (this.ticks % (Math.round(thi * 20) * 3 + 1) == 0 && thi < 0.3F)
             thiShake = Math.round((float) Math.random() * 2) - 1;
         if (player.hasStatusEffect(HcsEffects.THIRST) || player.hasStatusEffect(HcsEffects.DIARRHEA))
@@ -335,7 +335,7 @@ public abstract class InGameHudMixin extends DrawableHelper {
                 devi = 144;
                 shakeInterval = 6;
             }
-            this.drawHCSTexture(matrices, xx, yy /*+ sanShake*/ + (((this.ticks % (shakeInterval * 2)) < shakeInterval) ? 1 : 0), devi, 80, 16, 16);
+            this.drawHCSTexture(matrices, xx, yy + (((this.ticks % (shakeInterval * 2)) < shakeInterval) ? 1 : 0), devi, 80, 16, 16);
         }
         this.drawTextWithThickShadow(matrices, customNumberFormatter(san < 0.1F ? " #%" : "##%", san), xx + 2, yyy + 11, getColorByPercentage(san), 0.75F);
         //TEMPERATURE

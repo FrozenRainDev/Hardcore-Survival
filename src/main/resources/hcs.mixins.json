@@ -68,6 +68,7 @@
     "client.ClientPlayerInteractionManagerMixin",
     "client.HeldItemRendererMixin",
     "client.MinecraftClientMixin",
+    "client.WorldRendererMixin",
     "client.gui.AbstractInventoryScreenMixin",
     "client.gui.DebugHudMixin",
     "client.gui.InGameHudMixin",
