@@ -24,4 +24,8 @@ public class NutritionManager {
         setVegetable(vegetable + val);
     }
 
+    public void reset() {
+        addVegetable(1.0);
+    }
+
 }

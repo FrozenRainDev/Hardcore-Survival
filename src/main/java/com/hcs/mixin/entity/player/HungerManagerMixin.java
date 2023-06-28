@@ -1,5 +1,6 @@
 package com.hcs.mixin.entity.player;
 
+import com.hcs.misc.HcsEffects;
 import com.hcs.misc.accessor.StatAccessor;
 import net.minecraft.entity.player.HungerManager;
 import net.minecraft.entity.player.PlayerEntity;
@@ -48,6 +49,7 @@ public class HungerManagerMixin {
         Difficulty difficulty = player.world.getDifficulty();
         this.prevFoodLevel = this.foodLevel;
         double thirst = ((StatAccessor) player).getThirstManager().get();
+        boolean malnutrition = player.hasStatusEffect(HcsEffects.MALNUTRITION);
         if (difficulty == Difficulty.PEACEFUL) {
             ((StatAccessor) player).getThirstManager().addDirectly(0.01);
             ((StatAccessor) player).getSanityManager().add(0.01);
@@ -62,7 +64,7 @@ public class HungerManagerMixin {
         }
         boolean bl = player.world.getGameRules().getBoolean(GameRules.NATURAL_REGENERATION);
         if (bl && this.saturationLevel >= 0.0F && player.canFoodHeal() && this.foodLevel >= 19 && thirst >= 0.8) {
-            ++this.foodTickTimer;
+            if (!malnutrition || Math.random() < 0.5) ++this.foodTickTimer;
             if (this.foodTickTimer >= 10) {
                 float f = Math.min(1.0F + this.saturationLevel / 6.0F, 2.0F) / 100.0F;
                 player.heal(f);

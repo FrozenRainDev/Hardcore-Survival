@@ -27,6 +27,8 @@
   "effect.hcs.overeaten": "Overeaten",
   "effect.hcs.insanity": "Insanity",
   "effect.hcs.insanity.description": "Prone to hallucinations",
+  "effect.hcs.malnutrition": "Malnutrition",
+  "effect.hcs.malnutrition.description": "Slower regen and faster hungering",
 
   "hcs.food_info.fresh": "Fresh",
   "hcs.food_info.stale": "Stale",

@@ -50,8 +50,8 @@ public class HcsEffects {
         public void applyUpdateEffect(LivingEntity entity, int amplifier) {
             if (entity instanceof ServerPlayerEntity player && !entity.isSpectator()) {
                 ((ServerPlayerEntity) entity).getHungerManager().addExhaustion(0.01F * (float) (amplifier + 1));
-                ((StatAccessor) player).getThirstManager().add(-0.00015 *  (amplifier + 1));
-                ((StatAccessor) player).getSanityManager().add(-0.00001 *  (amplifier + 1));
+                ((StatAccessor) player).getThirstManager().add(-0.00015 * (amplifier + 1));
+                ((StatAccessor) player).getSanityManager().add(-0.00001 * (amplifier + 1));
             }
         }
     };
@@ -151,5 +151,7 @@ public class HcsEffects {
             .addAttributeModifier(EntityAttributes.GENERIC_MOVEMENT_SPEED, "7107DE5E-7CE8-4030-940E-514C1F160890", -0.05F, EntityAttributeModifier.Operation.MULTIPLY_TOTAL)
             .addAttributeModifier(EntityAttributes.GENERIC_ATTACK_SPEED, "55FCED67-E92A-486E-9800-B47F202C4386", -0.05F, EntityAttributeModifier.Operation.MULTIPLY_TOTAL);
 
+    public static final StatusEffect MALNUTRITION = new StatusEffect(StatusEffectCategory.HARMFUL, 0xe8e5d2) {
+    };
 
 }

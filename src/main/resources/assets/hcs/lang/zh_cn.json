@@ -27,6 +27,8 @@
   "effect.hcs.overeaten": "吃撑",
   "effect.hcs.insanity": "精神错乱",
   "effect.hcs.insanity.description": "很可能产生幻觉",
+  "effect.hcs.malnutrition": "营养不良",
+  "effect.hcs.malnutrition.description": "回血减慢，更容易饿",
 
   "hcs.food_info.fresh": "新鲜",
   "hcs.food_info.stale": "不新鲜",

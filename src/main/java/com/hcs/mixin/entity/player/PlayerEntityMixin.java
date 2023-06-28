@@ -252,6 +252,12 @@ public abstract class PlayerEntityMixin extends LivingEntity implements StatAcce
             FoodComponent food = item.getFoodComponent();
             EntityHelper.checkOvereaten(player, false);
             if (food != null) {
+                if (food.isMeat() || name.contains("egg"))
+                    this.nutritionManager.addVegetable(-0.08);
+                else if (name.contains("kelp")) this.nutritionManager.addVegetable(0.1);
+                else if (name.contains("berries") || name.contains("berry")) this.nutritionManager.addVegetable(0.17);
+                else if (name.contains("apple") || name.contains("orange") || name.contains("carrot") || name.contains("cactus") || name.contains("melon") || name.contains("potherb") || name.contains("shoot") || name.contains("salad") || name.contains("fruit"))
+                    this.nutritionManager.addVegetable(0.3);
                 int freshLevel = RotHelper.addDebuff(world, player, stack);
                 if (item == Items.GOLDEN_APPLE || item == Items.ENCHANTED_GOLDEN_APPLE) this.sanityManager.add(1.0);
                 else if (item == Items.KELP) this.sanityManager.add(-0.04);
@@ -294,7 +300,8 @@ public abstract class PlayerEntityMixin extends LivingEntity implements StatAcce
     @Inject(method = "addExhaustion", at = @At("TAIL"))
     public void addExhaustion(float exhaustion, CallbackInfo ci) {
         if (!this.world.isClient) {
-            this.thirstManager.add(-exhaustion / 70);
+            this.thirstManager.add(-exhaustion / 180);//70 originally
+            if (this.hasStatusEffect(HcsEffects.MALNUTRITION)) this.hungerManager.addExhaustion(exhaustion * 0.5F);
         }
     }
 

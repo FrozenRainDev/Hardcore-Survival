@@ -113,9 +113,16 @@ public abstract class ServerPlayerEntityMixin extends PlayerEntity {
                 EntityHelper.addHcsDebuff(this, HcsEffects.STRONG_SUN, Math.max(0, sunshineIntensity - 1));
             if (biome.isCold(this.getBlockPos()) && windchillLevel > 0)
                 EntityHelper.addHcsDebuff(this, HcsEffects.CHILLY_WIND, windchillLevel - 1);
+
             //Debuff for insanity
             double san = ((StatAccessor) this).getSanityManager().get();
-            if (san < 0.3) EntityHelper.addHcsDebuff(this, HcsEffects.INSANITY, san < 0.15F ? 1 : 0);
+            if (san < 0.3)
+                EntityHelper.addHcsDebuff(this, HcsEffects.INSANITY, san < 0.15 ? (san < 0.1 ? (san < 0.05 ? 3 : 2) : 1) : 0);
+
+            //Debuff for malnutrition
+            double vegetable = ((StatAccessor) this).getNutritionManager().getVegetable();
+            if (vegetable < 0.00001) EntityHelper.addHcsDebuff(this, HcsEffects.MALNUTRITION, 0);
+
         }
     }
 }
