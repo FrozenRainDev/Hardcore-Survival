@@ -86,10 +86,15 @@ public class EntityHelper {
         player.sendMessage(Text.translatable(id), isTipMessage);
     }
 
-    public static String customNumberFormatter(String pattern, float value) {
+    public static String customNumberFormatter(String pattern, double value) {
         DecimalFormat decimalFormat = new DecimalFormat(pattern);
         return decimalFormat.format(value);
     }
+
+    public static String customNumberFormatter(String pattern, float value) {
+        return customNumberFormatter(pattern, (double) value);
+    }
+
 
     public static BlockHitResult rayCast(@NotNull World world, @NotNull Entity entity, RaycastContext.FluidHandling fluidHandling, double maxDistance) {
         float f = entity.getPitch();
@@ -267,8 +272,8 @@ public class EntityHelper {
 
     public static void checkOvereaten(@NotNull ServerPlayerEntity player, boolean isDrink) {
         int hunger = player.getHungerManager().getFoodLevel();
-        float thirst = ((StatAccessor) player).getThirstManager().get();
-        if ((isDrink && (hunger >= 20 || thirst > 0.99F)) || (!isDrink && hunger >= 20)) {
+        double thirst = ((StatAccessor) player).getThirstManager().get();
+        if ((isDrink && (hunger >= 20 || thirst > 0.99)) || (!isDrink && hunger >= 20)) {
             StatusManager statusManager = ((StatAccessor) player).getStatusManager();
             statusManager.setHasDecimalFoodLevel(false);
             if (statusManager.getRecentLittleOvereatenTicks() > 0)
@@ -278,8 +283,8 @@ public class EntityHelper {
     }
 
     public static LivingEntity getHallucinationEntityForPlayer(World world, LivingEntity originalEntity) {
-        if(originalEntity instanceof PlayerEntity player) {
-            if (world != null && player.hasStatusEffect(HcsEffects.INSANITY) && ((StatAccessor) player).getSanityManager().get() < 0.05F) {
+        if (originalEntity instanceof PlayerEntity player) {
+            if (world != null && player.hasStatusEffect(HcsEffects.INSANITY) && ((StatAccessor) player).getSanityManager().get() < 0.05) {
                 LivingEntity hallucinationEntity = new SkeletonEntity(EntityType.SKELETON, world);
                 hallucinationEntity.setStackInHand(Hand.MAIN_HAND, player.getMainHandStack());
                 hallucinationEntity.setStackInHand(Hand.OFF_HAND, player.getOffHandStack());

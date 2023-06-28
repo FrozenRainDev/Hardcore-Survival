@@ -1,55 +1,50 @@
 package com.hcs.main.manager;
 
-import java.math.BigDecimal;
-
-import static java.math.BigDecimal.ONE;
-import static java.math.BigDecimal.ZERO;
-
 public class SanityManager {
-    private BigDecimal sanity = new BigDecimal("1.0");
-    private float lastSanity = 1.0F;
+    private double sanity = 1.0;
+    private double lastSanity = 1.0;
     //Don't calculate difference between sanity and lastSanity when in InGameHud as it refreshes much faster than ticks() in PlayerEntity and cause twinkle of arrow which indicates trend of rising and falling
-    private float sanDifference = 0.0F;
+    private double sanDifference = 0.0;
     private int panicTicks = 0;
     public static final String SANITY_NBT = "hcs_sanity";
 
-    public float get() {
-        if (sanity.compareTo(ONE) > 0) sanity = ONE;
-        else if (sanity.compareTo(ZERO) < 0) sanity = ZERO;
-        return sanity.floatValue();
+    public double get() {
+        if (sanity > 1.0) sanity = 1.0;
+        else if (sanity < 0.0) sanity = 0.0;
+        return sanity;
     }
 
-    public void set(float val) {
-        if (Float.isNaN(val)) {
+    public void set(double val) {
+        if (Double.isNaN(val)) {
             new NumberFormatException("Val is NaN").printStackTrace();
             return;
         }
-        if (val > 1.0F) val = 1.0F;
-        else if (val < 0.0F) val = 0.0F;
-        sanity = new BigDecimal(String.format("%.7f", val));
+        if (val > 1.0) val = 1.0;
+        else if (val < 0.0) val = 0.0;
+        sanity = val;
     }
 
-    public void add(float val) {
-        set(sanity.floatValue() + val);
+    public void add(double val) {
+        set(sanity + val);
     }
 
     public void reset() {
-        add(1.0F);
-        lastSanity = 1.0F;
+        add(1.0);
+        lastSanity = 1.0;
         updateDifference();
     }
 
-    public float getDifference() {
+    public double getDifference() {
         return sanDifference;
     }
 
-    public void setDifference(float val) {
+    public void setDifference(double val) {
         sanDifference = val;
     }
 
     public void updateDifference() {
-        sanDifference = sanity.floatValue() - lastSanity;
-        lastSanity = sanity.floatValue();
+        sanDifference = sanity - lastSanity;
+        lastSanity = sanity;
     }
 
     public int getPanicTicks() {

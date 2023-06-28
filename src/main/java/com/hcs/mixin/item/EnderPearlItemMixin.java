@@ -17,6 +17,6 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 public class EnderPearlItemMixin {
     @Inject(method = "use", at = @At("HEAD"))
     public void use(@NotNull World world, PlayerEntity user, Hand hand, CallbackInfoReturnable<TypedActionResult<ItemStack>> cir) {
-        if (!world.isClient && !user.getAbilities().invulnerable) ((StatAccessor) user).getSanityManager().add(-0.08F);
+        if (!world.isClient && !user.getAbilities().invulnerable) ((StatAccessor) user).getSanityManager().add(-0.08);
     }
 }

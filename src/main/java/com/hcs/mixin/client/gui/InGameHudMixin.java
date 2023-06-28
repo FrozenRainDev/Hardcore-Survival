@@ -113,14 +113,14 @@ public abstract class InGameHudMixin extends DrawableHelper {
         return result;
     }
 
-    public int getDrawIconHeight(float val, int initAdd, int maxCut) {
-        int result = Math.round(val * ((14 - maxCut) - initAdd)) + initAdd;
+    public int getDrawIconHeight(double val, int initAdd, int maxCut) {
+        int result = Math.round((float) val * ((14 - maxCut) - initAdd)) + initAdd;
         if ((val <= 0 && result >= 2) || result < 0) result = 0;
         else if (result > 16) result = 16;
         return result;
     }
 
-    public int getColorByPercentage(float val) {
+    public int getColorByPercentage(double val) {
         int r, g;
         String R, G;
         if (val > 1) val = 1;
@@ -139,7 +139,7 @@ public abstract class InGameHudMixin extends DrawableHelper {
         return Integer.parseInt(R + G + "00", 16);
     }
 
-    public double getTempForDisplay(float x) {
+    public double getTempForDisplay(double x) {
         if (x <= 0.5F) return 0.5 - Math.pow(0.5 - x, 1.6) * 1.5;
         return Math.pow(x - 0.5, 1.6) * 1.5 + 0.5;
     }
@@ -147,11 +147,11 @@ public abstract class InGameHudMixin extends DrawableHelper {
     @Inject(method = "render", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/network/ClientPlayerEntity;getFrozenTicks()I"))
     public void render(MatrixStack matrices, float tickDelta, CallbackInfo ci) {
         if (this.client.player != null) {
-            float san = ((StatAccessor) this.client.player).getSanityManager().get();
+            double san = ((StatAccessor) this.client.player).getSanityManager().get();
             if (this.client.player.hasStatusEffect(HcsEffects.INSANITY))
-                this.renderOverlay(matrices, INSANITY_OUTLINE, Math.min(1.0F, Math.max(0.3F, 1.0F - san / 0.3F + 0.3F * (1.0F - san / 0.6F) * MathHelper.sin((float) this.ticks * (float) Math.PI / 15.0f))));
+                this.renderOverlay(matrices, INSANITY_OUTLINE, Math.min(1.0F, Math.max(0.3F, 1.0F - (float) san / 0.3F + 0.3F * (1.0F - (float) san / 0.6F) * MathHelper.sin((float) this.ticks * (float) Math.PI / 15.0f))));
             TemperatureManager temperatureManager = ((StatAccessor) this.client.player).getTemperatureManager();
-            float temp = temperatureManager.get();
+            double temp = temperatureManager.get();
             float opacity = Math.min(1.0F, 0.2F + temperatureManager.getSaturationPercentage());
             if (temp >= 1.0F && this.client.player.hasStatusEffect(HcsEffects.HEATSTROKE))
                 this.renderOverlay(matrices, HEATSTROKE_BLUR, opacity);
@@ -233,7 +233,7 @@ public abstract class InGameHudMixin extends DrawableHelper {
         //this.client.getProfiler().swap("health");
         displacement.put("hea", true);
         TemperatureManager temperatureManager = ((StatAccessor) player).getTemperatureManager();
-        float tem = temperatureManager.get();
+        double tem = temperatureManager.get();
         float hea = player.getHealth();
         float heaMax = player.getMaxHealth();
         float heaPercentage = hea / heaMax;
@@ -259,7 +259,7 @@ public abstract class InGameHudMixin extends DrawableHelper {
         this.drawTextWithThickShadow(matrices, String.format("%.1f", hea > 0 ? Math.max(hea, 0.1F) : Math.max(hea, 0.0F)), xx, yyy + 11, getColorByPercentage(heaPercentage), 0.75F);//\n is invalid
         this.drawTextWithThickShadow(matrices, (heaAbsorption >= 1.0F ? "+" + String.format("%.1f", heaAbsorption) : "") + "/" + String.format("%.1f", heaMax), xx, yyy + 17, getColorByPercentage(heaPercentage), 0.5F);
         //STAMINA
-        float str = ((StatAccessor) player).getStaminaManager().get();
+        double str = ((StatAccessor) player).getStaminaManager().get();
         displacement.put("str", true);
         xx += 20;
         int strHeight = this.getDrawIconHeight((float) Math.pow(str, 0.8D));
@@ -272,7 +272,7 @@ public abstract class InGameHudMixin extends DrawableHelper {
         //THIRST
         displacement.put("thi", true);
         xx += 20;
-        float thi = ((StatAccessor) player).getThirstManager().get();
+        double thi = ((StatAccessor) player).getThirstManager().get();
         int thiHeight = this.getDrawIconHeight(thi, 1, 1);//(float)Math.pow(thi,1.18D)
         if (thiHeight < 0) thiHeight = 0;
         else if (thi > 0.05F && thiHeight <= 1) thiHeight = 2;
@@ -309,8 +309,8 @@ public abstract class InGameHudMixin extends DrawableHelper {
         displacement.put("san", true);
         xx += 20;
         SanityManager sanityManager = ((StatAccessor) player).getSanityManager();
-        float san = sanityManager.get();
-        float sanDifference = sanityManager.getDifference(), sanDifferenceAbs = Math.abs(sanDifference);
+        double san = sanityManager.get();
+        double sanDifference = sanityManager.getDifference(), sanDifferenceAbs = Math.abs(sanDifference);
         if (san > 1.0F) san = 1.0F;
         else if (san < 0.0F) san = 0.0F;
         int sanHeight = this.getDrawIconHeight((float) Math.pow(san, 0.6D));
@@ -441,7 +441,7 @@ public abstract class InGameHudMixin extends DrawableHelper {
 
     @ModifyArg(method = "renderHeldItemTooltip", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/font/TextRenderer;drawWithShadow(Lnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/text/Text;FFI)I"), index = 1)
     public Text renderHeldItemTooltip(Text text) {
-        if (text != null && this.client.player != null && ((StatAccessor) this.client.player).getSanityManager().get() < 0.1F && this.client.player.hasStatusEffect(HcsEffects.INSANITY))
+        if (text != null && this.client.player != null && ((StatAccessor) this.client.player).getSanityManager().get() < 0.1 && this.client.player.hasStatusEffect(HcsEffects.INSANITY))
             return MutableText.of(text.getContent()).formatted(Formatting.OBFUSCATED);
         return text;
     }

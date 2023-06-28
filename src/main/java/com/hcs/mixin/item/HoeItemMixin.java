@@ -20,7 +20,7 @@ public class HoeItemMixin {
         if (player == null) return;
         if (!player.world.isClient && !player.getAbilities().invulnerable) {
             StaminaManager staminaManager = ((StatAccessor) player).getStaminaManager();
-            staminaManager.add(-0.005F, player);
+            staminaManager.add(-0.005, player);
             staminaManager.pauseRestoring();
         }
     }

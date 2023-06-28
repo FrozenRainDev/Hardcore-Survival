@@ -43,9 +43,9 @@ public class BottleItem extends PotionItem {
                 RotHelper.addDebuff(world, serverPlayer, stack);
                 TemperatureManager temperatureManager = ((StatAccessor) player).getTemperatureManager();
                 EntityHelper.checkOvereaten(serverPlayer, true);
-                if (temperatureManager.get() > 0.8F) temperatureManager.add(-0.08F);
+                if (temperatureManager.get() > 0.8) temperatureManager.add(-0.08);
                 if (!serverPlayer.isCreative()) {
-                    ((StatAccessor) serverPlayer).getThirstManager().add(0.35F);
+                    ((StatAccessor) serverPlayer).getThirstManager().add(0.35);
                     if (this.effectInstance != null) {
                         if (this.effectInstance.getEffectType() == HcsEffects.THIRST) {
                             livingEntity.addStatusEffect(livingEntity.hasStatusEffect(HcsEffects.THIRST) ? new StatusEffectInstance(HcsEffects.THIRST, Math.min(Objects.requireNonNull(livingEntity.getStatusEffect(HcsEffects.THIRST)).getDuration() + 1200, 9600), 0, false, false, true) : new StatusEffectInstance(this.effectInstance));

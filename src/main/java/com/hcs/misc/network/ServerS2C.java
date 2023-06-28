@@ -1,9 +1,6 @@
 package com.hcs.misc.network;
 
-import com.hcs.main.manager.SanityManager;
-import com.hcs.main.manager.StatusManager;
-import com.hcs.main.manager.TemperatureManager;
-import com.hcs.main.manager.ThirstManager;
+import com.hcs.main.manager.*;
 import com.hcs.misc.accessor.StatAccessor;
 import io.netty.buffer.Unpooled;
 import net.minecraft.network.PacketByteBuf;
@@ -18,9 +15,13 @@ public class ServerS2C {
     public static final Identifier TEMPERATURE_ID = new Identifier("hcs", "s2c_temperature");
     public static final Identifier STATUS_ID = new Identifier("hcs", "s2c_status");
     public static final Identifier SANITY_ID = new Identifier("hcs", "s2c_sanity");
+    public static final Identifier NUTRITION_ID = new Identifier("hcs", "s2c_nutrition");
     public static final float TRANS_MULTIPLIER = 10000000.0F;
 
     public static int floatToInt(float val) {
+        return (int) (val * TRANS_MULTIPLIER);
+    }
+    public static int doubleToInt(double val) {
         return (int) (val * TRANS_MULTIPLIER);
     }
 
@@ -35,16 +36,16 @@ public class ServerS2C {
     private static void writeS2CPacket(@NotNull ServerPlayerEntity player) {
         PacketByteBuf buf1 = new PacketByteBuf(Unpooled.buffer());
         ThirstManager thirstManager = ((StatAccessor) player).getThirstManager();
-        buf1.writeIntArray(new int[]{player.getId(), floatToInt(thirstManager.get()), floatToInt(thirstManager.getSaturation()), floatToInt(thirstManager.getThirstRateAffectedByTemp())});
+        buf1.writeIntArray(new int[]{player.getId(), doubleToInt(thirstManager.get()), floatToInt(thirstManager.getSaturation()), floatToInt(thirstManager.getThirstRateAffectedByTemp())});
         player.networkHandler.sendPacket(new CustomPayloadS2CPacket(THIRST_ID, buf1));
 
         PacketByteBuf buf2 = new PacketByteBuf(Unpooled.buffer());
-        buf2.writeIntArray(new int[]{player.getId(), floatToInt(((StatAccessor) player).getStaminaManager().get())});
+        buf2.writeIntArray(new int[]{player.getId(), doubleToInt(((StatAccessor) player).getStaminaManager().get())});
         player.networkHandler.sendPacket(new CustomPayloadS2CPacket(STAMINA_ID, buf2));
 
         PacketByteBuf buf3 = new PacketByteBuf(Unpooled.buffer());
         TemperatureManager temperatureManager = ((StatAccessor) player).getTemperatureManager();
-        buf3.writeIntArray(new int[]{player.getId(), floatToInt(temperatureManager.get()), floatToInt(temperatureManager.getEnvTempCache()), floatToInt(temperatureManager.getSaturation()), floatToInt(temperatureManager.getFeelTempCache()), temperatureManager.getTrendType()});
+        buf3.writeIntArray(new int[]{player.getId(), doubleToInt(temperatureManager.get()), floatToInt(temperatureManager.getEnvTempCache()), floatToInt(temperatureManager.getSaturation()), floatToInt(temperatureManager.getFeelTempCache()), temperatureManager.getTrendType()});
         player.networkHandler.sendPacket(new CustomPayloadS2CPacket(TEMPERATURE_ID, buf3));
 
         PacketByteBuf buf4 = new PacketByteBuf(Unpooled.buffer());
@@ -55,7 +56,12 @@ public class ServerS2C {
 
         PacketByteBuf buf5 = new PacketByteBuf(Unpooled.buffer());
         SanityManager sanityManager = ((StatAccessor) player).getSanityManager();
-        buf5.writeIntArray(new int[]{player.getId(), floatToInt(sanityManager.get()), floatToInt(sanityManager.getDifference()), sanityManager.getPanicTicks()});
+        buf5.writeIntArray(new int[]{player.getId(), doubleToInt(sanityManager.get()), doubleToInt(sanityManager.getDifference()), sanityManager.getPanicTicks()});
         player.networkHandler.sendPacket(new CustomPayloadS2CPacket(SANITY_ID, buf5));
+
+        PacketByteBuf buf6 = new PacketByteBuf(Unpooled.buffer());
+        NutritionManager nutritionManager = ((StatAccessor) player).getNutritionManager();
+        buf6.writeIntArray(new int[]{player.getId(), doubleToInt(nutritionManager.getVegetable())});
+        player.networkHandler.sendPacket(new CustomPayloadS2CPacket(NUTRITION_ID, buf6));
     }
 }

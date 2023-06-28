@@ -15,6 +15,9 @@ public class ClientS2C {
     public static float intToFloat(int val) {
         return (float) val / TRANS_MULTIPLIER;
     }
+    public static double intToDouble(int val) {
+        return (double) val / TRANS_MULTIPLIER;
+    }
 
     public static boolean intToBoolean(int val) {
         return val == 1;
@@ -28,7 +31,7 @@ public class ClientS2C {
                     PlayerEntity player = (PlayerEntity) client.player.world.getEntityById(bufArr[0]);
                     if (player != null) {
                         ThirstManager thirstManager = ((StatAccessor) player).getThirstManager();
-                        thirstManager.set(intToFloat(bufArr[1]));
+                        thirstManager.set(intToDouble(bufArr[1]));
                         thirstManager.setSaturation(intToFloat(bufArr[2]));
                         thirstManager.setThirstRateAffectedByTemp(intToFloat(bufArr[3]));
                     }
@@ -43,7 +46,7 @@ public class ClientS2C {
                     PlayerEntity player = (PlayerEntity) client.player.world.getEntityById(bufArr[0]);
                     if (player != null) {
                         StaminaManager staminaManager = ((StatAccessor) player).getStaminaManager();
-                        staminaManager.set(intToFloat(bufArr[1]));
+                        staminaManager.set(intToDouble(bufArr[1]));
                     }
                 }
             });
@@ -56,7 +59,7 @@ public class ClientS2C {
                     PlayerEntity player = (PlayerEntity) client.player.world.getEntityById(bufArr[0]);
                     if (player != null) {
                         TemperatureManager temperatureManager = ((StatAccessor) player).getTemperatureManager();
-                        temperatureManager.set(intToFloat(bufArr[1]));
+                        temperatureManager.set(intToDouble(bufArr[1]));
                         temperatureManager.setEnvTempCache(intToFloat(bufArr[2]));
                         temperatureManager.setSaturation(intToFloat(bufArr[3]));
                         temperatureManager.setFeelTempCache(intToFloat(bufArr[4]));
@@ -93,13 +96,26 @@ public class ClientS2C {
                     PlayerEntity player = (PlayerEntity) client.player.world.getEntityById(bufArr[0]);
                     if (player != null) {
                         SanityManager sanityManager = ((StatAccessor) player).getSanityManager();
-                        sanityManager.set(intToFloat(bufArr[1]));
-                        sanityManager.setDifference(intToFloat(bufArr[2]));
+                        sanityManager.set(intToDouble(bufArr[1]));
+                        sanityManager.setDifference(intToDouble(bufArr[2]));
                         sanityManager.setPanicTicks(bufArr[3]);
                     }
                 }
             });
         });
 
+
+        ClientPlayNetworking.registerGlobalReceiver(NUTRITION_ID, (client, handler, buffer, responseSender) -> {
+            int[] bufArr = buffer.readIntArray();
+            client.execute(() -> {
+                if (client.player != null && client.player.world.getEntityById(bufArr[0]) != null) {
+                    PlayerEntity player = (PlayerEntity) client.player.world.getEntityById(bufArr[0]);
+                    if (player != null) {
+                        NutritionManager nutritionManager = ((StatAccessor) player).getNutritionManager();
+                        nutritionManager.setVegetable(intToDouble(bufArr[1]));
+                    }
+                }
+            });
+        });
     }
 }

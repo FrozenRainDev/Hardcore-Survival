@@ -46,14 +46,14 @@ public abstract class ClientPlayerEntityMixin extends PlayerEntity {
         ++ticks;
         SanityManager sanityManager = ((StatAccessor) this).getSanityManager();
         boolean isThirdPerson = this.client.gameRenderer.getCamera().isThirdPerson();
-        if (!this.isCreative() && !this.isSpectator() && sanityManager.get() < 0.65F) {
-            int insanityEffectId = Math.min(12, Math.max(0, (int) (sanityManager.get() * 20.0F)));
+        if (!this.isCreative() && !this.isSpectator() && sanityManager.get() < 0.65) {
+            int insanityEffectId = Math.min(12, Math.max(0, (int) (sanityManager.get() * 20.0)));
             if (prevInsanityEffectId != insanityEffectId || isThirdPerson != prevIsThirdPerson || this.ticks % 20 == 0) {
                 this.client.gameRenderer.loadPostProcessor(new Identifier("hcs", "shaders/post/insanity_" + insanityEffectId + ".json"));
                 this.prevInsanityEffectId = insanityEffectId;
             }
             if (this.hasStatusEffect(HcsEffects.INSANITY)) {
-                if (sanityManager.get() < 0.15F) {
+                if (sanityManager.get() < 0.15) {
                     for (SoundCategory cate : new SoundCategory[]{SoundCategory.BLOCKS, SoundCategory.HOSTILE, SoundCategory.MUSIC, SoundCategory.NEUTRAL, SoundCategory.RECORDS, SoundCategory.VOICE, SoundCategory.WEATHER, SoundCategory.PLAYERS})
                         this.client.getSoundManager().stopSounds(null, cate);
                     this.world.spawnEntity(new BlazeEntity(EntityType.BLAZE, this.world));

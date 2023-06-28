@@ -32,7 +32,7 @@ public class RockItem extends ItemWithTip {
             if (!user.getAbilities().invulnerable) {
                 itemStack.decrement(1);
                 StaminaManager staminaManager = ((StatAccessor) user).getStaminaManager();
-                staminaManager.add(-0.01F, user);
+                staminaManager.add(-0.01, user);
                 staminaManager.pauseRestoring();
             }
         }

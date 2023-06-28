@@ -51,7 +51,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import java.util.Objects;
 
 import static com.hcs.main.helper.DigRestrictHelper.canBreak;
-import static com.hcs.misc.network.ServerS2C.floatToInt;
+import static com.hcs.misc.network.ServerS2C.doubleToInt;
 
 @Mixin(PlayerEntity.class)
 public abstract class PlayerEntityMixin extends LivingEntity implements StatAccessor {
@@ -112,6 +112,7 @@ public abstract class PlayerEntityMixin extends LivingEntity implements StatAcce
     TemperatureManager temperatureManager = new TemperatureManager();
     StatusManager statusManager = new StatusManager();
     SanityManager sanityManager = new SanityManager();
+    NutritionManager nutritionManager = new NutritionManager();
 
     @Override
     public ThirstManager getThirstManager() {
@@ -138,30 +139,37 @@ public abstract class PlayerEntityMixin extends LivingEntity implements StatAcce
         return this.sanityManager;
     }
 
+    @Override
+    public NutritionManager getNutritionManager() {
+        return this.nutritionManager;
+    }
+
 
     @Inject(method = "readCustomDataFromNbt", at = @At("TAIL"))
     public void readCustomDataFromNbt(NbtCompound nbt, CallbackInfo info) {
         if (!this.world.isClient()) {
-            this.thirstManager.set(nbt.contains(ThirstManager.THIRST_NBT, NbtElement.FLOAT_TYPE) ? nbt.getFloat(ThirstManager.THIRST_NBT) : 1.0F);
+            this.thirstManager.set(nbt.contains(ThirstManager.THIRST_NBT, NbtElement.DOUBLE_TYPE) ? nbt.getDouble(ThirstManager.THIRST_NBT) : 1.0);
             this.thirstManager.setSaturation(nbt.contains(ThirstManager.THIRST_SATURATION_NBT, NbtElement.FLOAT_TYPE) ? nbt.getFloat(ThirstManager.THIRST_SATURATION_NBT) : 0.2F);
-            this.staminaManager.set(nbt.contains(StaminaManager.STAMINA_NBT, NbtElement.FLOAT_TYPE) ? nbt.getFloat(StaminaManager.STAMINA_NBT) : 1.0F);
-            this.temperatureManager.set(nbt.contains(TemperatureManager.TEMPERATURE_NBT, NbtElement.FLOAT_TYPE) ? nbt.getFloat(TemperatureManager.TEMPERATURE_NBT) : 0.5F);
+            this.staminaManager.set(nbt.contains(StaminaManager.STAMINA_NBT, NbtElement.DOUBLE_TYPE) ? nbt.getDouble(StaminaManager.STAMINA_NBT) : 1.0);
+            this.temperatureManager.set(nbt.contains(TemperatureManager.TEMPERATURE_NBT, NbtElement.DOUBLE_TYPE) ? nbt.getDouble(TemperatureManager.TEMPERATURE_NBT) : 0.5);
             this.temperatureManager.setSaturation(nbt.contains(TemperatureManager.TEMPERATURE_SATURATION_NBT, NbtElement.FLOAT_TYPE) ? nbt.getFloat(TemperatureManager.TEMPERATURE_SATURATION_NBT) : 0.0F);
             this.statusManager.setMaxExpLevelReached(nbt.contains(StatusManager.MAX_LVL_NBT, NbtElement.INT_TYPE) ? nbt.getInt(StatusManager.MAX_LVL_NBT) : 0);
-            this.sanityManager.set(nbt.contains(SanityManager.SANITY_NBT, NbtElement.FLOAT_TYPE) ? nbt.getFloat(SanityManager.SANITY_NBT) : 1.0F);
+            this.sanityManager.set(nbt.contains(SanityManager.SANITY_NBT, NbtElement.DOUBLE_TYPE) ? nbt.getDouble(SanityManager.SANITY_NBT) : 1.0);
+            this.nutritionManager.setVegetable(nbt.contains(NutritionManager.NUTRITION_VEGETABLE_NBT, NbtElement.DOUBLE_TYPE) ? nbt.getDouble(NutritionManager.NUTRITION_VEGETABLE_NBT) : 1.0);
         }
     }
 
     @Inject(method = "writeCustomDataToNbt", at = @At("TAIL"))
     public void writeCustomDataToNbt(NbtCompound nbt, CallbackInfo info) {
         if (!this.world.isClient()) {
-            nbt.putFloat(ThirstManager.THIRST_NBT, this.thirstManager.get());
+            nbt.putDouble(ThirstManager.THIRST_NBT, this.thirstManager.get());
             nbt.putFloat(ThirstManager.THIRST_SATURATION_NBT, this.thirstManager.getSaturation());
-            nbt.putFloat(StaminaManager.STAMINA_NBT, this.staminaManager.get());
-            nbt.putFloat(TemperatureManager.TEMPERATURE_NBT, this.temperatureManager.get());
+            nbt.putDouble(StaminaManager.STAMINA_NBT, this.staminaManager.get());
+            nbt.putDouble(TemperatureManager.TEMPERATURE_NBT, this.temperatureManager.get());
             nbt.putFloat(TemperatureManager.TEMPERATURE_SATURATION_NBT, this.temperatureManager.getSaturation());
             nbt.putInt(StatusManager.MAX_LVL_NBT, this.statusManager.getMaxExpLevelReached());
-            nbt.putFloat(SanityManager.SANITY_NBT, this.sanityManager.get());
+            nbt.putDouble(SanityManager.SANITY_NBT, this.sanityManager.get());
+            nbt.putDouble(NutritionManager.NUTRITION_VEGETABLE_NBT, this.nutritionManager.getVegetable());
         }
     }
 
@@ -195,7 +203,8 @@ public abstract class PlayerEntityMixin extends LivingEntity implements StatAcce
             };
             f *= g;
         }
-        if (this.hasStatusEffect(HcsEffects.EXHAUSTED)) f *= floatToInt(this.staminaManager.get()) <= 10 ? 0.05F : 0.7F;
+        if (this.hasStatusEffect(HcsEffects.EXHAUSTED))
+            f *= doubleToInt(this.staminaManager.get()) <= 10 ? 0.05F : 0.7F;
         if (this.isSubmergedIn(FluidTags.WATER) && !EnchantmentHelper.hasAquaAffinity(this)) f /= 5.0F;
         if (!this.onGround) f /= 5.0F;
         if (state.isOf(Blocks.SUGAR_CANE)) f /= 9.0F;
@@ -211,7 +220,7 @@ public abstract class PlayerEntityMixin extends LivingEntity implements StatAcce
             else f = -1.0F;
         }
         if ((block instanceof TorchBlock) || state.isIn(BlockTags.FLOWERS)) f = 999999.0F;
-        this.staminaManager.add(-0.00015F, this);
+        this.staminaManager.add(-0.00015, this);
         this.staminaManager.pauseRestoring();
         cir.setReturnValue(f);
         cir.cancel();
@@ -244,23 +253,23 @@ public abstract class PlayerEntityMixin extends LivingEntity implements StatAcce
             EntityHelper.checkOvereaten(player, false);
             if (food != null) {
                 int freshLevel = RotHelper.addDebuff(world, player, stack);
-                if (item == Items.GOLDEN_APPLE || item == Items.ENCHANTED_GOLDEN_APPLE) this.sanityManager.add(1.0F);
-                else if (item == Items.KELP) this.sanityManager.add(-0.04F);
+                if (item == Items.GOLDEN_APPLE || item == Items.ENCHANTED_GOLDEN_APPLE) this.sanityManager.add(1.0);
+                else if (item == Items.KELP) this.sanityManager.add(-0.04);
                 else if (item == Items.POISONOUS_POTATO || item == Items.SPIDER_EYE || item == Items.CHORUS_FRUIT)
-                    this.sanityManager.add(-0.07F);
-                else if (item == Items.ROTTEN_FLESH) this.sanityManager.add(-0.1F);
+                    this.sanityManager.add(-0.07);
+                else if (item == Items.ROTTEN_FLESH) this.sanityManager.add(-0.1);
                 else if (item == Items.RED_MUSHROOM || item == Items.CRIMSON_FUNGUS || item == Items.WARPED_FUNGUS)
-                    this.sanityManager.add(-1.0F);
+                    this.sanityManager.add(-1.0);
                 else if (freshLevel > 2) {
                     if (item == Items.PUMPKIN_PIE || item == Items.RABBIT_STEW || item == Items.GOLDEN_CARROT)
-                        this.sanityManager.add(0.15F);
+                        this.sanityManager.add(0.15);
                     else if (item == Items.MUSHROOM_STEW || item == Reg.COOKED_CACTUS_FLESH || item == Items.BEETROOT_SOUP)
-                        this.sanityManager.add(0.07F);
-                    else if (item == Items.DRIED_KELP) this.sanityManager.add(0.05F);
+                        this.sanityManager.add(0.07);
+                    else if (item == Items.DRIED_KELP) this.sanityManager.add(0.05);
                     else if (item == Items.COOKIE || item == Items.APPLE || item == Reg.ORANGE)
-                        this.sanityManager.add(0.03F);
+                        this.sanityManager.add(0.03);
                     else if (name.contains("cooked_") || name.contains("roasted_") || name.contains("baked_") || item == Items.BREAD || item == Items.SUGAR)
-                        this.sanityManager.add(0.01F);
+                        this.sanityManager.add(0.01);
                 }
                 if (item == Items.WHEAT || item == Items.SUGAR || item == Items.SUGAR_CANE || item == Reg.POTHERB || item == Reg.ROASTED_SEEDS)
                     this.hungerManager.setFoodLevel(Math.min(this.hungerManager.getFoodLevel() + 1, 20));
@@ -268,14 +277,14 @@ public abstract class PlayerEntityMixin extends LivingEntity implements StatAcce
                     EntityHelper.addDecimalFoodLevel(player, 0.4F, false);
                 if (!name.contains("dried") && !name.contains("jerky") && !name.contains("seeds") && item != Items.COOKIE && item != Items.BREAD && item != Items.SUGAR) {
                     if (name.contains("stew") || name.contains("soup"))
-                        this.thirstManager.add(item == Items.MUSHROOM_STEW ? 0.06F : 0.2F);
+                        this.thirstManager.add(item == Items.MUSHROOM_STEW ? 0.06 : 0.2);
                     else if (item == Items.MELON_SLICE || item == Items.APPLE || item == Reg.ORANGE || item == Items.SUGAR_CANE || item == Reg.CACTUS_FLESH)
-                        this.thirstManager.addDirectly(0.05F);
+                        this.thirstManager.addDirectly(0.05);
                     else if (item == Items.CARROT || item == Items.POTATO || item == Reg.PUMPKIN_SLICE || item == Reg.PETALS_SALAD)
-                        this.thirstManager.addDirectly(0.03F);
+                        this.thirstManager.addDirectly(0.03);
                     else if (food.isMeat() || name.contains("berries") || item == Reg.COOKED_CACTUS_FLESH || item == Reg.COOKED_PUMPKIN_SLICE || item == Reg.COOKED_CARROT || item == Reg.COOKED_BAMBOO_SHOOT || item == Reg.COOKED_SWEET_BERRIES)
-                        this.thirstManager.addDirectly(0.02F);
-                    else this.thirstManager.addDirectly(0.01F);
+                        this.thirstManager.addDirectly(0.02);
+                    else this.thirstManager.addDirectly(0.01);
                 }
             }
         }
@@ -315,14 +324,14 @@ public abstract class PlayerEntityMixin extends LivingEntity implements StatAcce
         this.staminaManager.pauseRestoring();
         this.addExhaustion(0.025F * rate);
         this.staminaManager.pauseRestoring();
-        this.staminaManager.add(-0.002F * rate, this);
+        this.staminaManager.add(-0.002 * rate, this);
         ci.cancel();
     }
 
     @Inject(method = "attack", at = @At("TAIL"))
     public void attack(Entity target, CallbackInfo ci) {
         this.staminaManager.pauseRestoring(50);
-        this.staminaManager.add(-0.01F, this);
+        this.staminaManager.add(-0.01, this);
         this.statusManager.setRecentAttackTicks(200);
     }
 
@@ -336,7 +345,7 @@ public abstract class PlayerEntityMixin extends LivingEntity implements StatAcce
         this.statusManager.setRecentHasHotWaterBagTicks(Math.max(0, this.statusManager.getRecentHasHotWaterBagTicks() - 1));
         this.statusManager.setRecentLittleOvereatenTicks(this.hungerManager.getFoodLevel() < 20 ? 0 : Math.max(0, this.statusManager.getRecentLittleOvereatenTicks() - 1));
         if (this.sanityManager.getPanicTicks() > 0) {
-            this.sanityManager.add(-0.00004F);
+            this.sanityManager.add(-0.00004);
             this.sanityManager.setPanicTicks(this.sanityManager.getPanicTicks() - 1);
         }
         //Set max health according to max exp level reached
@@ -353,45 +362,45 @@ public abstract class PlayerEntityMixin extends LivingEntity implements StatAcce
             } else if (maxLvlReached >= 36 && currentMaxHealth < 20) instance.setBaseValue(20);
         }
         if (!this.isCreative() && !this.isSpectator()) {
-            if (this.getPos().distanceTo(this.staminaManager.getLastVecPos()) > 0.0001D) {
+            if (this.getPos().distanceTo(this.staminaManager.getLastVecPos()) > 0.0001) {
                 //Player is moving this.getVelocity() and this.speed are useless
                 if (!this.hasVehicle()) {
                     boolean shouldPauseRestoring = true;
                     if (this.onGround) {
-                        if (this.isSprinting()) this.staminaManager.add(-0.0007F, this);
-                        else if (this.isInSneakingPose()) this.staminaManager.add(-0.0001F, this);
-                        else if (this.staminaManager.get() < 0.7F) {//walking while stamina < 0.7 will get a recovery
+                        if (this.isSprinting()) this.staminaManager.add(-0.0007, this);
+                        else if (this.isInSneakingPose()) this.staminaManager.add(-0.0001, this);
+                        else if (this.staminaManager.get() < 0.7) {//walking while stamina < 0.7 will get a recovery
                             shouldPauseRestoring = false;
-                            this.staminaManager.add(this.staminaManager.get() < 0.3F ? 0.0001F : 0.001F, this);
+                            this.staminaManager.add(this.staminaManager.get() < 0.3 ? 0.0001 : 0.001, this);
                         }
                     }
-                    if (this.isSwimming() || this.isClimbing()) this.staminaManager.add(-0.001F, this);
-                    else if (this.isTouchingWater()) this.staminaManager.add(-0.0004F, this);
+                    if (this.isSwimming() || this.isClimbing()) this.staminaManager.add(-0.001, this);
+                    else if (this.isTouchingWater()) this.staminaManager.add(-0.0004, this);
                     if (shouldPauseRestoring) this.staminaManager.pauseRestoring();
                 }
             } else {
-                if (this.getThirstManager().get() > 0.6F && this.getHungerManager().getFoodLevel() > 12)
-                    this.staminaManager.add(0.0045F, this);
-                else if (this.getThirstManager().get() > 0.3F && this.getHungerManager().getFoodLevel() > 6)
-                    this.staminaManager.add(0.0025F, this);
-                else this.staminaManager.add(0.001F, this);
+                if (this.getThirstManager().get() > 0.6 && this.getHungerManager().getFoodLevel() > 12)
+                    this.staminaManager.add(0.0045, this);
+                else if (this.getThirstManager().get() > 0.3 && this.getHungerManager().getFoodLevel() > 6)
+                    this.staminaManager.add(0.0025, this);
+                else this.staminaManager.add(0.001, this);
             }
             //Gain sanity when being exposed in the sun with flower in hand
             BlockPos headPos = this.getBlockPos().up();
             int skyBrightness = this.world.getLightLevel(LightType.SKY, headPos);
             if ((this.getMainHandStack().isIn(ItemTags.FLOWERS) || this.getOffHandStack().isIn(ItemTags.FLOWERS)) && this.world.isDay() && skyBrightness >= LightType.SKY.value)
-                this.sanityManager.add(0.000009F);
+                this.sanityManager.add(0.000009);
             //Lose sanity
-            if (this.hasStatusEffect(StatusEffects.WITHER)) this.sanityManager.add(-0.00008F);
-            else if (this.hasStatusEffect(StatusEffects.POISON)) this.sanityManager.add(-0.00003F);
+            if (this.hasStatusEffect(StatusEffects.WITHER)) this.sanityManager.add(-0.00008);
+            else if (this.hasStatusEffect(StatusEffects.POISON)) this.sanityManager.add(-0.00003);
             boolean isInCavelike = skyBrightness < 5 && this.world.getDimension().hasSkyLight();
             boolean isInUnpleasantDimension = !this.world.getDimension().bedWorks() || this.world.getRegistryKey() == World.NETHER;//Avoid mods conflict as sleeping in the nether is set to permissive
             if (((this.world.isNight() || isInCavelike) && !this.hasStatusEffect(StatusEffects.NIGHT_VISION)) || isInUnpleasantDimension) {
-                float sanDecrement = 0.00001F;
+                double sanDecrement = 0.00001;
                 int blockBrightness = this.world.getLightLevel(LightType.BLOCK, headPos);
                 if (!isInUnpleasantDimension) {
-                    if (blockBrightness < 2 && isInCavelike) sanDecrement = 0.00004F;
-                    else if (blockBrightness < 8) sanDecrement = 0.000015F;
+                    if (blockBrightness < 2 && isInCavelike) sanDecrement = 0.00004;
+                    else if (blockBrightness < 8) sanDecrement = 0.000015;
                 }
                 this.sanityManager.add(-sanDecrement);
             }

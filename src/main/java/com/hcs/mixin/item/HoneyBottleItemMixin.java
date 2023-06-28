@@ -21,8 +21,8 @@ public class HoneyBottleItemMixin {
         if (!world.isClient) {
             user.addStatusEffect(new StatusEffectInstance(StatusEffects.REGENERATION, 20 * 5, 0));
             if (user instanceof PlayerEntity player) {
-                ((StatAccessor) player).getThirstManager().add(0.1F);
-                ((StatAccessor) player).getSanityManager().add(0.1F);
+                ((StatAccessor) player).getThirstManager().add(0.1);
+                ((StatAccessor) player).getSanityManager().add(0.1);
             }
         }
     }

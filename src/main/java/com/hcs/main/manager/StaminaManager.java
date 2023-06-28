@@ -5,47 +5,42 @@ import net.minecraft.entity.effect.StatusEffects;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.math.Vec3d;
 
-import java.math.BigDecimal;
-
-import static java.math.BigDecimal.ONE;
-import static java.math.BigDecimal.ZERO;
-
 public class StaminaManager {
-    private BigDecimal stamina = new BigDecimal("1.0");
+    private double stamina = 1.0;
     private int restoringCoolDown = 0;
     private Vec3d lastVecPos = Vec3d.ZERO;
     public static final String STAMINA_NBT = "hcs_stamina";
 
-    public float get() {
-        if (stamina.compareTo(ONE) > 0) stamina = ONE;
-        else if (stamina.compareTo(ZERO) < 0) stamina = ZERO;
-        return stamina.floatValue();
+    public double get() {
+        if (stamina > 1.0) stamina = 1.0;
+        else if (stamina < 0.0) stamina = 0.0;
+        return stamina;
     }
 
-    public void set(float val) {
-        if (Float.isNaN(val)) {
+    public void set(double val) {
+        if (Double.isNaN(val)) {
             new NumberFormatException("Val is NaN").printStackTrace();
             return;
         }
-        if (val > 1.0F) val = 1.0F;
-        else if (val < 0.0F) val = 0.0F;
-        stamina = new BigDecimal(String.format("%.7f", val));
+        if (val > 1.0) val = 1.0;
+        else if (val < 0.0) val = 0.0;
+        stamina = val;
     }
 
-    public void add(float val, Entity entity) {
+    public void add(double val, Entity entity) {
         if (entity instanceof PlayerEntity player) add(val, player);
     }
 
-    public void add(float val, PlayerEntity player) {
+    public void add(double val, PlayerEntity player) {
         if (player == null || player.getAbilities().invulnerable) return;
-        if (val >= 0.0F) {
+        if (val >= 0.0) {
             if (restoringCoolDown <= 0) addDirectly(val);
             else --restoringCoolDown;
         } else if (!player.hasStatusEffect(StatusEffects.STRENGTH)) addDirectly(val);
     }
 
-    public void addDirectly(float val) {
-        set(stamina.floatValue() + val);
+    public void addDirectly(double val) {
+        set(stamina + val);
     }
 
     public void pauseRestoring() {
@@ -57,7 +52,7 @@ public class StaminaManager {
     }
 
     public void reset() {
-        addDirectly(1.0F);
+        addDirectly(1.0);
         restoringCoolDown = 0;
         lastVecPos = Vec3d.ZERO;
     }

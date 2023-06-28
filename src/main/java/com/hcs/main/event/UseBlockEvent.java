@@ -60,9 +60,9 @@ public class UseBlockEvent {
             return;
         }
         if (player.isSneaking() && player.getMainHandStack().isEmpty() && player.getOffHandStack().isEmpty()) {
-            ((StatAccessor) player).getThirstManager().addDirectly(0.02F);
+            ((StatAccessor) player).getThirstManager().addDirectly(0.02);
             TemperatureManager temperatureManager = ((StatAccessor) player).getTemperatureManager();
-            if (temperatureManager.get() > 0.8F) temperatureManager.add(-0.005F);
+            if (temperatureManager.get() > 0.8) temperatureManager.add(-0.005);
             if (player.world.getBiome(pos).isIn(BiomeTags.IS_OCEAN) || player.world.getBiome(pos).isIn(BiomeTags.IS_DEEP_OCEAN) || player.world.getBiome(pos).isIn(BiomeTags.IS_BEACH)) {
                 if (player.hasStatusEffect(HcsEffects.THIRST))
                     player.addStatusEffect(new StatusEffectInstance(HcsEffects.THIRST, Math.min(Objects.requireNonNull(player.getStatusEffect(HcsEffects.THIRST)).getDuration() + 200, 9600), 0, false, false, true));

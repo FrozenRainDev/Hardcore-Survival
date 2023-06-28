@@ -269,7 +269,7 @@ public class RotHelper {
             switch (item == Reg.ROT ? 0 : freshLevel) {
                 case 0 -> {
                     hungerManager.setSaturationLevel(0);
-                    sanityManager.add(-0.1F);
+                    sanityManager.add(-0.1);
                     if (food != null) hungerManager.setFoodLevel(hungerManager.getFoodLevel() - food.getHunger() + 1);
                     player.addStatusEffect(new StatusEffectInstance(StatusEffects.NAUSEA, 200));
                     player.addStatusEffect(new StatusEffectInstance(StatusEffects.POISON, 100));
@@ -277,7 +277,7 @@ public class RotHelper {
                     player.addStatusEffect(new StatusEffectInstance(HcsEffects.DIARRHEA, 600, 1));
                 }
                 case 1 -> {
-                    sanityManager.add(-0.07F);
+                    sanityManager.add(-0.07);
                     if (food != null)
                         hungerManager.setFoodLevel(hungerManager.getFoodLevel() - (int) (Math.min(food.getHunger() - 1, food.getHunger() * 0.7)));
                     player.addStatusEffect(new StatusEffectInstance(StatusEffects.HUNGER, 400));
@@ -285,7 +285,7 @@ public class RotHelper {
                     player.addStatusEffect(new StatusEffectInstance(HcsEffects.DIARRHEA, 600));
                 }
                 case 2 -> {
-                    sanityManager.add(-0.01F);
+                    sanityManager.add(-0.01);
                     if (food != null)
                         hungerManager.setFoodLevel(hungerManager.getFoodLevel() - (int) (Math.min(food.getHunger() - 1, food.getHunger() * 0.3)));
                 }

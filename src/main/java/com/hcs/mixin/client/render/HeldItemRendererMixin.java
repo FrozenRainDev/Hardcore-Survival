@@ -37,7 +37,7 @@ public class HeldItemRendererMixin {
         if (this.client.player == null) return;
         ItemStack mainStack = this.client.player.getMainHandStack();
         ItemStack offStack = this.client.player.getOffHandStack();
-        if (mainStack.isEmpty() && this.client.player != null && this.client.player.hasStatusEffect(HcsEffects.INSANITY) && ((StatAccessor) this.client.player).getSanityManager().get() < 0.05F)
+        if (mainStack.isEmpty() && this.client.player != null && this.client.player.hasStatusEffect(HcsEffects.INSANITY) && ((StatAccessor) this.client.player).getSanityManager().get() < 0.05)
             this.equipProgressMainHand = 0.0F;
         else if (mainStack.isOf(Reg.HOT_WATER_BOTTLE) && mainStack.isItemEqual(this.mainHand)) {
             this.equipProgressMainHand = 1.0F;

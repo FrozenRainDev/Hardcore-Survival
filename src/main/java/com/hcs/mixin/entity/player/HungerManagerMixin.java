@@ -47,10 +47,10 @@ public class HungerManagerMixin {
     public void update(@NotNull PlayerEntity player, CallbackInfo cir) {
         Difficulty difficulty = player.world.getDifficulty();
         this.prevFoodLevel = this.foodLevel;
-        float thirst = ((StatAccessor) player).getThirstManager().get();
+        double thirst = ((StatAccessor) player).getThirstManager().get();
         if (difficulty == Difficulty.PEACEFUL) {
-            ((StatAccessor) player).getThirstManager().addDirectly(0.01F);
-            ((StatAccessor) player).getSanityManager().add(0.01F);
+            ((StatAccessor) player).getThirstManager().addDirectly(0.01);
+            ((StatAccessor) player).getSanityManager().add(0.01);
         }
         if (this.exhaustion > 4.0F) {
             this.exhaustion = 0.0F;

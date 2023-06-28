@@ -27,6 +27,6 @@ public class LivingEntityMixin {
     @Inject(method = "onAttacking", at = @At("HEAD"))
     public void onAttacking(Entity target, CallbackInfo ci) {
         if ((Object) this instanceof HostileEntity && target instanceof PlayerEntity player)
-            ((StatAccessor) player).getSanityManager().add((Object) this instanceof EndermanEntity ? -0.08F : -0.005F);
+            ((StatAccessor) player).getSanityManager().add((Object) this instanceof EndermanEntity ? -0.08 : -0.005);
     }
 }

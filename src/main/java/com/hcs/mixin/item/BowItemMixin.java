@@ -20,7 +20,7 @@ public class BowItemMixin {
         if (user != null) {
             if (!user.world.isClient && !user.getAbilities().invulnerable) {
                 StaminaManager staminaManager = ((StatAccessor) user).getStaminaManager();
-                staminaManager.add(-0.02F, user);
+                staminaManager.add(-0.02, user);
                 staminaManager.pauseRestoring();
             }
         }

@@ -1,10 +1,7 @@
 package com.hcs.mixin.client.gui;
 
 import com.hcs.main.helper.TemperatureHelper;
-import com.hcs.main.manager.SanityManager;
-import com.hcs.main.manager.StaminaManager;
-import com.hcs.main.manager.TemperatureManager;
-import com.hcs.main.manager.ThirstManager;
+import com.hcs.main.manager.*;
 import com.hcs.misc.accessor.StatAccessor;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.hud.DebugHud;
@@ -41,12 +38,12 @@ public abstract class DebugHudMixin {
         StaminaManager staminaManager = ((StatAccessor) player).getStaminaManager();
         TemperatureManager temperatureManager = ((StatAccessor) player).getTemperatureManager();
         SanityManager sanityManager = ((StatAccessor) player).getSanityManager();
+        NutritionManager nutritionManager = ((StatAccessor) player).getNutritionManager();
         World world = player.world;
         BlockPos pos = player.getBlockPos();
         RegistryEntry<Biome> biomeEntry = world.getBiome(pos);
         Biome biome = biomeEntry.value();
         String biomeName = TemperatureHelper.getBiomeName(biomeEntry);
-        list.add("");
         list.add("[ HCS Debug ]");
         list.add("MainHandStackNbt: " + player.getMainHandStack().getOrCreateNbt().toString());
         list.add("Time: tick=" + world.getTime() + ", lunar=of_day=" + world.getLunarTime());
@@ -55,7 +52,7 @@ public abstract class DebugHudMixin {
         list.add("Stamina: " + staminaManager.get());
         list.add("Sanity: " + sanityManager.get() + ", difference=" + sanityManager.getDifference());
         list.add("Temperature: biome=" + biome.getTemperature() + ", env=[real: " + String.format("%.5f", TemperatureHelper.getTemp(player)) + " ,feel:" + String.format("%.5f", TemperatureHelper.getFeelingTemp(player, TemperatureHelper.getTemp(player), biomeName, player.world.getLightLevel(LightType.SKY, player.getBlockPos()))) + "]" + ", value=" + String.format("%.5f", temperatureManager.get()) + ", satu=" + String.format("%.5f", temperatureManager.getSaturation()) + ", trend=" + temperatureManager.getTrendType());
-        list.add("");
+        list.add("Nutrition: vegetable=" + nutritionManager.getVegetable());
     }
 
 }

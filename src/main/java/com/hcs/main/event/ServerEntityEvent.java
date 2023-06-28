@@ -16,7 +16,7 @@ public class ServerEntityEvent {
                 Entity entity, ServerWorld world) -> {
             if (entity instanceof ServerPlayerEntity player) {
                 RotHelper.theWorld = world;
-                if (player.getLastDeathPos().isEmpty() && player.getHungerManager().getFoodLevel() == 20 && player.getHungerManager().getExhaustion() == 0.0F && ((StatAccessor) player).getThirstManager().get() == 1.0F && player.getScore() == 0 && player.totalExperience == 0 && player.getInventory().isEmpty()) {
+                if (player.getLastDeathPos().isEmpty() && player.getHungerManager().getFoodLevel() == 20 && player.getHungerManager().getExhaustion() == 0.0F && ((StatAccessor) player).getThirstManager().get() == 1.0 && player.getScore() == 0 && player.totalExperience == 0 && player.getInventory().isEmpty()) {
                     //Novice gift
                     EntityHelper.dropItem(player, Reg.FLINT_KNIFE, 1);
                     EntityHelper.dropItem(player, Reg.FLINT_CONE, 1);

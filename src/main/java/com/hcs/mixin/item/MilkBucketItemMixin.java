@@ -43,7 +43,7 @@ public class MilkBucketItemMixin {
             hm.setExhaustion(0.0F);
             int freshLevel = RotHelper.getFreshLevel(RotHelper.getFresh(world, oriStack));
             hm.setFoodLevel(Math.min(20, hm.getFoodLevel() + Math.min(freshLevel * (freshLevel > 1 ? 2 : 1), 5)));
-            ((StatAccessor) user).getThirstManager().add(1.0F);
+            ((StatAccessor) user).getThirstManager().add(1.0);
             RotHelper.addDebuff(world, player, oriStack);
             EntityHelper.checkOvereaten(player, true);
         }

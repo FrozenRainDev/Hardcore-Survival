@@ -23,10 +23,10 @@ public class PotionItemMixin {
         if (user instanceof ServerPlayerEntity player) {
             Potion potion = PotionUtil.getPotion(stack);
             if (!world.isClient && potion.getEffects().isEmpty()) {
-                ((StatAccessor) player).getThirstManager().addDirectly(0.3F);
+                ((StatAccessor) player).getThirstManager().addDirectly(0.3);
                 player.addStatusEffect(new StatusEffectInstance(HcsEffects.DIARRHEA, 600, 0, false, false, true));
                 TemperatureManager temperatureManager = ((StatAccessor) player).getTemperatureManager();
-                if (temperatureManager.get() > 0.7F) temperatureManager.add(-0.1F);
+                if (temperatureManager.get() > 0.7) temperatureManager.add(-0.1);
             }
         }
     }

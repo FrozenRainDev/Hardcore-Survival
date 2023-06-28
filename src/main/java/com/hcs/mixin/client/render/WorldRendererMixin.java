@@ -44,7 +44,7 @@ public abstract class WorldRendererMixin {
 
     @Inject(method = "render", at = @At("HEAD"))
     public void render(MatrixStack matrices, float tickDelta, long limitTime, boolean renderBlockOutline, Camera camera, GameRenderer gameRenderer, LightmapTextureManager lightmapTextureManager, Matrix4f positionMatrix, CallbackInfo ci) {
-        if (this.client.world != null && this.client.player != null && this.client.player.hasStatusEffect(HcsEffects.INSANITY) && ((StatAccessor) this.client.player).getSanityManager().get() < 0.1F) {
+        if (this.client.world != null && this.client.player != null && this.client.player.hasStatusEffect(HcsEffects.INSANITY) && ((StatAccessor) this.client.player).getSanityManager().get() < 0.1) {
             double dist;
             if (this.hallucinationEntity == null || (dist = this.client.player.getPos().distanceTo(hallucinationEntity == null ? Vec3d.ZERO : hallucinationEntity.getPos())) > 16 || dist < 6) {
                 Entity[] entities = {new BlazeEntity(EntityType.BLAZE, this.client.world), new EndermanEntity(EntityType.ENDERMAN, this.client.world), new RavagerEntity(EntityType.RAVAGER, this.client.world), new SpiderEntity(EntityType.SPIDER, this.client.world), new IllusionerEntity(EntityType.ILLUSIONER, this.client.world), new PiglinEntity(EntityType.PIGLIN, this.client.world), new ZombieEntity(EntityType.ZOMBIE, this.client.world), new WitherSkeletonEntity(EntityType.WITHER_SKELETON, this.client.world)};

@@ -1,41 +1,36 @@
 package com.hcs.main.manager;
 
-import java.math.BigDecimal;
-
-import static java.math.BigDecimal.ONE;
-import static java.math.BigDecimal.ZERO;
-
 public class ThirstManager {
     /*
     variable thirst↓ means thirsty↑
     BigDecimal is used to avoid inaccurate calculations
     */
 
-    private BigDecimal thirst = new BigDecimal("1.0");
+    private double thirst = 1.0;
     private float saturation = 0.05F;
     private float thirstRateAffectedByTemp = 1.0F;
 
     public static final String THIRST_NBT = "hcs_thirst";
     public static final String THIRST_SATURATION_NBT = "hcs_thirst_saturation";
 
-    public float get() {
-        if (thirst.compareTo(ONE) > 0) thirst = ONE;//>1
-        else if (thirst.compareTo(ZERO) < 0) thirst = ZERO;//<0
-        return thirst.floatValue();
+    public double get() {
+        if (thirst > 1.0) thirst = 1.0;//>1
+        else if (thirst < 0.0) thirst = 0.0;//<0
+        return thirst;
     }
 
-    public void set(float val) {
-        if (Float.isNaN(val)) {
+    public void set(double val) {
+        if (Double.isNaN(val)) {
             new NumberFormatException("Val is NaN").printStackTrace();
             return;
         }
         if (val > 1.0F) val = 1.0F;
         else if (val < 0.0F) val = 0.0F;
-        thirst = new BigDecimal(String.format("%.7f", val));
+        thirst = val;
     }
 
-    public void add(float val) {
-        if (Float.isNaN(val)) {
+    public void add(double val) {
+        if (Double.isNaN(val)) {
             new NumberFormatException("Val is NaN").printStackTrace();
             return;
         }
@@ -45,19 +40,19 @@ public class ThirstManager {
                 saturation = 0.0F;
                 //Slower thirst rate when thirsty
                 float rate = 1.0F;
-                if (thirst.compareTo(new BigDecimal("0.1")) < 0) rate = 0.25F;
-                else if (thirst.compareTo(new BigDecimal("0.2")) < 0) rate = 0.6F;
-                else if (thirst.compareTo(new BigDecimal("0.3")) < 0) rate = 0.8F;
+                if (thirst < 0.1) rate = 0.25F;
+                else if (thirst < 0.2) rate = 0.6F;
+                else if (thirst < 0.3) rate = 0.8F;
                 addDirectly(val * rate * getThirstRateAffectedByTemp());
             } else saturation += val;
         } else {
-            saturation = Math.min(saturation + val * 0.33F, 0.12F);
+            saturation = Math.min(saturation + (float) val * 0.33F, 0.12F);
             addDirectly(val);
         }
     }
 
-    public void addDirectly(float val) {
-        set(thirst.floatValue() + val);
+    public void addDirectly(double val) {
+        set(thirst + val);
     }
 
     public float getSaturation() {
@@ -89,7 +84,7 @@ public class ThirstManager {
     }
 
     public void reset() {
-        addDirectly(1.0F);
+        addDirectly(1.0);
         setSaturation(0.05F);
         setThirstRateAffectedByTemp(1.0F);
     }

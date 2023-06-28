@@ -24,7 +24,7 @@ public class ScreenMixin {
 
     @Inject(method = "getTooltipFromItem", at = @At("RETURN"))
     public void getTooltipFromItem(ItemStack stack, CallbackInfoReturnable<List<Text>> cir) {
-        if (this.client.player != null && this.client.player.hasStatusEffect(HcsEffects.INSANITY) && ((StatAccessor) this.client.player).getSanityManager().get() < 0.1F) {
+        if (this.client.player != null && this.client.player.hasStatusEffect(HcsEffects.INSANITY) && ((StatAccessor) this.client.player).getSanityManager().get() < 0.1) {
             List<Text> list = cir.getReturnValue();
             for (Text text : list) {
                 if (text instanceof MutableText mutableText) {
