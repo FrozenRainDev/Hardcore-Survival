@@ -17,6 +17,9 @@ import net.minecraft.entity.effect.StatusEffects;
 import net.minecraft.entity.player.HungerManager;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.registry.tag.FluidTags;
+import net.minecraft.text.MutableText;
+import net.minecraft.text.Text;
+import net.minecraft.util.Formatting;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.MathHelper;
 import org.jetbrains.annotations.NotNull;
@@ -25,6 +28,7 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.ModifyArg;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import java.util.HashMap;
@@ -433,5 +437,12 @@ public abstract class InGameHudMixin extends DrawableHelper {
         shouldRenderMountJumpBar = true;
         renderExperienceBarX = x;
         ci.cancel();
+    }
+
+    @ModifyArg(method = "renderHeldItemTooltip", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/font/TextRenderer;drawWithShadow(Lnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/text/Text;FFI)I"), index = 1)
+    public Text renderHeldItemTooltip(Text text) {
+        if (text != null && this.client.player != null && ((StatAccessor) this.client.player).getSanityManager().get() < 0.1F && this.client.player.hasStatusEffect(HcsEffects.INSANITY))
+            return MutableText.of(text.getContent()).formatted(Formatting.OBFUSCATED);
+        return text;
     }
 }

@@ -66,13 +66,16 @@
   ],
   "client": [
     "client.ClientPlayerInteractionManagerMixin",
-    "client.HeldItemRendererMixin",
     "client.MinecraftClientMixin",
-    "client.WorldRendererMixin",
     "client.gui.AbstractInventoryScreenMixin",
     "client.gui.DebugHudMixin",
     "client.gui.InGameHudMixin",
     "client.gui.InventoryScreenMixin",
+    "client.gui.ScreenMixin",
+    "client.gui.SubtitlesHudMixin",
+    "client.render.HeldItemRendererMixin",
+    "client.render.PlayerEntityRendererMixin",
+    "client.render.WorldRendererMixin",
     "entity.player.ClientPlayerEntityMixin"
   ],
   "server": [

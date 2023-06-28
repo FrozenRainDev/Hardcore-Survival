@@ -1,4 +1,4 @@
-package com.hcs.mixin.client;
+package com.hcs.mixin.client.render;
 
 import com.hcs.misc.HcsEffects;
 import com.hcs.misc.accessor.StatAccessor;
@@ -40,21 +40,21 @@ public abstract class WorldRendererMixin {
     @Shadow
     @Final
     private MinecraftClient client;
-    Entity halluEntity;
+    Entity hallucinationEntity;
 
     @Inject(method = "render", at = @At("HEAD"))
     public void render(MatrixStack matrices, float tickDelta, long limitTime, boolean renderBlockOutline, Camera camera, GameRenderer gameRenderer, LightmapTextureManager lightmapTextureManager, Matrix4f positionMatrix, CallbackInfo ci) {
-        if (this.client.world != null && this.client.player != null && this.client.player.hasStatusEffect(HcsEffects.INSANITY) && ((StatAccessor) this.client.player).getSanityManager().get() < 0.15F) {
+        if (this.client.world != null && this.client.player != null && this.client.player.hasStatusEffect(HcsEffects.INSANITY) && ((StatAccessor) this.client.player).getSanityManager().get() < 0.1F) {
             double dist;
-            if (this.halluEntity == null || (dist = this.client.player.getPos().distanceTo(halluEntity == null ? Vec3d.ZERO : halluEntity.getPos())) > 16 || dist < 6) {
-                Entity[] entities = {new BlazeEntity(EntityType.BLAZE, this.client.world), new EndermanEntity(EntityType.ENDERMAN, this.client.world),new RavagerEntity(EntityType.RAVAGER, this.client.world), new SpiderEntity(EntityType.SPIDER, this.client.world), new VindicatorEntity(EntityType.VINDICATOR, this.client.world), new WardenEntity(EntityType.WARDEN, this.client.world), new ZombieEntity(EntityType.ZOMBIE, this.client.world), new WitherSkeletonEntity(EntityType.WITHER_SKELETON, this.client.world)};
-                halluEntity = entities[(int) (entities.length * Math.random())];
-                halluEntity.setPos(this.client.player.getX() + MathHelper.nextInt(Random.create(), -16, 16), this.client.player.getY() + 1, MathHelper.nextInt(Random.create(), -16, 16));
-                halluEntity.lastRenderX = halluEntity.getX();
-                halluEntity.lastRenderY = halluEntity.getY();
-                halluEntity.lastRenderZ = halluEntity.getZ();
+            if (this.hallucinationEntity == null || (dist = this.client.player.getPos().distanceTo(hallucinationEntity == null ? Vec3d.ZERO : hallucinationEntity.getPos())) > 16 || dist < 6) {
+                Entity[] entities = {new BlazeEntity(EntityType.BLAZE, this.client.world), new EndermanEntity(EntityType.ENDERMAN, this.client.world), new RavagerEntity(EntityType.RAVAGER, this.client.world), new SpiderEntity(EntityType.SPIDER, this.client.world), new IllusionerEntity(EntityType.ILLUSIONER, this.client.world), new PiglinEntity(EntityType.PIGLIN, this.client.world), new ZombieEntity(EntityType.ZOMBIE, this.client.world), new WitherSkeletonEntity(EntityType.WITHER_SKELETON, this.client.world)};
+                hallucinationEntity = entities[(int) (entities.length * Math.random())];
+                hallucinationEntity.setPos(this.client.player.getX() + MathHelper.nextInt(Random.create(), -16, 16), this.client.player.getY() + 1, this.client.player.getZ() + MathHelper.nextInt(Random.create(), -16, 16));
+                hallucinationEntity.lastRenderX = hallucinationEntity.getX();
+                hallucinationEntity.lastRenderY = hallucinationEntity.getY();
+                hallucinationEntity.lastRenderZ = hallucinationEntity.getZ();
             }
-            this.renderEntity(halluEntity, camera.getPos().getX(), camera.getPos().getY(), camera.getPos().getZ(), tickDelta, matrices, this.bufferBuilders.getOutlineVertexConsumers());
+            this.renderEntity(hallucinationEntity, camera.getPos().getX(), camera.getPos().getY(), camera.getPos().getZ(), tickDelta, matrices, this.bufferBuilders.getOutlineVertexConsumers());
         }
     }
 }

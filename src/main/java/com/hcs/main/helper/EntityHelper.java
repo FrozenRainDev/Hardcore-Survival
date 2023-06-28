@@ -8,10 +8,12 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.block.*;
 import net.minecraft.client.render.*;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityType;
 import net.minecraft.entity.ItemEntity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.effect.StatusEffect;
 import net.minecraft.entity.effect.StatusEffectInstance;
+import net.minecraft.entity.mob.SkeletonEntity;
 import net.minecraft.entity.player.HungerManager;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.*;
@@ -26,7 +28,7 @@ import net.minecraft.sound.SoundEvents;
 import net.minecraft.text.LiteralTextContent;
 import net.minecraft.text.MutableText;
 import net.minecraft.text.Text;
-import net.minecraft.util.Identifier;
+import net.minecraft.util.Hand;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.ChunkPos;
@@ -38,8 +40,6 @@ import org.jetbrains.annotations.NotNull;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import java.text.DecimalFormat;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -275,5 +275,17 @@ public class EntityHelper {
                 player.addStatusEffect(new StatusEffectInstance(HcsEffects.OVEREATEN, 600, 0, false, false, true));
             else statusManager.setRecentLittleOvereatenTicks(1200);
         }
+    }
+
+    public static LivingEntity getHallucinationEntityForPlayer(World world, LivingEntity originalEntity) {
+        if(originalEntity instanceof PlayerEntity player) {
+            if (world != null && player.hasStatusEffect(HcsEffects.INSANITY) && ((StatAccessor) player).getSanityManager().get() < 0.05F) {
+                LivingEntity hallucinationEntity = new SkeletonEntity(EntityType.SKELETON, world);
+                hallucinationEntity.setStackInHand(Hand.MAIN_HAND, player.getMainHandStack());
+                hallucinationEntity.setStackInHand(Hand.OFF_HAND, player.getOffHandStack());
+                return hallucinationEntity;
+            }
+        }
+        return originalEntity;
     }
 }

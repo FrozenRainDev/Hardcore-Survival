@@ -231,7 +231,7 @@ public class RotHelper {
         float fresh = getFresh(world, stack, isInIcebox);
         int freshLv = getFreshLevel(fresh);
         MutableText modifier = MutableText.of(TextContent.EMPTY);
-        if (freshLv >= 3) modifier.append(Text.translatable("hcs.food_info.fresh")).formatted(Formatting.DARK_GREEN);
+        if (freshLv >= 3) modifier.append(Text.translatable("hcs.food_info.fresh").formatted(Formatting.DARK_GREEN));//If .formatted() outside of append() rather than outside of it, the sibling cannot clear its style via cleaning father text? See ScreenMixin prev bug
         else if (freshLv == 2) modifier.append(Text.translatable("hcs.food_info.stale").formatted(Formatting.YELLOW));
         else if (freshLv == 1) modifier.append(Text.translatable("hcs.food_info.spoiled").formatted(Formatting.RED));
         else {

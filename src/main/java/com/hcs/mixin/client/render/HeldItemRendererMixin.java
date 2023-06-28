@@ -1,6 +1,8 @@
-package com.hcs.mixin.client;
+package com.hcs.mixin.client.render;
 
 import com.hcs.main.Reg;
+import com.hcs.misc.HcsEffects;
+import com.hcs.misc.accessor.StatAccessor;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.MinecraftClient;
@@ -35,7 +37,9 @@ public class HeldItemRendererMixin {
         if (this.client.player == null) return;
         ItemStack mainStack = this.client.player.getMainHandStack();
         ItemStack offStack = this.client.player.getOffHandStack();
-        if (mainStack.isOf(Reg.HOT_WATER_BOTTLE) && mainStack.isItemEqual(this.mainHand)) {
+        if (mainStack.isEmpty() && this.client.player != null && this.client.player.hasStatusEffect(HcsEffects.INSANITY) && ((StatAccessor) this.client.player).getSanityManager().get() < 0.05F)
+            this.equipProgressMainHand = 0.0F;
+        else if (mainStack.isOf(Reg.HOT_WATER_BOTTLE) && mainStack.isItemEqual(this.mainHand)) {
             this.equipProgressMainHand = 1.0F;
             this.mainHand = this.client.player.getMainHandStack();
         }

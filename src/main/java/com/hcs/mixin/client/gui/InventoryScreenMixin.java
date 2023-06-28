@@ -1,17 +1,19 @@
 package com.hcs.mixin.client.gui;
 
 import com.hcs.main.helper.EntityHelper;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import net.minecraft.client.gui.screen.ingame.AbstractInventoryScreen;
 import net.minecraft.client.gui.screen.ingame.InventoryScreen;
-import net.minecraft.client.util.math.MatrixStack;
+import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.screen.PlayerScreenHandler;
 import net.minecraft.text.Text;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import org.spongepowered.asm.mixin.injection.ModifyArg;
 
+@Environment(value = EnvType.CLIENT)
 @Mixin(InventoryScreen.class)
 public abstract class InventoryScreenMixin extends AbstractInventoryScreen<PlayerScreenHandler> {
 
@@ -19,16 +21,10 @@ public abstract class InventoryScreenMixin extends AbstractInventoryScreen<Playe
         super(screenHandler, playerInventory, text);
     }
 
-    @Inject(at = @At("HEAD"), method = "render")
-    protected void render(MatrixStack matrices, int mouseX, int mouseY, float delta, CallbackInfo ci) {
-//        EntityHelper.canShowMoreStat = true;
+    @ModifyArg(method = "drawBackground", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/screen/ingame/InventoryScreen;drawEntity(Lnet/minecraft/client/util/math/MatrixStack;IIIFFLnet/minecraft/entity/LivingEntity;)V"), index = 6)
+    public LivingEntity drawBackground(LivingEntity entity) {
+        if (this.client != null)
+            return EntityHelper.getHallucinationEntityForPlayer(this.client.world, this.client.player);
+        return entity;
     }
-
-    /*
-    @Inject(at = @At("HEAD"), method = "removed", cancellable = true)
-    protected void removed(CallbackInfo ci) {
-        EntityHelper.canShowMoreStat=false;
-    }
-     */
-
 }
