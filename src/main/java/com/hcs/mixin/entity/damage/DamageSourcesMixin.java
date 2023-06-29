@@ -1,6 +1,6 @@
 package com.hcs.mixin.entity.damage;
 
-import com.hcs.misc.accessor.DamageSourcesAccessor;
+import com.hcs.status.accessor.DamageSourcesAccessor;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.damage.DamageSources;

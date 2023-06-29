@@ -1,8 +1,8 @@
 package com.hcs.mixin.client.gui;
 
-import com.hcs.main.helper.TemperatureHelper;
-import com.hcs.main.manager.*;
-import com.hcs.misc.accessor.StatAccessor;
+import com.hcs.status.accessor.StatAccessor;
+import com.hcs.status.manager.*;
+import com.hcs.util.TemperatureHelper;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.hud.DebugHud;
 import net.minecraft.entity.player.HungerManager;

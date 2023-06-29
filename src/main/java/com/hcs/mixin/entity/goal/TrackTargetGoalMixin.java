@@ -1,6 +1,6 @@
 package com.hcs.mixin.entity.goal;
 
-import com.hcs.main.helper.EntityHelper;
+import com.hcs.util.EntityHelper;
 import net.minecraft.entity.ai.goal.TrackTargetGoal;
 import net.minecraft.entity.mob.MobEntity;
 import net.minecraft.entity.mob.ZombieEntity;

@@ -1,7 +1,7 @@
 package com.hcs.mixin.entity;
 
 import com.hcs.item.HotWaterBottleItem;
-import com.hcs.main.Reg;
+import com.hcs.Reg;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.block.entity.CampfireBlockEntity;

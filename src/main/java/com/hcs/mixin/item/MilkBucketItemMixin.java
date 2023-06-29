@@ -1,9 +1,9 @@
 package com.hcs.mixin.item;
 
-import com.hcs.main.Reg;
-import com.hcs.main.helper.EntityHelper;
-import com.hcs.main.helper.RotHelper;
-import com.hcs.misc.accessor.StatAccessor;
+import com.hcs.Reg;
+import com.hcs.util.EntityHelper;
+import com.hcs.util.RotHelper;
+import com.hcs.status.accessor.StatAccessor;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.HungerManager;
 import net.minecraft.entity.player.PlayerEntity;

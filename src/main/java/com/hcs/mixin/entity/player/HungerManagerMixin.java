@@ -1,7 +1,7 @@
 package com.hcs.mixin.entity.player;
 
-import com.hcs.misc.HcsEffects;
-import com.hcs.misc.accessor.StatAccessor;
+import com.hcs.status.HcsEffects;
+import com.hcs.status.accessor.StatAccessor;
 import net.minecraft.entity.player.HungerManager;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.world.Difficulty;
@@ -35,10 +35,10 @@ public class HungerManagerMixin {
         if (this.saturationLevel < 0.01F) {
             //Slower hunger rate when foodLevel is low
             float rate = 1.0F;
-            if (foodLevel <= 1) rate = 0.1F;
-            else if (foodLevel == 2) rate = 0.25F;
-            else if (foodLevel <= 4) rate = 0.5F;
-            else if (foodLevel <= 6) rate = 0.65F;
+            if (foodLevel <= 1) rate = 0.05F;
+            else if (foodLevel == 2) rate = 0.2F;
+            else if (foodLevel <= 4) rate = 0.35F;
+            else if (foodLevel <= 6) rate = 0.5F;
             this.exhaustion += exhaustion * rate;
             ci.cancel();
         }

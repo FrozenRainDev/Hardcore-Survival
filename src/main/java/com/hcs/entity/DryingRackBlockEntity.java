@@ -1,9 +1,9 @@
 package com.hcs.entity;
 
-import com.hcs.main.Reg;
-import com.hcs.main.helper.EntityHelper;
-import com.hcs.main.helper.RotHelper;
-import com.hcs.misc.recipes.CustomDryingRackRecipe;
+import com.hcs.Reg;
+import com.hcs.util.EntityHelper;
+import com.hcs.util.RotHelper;
+import com.hcs.recipe.CustomDryingRackRecipe;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockEntityProvider;
 import net.minecraft.block.BlockState;

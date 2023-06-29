@@ -1,10 +1,10 @@
 package com.hcs.mixin.client.gui;
 
-import com.hcs.main.manager.SanityManager;
-import com.hcs.main.manager.StatusManager;
-import com.hcs.main.manager.TemperatureManager;
-import com.hcs.misc.HcsEffects;
-import com.hcs.misc.accessor.StatAccessor;
+import com.hcs.status.manager.SanityManager;
+import com.hcs.status.manager.StatusManager;
+import com.hcs.status.manager.TemperatureManager;
+import com.hcs.status.HcsEffects;
+import com.hcs.status.accessor.StatAccessor;
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.font.TextRenderer;
@@ -34,7 +34,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import java.util.HashMap;
 import java.util.Map;
 
-import static com.hcs.main.helper.EntityHelper.customNumberFormatter;
+import static com.hcs.util.EntityHelper.customNumberFormatter;
 
 
 @Mixin(InGameHud.class)

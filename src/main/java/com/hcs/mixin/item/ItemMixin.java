@@ -1,8 +1,8 @@
 package com.hcs.mixin.item;
 
-import com.hcs.main.helper.EntityHelper;
-import com.hcs.main.helper.RotHelper;
-import com.hcs.misc.HcsEffects;
+import com.hcs.util.EntityHelper;
+import com.hcs.util.RotHelper;
+import com.hcs.status.HcsEffects;
 import net.minecraft.client.item.TooltipContext;
 import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.entity.effect.StatusEffects;

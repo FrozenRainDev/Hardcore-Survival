@@ -1,7 +1,7 @@
 package com.hcs.mixin.client.gui;
 
-import com.hcs.misc.HcsEffects;
-import com.hcs.misc.accessor.StatAccessor;
+import com.hcs.status.HcsEffects;
+import com.hcs.status.accessor.StatAccessor;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.item.ItemStack;

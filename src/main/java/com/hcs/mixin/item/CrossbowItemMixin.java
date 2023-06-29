@@ -1,6 +1,6 @@
 package com.hcs.mixin.item;
 
-import com.hcs.main.helper.EntityHelper;
+import com.hcs.util.EntityHelper;
 import net.minecraft.client.item.TooltipContext;
 import net.minecraft.item.CrossbowItem;
 import net.minecraft.item.ItemStack;

@@ -1,8 +1,8 @@
 package com.hcs.mixin.client;
 
-import com.hcs.main.helper.EntityHelper;
-import com.hcs.main.helper.RotHelper;
-import com.hcs.misc.network.ClientC2S;
+import com.hcs.util.EntityHelper;
+import com.hcs.util.RotHelper;
+import com.hcs.status.network.ClientC2S;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.MinecraftClient;

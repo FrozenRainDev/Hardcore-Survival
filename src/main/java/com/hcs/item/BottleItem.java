@@ -1,10 +1,10 @@
 package com.hcs.item;
 
-import com.hcs.main.helper.EntityHelper;
-import com.hcs.main.helper.RotHelper;
-import com.hcs.main.manager.TemperatureManager;
-import com.hcs.misc.HcsEffects;
-import com.hcs.misc.accessor.StatAccessor;
+import com.hcs.util.EntityHelper;
+import com.hcs.util.RotHelper;
+import com.hcs.status.manager.TemperatureManager;
+import com.hcs.status.HcsEffects;
+import com.hcs.status.accessor.StatAccessor;
 import net.minecraft.advancement.criterion.Criteria;
 import net.minecraft.client.item.TooltipContext;
 import net.minecraft.entity.LivingEntity;

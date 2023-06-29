@@ -1,7 +1,7 @@
 package com.hcs.mixin.block;
 
-import com.hcs.main.Reg;
-import com.hcs.main.helper.EntityHelper;
+import com.hcs.Reg;
+import com.hcs.util.EntityHelper;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.LeavesBlock;
 import net.minecraft.item.ItemStack;

@@ -1,6 +1,6 @@
 package com.hcs.mixin.potion;
 
-import com.hcs.misc.HcsEffects;
+import com.hcs.status.HcsEffects;
 import net.minecraft.entity.effect.StatusEffect;
 import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.entity.effect.StatusEffects;

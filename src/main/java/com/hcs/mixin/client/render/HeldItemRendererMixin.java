@@ -1,8 +1,8 @@
 package com.hcs.mixin.client.render;
 
-import com.hcs.main.Reg;
-import com.hcs.misc.HcsEffects;
-import com.hcs.misc.accessor.StatAccessor;
+import com.hcs.Reg;
+import com.hcs.status.HcsEffects;
+import com.hcs.status.accessor.StatAccessor;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.MinecraftClient;

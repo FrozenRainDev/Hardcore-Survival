@@ -1,7 +1,7 @@
 package com.hcs.mixin.item;
 
-import com.hcs.main.Reg;
-import com.hcs.main.helper.EntityHelper;
+import com.hcs.Reg;
+import com.hcs.util.EntityHelper;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.GlassBottleItem;
 import net.minecraft.item.ItemStack;

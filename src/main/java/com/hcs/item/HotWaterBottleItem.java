@@ -1,10 +1,10 @@
 package com.hcs.item;
 
 import com.hcs.entity.IceboxBlockEntity;
-import com.hcs.main.Reg;
-import com.hcs.main.helper.RotHelper;
-import com.hcs.main.manager.StatusManager;
-import com.hcs.misc.accessor.StatAccessor;
+import com.hcs.Reg;
+import com.hcs.util.RotHelper;
+import com.hcs.status.manager.StatusManager;
+import com.hcs.status.accessor.StatAccessor;
 import net.minecraft.client.item.TooltipContext;
 import net.minecraft.entity.Entity;
 import net.minecraft.inventory.Inventory;

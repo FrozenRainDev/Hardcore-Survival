@@ -1,5 +1,5 @@
 package com.hcs.mixin.recipe;
-import com.hcs.main.Reg;
+import com.hcs.Reg;
 import net.minecraft.item.Item;
 import net.minecraft.item.Items;
 import net.minecraft.potion.Potion;

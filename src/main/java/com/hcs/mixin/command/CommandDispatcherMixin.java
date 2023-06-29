@@ -1,7 +1,7 @@
 package com.hcs.mixin.command;
 
-import com.hcs.main.helper.EntityHelper;
-import com.hcs.misc.accessor.StatAccessor;
+import com.hcs.util.EntityHelper;
+import com.hcs.status.accessor.StatAccessor;
 import com.mojang.brigadier.Command;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.FloatArgumentType;
@@ -15,7 +15,7 @@ import org.spongepowered.asm.mixin.Mixin;
 
 import java.util.Objects;
 
-import static com.hcs.main.helper.EntityHelper.thePlayer;
+import static com.hcs.util.EntityHelper.thePlayer;
 import static net.minecraft.server.command.CommandManager.argument;
 import static net.minecraft.server.command.CommandManager.literal;
 

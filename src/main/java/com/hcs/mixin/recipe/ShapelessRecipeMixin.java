@@ -1,6 +1,6 @@
 package com.hcs.mixin.recipe;
 
-import com.hcs.main.helper.RotHelper;
+import com.hcs.util.RotHelper;
 import net.minecraft.inventory.CraftingInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.recipe.Ingredient;

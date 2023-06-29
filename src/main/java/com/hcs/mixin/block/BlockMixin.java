@@ -1,8 +1,8 @@
 package com.hcs.mixin.block;
 
-import com.hcs.main.Reg;
-import com.hcs.main.helper.RotHelper;
-import com.hcs.main.helper.WorldHelper;
+import com.hcs.Reg;
+import com.hcs.util.RotHelper;
+import com.hcs.util.WorldHelper;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;

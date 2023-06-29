@@ -1,12 +1,12 @@
 package com.hcs.mixin.entity.player;
 
-import com.hcs.main.Reg;
-import com.hcs.main.helper.DigRestrictHelper;
-import com.hcs.main.helper.EntityHelper;
-import com.hcs.main.helper.RotHelper;
-import com.hcs.main.manager.*;
-import com.hcs.misc.HcsEffects;
-import com.hcs.misc.accessor.StatAccessor;
+import com.hcs.Reg;
+import com.hcs.status.HcsEffects;
+import com.hcs.status.accessor.StatAccessor;
+import com.hcs.status.manager.*;
+import com.hcs.util.DigRestrictHelper;
+import com.hcs.util.EntityHelper;
+import com.hcs.util.RotHelper;
 import net.minecraft.block.*;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.Entity;
@@ -50,8 +50,8 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import java.util.Objects;
 
-import static com.hcs.main.helper.DigRestrictHelper.canBreak;
-import static com.hcs.misc.network.ServerS2C.doubleToInt;
+import static com.hcs.status.network.ServerS2C.doubleToInt;
+import static com.hcs.util.DigRestrictHelper.canBreak;
 
 @Mixin(PlayerEntity.class)
 public abstract class PlayerEntityMixin extends LivingEntity implements StatAccessor {
@@ -254,7 +254,7 @@ public abstract class PlayerEntityMixin extends LivingEntity implements StatAcce
             if (food != null) {
                 if (food.isMeat() || name.contains("egg"))
                     this.nutritionManager.addVegetable(-0.08);
-                else if (name.contains("kelp")) this.nutritionManager.addVegetable(0.1);
+                else if (name.contains("kelp")) this.nutritionManager.addVegetable(0.15);
                 else if (name.contains("berries") || name.contains("berry")) this.nutritionManager.addVegetable(0.17);
                 else if (name.contains("apple") || name.contains("orange") || name.contains("carrot") || name.contains("cactus") || name.contains("melon") || name.contains("potherb") || name.contains("shoot") || name.contains("salad") || name.contains("fruit"))
                     this.nutritionManager.addVegetable(0.3);
@@ -300,7 +300,7 @@ public abstract class PlayerEntityMixin extends LivingEntity implements StatAcce
     @Inject(method = "addExhaustion", at = @At("TAIL"))
     public void addExhaustion(float exhaustion, CallbackInfo ci) {
         if (!this.world.isClient) {
-            this.thirstManager.add(-exhaustion / 180);//70 originally
+            this.thirstManager.add(-exhaustion / 140);//70 originally
             if (this.hasStatusEffect(HcsEffects.MALNUTRITION)) this.hungerManager.addExhaustion(exhaustion * 0.5F);
         }
     }
@@ -345,6 +345,8 @@ public abstract class PlayerEntityMixin extends LivingEntity implements StatAcce
     @Inject(method = "tick", at = @At("HEAD"))
     public void tick(CallbackInfo ci) {
         if (this.world.isClient) return;
+        int caveDeepLevelToSet = 0;
+        double y = this.getY();
         this.addExhaustion(0.001F);
         this.statusManager.setRecentAttackTicks(Math.max(0, this.statusManager.getRecentAttackTicks() - 1));
         this.statusManager.setRecentMiningTicks(Math.max(0, this.statusManager.getRecentMiningTicks() - 1));
@@ -400,8 +402,8 @@ public abstract class PlayerEntityMixin extends LivingEntity implements StatAcce
             //Lose sanity
             if (this.hasStatusEffect(StatusEffects.WITHER)) this.sanityManager.add(-0.00008);
             else if (this.hasStatusEffect(StatusEffects.POISON)) this.sanityManager.add(-0.00003);
-            boolean isInCavelike = skyBrightness < 5 && this.world.getDimension().hasSkyLight();
-            boolean isInUnpleasantDimension = !this.world.getDimension().bedWorks() || this.world.getRegistryKey() == World.NETHER;//Avoid mods conflict as sleeping in the nether is set to permissive
+            boolean isInCavelike = skyBrightness < 1 && this.world.getDimension().hasSkyLight();
+            boolean isInUnpleasantDimension = !this.world.getDimension().bedWorks() || this.world.getRegistryKey() == World.NETHER;//Avoid mods conflict since sleeping in the nether is set to permissive
             if (((this.world.isNight() || isInCavelike) && !this.hasStatusEffect(StatusEffects.NIGHT_VISION)) || isInUnpleasantDimension) {
                 double sanDecrement = 0.00001;
                 int blockBrightness = this.world.getLightLevel(LightType.BLOCK, headPos);
@@ -410,11 +412,18 @@ public abstract class PlayerEntityMixin extends LivingEntity implements StatAcce
                     else if (blockBrightness < 8) sanDecrement = 0.000015;
                 }
                 this.sanityManager.add(-sanDecrement);
+                //Lose oxygen in deep cave
+                if (y < 30) {
+                    caveDeepLevelToSet = 3;
+                    if (this.world.getTime() % 50 == 0) this.setAir(this.getNextAirUnderwater(this.getAir()));
+                } else if (y < 40) caveDeepLevelToSet = 2;
+                else if (y < 50) caveDeepLevelToSet = 1;
             }
         }
         if (this.hasStatusEffect(StatusEffects.STRENGTH)) this.staminaManager.reset();
         this.staminaManager.setLastVecPos(this.getPos());
         this.sanityManager.updateDifference();
+        this.statusManager.setOxygenLackLevel(caveDeepLevelToSet);
     }
 
     @Inject(method = "getXpToDrop", at = @At("HEAD"), cancellable = true)

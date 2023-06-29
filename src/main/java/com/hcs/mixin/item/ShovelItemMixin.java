@@ -1,7 +1,7 @@
 package com.hcs.mixin.item;
 
-import com.hcs.main.manager.StaminaManager;
-import com.hcs.misc.accessor.StatAccessor;
+import com.hcs.status.manager.StaminaManager;
+import com.hcs.status.accessor.StatAccessor;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemUsageContext;
 import net.minecraft.item.ShovelItem;

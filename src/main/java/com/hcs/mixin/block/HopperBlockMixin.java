@@ -1,8 +1,8 @@
 package com.hcs.mixin.block;
 
 import com.hcs.item.HotWaterBottleItem;
-import com.hcs.main.Reg;
-import com.hcs.main.helper.RotHelper;
+import com.hcs.Reg;
+import com.hcs.util.RotHelper;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.HopperBlock;
 import net.minecraft.block.entity.BlockEntity;

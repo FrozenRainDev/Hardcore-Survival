@@ -1,14 +1,14 @@
 package com.hcs.mixin.entity.player;
 
-import com.hcs.main.helper.EntityHelper;
-import com.hcs.main.helper.TemperatureHelper;
-import com.hcs.main.manager.StaminaManager;
-import com.hcs.main.manager.TemperatureManager;
-import com.hcs.main.manager.ThirstManager;
-import com.hcs.misc.HcsEffects;
-import com.hcs.misc.accessor.DamageSourcesAccessor;
-import com.hcs.misc.accessor.StatAccessor;
-import com.hcs.misc.network.ServerS2C;
+import com.hcs.util.EntityHelper;
+import com.hcs.util.TemperatureHelper;
+import com.hcs.status.manager.StaminaManager;
+import com.hcs.status.manager.TemperatureManager;
+import com.hcs.status.manager.ThirstManager;
+import com.hcs.status.HcsEffects;
+import com.hcs.status.accessor.DamageSourcesAccessor;
+import com.hcs.status.accessor.StatAccessor;
+import com.hcs.status.network.ServerS2C;
 import com.mojang.authlib.GameProfile;
 import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.effect.StatusEffects;
@@ -27,8 +27,8 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-import static com.hcs.main.manager.TemperatureManager.CHANGE_SPAN;
-import static com.hcs.misc.network.ServerS2C.doubleToInt;
+import static com.hcs.status.manager.TemperatureManager.CHANGE_SPAN;
+import static com.hcs.status.network.ServerS2C.doubleToInt;
 
 @Mixin(ServerPlayerEntity.class)
 public abstract class ServerPlayerEntityMixin extends PlayerEntity {

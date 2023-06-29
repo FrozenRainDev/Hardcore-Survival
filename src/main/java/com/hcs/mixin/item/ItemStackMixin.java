@@ -1,6 +1,6 @@
 package com.hcs.mixin.item;
 
-import com.hcs.main.helper.RotHelper;
+import com.hcs.util.RotHelper;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
 import org.jetbrains.annotations.NotNull;

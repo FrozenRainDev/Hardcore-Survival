@@ -1,6 +1,6 @@
 package com.hcs.mixin.item;
 
-import com.hcs.main.helper.EntityHelper;
+import com.hcs.util.EntityHelper;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.item.ItemStack;

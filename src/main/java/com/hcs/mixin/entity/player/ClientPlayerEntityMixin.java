@@ -1,8 +1,8 @@
 package com.hcs.mixin.entity.player;
 
-import com.hcs.main.manager.SanityManager;
-import com.hcs.misc.HcsEffects;
-import com.hcs.misc.accessor.StatAccessor;
+import com.hcs.status.manager.SanityManager;
+import com.hcs.status.HcsEffects;
+import com.hcs.status.accessor.StatAccessor;
 import com.mojang.authlib.GameProfile;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;

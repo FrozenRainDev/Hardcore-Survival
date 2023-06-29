@@ -2,8 +2,8 @@ package com.hcs.block;
 
 import com.hcs.entity.IceboxBlockEntity;
 import com.hcs.item.HotWaterBottleItem;
-import com.hcs.main.Reg;
-import com.hcs.main.helper.RotHelper;
+import com.hcs.Reg;
+import com.hcs.util.RotHelper;
 import net.minecraft.block.*;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.block.entity.BlockEntityTicker;

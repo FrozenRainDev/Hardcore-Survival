@@ -1,8 +1,8 @@
 package com.hcs.mixin.server;
 
 import com.hcs.item.HotWaterBottleItem;
-import com.hcs.main.Reg;
-import com.hcs.main.helper.RotHelper;
+import com.hcs.Reg;
+import com.hcs.util.RotHelper;
 import net.minecraft.server.PlayerManager;
 import net.minecraft.server.network.ServerPlayerEntity;
 import org.spongepowered.asm.mixin.Mixin;

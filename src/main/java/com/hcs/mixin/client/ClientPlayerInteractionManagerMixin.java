@@ -1,6 +1,6 @@
 package com.hcs.mixin.client;
 
-import com.hcs.main.helper.EntityHelper;
+import com.hcs.util.EntityHelper;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.ClientPlayerInteractionManager;
 import net.minecraft.world.GameMode;

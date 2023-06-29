@@ -1,6 +1,6 @@
 package com.hcs.entity;
 
-import com.hcs.main.Reg;
+import com.hcs.Reg;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.ItemEntity;

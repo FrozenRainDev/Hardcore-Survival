@@ -1,8 +1,8 @@
 package com.hcs.mixin.block;
 
 import com.hcs.item.HotWaterBottleItem;
-import com.hcs.main.Reg;
-import com.hcs.main.helper.RotHelper;
+import com.hcs.Reg;
+import com.hcs.util.RotHelper;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.ChestBlock;
@@ -30,7 +30,7 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
-import static com.hcs.main.helper.EntityHelper.msgById;
+import static com.hcs.util.EntityHelper.msgById;
 
 @Mixin(ChestBlock.class)
 public class ChestBlockMixin {

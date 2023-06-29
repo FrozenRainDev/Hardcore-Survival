@@ -1,7 +1,7 @@
 package com.hcs.mixin.entity;
 
-import com.hcs.main.helper.EntityHelper;
-import com.hcs.misc.accessor.StatAccessor;
+import com.hcs.util.EntityHelper;
+import com.hcs.status.accessor.StatAccessor;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.mob.HostileEntity;

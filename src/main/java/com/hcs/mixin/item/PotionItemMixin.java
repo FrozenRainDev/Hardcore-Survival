@@ -1,8 +1,8 @@
 package com.hcs.mixin.item;
 
-import com.hcs.main.manager.TemperatureManager;
-import com.hcs.misc.HcsEffects;
-import com.hcs.misc.accessor.StatAccessor;
+import com.hcs.status.manager.TemperatureManager;
+import com.hcs.status.HcsEffects;
+import com.hcs.status.accessor.StatAccessor;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.item.ItemStack;

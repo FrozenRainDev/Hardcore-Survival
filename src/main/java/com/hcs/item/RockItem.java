@@ -1,8 +1,8 @@
 package com.hcs.item;
 
 import com.hcs.entity.RockProjectileEntity;
-import com.hcs.main.manager.StaminaManager;
-import com.hcs.misc.accessor.StatAccessor;
+import com.hcs.status.manager.StaminaManager;
+import com.hcs.status.accessor.StatAccessor;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.sound.SoundCategory;

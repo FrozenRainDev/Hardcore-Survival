@@ -1,6 +1,6 @@
 package com.hcs.mixin.block;
 
-import com.hcs.main.Reg;
+import com.hcs.Reg;
 import net.minecraft.block.AbstractBlock;
 import net.minecraft.block.BlockState;
 import net.minecraft.util.math.BlockPos;

@@ -1,6 +1,6 @@
 package com.hcs.mixin.client.gui;
 
-import com.hcs.main.helper.EntityHelper;
+import com.hcs.util.EntityHelper;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.gui.screen.ingame.AbstractInventoryScreen;

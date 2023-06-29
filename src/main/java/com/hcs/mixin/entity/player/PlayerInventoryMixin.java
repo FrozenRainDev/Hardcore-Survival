@@ -1,9 +1,9 @@
 package com.hcs.mixin.entity.player;
 
 import com.hcs.item.HotWaterBottleItem;
-import com.hcs.main.helper.RotHelper;
-import com.hcs.main.manager.TemperatureManager;
-import com.hcs.misc.accessor.StatAccessor;
+import com.hcs.util.RotHelper;
+import com.hcs.status.manager.TemperatureManager;
+import com.hcs.status.accessor.StatAccessor;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import org.spongepowered.asm.mixin.Mixin;

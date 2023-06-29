@@ -1,7 +1,7 @@
 package com.hcs.mixin.entity;
 
-import com.hcs.main.Reg;
-import com.hcs.main.helper.EntityHelper;
+import com.hcs.Reg;
+import com.hcs.util.EntityHelper;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.mob.HostileEntity;
 import net.minecraft.entity.mob.SpiderEntity;

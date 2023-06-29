@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "id": "hcs",
-  "version": "0.0.1",
+  "version": "0.1",
 
   "name": "Hardcore Survival",
   "description": "A Minecraft mod brings incredibly realistic and tough survival experience with ambitious playing goals",
@@ -19,10 +19,10 @@
   "environment": "*",
   "entrypoints": {
     "main": [
-      "com.hcs.main.Reg"
+      "com.hcs.Reg"
     ],
     "client": [
-      "com.hcs.main.Client"
+      "com.hcs.client.Client"
     ]
   },
   "mixins": [

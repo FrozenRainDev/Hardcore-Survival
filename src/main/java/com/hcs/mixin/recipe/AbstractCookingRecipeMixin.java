@@ -1,8 +1,8 @@
 package com.hcs.mixin.recipe;
 
 import com.hcs.item.HotWaterBottleItem;
-import com.hcs.main.Reg;
-import com.hcs.main.helper.RotHelper;
+import com.hcs.Reg;
+import com.hcs.util.RotHelper;
 import net.minecraft.inventory.Inventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;

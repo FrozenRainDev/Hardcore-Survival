@@ -1,6 +1,6 @@
 package com.hcs.mixin.item;
 
-import com.hcs.misc.accessor.StatAccessor;
+import com.hcs.status.accessor.StatAccessor;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.EnderPearlItem;
 import net.minecraft.item.ItemStack;

@@ -1,8 +1,8 @@
 package com.hcs.entity.goal;
 
-import com.hcs.main.helper.DigRestrictHelper;
-import com.hcs.main.helper.EntityHelper;
-import com.hcs.main.helper.WorldHelper;
+import com.hcs.util.DigRestrictHelper;
+import com.hcs.util.EntityHelper;
+import com.hcs.util.WorldHelper;
 import net.minecraft.block.*;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.ai.NavigationConditions;
