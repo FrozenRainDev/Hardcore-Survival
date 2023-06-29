@@ -1,8 +1,8 @@
 package com.hcs.status;
 
-import com.hcs.util.EntityHelper;
 import com.hcs.status.accessor.DamageSourcesAccessor;
 import com.hcs.status.accessor.StatAccessor;
+import com.hcs.util.EntityHelper;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.attribute.AttributeContainer;
 import net.minecraft.entity.attribute.EntityAttributeModifier;
@@ -147,9 +147,7 @@ public class HcsEffects {
 
     //Cause hallucinations
     public static final StatusEffect INSANITY = new StatusEffect(StatusEffectCategory.HARMFUL, 0xff6113) {
-    }.addAttributeModifier(EntityAttributes.GENERIC_ATTACK_DAMAGE, "22653B89-116E-49DC-9B6B-9971489B5BE5", -0.05F, EntityAttributeModifier.Operation.ADDITION)
-            .addAttributeModifier(EntityAttributes.GENERIC_MOVEMENT_SPEED, "7107DE5E-7CE8-4030-940E-514C1F160890", -0.05F, EntityAttributeModifier.Operation.MULTIPLY_TOTAL)
-            .addAttributeModifier(EntityAttributes.GENERIC_ATTACK_SPEED, "55FCED67-E92A-486E-9800-B47F202C4386", -0.05F, EntityAttributeModifier.Operation.MULTIPLY_TOTAL);
+    };
 
     public static final StatusEffect MALNUTRITION = new StatusEffect(StatusEffectCategory.HARMFUL, 0xe8e5d2) {
     };

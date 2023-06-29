@@ -4,6 +4,7 @@ import com.hcs.status.accessor.StatAccessor;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.effect.StatusEffects;
 import net.minecraft.entity.mob.EndermanEntity;
 import net.minecraft.entity.mob.HostileEntity;
 import net.minecraft.entity.player.PlayerEntity;
@@ -42,14 +43,12 @@ public abstract class LivingEntityMixin extends Entity {
     @Inject(method = "getNextAirOnLand", at = @At("RETURN"), cancellable = true)
     protected void getNextAirOnLand(int air, @NotNull CallbackInfoReturnable<Integer> cir) {
         if ((Object) this instanceof PlayerEntity player) {
-            switch (((StatAccessor) player).getStatusManager().getOxygenLackLevel()) {
-                case 1:
-                    cir.setReturnValue(air + 1);
-                case 2:
-                    cir.setReturnValue(air + Math.random() < 0.2 ? 1 : 0);
-                case 3:
-                    cir.setReturnValue(air);
-                    break;
+            int lvl = ((StatAccessor) player).getStatusManager().getFinalOxygenLackLevel();
+            if (lvl > 0 && !player.hasStatusEffect(StatusEffects.WATER_BREATHING)) {
+                cir.setReturnValue(air + ((air + 1 >= this.getMaxAir()) ? 0 : switch (lvl) {
+                    case 1 -> 1;
+                    default -> 0;
+                }));
             }
         }
     }

@@ -1,14 +1,11 @@
 package com.hcs.util;
 
 import com.hcs.Reg;
-import com.hcs.status.manager.StatusManager;
-import com.hcs.status.manager.TemperatureManager;
 import com.hcs.status.HcsEffects;
 import com.hcs.status.accessor.StatAccessor;
-import net.minecraft.block.AbstractFurnaceBlock;
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.Blocks;
+import com.hcs.status.manager.StatusManager;
+import com.hcs.status.manager.TemperatureManager;
+import net.minecraft.block.*;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.entity.player.PlayerEntity;
@@ -19,6 +16,7 @@ import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.LightType;
 import net.minecraft.world.World;
+import net.minecraft.world.WorldView;
 import net.minecraft.world.biome.Biome;
 
 import java.util.ArrayList;
@@ -31,7 +29,7 @@ import java.util.List;
   > 1.0 too hot
 */
 
-public class TemperatureHelper {
+public abstract class TemperatureHelper implements WorldView {
     public static final int[][] POS_IN_NEARBY_CHUNKS = {{-16, 0}, {16, 0}, {0, -16}, {0, 16}};
     public static final int[][][] BALL_RAD3 = {{{-3, 0, 0}, {-2, -2, -1}}, {{-2, -2, 0}, {-2, -2, 1}}, {{-2, -1, -2}, {-2, -1, -1}}, {{-2, -1, 0}, {-2, -1, 1}}, {{-2, -1, 2}, {-2, 0, -2}}, {{-2, 0, -1}, {-2, 0, 0}}, {{-2, 0, 1}, {-2, 0, 2}}, {{-2, 1, -2}, {-2, 1, -1}}, {{-2, 1, 0}, {-2, 1, 1}}, {{-2, 1, 2}, {-2, 2, -1}}, {{-2, 2, 0}, {-2, 2, 1}}, {{-1, -2, -2}, {-1, -2, -1}}, {{-1, -2, 0}, {-1, -2, 1}}, {{-1, -2, 2}, {-1, -1, -2}}, {{-1, -1, -1}, {-1, -1, 0}}, {{-1, -1, 1}, {-1, -1, 2}}, {{-1, 0, -2}, {-1, 0, -1}}, {{-1, 0, 0}, {-1, 0, 1}}, {{-1, 0, 2}, {-1, 1, -2}}, {{-1, 1, -1}, {-1, 1, 0}}, {{-1, 1, 1}, {-1, 1, 2}}, {{-1, 2, -2}, {-1, 2, -1}}, {{-1, 2, 0}, {-1, 2, 1}}, {{-1, 2, 2}, {0, -3, 0}}, {{0, -2, -2}, {0, -2, -1}}, {{0, -2, 0}, {0, -2, 1}}, {{0, -2, 2}, {0, -1, -2}}, {{0, -1, -1}, {0, -1, 0}}, {{0, -1, 1}, {0, -1, 2}}, {{0, 0, -3}, {0, 0, -2}}, {{0, 0, -1}, {0, 0, 0}}, {{0, 0, 1}, {0, 0, 2}}, {{0, 0, 3}, {0, 1, -2}}, {{0, 1, -1}, {0, 1, 0}}, {{0, 1, 1}, {0, 1, 2}}, {{0, 2, -2}, {0, 2, -1}}, {{0, 2, 0}, {0, 2, 1}}, {{0, 2, 2}, {0, 3, 0}}, {{1, -2, -2}, {1, -2, -1}}, {{1, -2, 0}, {1, -2, 1}}, {{1, -2, 2}, {1, -1, -2}}, {{1, -1, -1}, {1, -1, 0}}, {{1, -1, 1}, {1, -1, 2}}, {{1, 0, -2}, {1, 0, -1}}, {{1, 0, 0}, {1, 0, 1}}, {{1, 0, 2}, {1, 1, -2}}, {{1, 1, -1}, {1, 1, 0}}, {{1, 1, 1}, {1, 1, 2}}, {{1, 2, -2}, {1, 2, -1}}, {{1, 2, 0}, {1, 2, 1}}, {{1, 2, 2}, {2, -2, -1}}, {{2, -2, 0}, {2, -2, 1}}, {{2, -1, -2}, {2, -1, -1}}, {{2, -1, 0}, {2, -1, 1}}, {{2, -1, 2}, {2, 0, -2}}, {{2, 0, -1}, {2, 0, 0}}, {{2, 0, 1}, {2, 0, 2}}, {{2, 1, -2}, {2, 1, -1}}, {{2, 1, 0}, {2, 1, 1}}, {{2, 1, 2}, {2, 2, -1}}, {{2, 2, 0}, {2, 2, 1}}, {{3, 0, 0}}};
 
@@ -206,11 +204,16 @@ public class TemperatureHelper {
         if (playerObj instanceof ServerPlayerEntity player) {
             int i = (int) (player.world.getTime() % (BALL_RAD3.length));
             TemperatureManager temperatureManager = ((StatAccessor) player).getTemperatureManager();
+            StatusManager statusManager = ((StatAccessor) player).getStatusManager();
             BlockPos playerPos = player.getBlockPos();
-            if (i == 0) temperatureManager.updateAmbient();//Do not put in for-loop
+            if (i == 0) {//Do not put in for-loop
+                temperatureManager.updateAmbient();
+                statusManager.updateOxygenGen();
+            }
             int[][] bp = BALL_RAD3[i];
             for (int[] bpp : bp) {
-                BlockState state = player.world.getBlockState(playerPos.add(bpp[0], bpp[1], bpp[2]));
+                BlockPos checkPos = playerPos.add(bpp[0], bpp[1], bpp[2]);
+                BlockState state = player.world.getBlockState(checkPos);
                 Block block = state.getBlock();
 //                if (player.getMainHandStack().isOf(Items.DEBUG_STICK)) player.world.setBlockState(player.getBlockPos().add(bpp[0], bpp[1], bpp[2]), Blocks.COBBLESTONE.getDefaultState());
                 RegistryEntry<Biome> biomeEntry = player.world.getBiome(playerPos);
@@ -229,6 +232,13 @@ public class TemperatureHelper {
                 else if (block == Blocks.MAGMA_BLOCK) temperatureManager.addAmbient(0.5F);
                 else if (block == Blocks.LAVA || block == Blocks.LAVA_CAULDRON) temperatureManager.addAmbient(2.0F);
                 else if (block == Blocks.TORCH) temperatureManager.addAmbient(0.01F);
+                //Addition: check oxygen generation
+                if ((block instanceof LeavesBlock || (block instanceof PlantBlock && !(block instanceof RootsBlock) && block != Blocks.DEAD_BUSH) || block == Blocks.GRASS_BLOCK)/* && player.world.raycast(new RaycastContext(player.getPos(), new Vec3d(checkPos.getX(), checkPos.getY(), checkPos.getZ()), RaycastContext.ShapeType.COLLIDER, RaycastContext.FluidHandling.NONE, player)).getType() != HitResult.Type.MISS*/) {
+                    for (BlockPos immediatePos : new BlockPos[]{checkPos.up(), checkPos.down(), checkPos.east(), checkPos.south(), checkPos.west(), checkPos.north()}) {
+                        if (player.world.getLightLevel(LightType.BLOCK, immediatePos) > 5) statusManager.addOxygenGen();
+                        break;
+                    }
+                }
             }
         }
     }
@@ -322,7 +332,7 @@ public class TemperatureHelper {
             return result;
         }
         Biome biome = biomeEntry.value();
-        if (envTempReal > 0.0F || !biome.isCold(pos) || (!world.isSkyVisible(pos) && world.getLightLevel(LightType.BLOCK, pos) > 7/*indoors*/))
+        if (envTempReal > 0.0F || !biome.isCold(pos) || world.getLightLevel(LightType.SKY, pos) < 1 || (!world.isSkyVisible(pos) && world.getLightLevel(LightType.BLOCK, pos) > 7))
             return result;
         String biomeName = getBiomeName(biomeEntry);
         boolean isInForest = biomeName.contains("taiga") || biomeName.contains("forest");

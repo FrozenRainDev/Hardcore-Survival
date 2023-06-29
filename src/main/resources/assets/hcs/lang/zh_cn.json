@@ -6,6 +6,7 @@
 
   "death.attack.hcs.dehydrate": "%1$s 渴死了",
   "death.attack.hcs.heatstroke": "%1$s 中暑而死",
+  "death.attack.hcs.oxygenDeficiency": "%1$s 缺氧而死",
 
   "effect.hcs.thirst": "干渴",
   "effect.hcs.diarrhea": "腹泻",

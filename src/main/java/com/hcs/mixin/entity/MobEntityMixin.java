@@ -1,11 +1,11 @@
 package com.hcs.mixin.entity;
 
-import com.hcs.util.EntityHelper;
 import com.hcs.status.accessor.StatAccessor;
+import com.hcs.util.EntityHelper;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.mob.HostileEntity;
 import net.minecraft.entity.mob.MobEntity;
+import net.minecraft.entity.mob.Monster;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
@@ -39,7 +39,7 @@ public abstract class MobEntityMixin extends LivingEntity {
     @SuppressWarnings("all")
     @Inject(method = "tick", at = @At("HEAD"))
     public void tick(CallbackInfo ci) {
-        if (!this.world.isClient && (Object) this instanceof HostileEntity && this.getTarget() instanceof PlayerEntity player && this.distanceTo(player) < 7)
-            ((StatAccessor) player).getSanityManager().setPanicTicks(10);
+        if (!this.world.isClient && (Object) this instanceof Monster && this.getTarget() instanceof PlayerEntity player && this.distanceTo(player) < 5 && player.canSee(this))
+            ((StatAccessor) player).getSanityManager().setMonsterWitnessingTicks(10);
     }
 }

@@ -11,6 +11,8 @@ public class StatusManager {
     private boolean hasDecimalFoodLevel = false;
     public static final String MAX_LVL_NBT = "hcs_max_lvl_reached";
     private int oxygenLackLevel = 0;
+    private int oxygenGenLevelAccumulation = 0;
+    private int oxygenGenLevel = 0;
 
     public void reset(int lvlReached) {
         exhaustion = 0.0F;
@@ -93,5 +95,26 @@ public class StatusManager {
         oxygenLackLevel = val;
     }
 
+    public void addOxygenGen() {
+        oxygenGenLevelAccumulation += 1;
+    }
+
+    public int getOxygenGenLevel() {
+        return oxygenGenLevel;
+    }
+
+    public void setOxygenGenLevel(int val) {
+        oxygenGenLevel = val;
+    }
+
+
+    public void updateOxygenGen() {
+        oxygenGenLevel = Math.min(2, oxygenGenLevelAccumulation);
+        oxygenGenLevelAccumulation = 0;
+    }
+
+    public int getFinalOxygenLackLevel() {
+        return oxygenLackLevel - oxygenGenLevel;
+    }
 
 }

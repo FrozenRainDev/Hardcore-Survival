@@ -18,10 +18,12 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(DamageSources.class)
 public abstract class DamageSourcesMixin implements DamageSourcesAccessor {
-    private DamageSource dehydrate, heatstroke;
+    private DamageSource dehydrate;
+    private DamageSource heatstroke;
+    private DamageSource oxygenDeficiency;
     @Shadow
     @Final
-    private Registry<DamageType> registry;
+    public Registry<DamageType> registry;
 
     @Override
     public DamageSource dehydrate() {
@@ -32,6 +34,12 @@ public abstract class DamageSourcesMixin implements DamageSourcesAccessor {
     public DamageSource heatstroke() {
         return this.heatstroke;
     }
+
+    @Override
+    public DamageSource oxygenDeficiency() {
+        return this.oxygenDeficiency;
+    }
+
 
     @Inject(method = "create(Lnet/minecraft/registry/RegistryKey;)Lnet/minecraft/entity/damage/DamageSource;", at = @At("HEAD"))
     private void create(RegistryKey<DamageType> key, CallbackInfoReturnable<DamageSource> cir) {
@@ -49,6 +57,12 @@ public abstract class DamageSourcesMixin implements DamageSourcesAccessor {
                 @Override
                 public Text getDeathMessage(LivingEntity killed) {
                     return Text.translatable("death.attack.hcs.heatstroke", killed.getDisplayName());
+                }
+            };
+            this.oxygenDeficiency = new DamageSource(this.registry.entryOf(key)) {
+                @Override
+                public Text getDeathMessage(LivingEntity killed) {
+                    return Text.translatable("death.attack.hcs.oxygenDeficiency", killed.getDisplayName());
                 }
             };
         }

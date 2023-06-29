@@ -86,6 +86,7 @@ public class ClientS2C {
                         statusManager.setRecentLittleOvereatenTicks(bufArr[7]);
                         statusManager.setHasDecimalFoodLevel(intToBoolean(bufArr[8]));
                         statusManager.setOxygenLackLevel(bufArr[9]);
+                        statusManager.setOxygenGenLevel(bufArr[10]);
                     }
                 }
             });
@@ -100,7 +101,7 @@ public class ClientS2C {
                         SanityManager sanityManager = ((StatAccessor) player).getSanityManager();
                         sanityManager.set(intToDouble(bufArr[1]));
                         sanityManager.setDifference(intToDouble(bufArr[2]));
-                        sanityManager.setPanicTicks(bufArr[3]);
+                        sanityManager.setMonsterWitnessingTicks(bufArr[3]);
                     }
                 }
             });

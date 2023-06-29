@@ -6,4 +6,6 @@ public interface DamageSourcesAccessor {
     DamageSource dehydrate();
 
     DamageSource heatstroke();
+
+    DamageSource oxygenDeficiency();
 }

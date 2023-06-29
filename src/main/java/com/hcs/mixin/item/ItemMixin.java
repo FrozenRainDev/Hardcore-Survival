@@ -1,8 +1,8 @@
 package com.hcs.mixin.item;
 
+import com.hcs.status.HcsEffects;
 import com.hcs.util.EntityHelper;
 import com.hcs.util.RotHelper;
-import com.hcs.status.HcsEffects;
 import net.minecraft.client.item.TooltipContext;
 import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.entity.effect.StatusEffects;
@@ -25,10 +25,7 @@ import java.util.List;
 public class ItemMixin {
     //The saturationModifier is invalid as saturation is added as same as food level
     //e.g. Cooked chicken increases 6 food levels,and 6 saturation levels,while its saturationModifier=0.6F
-    private static final FoodComponent BEETROOT_SEEDS = new FoodComponent.Builder().hunger(0).saturationModifier(1.0f).alwaysEdible().build();
-    private static final FoodComponent MELON_SEEDS = new FoodComponent.Builder().hunger(0).saturationModifier(1.0f).alwaysEdible().build();
-    private static final FoodComponent PUMPKIN_SEEDS = new FoodComponent.Builder().hunger(0).saturationModifier(1.0f).alwaysEdible().build();
-    private static final FoodComponent WHEAT_SEEDS = new FoodComponent.Builder().hunger(0).saturationModifier(1.0f).alwaysEdible().build();
+    private static final FoodComponent SEEDS = new FoodComponent.Builder().hunger(0).saturationModifier(1.0f).alwaysEdible().build();
     private static final FoodComponent WHEAT = new FoodComponent.Builder().hunger(0).saturationModifier(1.0f).build();
     private static final FoodComponent SUGAR = new FoodComponent.Builder().hunger(0).saturationModifier(1.0f).build();
     private static final FoodComponent COCA_BEANS = new FoodComponent.Builder().hunger(1).saturationModifier(1.0f).build();
@@ -56,10 +53,8 @@ public class ItemMixin {
     @Inject(method = "getFoodComponent", at = @At("RETURN"), cancellable = true)
     public void getFoodComponent(CallbackInfoReturnable<FoodComponent> cir) {
         Item item = ((Item) (Object) this);
-        if (item == Items.BEETROOT_SEEDS) cir.setReturnValue(BEETROOT_SEEDS);
-        else if (item == Items.MELON_SEEDS) cir.setReturnValue(MELON_SEEDS);
-        else if (item == Items.PUMPKIN_SEEDS) cir.setReturnValue(PUMPKIN_SEEDS);
-        else if (item == Items.WHEAT_SEEDS) cir.setReturnValue(WHEAT_SEEDS);
+        if (item == Items.BEETROOT_SEEDS || item == Items.MELON_SEEDS || item == Items.PUMPKIN_SEEDS || item == Items.WHEAT_SEEDS || item == Items.TORCHFLOWER_SEEDS)
+            cir.setReturnValue(SEEDS);
         else if (item == Items.WHEAT) cir.setReturnValue(WHEAT);
         else if (item == Items.SUGAR) cir.setReturnValue(SUGAR);
         else if (item == Items.COCOA_BEANS) cir.setReturnValue(COCA_BEANS);

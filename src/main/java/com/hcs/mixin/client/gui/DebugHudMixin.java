@@ -39,6 +39,7 @@ public abstract class DebugHudMixin {
         TemperatureManager temperatureManager = ((StatAccessor) player).getTemperatureManager();
         SanityManager sanityManager = ((StatAccessor) player).getSanityManager();
         NutritionManager nutritionManager = ((StatAccessor) player).getNutritionManager();
+        StatusManager statusManager = ((StatAccessor) player).getStatusManager();
         World world = player.world;
         BlockPos pos = player.getBlockPos();
         RegistryEntry<Biome> biomeEntry = world.getBiome(pos);
@@ -53,6 +54,7 @@ public abstract class DebugHudMixin {
         list.add("Sanity: " + sanityManager.get() + ", difference=" + sanityManager.getDifference());
         list.add("Temperature: biome=" + biome.getTemperature() + ", env=[real: " + String.format("%.5f", TemperatureHelper.getTemp(player)) + " ,feel:" + String.format("%.5f", TemperatureHelper.getFeelingTemp(player, TemperatureHelper.getTemp(player), biomeName, player.world.getLightLevel(LightType.SKY, player.getBlockPos()))) + "]" + ", value=" + String.format("%.5f", temperatureManager.get()) + ", satu=" + String.format("%.5f", temperatureManager.getSaturation()) + ", trend=" + temperatureManager.getTrendType());
         list.add("Nutrition: vegetable=" + nutritionManager.getVegetable());
+        list.add("Oxygen: lack=" + statusManager.getOxygenLackLevel() + ", gen=" + statusManager.getOxygenGenLevel());
     }
 
 }

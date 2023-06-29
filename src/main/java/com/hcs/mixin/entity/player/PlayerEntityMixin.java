@@ -2,6 +2,7 @@ package com.hcs.mixin.entity.player;
 
 import com.hcs.Reg;
 import com.hcs.status.HcsEffects;
+import com.hcs.status.accessor.DamageSourcesAccessor;
 import com.hcs.status.accessor.StatAccessor;
 import com.hcs.status.manager.*;
 import com.hcs.util.DigRestrictHelper;
@@ -345,7 +346,7 @@ public abstract class PlayerEntityMixin extends LivingEntity implements StatAcce
     @Inject(method = "tick", at = @At("HEAD"))
     public void tick(CallbackInfo ci) {
         if (this.world.isClient) return;
-        int caveDeepLevelToSet = 0;
+        int oxyLackLvl = 0;
         double y = this.getY();
         this.addExhaustion(0.001F);
         this.statusManager.setRecentAttackTicks(Math.max(0, this.statusManager.getRecentAttackTicks() - 1));
@@ -353,9 +354,9 @@ public abstract class PlayerEntityMixin extends LivingEntity implements StatAcce
         this.statusManager.setRecentHasColdWaterBagTicks(Math.max(0, this.statusManager.getRecentHasColdWaterBagTicks() - 1));
         this.statusManager.setRecentHasHotWaterBagTicks(Math.max(0, this.statusManager.getRecentHasHotWaterBagTicks() - 1));
         this.statusManager.setRecentLittleOvereatenTicks(this.hungerManager.getFoodLevel() < 20 ? 0 : Math.max(0, this.statusManager.getRecentLittleOvereatenTicks() - 1));
-        if (this.sanityManager.getPanicTicks() > 0) {
-            this.sanityManager.add(-0.00004);
-            this.sanityManager.setPanicTicks(this.sanityManager.getPanicTicks() - 1);
+        if (this.sanityManager.getMonsterWitnessingTicks() > 0) {
+            this.sanityManager.add(-0.00003);
+            this.sanityManager.setMonsterWitnessingTicks(this.sanityManager.getMonsterWitnessingTicks() - 1);
         }
         //Set max health according to max exp level reached
         if (this.experienceLevel > this.statusManager.getMaxExpLevelReached())
@@ -412,18 +413,22 @@ public abstract class PlayerEntityMixin extends LivingEntity implements StatAcce
                     else if (blockBrightness < 8) sanDecrement = 0.000015;
                 }
                 this.sanityManager.add(-sanDecrement);
+            }
+            if (isInCavelike) {
                 //Lose oxygen in deep cave
-                if (y < 30) {
-                    caveDeepLevelToSet = 3;
-                    if (this.world.getTime() % 50 == 0) this.setAir(this.getNextAirUnderwater(this.getAir()));
-                } else if (y < 40) caveDeepLevelToSet = 2;
-                else if (y < 50) caveDeepLevelToSet = 1;
+                if (y < 42) oxyLackLvl = 3;
+                else if (y < 49) oxyLackLvl = 2;
+                else if (y < 56) oxyLackLvl = 1;
             }
         }
         if (this.hasStatusEffect(StatusEffects.STRENGTH)) this.staminaManager.reset();
         this.staminaManager.setLastVecPos(this.getPos());
         this.sanityManager.updateDifference();
-        this.statusManager.setOxygenLackLevel(caveDeepLevelToSet);
+        this.statusManager.setOxygenLackLevel(oxyLackLvl);
+        if (this.statusManager.getFinalOxygenLackLevel() >= 3 && (this.world.getTime() % 20 == 0 || this.getAir() < 0))
+            this.setAir(this.getNextAirUnderwater(this.getAir()));
+        if (this.getAir() < -20 && this.world.getTime() % 15 == 0)
+            this.damage(((DamageSourcesAccessor) this.world.getDamageSources()).oxygenDeficiency(), 1.0F);
     }
 
     @Inject(method = "getXpToDrop", at = @At("HEAD"), cancellable = true)

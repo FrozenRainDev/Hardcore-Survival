@@ -5,7 +5,7 @@ public class SanityManager {
     private double lastSanity = 1.0;
     //Don't calculate difference between sanity and lastSanity when in InGameHud as it refreshes much faster than ticks() in PlayerEntity and cause twinkle of arrow which indicates trend of rising and falling
     private double sanDifference = 0.0;
-    private int panicTicks = 0;
+    private int monsterWitnessingTicks = 0;
     public static final String SANITY_NBT = "hcs_sanity";
 
     public double get() {
@@ -47,11 +47,11 @@ public class SanityManager {
         lastSanity = sanity;
     }
 
-    public int getPanicTicks() {
-        return panicTicks;
+    public int getMonsterWitnessingTicks() {
+        return monsterWitnessingTicks;
     }
 
-    public void setPanicTicks(int val) {
-        panicTicks = val;
+    public void setMonsterWitnessingTicks(int val) {
+        monsterWitnessingTicks = val;
     }
 }
