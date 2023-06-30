@@ -16,6 +16,7 @@ public class ServerS2C {
     public static final Identifier STATUS_ID = new Identifier("hcs", "s2c_status");
     public static final Identifier SANITY_ID = new Identifier("hcs", "s2c_sanity");
     public static final Identifier NUTRITION_ID = new Identifier("hcs", "s2c_nutrition");
+    public static final Identifier WETNESS_ID = new Identifier("hcs", "s2c_wetness");
     public static final float TRANS_MULTIPLIER = 10000000.0F;
 
     public static int floatToInt(float val) {
@@ -60,9 +61,9 @@ public class ServerS2C {
         buf5.writeIntArray(new int[]{player.getId(), doubleToInt(sanityManager.get()), doubleToInt(sanityManager.getDifference()), sanityManager.getMonsterWitnessingTicks()});
         player.networkHandler.sendPacket(new CustomPayloadS2CPacket(SANITY_ID, buf5));
 
-        PacketByteBuf buf6 = new PacketByteBuf(Unpooled.buffer());
-        NutritionManager nutritionManager = ((StatAccessor) player).getNutritionManager();
-        buf6.writeIntArray(new int[]{player.getId(), doubleToInt(nutritionManager.getVegetable())});
-        player.networkHandler.sendPacket(new CustomPayloadS2CPacket(NUTRITION_ID, buf6));
+        PacketByteBuf buf7 = new PacketByteBuf(Unpooled.buffer());
+        WetnessManager wetnessManager = ((StatAccessor) player).getWetnessManager();
+        buf7.writeIntArray(new int[]{player.getId(), doubleToInt(wetnessManager.get())});
+        player.networkHandler.sendPacket(new CustomPayloadS2CPacket(WETNESS_ID, buf7));
     }
 }

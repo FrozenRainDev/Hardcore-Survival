@@ -114,6 +114,7 @@ public abstract class PlayerEntityMixin extends LivingEntity implements StatAcce
     StatusManager statusManager = new StatusManager();
     SanityManager sanityManager = new SanityManager();
     NutritionManager nutritionManager = new NutritionManager();
+    WetnessManager wetnessManager = new WetnessManager();
 
     @Override
     public ThirstManager getThirstManager() {
@@ -145,6 +146,11 @@ public abstract class PlayerEntityMixin extends LivingEntity implements StatAcce
         return this.nutritionManager;
     }
 
+    @Override
+    public WetnessManager getWetnessManager() {
+        return this.wetnessManager;
+    }
+
 
     @Inject(method = "readCustomDataFromNbt", at = @At("TAIL"))
     public void readCustomDataFromNbt(NbtCompound nbt, CallbackInfo info) {
@@ -157,6 +163,7 @@ public abstract class PlayerEntityMixin extends LivingEntity implements StatAcce
             this.statusManager.setMaxExpLevelReached(nbt.contains(StatusManager.MAX_LVL_NBT, NbtElement.INT_TYPE) ? nbt.getInt(StatusManager.MAX_LVL_NBT) : 0);
             this.sanityManager.set(nbt.contains(SanityManager.SANITY_NBT, NbtElement.DOUBLE_TYPE) ? nbt.getDouble(SanityManager.SANITY_NBT) : 1.0);
             this.nutritionManager.setVegetable(nbt.contains(NutritionManager.NUTRITION_VEGETABLE_NBT, NbtElement.DOUBLE_TYPE) ? nbt.getDouble(NutritionManager.NUTRITION_VEGETABLE_NBT) : 1.0);
+            this.wetnessManager.set(nbt.contains(WetnessManager.WETNESS_NBT, NbtElement.DOUBLE_TYPE) ? nbt.getDouble(WetnessManager.WETNESS_NBT) : 0.0);
         }
     }
 
@@ -171,6 +178,7 @@ public abstract class PlayerEntityMixin extends LivingEntity implements StatAcce
             nbt.putInt(StatusManager.MAX_LVL_NBT, this.statusManager.getMaxExpLevelReached());
             nbt.putDouble(SanityManager.SANITY_NBT, this.sanityManager.get());
             nbt.putDouble(NutritionManager.NUTRITION_VEGETABLE_NBT, this.nutritionManager.getVegetable());
+            nbt.putDouble(WetnessManager.WETNESS_NBT, this.wetnessManager.get());
         }
     }
 
@@ -429,6 +437,15 @@ public abstract class PlayerEntityMixin extends LivingEntity implements StatAcce
             this.setAir(this.getNextAirUnderwater(this.getAir()));
         if (this.getAir() < -20 && this.world.getTime() % 15 == 0)
             this.damage(((DamageSourcesAccessor) this.world.getDamageSources()).oxygenDeficiency(), 1.0F);
+        //Wetness
+        if (this.isTouchingWater()) this.wetnessManager.add(0.02);
+        else if (this.isBeingRainedOn()) this.wetnessManager.add(0.0004);
+        else if (this.temperatureManager.getAmbientCache() > 0.0F)
+            this.wetnessManager.add(-Math.abs(this.temperatureManager.getAmbientCache() / 100.0));
+        else {
+            float rate = this.thirstManager.getThirstRateAffectedByTemp();
+            this.wetnessManager.add(-Math.abs(0.0004 * rate * rate));
+        }
     }
 
     @Inject(method = "getXpToDrop", at = @At("HEAD"), cancellable = true)

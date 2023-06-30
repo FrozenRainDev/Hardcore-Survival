@@ -120,5 +120,18 @@ public class ClientS2C {
                 }
             });
         });
+
+        ClientPlayNetworking.registerGlobalReceiver(WETNESS_ID, (client, handler, buffer, responseSender) -> {
+            int[] bufArr = buffer.readIntArray();
+            client.execute(() -> {
+                if (client.player != null && client.player.world.getEntityById(bufArr[0]) != null) {
+                    PlayerEntity player = (PlayerEntity) client.player.world.getEntityById(bufArr[0]);
+                    if (player != null) {
+                        WetnessManager wetnessManager = ((StatAccessor) player).getWetnessManager();
+                        wetnessManager.set(intToDouble(bufArr[1]));
+                    }
+                }
+            });
+        });
     }
 }

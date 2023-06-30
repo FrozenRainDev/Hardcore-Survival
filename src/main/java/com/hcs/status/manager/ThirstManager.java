@@ -9,8 +9,8 @@ public class ThirstManager {
     public static final String THIRST_SATURATION_NBT = "hcs_thirst_saturation";
 
     public double get() {
-        if (thirst > 1.0) thirst = 1.0;//>1
-        else if (thirst < 0.0) thirst = 0.0;//<0
+        if (thirst > 1.0) thirst = 1.0;
+        else if (thirst < 0.0) thirst = 0.0;
         return thirst;
     }
 

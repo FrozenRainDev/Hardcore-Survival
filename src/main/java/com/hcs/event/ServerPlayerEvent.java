@@ -12,6 +12,7 @@ public class ServerPlayerEvent {
             ((StatAccessor) newPlayer).getStatusManager().reset(((StatAccessor) oldPlayer).getStatusManager().getMaxExpLevelReached());
             ((StatAccessor) newPlayer).getSanityManager().reset();
             ((StatAccessor) newPlayer).getNutritionManager().reset();
+            ((StatAccessor) newPlayer).getWetnessManager().reset();
         }));
     }
 }

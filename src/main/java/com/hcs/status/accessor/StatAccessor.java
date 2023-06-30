@@ -14,4 +14,6 @@ public interface StatAccessor {
     SanityManager getSanityManager();
 
     NutritionManager getNutritionManager();
+
+    WetnessManager getWetnessManager();
 }

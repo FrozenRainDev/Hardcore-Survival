@@ -1,14 +1,14 @@
 package com.hcs.mixin.entity.player;
 
-import com.hcs.util.EntityHelper;
-import com.hcs.util.TemperatureHelper;
-import com.hcs.status.manager.StaminaManager;
-import com.hcs.status.manager.TemperatureManager;
-import com.hcs.status.manager.ThirstManager;
 import com.hcs.status.HcsEffects;
 import com.hcs.status.accessor.DamageSourcesAccessor;
 import com.hcs.status.accessor.StatAccessor;
+import com.hcs.status.manager.StaminaManager;
+import com.hcs.status.manager.TemperatureManager;
+import com.hcs.status.manager.ThirstManager;
 import com.hcs.status.network.ServerS2C;
+import com.hcs.util.EntityHelper;
+import com.hcs.util.TemperatureHelper;
 import com.mojang.authlib.GameProfile;
 import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.effect.StatusEffects;
@@ -118,11 +118,12 @@ public abstract class ServerPlayerEntityMixin extends PlayerEntity {
             double san = ((StatAccessor) this).getSanityManager().get();
             if (san < 0.3)
                 EntityHelper.addHcsDebuff(this, HcsEffects.INSANITY, san < 0.15 ? (san < 0.1 ? (san < 0.05 ? 3 : 2) : 1) : 0);
-
             //Debuff for malnutrition
             double vegetable = ((StatAccessor) this).getNutritionManager().getVegetable();
             if (vegetable < 0.00001) EntityHelper.addHcsDebuff(this, HcsEffects.MALNUTRITION, 0);
-
+            //Debuff for malnutrition
+            if (((StatAccessor) this).getWetnessManager().get() > 0.3)
+                EntityHelper.addHcsDebuff(this, HcsEffects.WET, 0);
         }
     }
 }

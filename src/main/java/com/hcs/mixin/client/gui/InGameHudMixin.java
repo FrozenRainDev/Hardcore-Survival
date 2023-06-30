@@ -1,10 +1,10 @@
 package com.hcs.mixin.client.gui;
 
+import com.hcs.status.HcsEffects;
+import com.hcs.status.accessor.StatAccessor;
 import com.hcs.status.manager.SanityManager;
 import com.hcs.status.manager.StatusManager;
 import com.hcs.status.manager.TemperatureManager;
-import com.hcs.status.HcsEffects;
-import com.hcs.status.accessor.StatAccessor;
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.font.TextRenderer;
@@ -164,7 +164,7 @@ public abstract class InGameHudMixin extends DrawableHelper {
     private void renderStatusBarsHead(MatrixStack matrices, CallbackInfo ci) {
         //Disable original rendering without using ci.cancel() or overwrite
         RenderSystem.setShaderTexture(0, EMPTY_TEXTURE);
-        //this.client.getProfiler().pop();//used for 1.19.3 debug
+        //this.client.getProfiler().pop();
     }
 
     @Inject(method = "renderStatusBars", at = @At("TAIL"))
@@ -362,18 +362,6 @@ public abstract class InGameHudMixin extends DrawableHelper {
             else if (temDeviation > 176) temDeviation = 176;
             this.drawHCSTexture(matrices, xx, yy, 16 + temDeviation, 64, 16, 16);
         }
-        //WETNESS
-        /*float wet = 0.0F;
-        if (wet > 0.0F) {
-            xx += 20;
-            displacement.put("wet", true);
-            int wetHeight = this.getDrawIconHeight(wet);
-            int wetShake = 0;
-            this.drawHCSTexture(matrices, xx, yy + wetShake, 0, 128, 16, 16);
-            this.drawHCSTexture(matrices, xx, yy + (16 - wetHeight) + wetShake, 16, 144 - wetHeight, 16, wetHeight);
-            this.drawTextWithThickShadow(matrices, customNumberFormatter(wet < 0.1 ? " #%" : "##%", wet), xx + 2, yyy + 11, getColorByPercentage(wet), 0.75F);
-        } else*/
-        displacement.put("wet", false);
         //AIR
         //this.client.getProfiler().swap("air");
         int air = player.getAir();
@@ -401,6 +389,17 @@ public abstract class InGameHudMixin extends DrawableHelper {
             this.drawTextWithThickShadow(matrices, String.format("%.1f", mou > 0 ? Math.max(mou, 0.1F) : Math.max(mou, 0.0F)), xx, yyy + 11, getColorByPercentage(mouPercentage), 0.75F);
             this.drawTextWithThickShadow(matrices, "/" + String.format("%.1f", mouMax), xx, yyy + 17, getColorByPercentage(mouPercentage), 0.5F);
         } else displacement.put("mo", false);
+        //WETNESS
+        double wet = ((StatAccessor) player).getWetnessManager().get();
+        if (wet >= 0.01F) {
+            xx += 20;
+            displacement.put("wet", true);
+            int wetHeight = this.getDrawIconHeight((float) wet);
+            int wetShake = 0;
+            this.drawHCSTexture(matrices, xx, yy + wetShake, 0, 128, 16, 16);
+            this.drawHCSTexture(matrices, xx, yy + (16 - wetHeight) + wetShake, 16, 144 - wetHeight, 16, wetHeight);
+            this.drawTextWithThickShadow(matrices, customNumberFormatter(wet < 0.1 ? " #%" : "##%", wet), xx + 2, yyy + 11, getColorByPercentage(1.0 - wet), 0.75F);
+        } else displacement.put("wet", false);
         //this.client.getProfiler().pop();
         heaLast = hea;
         shouldRenderMountHealth = shouldRenderMountJumpBar = false;

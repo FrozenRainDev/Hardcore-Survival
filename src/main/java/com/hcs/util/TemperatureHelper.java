@@ -276,23 +276,23 @@ public abstract class TemperatureHelper implements WorldView {
                     x = (outdoorsWeight * x + (5 - outdoorsWeight) * tempInFullShade) / 5.0F;
                 }
             }
-            if (player.isTouchingWater()) {
-                //Feel much colder when soak in water
-                if (x < 0.0F) x = 0.0F;
-                else if (x > 1.05F) x = 1.05F;
-                x = x * x - 0.18F;
-            } else {
-                x += insulation;
-                if (insulationLevel >= 19.0F) {
-                    //Fully wear woolen suit will gain an award of protection from bitter cold
-                    if (x + insulation <= 0.0F) {
-                        if (x + insulation >= -0.7F) x = 0.01F;
-                        else x += 0.7F;
-                    }
-                    if (envTemp < -0.2F) x += 0.15F;
-                    else if (envTemp < -0.1F) x += 0.1F;
-                    else if (envTemp < 0.0F) x += 0.05F;
+            //Feel much colder when wet
+            float x1 = x;
+            if (x < 0.0F) x1 = 0.0F;
+            else if (x > 1.05F) x1 = 1.05F;
+            float x2 = x1 * x1 - 0.18F;
+            float wetFactor = (float) Math.pow(((StatAccessor) player).getWetnessManager().get(), 1.4);
+            x = wetFactor * x2 + (1 - wetFactor) * x;
+            x += insulation * (1 - wetFactor);
+            if (insulationLevel * (1 - wetFactor) >= 19.0F) {
+                //Fully wear woolen suit will gain an award of protection from bitter cold
+                if (x + insulation <= 0.0F) {
+                    if (x + insulation >= -0.7F) x = 0.01F;
+                    else x += 0.7F;
                 }
+                if (envTemp < -0.2F) x += 0.15F;
+                else if (envTemp < -0.1F) x += 0.1F;
+                else if (envTemp < 0.0F) x += 0.05F;
             }
             if (player.isSprinting() || statusManager.getRecentAttackTicks() > 0) { //Heat from doing sport
                 if (x <= 0.0F) x = 0.7F * x + 0.2F;
