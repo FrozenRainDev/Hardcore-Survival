@@ -67,6 +67,7 @@
   "client": [
     "client.ClientPlayerInteractionManagerMixin",
     "client.MinecraftClientMixin",
+    "client.MouseMixin",
     "client.gui.AbstractInventoryScreenMixin",
     "client.gui.DebugHudMixin",
     "client.gui.InGameHudMixin",

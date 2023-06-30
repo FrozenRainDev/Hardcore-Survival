@@ -108,6 +108,12 @@ public abstract class PlayerEntityMixin extends LivingEntity implements StatAcce
     @Shadow
     public abstract boolean isCreative();
 
+    @Shadow
+    protected boolean isSubmergedInWater;
+
+    @Shadow
+    public abstract void setFireTicks(int fireTicks);
+
     ThirstManager thirstManager = new ThirstManager();
     StaminaManager staminaManager = new StaminaManager();
     TemperatureManager temperatureManager = new TemperatureManager();
@@ -263,7 +269,7 @@ public abstract class PlayerEntityMixin extends LivingEntity implements StatAcce
             if (food != null) {
                 if (food.isMeat() || name.contains("egg"))
                     this.nutritionManager.addVegetable(-0.08);
-                else if (name.contains("kelp")) this.nutritionManager.addVegetable(0.15);
+                else if (name.contains("kelp") || name.contains("sugar_cane")) this.nutritionManager.addVegetable(0.15);
                 else if (name.contains("berries") || name.contains("berry")) this.nutritionManager.addVegetable(0.17);
                 else if (name.contains("apple") || name.contains("orange") || name.contains("carrot") || name.contains("cactus") || name.contains("melon") || name.contains("potherb") || name.contains("shoot") || name.contains("salad") || name.contains("fruit"))
                     this.nutritionManager.addVegetable(0.3);
@@ -438,13 +444,19 @@ public abstract class PlayerEntityMixin extends LivingEntity implements StatAcce
         if (this.getAir() < -20 && this.world.getTime() % 15 == 0)
             this.damage(((DamageSourcesAccessor) this.world.getDamageSources()).oxygenDeficiency(), 1.0F);
         //Wetness
-        if (this.isTouchingWater()) this.wetnessManager.add(0.02);
+        if (this.isSubmergedInWater) this.wetnessManager.add(0.03);
+        else if (this.isTouchingWater() && this.wetnessManager.get() < 0.7) this.wetnessManager.add(0.01);
         else if (this.isBeingRainedOn()) this.wetnessManager.add(0.0004);
-        else if (this.temperatureManager.getAmbientCache() > 0.0F)
-            this.wetnessManager.add(-Math.abs(this.temperatureManager.getAmbientCache() / 100.0));
-        else {
-            float rate = this.thirstManager.getThirstRateAffectedByTemp();
-            this.wetnessManager.add(-Math.abs(0.0004 * rate * rate));
+        else if (!this.isTouchingWater()) {
+            if (this.getFireTicks() > 0) {
+                this.wetnessManager.add(-0.3);
+                if (this.wetnessManager.get() > 0.0) this.setFireTicks(0);
+            } else if (this.temperatureManager.getAmbientCache() > 0.0F)
+                this.wetnessManager.add(-Math.abs(this.temperatureManager.getAmbientCache() / 100.0));
+            else {
+                float rate = this.thirstManager.getThirstRateAffectedByTemp();
+                this.wetnessManager.add(-Math.abs(0.00015 * rate * rate));
+            }
         }
     }
 

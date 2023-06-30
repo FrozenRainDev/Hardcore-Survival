@@ -51,7 +51,6 @@ public class HcsEffects {
             if (entity instanceof ServerPlayerEntity player && !entity.isSpectator()) {
                 ((ServerPlayerEntity) entity).getHungerManager().addExhaustion(0.01F * (float) (amplifier + 1));
                 ((StatAccessor) player).getThirstManager().add(-0.00015 * (amplifier + 1));
-                ((StatAccessor) player).getSanityManager().add(-0.00001 * (amplifier + 1));
             }
         }
     };

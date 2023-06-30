@@ -122,7 +122,7 @@ public abstract class ServerPlayerEntityMixin extends PlayerEntity {
             double vegetable = ((StatAccessor) this).getNutritionManager().getVegetable();
             if (vegetable < 0.00001) EntityHelper.addHcsDebuff(this, HcsEffects.MALNUTRITION, 0);
             //Debuff for malnutrition
-            if (((StatAccessor) this).getWetnessManager().get() > 0.3)
+            if (((StatAccessor) this).getWetnessManager().get() >= 0.3)
                 EntityHelper.addHcsDebuff(this, HcsEffects.WET, 0);
         }
     }

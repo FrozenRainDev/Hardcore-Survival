@@ -13,6 +13,7 @@ public class StatusManager {
     private int oxygenLackLevel = 0;
     private int oxygenGenLevelAccumulation = 0;
     private int oxygenGenLevel = 0;
+    private boolean shouldLockDestroying = false; //Client only
 
     public void reset(int lvlReached) {
         exhaustion = 0.0F;
@@ -117,4 +118,11 @@ public class StatusManager {
         return oxygenLackLevel - oxygenGenLevel;
     }
 
+    public boolean lockDestroying() {
+        return shouldLockDestroying;
+    }
+
+    public void setLockDestroying(boolean val) {
+        shouldLockDestroying = val;
+    }
 }
