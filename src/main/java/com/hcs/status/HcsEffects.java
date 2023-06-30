@@ -154,4 +154,16 @@ public class HcsEffects {
     public static final StatusEffect WET = new StatusEffect(StatusEffectCategory.HARMFUL, 0x99a9d7) {
     }.addAttributeModifier(EntityAttributes.GENERIC_MOVEMENT_SPEED, "7107DE5E-7CE8-4030-940E-514C1F160890", -0.05f, EntityAttributeModifier.Operation.MULTIPLY_TOTAL);
 
+    public static final StatusEffect CONSTANT_TEMPERATURE = new StatusEffect(StatusEffectCategory.BENEFICIAL, 0x00aa00) {
+        @Override
+        public boolean canApplyUpdateEffect(int duration, int amplifier) {
+            return true;
+        }
+
+        @Override
+        public void applyUpdateEffect(LivingEntity entity, int amplifier) {
+            if (entity instanceof ServerPlayerEntity player && !player.isSpectator())
+                ((StatAccessor) player).getTemperatureManager().reset();
+        }
+    };
 }

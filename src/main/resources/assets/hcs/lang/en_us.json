@@ -32,6 +32,7 @@
   "effect.hcs.malnutrition.description": "Slower regen and faster hungering",
   "effect.hcs.wet": "Wet",
   "effect.hcs.wet.description": "Feeling colder",
+  "effect.hcs.constant_temperature": "Constant Temperature",
 
   "hcs.food_info.fresh": "Fresh",
   "hcs.food_info.stale": "Stale",
@@ -52,24 +53,40 @@
   "item.minecraft.potion.effect.hcs_ironskin": "Potion of Ironskin",
   "item.minecraft.potion.effect.hcs_long_ironskin": "Potion of Ironskin",
   "item.minecraft.potion.effect.hcs_strong_ironskin": "Potion of Ironskin",
+
   "item.minecraft.splash_potion.effect.hcs_ironskin": "Splash Potion of Ironskin",
   "item.minecraft.splash_potion.effect.hcs_long_ironskin": "Splash Potion of Ironskin",
   "item.minecraft.splash_potion.effect.hcs_strong_ironskin": "Splash Potion of Ironskin",
+
   "item.minecraft.lingering_potion.effect.hcs_ironskin": "Lingering Potion of Ironskin",
   "item.minecraft.lingering_potion.effect.hcs_long_ironskin": "Lingering Potion of Ironskin",
   "item.minecraft.lingering_potion.effect.hcs_strong_ironskin": "Lingering Potion of Ironskin",
+
+  "item.minecraft.potion.effect.hcs_constant_temperature": "Potion of Constant Temperature",
+  "item.minecraft.potion.effect.hcs_long_constant_temperature": "Potion of Constant Temperature",
+
+  "item.minecraft.splash_potion.effect.hcs_constant_temperature": "Splash Potion of Constant Temperature",
+  "item.minecraft.splash_potion.effect.hcs_long_constant_temperature": "Splash Potion of Constant Temperature",
+
+  "item.minecraft.lingering_potion.effect.hcs_constant_temperature": "Lingering Potion of Constant Temperature",
+  "item.minecraft.lingering_potion.effect.hcs_long_constant_temperature": "Lingering Potion of Constant Temperature",
+
   "item.minecraft.potion.effect.hcs_return": "Potion of Return",
   "item.minecraft.splash_potion.effect.hcs_return": "Splash Potion of Return",
   "item.minecraft.lingering_potion.effect.hcs_return": "Lingering Potion of Return",
+
   "item.minecraft.potion.effect.hcs_mining": "Potion of Mining",
   "item.minecraft.potion.effect.hcs_long_mining": "Potion of Mining",
   "item.minecraft.potion.effect.hcs_strong_mining": "Potion of Mining",
+
   "item.minecraft.splash_potion.effect.hcs_mining": "Splash Potion of Mining",
   "item.minecraft.splash_potion.effect.hcs_long_mining": "Splash Potion of Mining",
   "item.minecraft.splash_potion.effect.hcs_strong_mining": "Splash Potion of Mining",
+
   "item.minecraft.lingering_potion.effect.hcs_mining": "Lingering Potion of Mining",
   "item.minecraft.lingering_potion.effect.hcs_long_mining": "Lingering Potion of Mining",
   "item.minecraft.lingering_potion.effect.hcs_strong_mining": "Lingering Potion of Mining",
+
   "item.minecraft.tipped_arrow.effect.hcs_ironskin": "Arrow of Ironskin",
   "item.minecraft.tipped_arrow.effect.hcs_long_ironskin": "Arrow of Ironskin",
   "item.minecraft.tipped_arrow.effect.hcs_strong_ironskin": "Arrow of Ironskin",
@@ -77,6 +94,8 @@
   "item.minecraft.tipped_arrow.effect.hcs_mining": "Arrow of Mining",
   "item.minecraft.tipped_arrow.effect.hcs_long_mining": "Arrow of Mining",
   "item.minecraft.tipped_arrow.effect.hcs_strong_mining": "Arrow of Mining",
+  "item.minecraft.tipped_arrow.effect.hcs_constant_temperature": "Arrow of Constant Temperature",
+  "item.minecraft.tipped_arrow.effect.hcs_long_constant_temperature": "Arrow of Constant Temperature",
 
   "item.hcs.fiber_string": "Fiber String",
   "item.hcs.fiber_string.tooltip": "Used for making tools",

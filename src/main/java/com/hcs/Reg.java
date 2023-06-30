@@ -5,14 +5,14 @@ import com.hcs.block.IceboxBlock;
 import com.hcs.entity.DryingRackBlockEntity;
 import com.hcs.entity.IceboxBlockEntity;
 import com.hcs.entity.RockProjectileEntity;
+import com.hcs.event.*;
 import com.hcs.item.*;
 import com.hcs.item.tool.*;
-import com.hcs.event.*;
-import com.hcs.status.manager.TemperatureManager;
+import com.hcs.recipe.*;
 import com.hcs.status.HcsEffects;
 import com.hcs.status.accessor.StatAccessor;
+import com.hcs.status.manager.TemperatureManager;
 import com.hcs.status.network.ServerC2S;
-import com.hcs.recipe.*;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.itemgroup.v1.FabricItemGroup;
 import net.fabricmc.fabric.api.itemgroup.v1.ItemGroupEvents;
@@ -53,6 +53,8 @@ public class Reg implements ModInitializer {
     public static final Potion MINING_POTION = new Potion("hcs_mining", new StatusEffectInstance(StatusEffects.HASTE, 3600));
     public static final Potion LONG_MINING_POTION = new Potion("hcs_long_mining", new StatusEffectInstance(StatusEffects.HASTE, 9600));
     public static final Potion STRONG_MINING_POTION = new Potion("hcs_strong_mining", new StatusEffectInstance(StatusEffects.HASTE, 1800, 1));
+    public static final Potion CONSTANT_TEMPERATURE_POTION = new Potion("hcs_constant_temperature", new StatusEffectInstance(HcsEffects.CONSTANT_TEMPERATURE, 3600));
+    public static final Potion LONG_CONSTANT_TEMPERATURE_POTION = new Potion("hcs_long_constant_temperature", new StatusEffectInstance(HcsEffects.CONSTANT_TEMPERATURE, 9600));
     public static final Item FIBER_STRING = new ItemWithTip(new Item.Settings(), "item.hcs.fiber_string.tooltip");
     public static final Item GRASS_FIBER = new Item(new Item.Settings());
     public static final Item ROASTED_SEEDS = new Item(new Item.Settings().food(new FoodComponent.Builder().hunger(0).snack().saturationModifier(0.5f).build()));
@@ -240,6 +242,7 @@ public class Reg implements ModInitializer {
             content.add(PotionUtil.setPotion(new ItemStack(Items.POTION), IRONSKIN_POTION));
             content.add(PotionUtil.setPotion(new ItemStack(Items.POTION), RETURN_POTION));
             content.add(PotionUtil.setPotion(new ItemStack(Items.POTION), MINING_POTION));
+            content.add(PotionUtil.setPotion(new ItemStack(Items.POTION), CONSTANT_TEMPERATURE_POTION));
             content.add(new ItemStack(ICEBOX_ITEM));
             content.add(new ItemStack(DRYING_RACK_ITEM));
         });
@@ -324,6 +327,9 @@ public class Reg implements ModInitializer {
         Registry.register(Registries.POTION, "hcs_mining", MINING_POTION);
         Registry.register(Registries.POTION, "hcs_long_mining", LONG_MINING_POTION);
         Registry.register(Registries.POTION, "hcs_strong_mining", STRONG_MINING_POTION);
+        Registry.register(Registries.POTION, "hcs_constant_temperature", CONSTANT_TEMPERATURE_POTION);
+        Registry.register(Registries.POTION, "hcs_long_constant_temperature", LONG_CONSTANT_TEMPERATURE_POTION);
+
 
         Registry.register(Registries.ENTITY_TYPE, new Identifier("hcs", "rock_projectile_entity"), ROCK_PROJECTILE_ENTITY);
         Registry.register(Registries.BLOCK_ENTITY_TYPE, new Identifier("hcs", "icebox_block_entity"), ICEBOX_BLOCK_ENTITY);
@@ -343,6 +349,8 @@ public class Reg implements ModInitializer {
         Registry.register(Registries.STATUS_EFFECT, new Identifier("hcs", "insanity"), HcsEffects.INSANITY);
         Registry.register(Registries.STATUS_EFFECT, new Identifier("hcs", "malnutrition"), HcsEffects.MALNUTRITION);
         Registry.register(Registries.STATUS_EFFECT, new Identifier("hcs", "wet"), HcsEffects.WET);
+        Registry.register(Registries.STATUS_EFFECT, new Identifier("hcs", "constant_temperature"), HcsEffects.CONSTANT_TEMPERATURE);
+
 
         RecipeSerializer.register("hcs_extract_water_from_bamboo", EXTRACT_WATER_FROM_BAMBOO_RECIPE);
         RecipeSerializer.register("hcs_extract_water_from_snow", EXTRACT_WATER_FROM_SNOW_RECIPE);

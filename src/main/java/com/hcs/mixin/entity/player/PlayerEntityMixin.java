@@ -23,10 +23,7 @@ import net.minecraft.entity.mob.SpiderEntity;
 import net.minecraft.entity.player.HungerManager;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.item.FoodComponent;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
+import net.minecraft.item.*;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtElement;
 import net.minecraft.registry.tag.BlockTags;
@@ -226,7 +223,7 @@ public abstract class PlayerEntityMixin extends LivingEntity implements StatAcce
         if (this.hasStatusEffect(HcsEffects.DEHYDRATED) || this.hasStatusEffect(HcsEffects.STARVING)) f /= 2;
         if (DigRestrictHelper.isBreakableFunctionalBlock(block))
             f *= (block instanceof AbstractFurnaceBlock || block == Blocks.ENDER_CHEST) ? 16 : 4;
-        if (!canBreak(mainHand, state)) {
+        if (!canBreak(mainHand, state) || !(mainHand instanceof ShovelItem)) {
             if (block.getSoundGroup(state) == BlockSoundGroup.GRAVEL || block == Blocks.GRASS_BLOCK || block == Blocks.MYCELIUM || block == Blocks.DIRT_PATH || block == Blocks.MUD) {
                 //Soil,Clay
                 f /= 30.0F;
