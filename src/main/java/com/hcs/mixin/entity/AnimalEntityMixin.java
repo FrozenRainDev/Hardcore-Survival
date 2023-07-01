@@ -23,23 +23,23 @@ public abstract class AnimalEntityMixin extends PassiveEntity {
 
     @Inject(method = "damage", at = @At("HEAD"))
     public void damage(DamageSource source, float amount, CallbackInfoReturnable<Integer> cir) {
-        Object obj = this;
-        if (obj instanceof ChickenEntity && source.toString().contains("EntityDamageSource"))
+        Object ent = this;
+        if (ent instanceof ChickenEntity && source.toString().contains("EntityDamageSource"))
             EntityHelper.dropItem(this, Items.FEATHER, 1);
         //On death
         if ((this.getHealth() - amount) <= 0.0F && this.getHealth() > 0.0F) {
-            if (obj instanceof ChickenEntity || obj instanceof CowEntity || obj instanceof PigEntity || obj instanceof SheepEntity) {
-                if (!(obj instanceof ChickenEntity)) {
+            if (ent instanceof ChickenEntity || ent instanceof CowEntity || ent instanceof PigEntity || ent instanceof SheepEntity) {
+                if (!(ent instanceof ChickenEntity)) {
                     //EntityHelper.dropItem(this, Items.BONE, 2);
                     EntityHelper.dropItem(this, Reg.ANIMAL_VISCERA, 1);
-                    if (obj instanceof SheepEntity && Math.random() < 0.6)
+                    if (ent instanceof SheepEntity && Math.random() < 0.6)
                         EntityHelper.dropItem(this, Items.LEATHER, 1);
                 }
                 if (this.isBaby())
                     EntityHelper.dropItem(this, this.getFireTicks() > 0 ? Reg.COOKED_MEAT : Reg.RAW_MEAT, 1);
-            } else if (obj instanceof AxolotlEntity || obj instanceof CatEntity || obj instanceof FrogEntity || obj instanceof ParrotEntity || obj instanceof RabbitEntity)
+            } else if (ent instanceof AxolotlEntity || ent instanceof CatEntity || ent instanceof FrogEntity || ent instanceof ParrotEntity)
                 EntityHelper.dropItem(this, this.getFireTicks() > 0 ? Reg.COOKED_MEAT : Reg.RAW_MEAT, 1);
-            else if (!(obj instanceof BeeEntity || obj instanceof TadpoleEntity)) {
+            else if (!(ent instanceof BeeEntity || ent instanceof TadpoleEntity)) {
                 EntityHelper.dropItem(this, this.getFireTicks() > 0 ? Reg.COOKED_MEAT : Reg.RAW_MEAT, (int) (Math.random() * 3) + 1);
                 //EntityHelper.dropItem(this, Items.BONE, 2);
                 EntityHelper.dropItem(this, Reg.ANIMAL_VISCERA, 1);

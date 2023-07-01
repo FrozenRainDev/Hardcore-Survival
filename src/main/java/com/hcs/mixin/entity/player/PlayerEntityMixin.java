@@ -202,7 +202,8 @@ public abstract class PlayerEntityMixin extends LivingEntity implements StatAcce
             speed /= 2.0F;
         if (DigRestrictHelper.isBreakableFunctionalBlock(block))
             speed *= (block instanceof AbstractFurnaceBlock || block == Blocks.ENDER_CHEST) ? 16.0F : 4.0F;
-        if (state.isOf(Blocks.SUGAR_CANE)) speed /= 9.0F;
+        if (block == Blocks.SUGAR_CANE) speed /= 9.0F;
+        else if (block instanceof LeavesBlock) speed /= 25.0F;
         if (block instanceof TorchBlock || state.isIn(BlockTags.FLOWERS)) speed = 999999.0F;
         cir.setReturnValue(speed);
     }
@@ -256,11 +257,11 @@ public abstract class PlayerEntityMixin extends LivingEntity implements StatAcce
                     else if (item == Items.COOKIE || item == Items.APPLE || item == Reg.ORANGE)
                         this.sanityManager.add(0.03);
                     else if (name.contains("cooked_") || name.contains("roasted_") || name.contains("baked_") || item == Items.BREAD || item == Items.SUGAR)
-                        this.sanityManager.add(0.01);
+                        this.sanityManager.add(0.02);
                 }
                 if (item == Items.WHEAT || item == Items.SUGAR || item == Items.SUGAR_CANE || item == Reg.POTHERB || item == Reg.ROASTED_SEEDS)
                     this.hungerManager.setFoodLevel(Math.min(this.hungerManager.getFoodLevel() + 1, 20));
-                else if ((name.contains("seeds") && food.getHunger() == 0) || item == Reg.COOKED_SWEET_BERRIES || item == Reg.ROT || item == Items.KELP)
+                else if ((name.contains("seeds") && food.getHunger() == 0) || item == Reg.COOKED_SWEET_BERRIES || item == Reg.ROT || item == Items.KELP || item == Reg.PETALS_SALAD)
                     EntityHelper.addDecimalFoodLevel(player, 0.4F, false);
                 if (!name.contains("dried") && !name.contains("jerky") && !name.contains("seeds") && item != Items.COOKIE && item != Items.BREAD && item != Items.SUGAR) {
                     if (name.contains("stew") || name.contains("soup"))
@@ -281,7 +282,7 @@ public abstract class PlayerEntityMixin extends LivingEntity implements StatAcce
     @Inject(method = "addExhaustion", at = @At("TAIL"))
     public void addExhaustion(float exhaustion, CallbackInfo ci) {
         if (!this.world.isClient) {
-            this.thirstManager.add(-exhaustion / 140);//70 originally
+            this.thirstManager.add(-exhaustion / 55.0); //70 originally
             if (this.hasStatusEffect(HcsEffects.MALNUTRITION)) this.hungerManager.addExhaustion(exhaustion * 0.5F);
         }
     }
@@ -335,7 +336,7 @@ public abstract class PlayerEntityMixin extends LivingEntity implements StatAcce
         this.statusManager.setRecentHasHotWaterBagTicks(Math.max(0, this.statusManager.getRecentHasHotWaterBagTicks() - 1));
         this.statusManager.setRecentLittleOvereatenTicks(this.hungerManager.getFoodLevel() < 20 ? 0 : Math.max(0, this.statusManager.getRecentLittleOvereatenTicks() - 1));
         if (this.sanityManager.getMonsterWitnessingTicks() > 0) {
-            this.sanityManager.add(-0.00003);
+            this.sanityManager.add(-0.00004);
             this.sanityManager.setMonsterWitnessingTicks(this.sanityManager.getMonsterWitnessingTicks() - 1);
         }
         //Set max health according to max exp level reached

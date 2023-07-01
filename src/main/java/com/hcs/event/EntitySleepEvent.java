@@ -15,7 +15,7 @@ public class EntitySleepEvent {
                     player.heal(20.0F);
                     ((StatAccessor) player).getStaminaManager().reset();
                     ((StatAccessor) player).getThirstManager().addDirectly(-0.25);
-                    ((StatAccessor) player).getSanityManager().reset();
+                    ((StatAccessor) player).getSanityManager().reset(false);
                     HungerManager hungerManager = player.getHungerManager();
                     hungerManager.setExhaustion(0.0F);
                     hungerManager.setFoodLevel(Math.max(0, hungerManager.getFoodLevel() - 4));

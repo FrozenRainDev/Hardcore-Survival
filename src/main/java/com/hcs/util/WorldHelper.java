@@ -20,9 +20,9 @@ public class WorldHelper {
         for (BlockPos bp : new BlockPos[]{pos, pos.up(), pos.down(), pos.east(), pos.west(), pos.south(), pos.north()}) {
             //Check the pos and its immediate pos
             BlockState state = world.getBlockState(bp);
-            if (state.isOf(Blocks.DIRT) || state.isOf(Blocks.DIRT_PATH)) {
+            if (state.isOf(Blocks.DIRT) || state.isOf(Blocks.DIRT_PATH) || state.isOf(Blocks.CLAY)) {
                 if (FallingBlock.canFallThrough(world.getBlockState(bp.down())) || bp.getY() < world.getBottomY()) {
-                    if (state.isOf(Blocks.DIRT) || state.isOf(Blocks.DIRT_PATH)) {
+                    if (state.isOf(Blocks.DIRT) || state.isOf(Blocks.DIRT_PATH) || state.isOf(Blocks.CLAY)) {
                         FallingBlockEntity.spawnFromBlock(world, bp, state);
                     }
                     //Recurse for further neighbor update

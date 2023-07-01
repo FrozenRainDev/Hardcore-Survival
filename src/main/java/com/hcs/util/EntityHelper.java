@@ -1,9 +1,9 @@
 package com.hcs.util;
 
 import com.hcs.Reg;
-import com.hcs.status.manager.StatusManager;
 import com.hcs.status.HcsEffects;
 import com.hcs.status.accessor.StatAccessor;
+import com.hcs.status.manager.StatusManager;
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.block.*;
 import net.minecraft.client.render.*;
@@ -45,7 +45,7 @@ import java.util.Optional;
 
 public class EntityHelper {
     public static final double[][] FIND_NEAREST = {{0, -1, 0}, {0, 1, 0}, {0, 2, 0}, {-1, 0, 0}, {-1, 1, 0}, {1, 0, 0}, {1, 1, 0}, {0, 0, 1}, {0, 1, 1}, {0, 0, -1}, {0, 1, -1}};
-    public static final double ZOMBIE_SENSING_RANGE = 64.0D;
+    public static final double ZOMBIE_SENSING_RANGE = 32.0;
     @Deprecated
     public static PlayerEntity thePlayer;
     @Deprecated
@@ -210,15 +210,15 @@ public class EntityHelper {
         Item item = mainHandStack.getItem();
         String name = item.getTranslationKey();
         if (name.contains("knife") || name.contains("hatchet") || name.contains("_cone") || (item instanceof ShearsItem) || (item instanceof FlintAndSteelItem))
-            dist += 0.5F;
-        else if ((name.contains("bone") && !mainHandStack.isOf(Items.BONE_MEAL)) || name.contains("rod") || item == Items.WOODEN_SWORD || item == Items.STICK)
             dist += 0.75F;
-        else if (item instanceof RangedWeaponItem || ((item instanceof BlockItem && (!RotHelper.canRot(item) || (!(name.contains("seed") && (name.contains("pumpkin") || name.contains("melon"))))))))
+        else if ((name.contains("bone") && !mainHandStack.isOf(Items.BONE_MEAL)) || name.contains("rod") || item == Items.STICK)
             dist += 1.0F;
-        else if (name.contains("spear") || (item instanceof TridentItem)) dist += 1.75F;
-        else if ((item instanceof ShovelItem) || (item instanceof PickaxeItem) || (item instanceof AxeItem) || (item instanceof SwordItem) || (item instanceof HoeItem))
+        else if (item instanceof RangedWeaponItem || item == Items.WOODEN_SWORD || ((item instanceof BlockItem && (!RotHelper.canRot(item) || (!(name.contains("seed") && (name.contains("pumpkin") || name.contains("melon"))))))))
             dist += 1.5F;
-        else if (mainHandStack.isEnchantable() && !(item instanceof ArmorItem)) dist += 1.0F;
+        else if (name.contains("spear") || (item instanceof TridentItem)) dist += 2.0F;
+        else if ((item instanceof ShovelItem) || (item instanceof PickaxeItem) || (item instanceof AxeItem) || (item instanceof SwordItem) || (item instanceof HoeItem))
+            dist += 2.0F;
+        else if (mainHandStack.isEnchantable() && !(item instanceof ArmorItem)) dist += 1.5F;
         return dist;
     }
 

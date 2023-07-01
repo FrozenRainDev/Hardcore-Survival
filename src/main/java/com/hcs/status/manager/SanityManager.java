@@ -28,9 +28,14 @@ public class SanityManager {
         set(sanity + val);
     }
 
-    public void reset() {
-        add(1.0);
-        lastSanity = 1.0;
+    public void reset(boolean shouldHalve) {
+        if (shouldHalve) {
+            sanity = 0.5;
+            lastSanity = 0.5;
+        } else {
+            add(1.0);
+            lastSanity = 1.0;
+        }
         updateDifference();
     }
 

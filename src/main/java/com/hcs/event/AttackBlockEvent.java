@@ -25,7 +25,6 @@ import static com.hcs.util.EntityHelper.msgById;
 public class AttackBlockEvent {
     public static void init() {
         AttackBlockCallback.EVENT.register((player, world, hand, pos, direction) -> {
-            boolean isSuccessful = Math.random() < (0.25 + player.experienceLevel / 40.0);
             BlockState state = world.getBlockState(pos);
             Block block = state.getBlock();
             BlockEntity blockEntity = world.getBlockEntity(pos);
@@ -49,13 +48,13 @@ public class AttackBlockEvent {
                         // Add sound and particles
                         world.syncWorldEvent(WorldEvents.BLOCK_BROKEN, pos, Block.getRawIdFromState(state));
                         mainHandStack.decrement(1);
-                        if (isSuccessful) {
+                        if (Math.random() < (0.5 + player.experienceLevel / 40.0)) {
                             EntityHelper.dropItem(player, x, y, z, Reg.SHARP_ROCK, 1);
                             EntityHelper.msgById(player, "hcs.tip.chip_succeed", true);
                         } else EntityHelper.msgById(player, "hcs.tip.chip_failed", true);
                     } else if (mainHand == Items.FLINT) {
                         mainHandStack.decrement(1);
-                        if (isSuccessful) {
+                        if (Math.random() < (0.25 + player.experienceLevel / 40.0)) {
                             EntityHelper.dropItem(player, x, y, z, Reg.SHARP_FLINT, 1);
                             EntityHelper.msgById(player, "hcs.tip.chip_succeed", true);
                         } else EntityHelper.msgById(player, "hcs.tip.chip_failed", true);

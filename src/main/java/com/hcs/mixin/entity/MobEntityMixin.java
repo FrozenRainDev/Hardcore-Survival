@@ -39,7 +39,7 @@ public abstract class MobEntityMixin extends LivingEntity {
     @SuppressWarnings("all")
     @Inject(method = "tick", at = @At("HEAD"))
     public void tick(CallbackInfo ci) {
-        if (!this.world.isClient && (Object) this instanceof Monster && this.getTarget() instanceof PlayerEntity player && this.distanceTo(player) < 5 && player.canSee(this))
+        if (!this.world.isClient && (Object) this instanceof Monster && this.getTarget() instanceof PlayerEntity player && this.distanceTo(player) < 7 && player.canSee(this))
             ((StatAccessor) player).getSanityManager().setMonsterWitnessingTicks(10);
     }
 }
