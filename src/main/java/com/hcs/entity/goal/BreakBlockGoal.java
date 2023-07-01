@@ -9,7 +9,7 @@ import net.minecraft.entity.ai.NavigationConditions;
 import net.minecraft.entity.ai.goal.Goal;
 import net.minecraft.entity.mob.MobEntity;
 import net.minecraft.item.ShovelItem;
-import net.minecraft.sound.BlockSoundGroup;
+import net.minecraft.registry.tag.BlockTags;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.GameRules;
 import net.minecraft.world.WorldEvents;
@@ -78,6 +78,7 @@ public class BreakBlockGoal extends Goal {
         return true;
     }
 
+    @SuppressWarnings("all")
     @Override
     public boolean shouldContinue() {
 //        System.out.println("state=" + this.breakState + "\t!shouldStop=" + !this.shouldStop + "\tbreakProgress=" + this.breakProgress + "\tmax=" + this.getMaxProgress() + "\tcanBreak=" + canBreakBlock(this.breakState) + "\twithinDistance=" + this.breakPos.isWithinDistance(this.mob.getPos(), 5) + "\tTimeSinceLastAttack=" + this.mob.getDamageTracker().getTimeSinceLastAttack() + "\tRecently attacked=" + this.mob.getDamageTracker().wasRecentlyAttacked());
@@ -89,7 +90,7 @@ public class BreakBlockGoal extends Goal {
     }
 
     public boolean canBreakBlock(@NotNull BlockState state) {
-        return (!state.isAir() && (DoorBlock.isWoodenDoor(state) || (DigRestrictHelper.canBreak(this.mob.getMainHandStack().getItem(), state)) && !state.getBlock().getTranslationKey().contains("brick")) || state.getBlock().getSoundGroup(state) == BlockSoundGroup.GRAVEL || state.isOf(Blocks.GRASS_BLOCK) || state.isOf(Blocks.MYCELIUM) || state.isOf(Blocks.DIRT_PATH) || state.isOf(Blocks.MUD) || state.isOf(Blocks.DIRT));
+        return (!state.isAir() && (DoorBlock.isWoodenDoor(state) || (DigRestrictHelper.canBreak(this.mob.getMainHandStack().getItem(), state)) /*&& !state.getBlock().getTranslationKey().contains("brick")*/) || state.isIn(BlockTags.SHOVEL_MINEABLE));
     }
 
     @Override

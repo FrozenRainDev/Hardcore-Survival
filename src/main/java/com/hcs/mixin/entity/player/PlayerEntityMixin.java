@@ -9,7 +9,6 @@ import com.hcs.util.DigRestrictHelper;
 import com.hcs.util.EntityHelper;
 import com.hcs.util.RotHelper;
 import net.minecraft.block.*;
-import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
@@ -17,20 +16,20 @@ import net.minecraft.entity.attribute.EntityAttributeInstance;
 import net.minecraft.entity.attribute.EntityAttributes;
 import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.effect.StatusEffectInstance;
-import net.minecraft.entity.effect.StatusEffectUtil;
 import net.minecraft.entity.effect.StatusEffects;
 import net.minecraft.entity.mob.SpiderEntity;
 import net.minecraft.entity.player.HungerManager;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.item.*;
+import net.minecraft.item.FoodComponent;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
+import net.minecraft.item.Items;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtElement;
 import net.minecraft.registry.tag.BlockTags;
-import net.minecraft.registry.tag.FluidTags;
 import net.minecraft.registry.tag.ItemTags;
 import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.sound.BlockSoundGroup;
 import net.minecraft.stat.Stats;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
@@ -48,7 +47,6 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import java.util.Objects;
 
-import static com.hcs.status.network.ServerS2C.doubleToInt;
 import static com.hcs.util.DigRestrictHelper.canBreak;
 
 @Mixin(PlayerEntity.class)
@@ -185,57 +183,28 @@ public abstract class PlayerEntityMixin extends LivingEntity implements StatAcce
         }
     }
 
-    @Inject(method = "getBlockBreakingSpeed", at = @At("HEAD"), cancellable = true)
-    public void getBlockBreakingSpeed(@NotNull BlockState state, CallbackInfoReturnable<Float> cir) {
+    @Inject(method = "getBlockBreakingSpeed", at = @At("RETURN"), cancellable = true)
+    public void getBlockBreakingSpeed(@NotNull BlockState state, @NotNull CallbackInfoReturnable<Float> cir) {
         this.statusManager.setRecentMiningTicks(200);
-        Block block = state.getBlock();
-        float f = this.getInventory().getBlockBreakingSpeed(state);
-        int slowDown = 0;
-        ItemStack mainHandStack = this.getMainHandStack();
-        Item mainHand = mainHandStack.getItem();
-        if (mainHand.isEnchantable(new ItemStack(mainHand))) {
-            //is by tool? f > 1.0F originally
-            int i = EnchantmentHelper.getEfficiency(this);
-            ItemStack itemStack = this.getMainHandStack();
-            if (i > 0 && !itemStack.isEmpty()) {
-                f += (float) (i * i + 1);
-            }
-        } else ++slowDown;
-        if (StatusEffectUtil.hasHaste(this)) {
-            f *= 1.0F + (float) (StatusEffectUtil.getHasteAmplifier(this) + 1) * 0.2F;
-        } else ++slowDown;
-        if (slowDown == 2) f /= 5.0f;
-        else if (mainHand != Reg.FLINT_HATCHET) f /= 2.0f;
-        if (this.hasStatusEffect(StatusEffects.MINING_FATIGUE)) {
-            float g = switch (Objects.requireNonNull(this.getStatusEffect(StatusEffects.MINING_FATIGUE)).getAmplifier()) {
-                case 0 -> 0.3F;
-                case 1 -> 0.09F;
-                case 2 -> 0.0027F;
-                default -> 8.1E-4F;
-            };
-            f *= g;
-        }
-        if (this.hasStatusEffect(HcsEffects.EXHAUSTED))
-            f *= doubleToInt(this.staminaManager.get()) <= 10 ? 0.05F : 0.7F;
-        if (this.isSubmergedIn(FluidTags.WATER) && !EnchantmentHelper.hasAquaAffinity(this)) f /= 5.0F;
-        if (!this.onGround) f /= 5.0F;
-        if (state.isOf(Blocks.SUGAR_CANE)) f /= 9.0F;
-        if (this.hasStatusEffect(HcsEffects.DEHYDRATED) || this.hasStatusEffect(HcsEffects.STARVING)) f /= 2;
-        if (DigRestrictHelper.isBreakableFunctionalBlock(block))
-            f *= (block instanceof AbstractFurnaceBlock || block == Blocks.ENDER_CHEST) ? 16 : 4;
-        if (!canBreak(mainHand, state) || !(mainHand instanceof ShovelItem)) {
-            if (block.getSoundGroup(state) == BlockSoundGroup.GRAVEL || block == Blocks.GRASS_BLOCK || block == Blocks.MYCELIUM || block == Blocks.DIRT_PATH || block == Blocks.MUD) {
-                //Soil,Clay
-                f /= 30.0F;
-//                if((Object)this instanceof PlayerEntity)((PlayerEntity)(Object)this).damage(DamageSource.CACTUS,0.0001F);
-            } else if (block == Reg.ICEBOX || block == Reg.DRYING_RACK) f = 0.3F;
-            else f = -1.0F;
-        }
-        if ((block instanceof TorchBlock) || state.isIn(BlockTags.FLOWERS)) f = 999999.0F;
         this.staminaManager.add(-0.00015, this);
         this.staminaManager.pauseRestoring();
-        cir.setReturnValue(f);
-        cir.cancel();
+        float speed = cir.getReturnValue();
+        ItemStack mainHandStack = this.getMainHandStack();
+        Item mainHand = mainHandStack.getItem();
+        Block block = state.getBlock();
+        if (!canBreak(mainHand, state)) {
+            if (state.isIn(BlockTags.SHOVEL_MINEABLE))
+                speed /= 60.0F;//if((Object)this instanceof PlayerEntity)((PlayerEntity)(Object)this).damage(DamageSource.CACTUS,0.0001F);
+            else speed = -1.0F;
+        }
+        if (mainHand != Reg.FLINT_HATCHET && (state.isIn(BlockTags.AXE_MINEABLE))) speed /= 2.0F;
+        if (this.hasStatusEffect(HcsEffects.DEHYDRATED) || this.hasStatusEffect(HcsEffects.STARVING) || this.hasStatusEffect(HcsEffects.EXHAUSTED))
+            speed /= 2.0F;
+        if (DigRestrictHelper.isBreakableFunctionalBlock(block))
+            speed *= (block instanceof AbstractFurnaceBlock || block == Blocks.ENDER_CHEST) ? 16.0F : 4.0F;
+        if (state.isOf(Blocks.SUGAR_CANE)) speed /= 9.0F;
+        if (block instanceof TorchBlock || state.isIn(BlockTags.FLOWERS)) speed = 999999.0F;
+        cir.setReturnValue(speed);
     }
 
     @Inject(method = "damage", at = @At("HEAD"))

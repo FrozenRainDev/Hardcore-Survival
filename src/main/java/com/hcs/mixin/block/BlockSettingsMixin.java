@@ -17,7 +17,7 @@ public abstract class BlockSettingsMixin {
     @Inject(method = "breakInstantly", at = @At("RETURN"), cancellable = true)
     private void breakInstantly(@NotNull CallbackInfoReturnable<Settings> cir) {
         Settings sets = cir.getReturnValue();
-        sets.strength(0.06f);
+        sets.strength(0.12F);
         cir.setReturnValue(sets);
     }
 
