@@ -87,6 +87,7 @@ public class ClientS2C {
                         statusManager.setHasDecimalFoodLevel(intToBoolean(bufArr[8]));
                         statusManager.setOxygenLackLevel(bufArr[9]);
                         statusManager.setOxygenGenLevel(bufArr[10]);
+                        statusManager.setRecentSleepTicks(bufArr[11]);
                     }
                 }
             });

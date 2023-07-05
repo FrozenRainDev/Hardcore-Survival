@@ -15,6 +15,6 @@ public class CropBlockMixin {
     @Inject(method = "randomTick", at = @At("HEAD"), cancellable = true)
     private void randomTick(BlockState state, ServerWorld world, BlockPos pos, Random random, CallbackInfo ci) {
         //Slow down growing speed
-        if (Math.random() > 0.05) ci.cancel();
+        if (Math.random() > 0.2) ci.cancel();
     }
 }

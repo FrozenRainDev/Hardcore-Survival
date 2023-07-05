@@ -31,13 +31,13 @@ import java.util.List;
 
 public abstract class TemperatureHelper implements WorldView {
     public static final int[][] POS_IN_NEARBY_CHUNKS = {{-16, 0}, {16, 0}, {0, -16}, {0, 16}};
-    public static final int[][][] BALL_RAD3 = {{{-3, 0, 0}, {-2, -2, -1}}, {{-2, -2, 0}, {-2, -2, 1}}, {{-2, -1, -2}, {-2, -1, -1}}, {{-2, -1, 0}, {-2, -1, 1}}, {{-2, -1, 2}, {-2, 0, -2}}, {{-2, 0, -1}, {-2, 0, 0}}, {{-2, 0, 1}, {-2, 0, 2}}, {{-2, 1, -2}, {-2, 1, -1}}, {{-2, 1, 0}, {-2, 1, 1}}, {{-2, 1, 2}, {-2, 2, -1}}, {{-2, 2, 0}, {-2, 2, 1}}, {{-1, -2, -2}, {-1, -2, -1}}, {{-1, -2, 0}, {-1, -2, 1}}, {{-1, -2, 2}, {-1, -1, -2}}, {{-1, -1, -1}, {-1, -1, 0}}, {{-1, -1, 1}, {-1, -1, 2}}, {{-1, 0, -2}, {-1, 0, -1}}, {{-1, 0, 0}, {-1, 0, 1}}, {{-1, 0, 2}, {-1, 1, -2}}, {{-1, 1, -1}, {-1, 1, 0}}, {{-1, 1, 1}, {-1, 1, 2}}, {{-1, 2, -2}, {-1, 2, -1}}, {{-1, 2, 0}, {-1, 2, 1}}, {{-1, 2, 2}, {0, -3, 0}}, {{0, -2, -2}, {0, -2, -1}}, {{0, -2, 0}, {0, -2, 1}}, {{0, -2, 2}, {0, -1, -2}}, {{0, -1, -1}, {0, -1, 0}}, {{0, -1, 1}, {0, -1, 2}}, {{0, 0, -3}, {0, 0, -2}}, {{0, 0, -1}, {0, 0, 0}}, {{0, 0, 1}, {0, 0, 2}}, {{0, 0, 3}, {0, 1, -2}}, {{0, 1, -1}, {0, 1, 0}}, {{0, 1, 1}, {0, 1, 2}}, {{0, 2, -2}, {0, 2, -1}}, {{0, 2, 0}, {0, 2, 1}}, {{0, 2, 2}, {0, 3, 0}}, {{1, -2, -2}, {1, -2, -1}}, {{1, -2, 0}, {1, -2, 1}}, {{1, -2, 2}, {1, -1, -2}}, {{1, -1, -1}, {1, -1, 0}}, {{1, -1, 1}, {1, -1, 2}}, {{1, 0, -2}, {1, 0, -1}}, {{1, 0, 0}, {1, 0, 1}}, {{1, 0, 2}, {1, 1, -2}}, {{1, 1, -1}, {1, 1, 0}}, {{1, 1, 1}, {1, 1, 2}}, {{1, 2, -2}, {1, 2, -1}}, {{1, 2, 0}, {1, 2, 1}}, {{1, 2, 2}, {2, -2, -1}}, {{2, -2, 0}, {2, -2, 1}}, {{2, -1, -2}, {2, -1, -1}}, {{2, -1, 0}, {2, -1, 1}}, {{2, -1, 2}, {2, 0, -2}}, {{2, 0, -1}, {2, 0, 0}}, {{2, 0, 1}, {2, 0, 2}}, {{2, 1, -2}, {2, 1, -1}}, {{2, 1, 0}, {2, 1, 1}}, {{2, 1, 2}, {2, 2, -1}}, {{2, 2, 0}, {2, 2, 1}}, {{3, 0, 0}}};
+    public static final int[][][] BALL_RAD3 = {{{-3, 0, 0}, {-2, -2, -1}, {-2, -2, 0}, {-2, -2, 1}, {-2, -1, -2}, {-2, -1, -1}, {-2, -1, 0}, {-2, -1, 1}, {-2, -1, 2}, {-2, 0, -2}, {-2, 0, -1}, {-2, 0, 0}}, {{-2, 0, 1}, {-2, 0, 2}, {-2, 1, -2}, {-2, 1, -1}, {-2, 1, 0}, {-2, 1, 1}, {-2, 1, 2}, {-2, 2, -1}, {-2, 2, 0}, {-2, 2, 1}, {-1, -2, -2}, {-1, -2, -1}}, {{-1, -2, 0}, {-1, -2, 1}, {-1, -2, 2}, {-1, -1, -2}, {-1, -1, -1}, {-1, -1, 0}, {-1, -1, 1}, {-1, -1, 2}, {-1, 0, -2}, {-1, 0, -1}, {-1, 0, 0}, {-1, 0, 1}}, {{-1, 0, 2}, {-1, 1, -2}, {-1, 1, -1}, {-1, 1, 0}, {-1, 1, 1}, {-1, 1, 2}, {-1, 2, -2}, {-1, 2, -1}, {-1, 2, 0}, {-1, 2, 1}, {-1, 2, 2}, {0, -3, 0}}, {{0, -2, -2}, {0, -2, -1}, {0, -2, 0}, {0, -2, 1}, {0, -2, 2}, {0, -1, -2}, {0, -1, -1}, {0, -1, 0}, {0, -1, 1}, {0, -1, 2}, {0, 0, -3}, {0, 0, -2}}, {{0, 0, -1}, {0, 0, 0}, {0, 0, 1}, {0, 0, 2}, {0, 0, 3}, {0, 1, -2}, {0, 1, -1}, {0, 1, 0}, {0, 1, 1}, {0, 1, 2}, {0, 2, -2}, {0, 2, -1}}, {{0, 2, 0}, {0, 2, 1}, {0, 2, 2}, {0, 3, 0}, {1, -2, -2}, {1, -2, -1}, {1, -2, 0}, {1, -2, 1}, {1, -2, 2}, {1, -1, -2}, {1, -1, -1}, {1, -1, 0}}, {{1, -1, 1}, {1, -1, 2}, {1, 0, -2}, {1, 0, -1}, {1, 0, 0}, {1, 0, 1}, {1, 0, 2}, {1, 1, -2}, {1, 1, -1}, {1, 1, 0}, {1, 1, 1}, {1, 1, 2}}, {{1, 2, -2}, {1, 2, -1}, {1, 2, 0}, {1, 2, 1}, {1, 2, 2}, {2, -2, -1}, {2, -2, 0}, {2, -2, 1}, {2, -1, -2}, {2, -1, -1}, {2, -1, 0}, {2, -1, 1}}, {{2, -1, 2}, {2, 0, -2}, {2, 0, -1}, {2, 0, 0}, {2, 0, 1}, {2, 0, 2}, {2, 1, -2}, {2, 1, -1}, {2, 1, 0}, {2, 1, 1}, {2, 1, 2}, {2, 2, -1}}, {{2, 2, 0}, {2, 2, 1}, {3, 0, 0}}};
 
     /*
     To avoid unnecessary calculation, the coordinates have been given
     Original algorithm:
     // √(x^2+y^2+z^2) <=r (Based on 3D space distance formula)
-    public static String getBall(int r) {
+    public static @NotNull String getBall(int r) {
         int x, y, z, l = 0;
         x = y = z = -r;
         StringBuilder result = new StringBuilder("{");
@@ -45,11 +45,10 @@ public abstract class TemperatureHelper implements WorldView {
             for (; y <= r; ++y) {
                 for (; z <= r; ++z) {
                     if (Math.pow(x * x + y * y + z * z, 1.0 / 2.0) <= r) {
-                        ++l;
-                        if (l % (r - 1) != 0) result.append("{");
+                        if (l % amountPerTick == 0) result.append("{");
                         result.append("{").append(x).append(",").append(y).append(",").append(z).append("}");
-                        if (l % (r - 1) == 0) result.append("},");
-                        if (l % Math.floor(24.0 / (double) r) == 0) result.append("\n");
+                        if (l % amountPerTick == (amountPerTick - 1)) result.append("},");
+                        ++l;
                     }
                 }
                 z = -r;
@@ -114,12 +113,12 @@ public abstract class TemperatureHelper implements WorldView {
                 //Hotter in deep layer
                 if (y < 44) {
                     surfaceWeight = 0.0F;
-                    temp = Math.min(2.0F, 0.5F + Math.abs(44 - y) / 100.0F);
+                    temp = Math.min(2.0F, 0.4F + Math.abs(44 - y) / 90.0F);
                     dailyTempAmplitude = 0.0F;
                 } else if (y < 64) {
                     //The shallower the layer is, the closer it is to the surface temperature
                     surfaceWeight = (y - 44.0F) / 20.0F;
-                    temp = 0.5F * (1 - surfaceWeight) + temp * surfaceWeight;
+                    temp = 0.4F * (1 - surfaceWeight) + temp * surfaceWeight;
                     dailyTempAmplitude *= surfaceWeight;
                 }
             }
@@ -340,7 +339,7 @@ public abstract class TemperatureHelper implements WorldView {
         boolean isInForest = biomeName.contains("taiga") || biomeName.contains("forest");
         //Calculate windchill level according to time and isInForest
         long time = world.getLunarTime();
-        while (time >= 24000L) time -= 24000L;
+        while (time >= 24000) time -= 24000L;
         float basicWindchillLevel;
         if (time < 4000) basicWindchillLevel = -0.001F * time + 4.0F;
         else if (time < 10000) basicWindchillLevel = 0.0F;

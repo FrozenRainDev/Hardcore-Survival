@@ -53,13 +53,18 @@ public class ServerS2C {
         PacketByteBuf buf4 = new PacketByteBuf(Unpooled.buffer());
         StatusManager statusManager = ((StatAccessor) player).getStatusManager();
         statusManager.setExhaustion(player.getHungerManager().getExhaustion());
-        buf4.writeIntArray(new int[]{player.getId(), floatToInt(statusManager.getExhaustion()), statusManager.getRecentAttackTicks(), statusManager.getRecentMiningTicks(), statusManager.getRecentHasColdWaterBagTicks(), statusManager.getRecentHasHotWaterBagTicks(), statusManager.getMaxExpLevelReached(), statusManager.getRecentLittleOvereatenTicks(), booleanToInt(statusManager.hasDecimalFoodLevel()), statusManager.getOxygenLackLevel(), statusManager.getOxygenGenLevel()});
+        buf4.writeIntArray(new int[]{player.getId(), floatToInt(statusManager.getExhaustion()), statusManager.getRecentAttackTicks(), statusManager.getRecentMiningTicks(), statusManager.getRecentHasColdWaterBagTicks(), statusManager.getRecentHasHotWaterBagTicks(), statusManager.getMaxExpLevelReached(), statusManager.getRecentLittleOvereatenTicks(), booleanToInt(statusManager.hasDecimalFoodLevel()), statusManager.getOxygenLackLevel(), statusManager.getOxygenGenLevel(), statusManager.getRecentSleepTicks()});
         player.networkHandler.sendPacket(new CustomPayloadS2CPacket(STATUS_ID, buf4));
 
         PacketByteBuf buf5 = new PacketByteBuf(Unpooled.buffer());
         SanityManager sanityManager = ((StatAccessor) player).getSanityManager();
         buf5.writeIntArray(new int[]{player.getId(), doubleToInt(sanityManager.get()), doubleToInt(sanityManager.getDifference()), sanityManager.getMonsterWitnessingTicks()});
         player.networkHandler.sendPacket(new CustomPayloadS2CPacket(SANITY_ID, buf5));
+
+        PacketByteBuf buf6 = new PacketByteBuf(Unpooled.buffer());
+        NutritionManager nutritionManager = ((StatAccessor) player).getNutritionManager();
+        buf6.writeIntArray(new int[]{player.getId(), doubleToInt(nutritionManager.getVegetable())});
+        player.networkHandler.sendPacket(new CustomPayloadS2CPacket(NUTRITION_ID, buf6));
 
         PacketByteBuf buf7 = new PacketByteBuf(Unpooled.buffer());
         WetnessManager wetnessManager = ((StatAccessor) player).getWetnessManager();

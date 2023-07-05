@@ -2,7 +2,7 @@ package com.hcs.status.manager;
 
 public class ThirstManager {
     private double thirst = 1.0;
-    private float saturation = 0.03F;
+    private float saturation = 0.05F;
     private float thirstRateAffectedByTemp = 1.0F;
 
     public static final String THIRST_NBT = "hcs_thirst";
@@ -36,8 +36,8 @@ public class ThirstManager {
                 //Slower thirst rate when thirsty
                 float rate = 1.0F;
                 if (thirst < 0.1) rate = 0.25F;
-                else if (thirst < 0.2) rate = 0.6F;
-                else if (thirst < 0.3) rate = 0.8F;
+                else if (thirst < 0.2) rate = 0.4F;
+                else if (thirst < 0.3) rate = 0.6F;
                 addDirectly(val * rate * getThirstRateAffectedByTemp());
             } else saturation += val;
         } else {

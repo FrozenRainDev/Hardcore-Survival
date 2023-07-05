@@ -222,6 +222,10 @@ public class EntityHelper {
         return dist;
     }
 
+    public static void addHcsDebuff(Object playerObj, StatusEffect effect) {
+        addHcsDebuff(playerObj, effect, 0);
+    }
+
     //Also see at StatusEffectUtilMixin, AbstractInventoryScreenMixin
     public static void addHcsDebuff(Object playerObj, StatusEffect effect, int amplifier) {
         if (playerObj instanceof ServerPlayerEntity player) {
@@ -238,7 +242,6 @@ public class EntityHelper {
     public static void mixinToolsPostMine(ItemStack stack, BlockState state, LivingEntity miner, CallbackInfoReturnable<Boolean> cir) {
         if (stack == null || state == null || miner == null || cir == null) return;
         Block block = state.getBlock();
-        System.out.println(stack.getItem());
         if (state.isIn(BlockTags.FLOWERS) || block instanceof TorchBlock || (stack.getItem() instanceof SwordItem swordItem && swordItem.getMaterial() == ToolMaterials.WOOD && (block instanceof FernBlock || block instanceof TallPlantBlock)))
             cir.setReturnValue(true);
     }

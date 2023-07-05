@@ -33,6 +33,8 @@
   "effect.hcs.wet": "打湿",
   "effect.hcs.wet.description": "感觉更冷",
   "effect.hcs.constant_temperature": "恒温",
+  "effect.hcs.soul_impaired": "灵魂受损",
+  "effect.hcs.soul_impaired.description": "减少最大生命值，恢复需九死还魂草或金苹果",
 
   "hcs.food_info.fresh": "新鲜",
   "hcs.food_info.stale": "不新鲜",

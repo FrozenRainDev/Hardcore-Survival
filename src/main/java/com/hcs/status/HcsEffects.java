@@ -36,7 +36,7 @@ public class HcsEffects {
         @Override
         public void applyUpdateEffect(LivingEntity entity, int amplifier) {
             if (entity instanceof ServerPlayerEntity && !entity.isSpectator())
-                ((StatAccessor) entity).getThirstManager().add(-0.00045 * (float) (amplifier + 1));
+                ((StatAccessor) entity).getThirstManager().add(-0.00045 * (amplifier + 1));
         }
     };
 
@@ -49,7 +49,7 @@ public class HcsEffects {
         @Override
         public void applyUpdateEffect(LivingEntity entity, int amplifier) {
             if (entity instanceof ServerPlayerEntity player && !entity.isSpectator()) {
-                ((ServerPlayerEntity) entity).getHungerManager().addExhaustion(0.01F * (float) (amplifier + 1));
+                ((ServerPlayerEntity) entity).getHungerManager().addExhaustion(0.01F * (amplifier + 1));
                 ((StatAccessor) player).getThirstManager().add(-0.00015 * (amplifier + 1));
             }
         }
@@ -65,7 +65,7 @@ public class HcsEffects {
         public void applyUpdateEffect(LivingEntity entity, int amplifier) {
             if (entity instanceof ServerPlayerEntity player && !entity.isInvisible()) {
                 entity.setSprinting(false);
-                ((StatAccessor) player).getSanityManager().add(-0.00001 * (float) (amplifier + 1));
+                ((StatAccessor) player).getSanityManager().add(-0.00001 * (amplifier + 1));
             }
         }
     }.addAttributeModifier(EntityAttributes.GENERIC_ATTACK_DAMAGE, "22653B89-116E-49DC-9B6B-9971489B5BE5", 0.0, EntityAttributeModifier.Operation.ADDITION)
@@ -88,6 +88,15 @@ public class HcsEffects {
             .addAttributeModifier(EntityAttributes.GENERIC_ATTACK_SPEED, "55FCED67-E92A-486E-9800-B47F202C4386", -0.1f, EntityAttributeModifier.Operation.MULTIPLY_TOTAL);
 
     public static final StatusEffect EXHAUSTED = new StatusEffect(StatusEffectCategory.HARMFUL, 0xe3e3e3) {
+        @Override
+        public boolean canApplyUpdateEffect(int duration, int amplifier) {
+            return true;
+        }
+
+        @Override
+        public void applyUpdateEffect(LivingEntity entity, int amplifier) {
+            if (entity instanceof ServerPlayerEntity && amplifier > 0) entity.setSprinting(false);
+        }
     }.addAttributeModifier(EntityAttributes.GENERIC_ATTACK_DAMAGE, "22653B89-116E-49DC-9B6B-9971489B5BE5", -0.45F, EntityAttributeModifier.Operation.MULTIPLY_TOTAL)
             .addAttributeModifier(EntityAttributes.GENERIC_MOVEMENT_SPEED, "7107DE5E-7CE8-4030-940E-514C1F160890", -0.35F, EntityAttributeModifier.Operation.MULTIPLY_TOTAL)
             .addAttributeModifier(EntityAttributes.GENERIC_ATTACK_SPEED, "55FCED67-E92A-486E-9800-B47F202C4386", -0.4F, EntityAttributeModifier.Operation.MULTIPLY_TOTAL);
@@ -101,7 +110,7 @@ public class HcsEffects {
         @Override
         public void applyUpdateEffect(LivingEntity entity, int amplifier) {
             if (entity instanceof ServerPlayerEntity player && !entity.isSpectator() && amplifier > 0 && !player.getAbilities().invulnerable) {
-                ((StatAccessor) player).getSanityManager().add(-0.00001 * (float) (amplifier + 1));
+                ((StatAccessor) player).getSanityManager().add(-0.00001 * (amplifier + 1));
                 player.setSprinting(false);
                 player.setFrozenTicks(entity.getMinFreezeDamageTicks() + 3);
             }
@@ -120,8 +129,8 @@ public class HcsEffects {
         public void applyUpdateEffect(LivingEntity entity, int amplifier) {
             if (entity instanceof ServerPlayerEntity player && !entity.isSpectator() && !entity.isInvulnerable()) {
                 //Accelerate water losing and decrease sanity
-                ((StatAccessor) player).getThirstManager().add(-0.0001 * (float) (amplifier + 1));
-                ((StatAccessor) player).getSanityManager().add(-0.00003 * (float) (amplifier + 1));
+                ((StatAccessor) player).getThirstManager().add(-0.0001 * (amplifier + 1));
+                ((StatAccessor) player).getSanityManager().add(-0.00003 * (amplifier + 1));
                 if (amplifier > 0) {
                     player.setSprinting(false);
                     if (player.world != null && player.world.getTime() % 60 == 0) {
@@ -152,7 +161,17 @@ public class HcsEffects {
     };
 
     public static final StatusEffect WET = new StatusEffect(StatusEffectCategory.HARMFUL, 0x99a9d7) {
-    }.addAttributeModifier(EntityAttributes.GENERIC_MOVEMENT_SPEED, "7107DE5E-7CE8-4030-940E-514C1F160890", -0.02F, EntityAttributeModifier.Operation.MULTIPLY_TOTAL);
+        @Override
+        public boolean canApplyUpdateEffect(int duration, int amplifier) {
+            return true;
+        }
+
+        @Override
+        public void applyUpdateEffect(LivingEntity entity, int amplifier) {
+            if (entity instanceof ServerPlayerEntity player && !player.isWet())
+                ((StatAccessor) player).getSanityManager().add(-0.00001 * (amplifier + 1));
+        }
+    };
 
     public static final StatusEffect CONSTANT_TEMPERATURE = new StatusEffect(StatusEffectCategory.BENEFICIAL, 0x00aa00) {
         @Override
@@ -166,4 +185,9 @@ public class HcsEffects {
                 ((StatAccessor) player).getTemperatureManager().reset();
         }
     };
+
+    public static final StatusEffect SOUL_IMPAIRED = new StatusEffect(StatusEffectCategory.HARMFUL, 0xd7e4eb) {
+    }.addAttributeModifier(EntityAttributes.GENERIC_MAX_HEALTH, "5D6F0BA2-1186-46AC-B896-C61C5CEE99CC", -0.25F, EntityAttributeModifier.Operation.MULTIPLY_TOTAL);
+
+
 }

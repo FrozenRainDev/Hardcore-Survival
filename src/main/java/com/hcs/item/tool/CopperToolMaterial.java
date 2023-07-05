@@ -8,7 +8,7 @@ public class CopperToolMaterial implements ToolMaterial {
 
     @Override
     public int getDurability() {
-        return 200;
+        return 64;
     }
 
     @Override

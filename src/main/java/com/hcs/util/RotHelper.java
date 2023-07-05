@@ -1,10 +1,10 @@
 package com.hcs.util;
 
-import com.hcs.entity.DryingRackBlockEntity;
 import com.hcs.Reg;
-import com.hcs.status.manager.SanityManager;
+import com.hcs.entity.DryingRackBlockEntity;
 import com.hcs.status.HcsEffects;
 import com.hcs.status.accessor.StatAccessor;
+import com.hcs.status.manager.SanityManager;
 import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.entity.effect.StatusEffects;
 import net.minecraft.entity.player.HungerManager;
@@ -231,7 +231,8 @@ public class RotHelper {
         float fresh = getFresh(world, stack, isInIcebox);
         int freshLv = getFreshLevel(fresh);
         MutableText modifier = MutableText.of(TextContent.EMPTY);
-        if (freshLv >= 3) modifier.append(Text.translatable("hcs.food_info.fresh").formatted(Formatting.DARK_GREEN));//If .formatted() outside of append() rather than outside of it, the sibling cannot clear its style via cleaning father text? See ScreenMixin prev bug
+        if (freshLv >= 3)
+            modifier.append(Text.translatable("hcs.food_info.fresh").formatted(Formatting.DARK_GREEN));//If .formatted() outside of append() rather than outside of it, the sibling cannot clear its style via cleaning father text? See ScreenMixin prev bug
         else if (freshLv == 2) modifier.append(Text.translatable("hcs.food_info.stale").formatted(Formatting.YELLOW));
         else if (freshLv == 1) modifier.append(Text.translatable("hcs.food_info.spoiled").formatted(Formatting.RED));
         else {
@@ -285,7 +286,6 @@ public class RotHelper {
                     player.addStatusEffect(new StatusEffectInstance(HcsEffects.DIARRHEA, 600));
                 }
                 case 2 -> {
-                    sanityManager.add(-0.01);
                     if (food != null)
                         hungerManager.setFoodLevel(hungerManager.getFoodLevel() - (int) (Math.min(food.getHunger() - 1, food.getHunger() * 0.3)));
                 }

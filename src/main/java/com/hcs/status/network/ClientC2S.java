@@ -14,7 +14,7 @@ import static net.minecraft.sound.SoundEvents.ENTITY_GENERIC_DRINK;
 public class ClientC2S {
     public static void writeC2SPacketOnDrinkWater(Object playerObj, int x, int y, int z) {
         if (playerObj instanceof ClientPlayerEntity player) {
-            if (player.world != null && player.isSneaking() && player.getMainHandStack().isEmpty())
+            if (player.world != null && player.isSneaking() && player.getMainHandStack().isEmpty() && player.getOffHandStack().isEmpty())
                 player.world.playSound(x, y, z, ENTITY_GENERIC_DRINK, SoundCategory.PLAYERS, 10, 1, true);
             PacketByteBuf buf1 = new PacketByteBuf(Unpooled.buffer());
             buf1.writeIntArray(new int[]{player.getId(), x, y, z});

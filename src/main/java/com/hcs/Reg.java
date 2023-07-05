@@ -352,7 +352,7 @@ public class Reg implements ModInitializer {
         Registry.register(Registries.STATUS_EFFECT, new Identifier("hcs", "malnutrition"), HcsEffects.MALNUTRITION);
         Registry.register(Registries.STATUS_EFFECT, new Identifier("hcs", "wet"), HcsEffects.WET);
         Registry.register(Registries.STATUS_EFFECT, new Identifier("hcs", "constant_temperature"), HcsEffects.CONSTANT_TEMPERATURE);
-
+        Registry.register(Registries.STATUS_EFFECT, new Identifier("hcs", "soul_impaired"), HcsEffects.SOUL_IMPAIRED);
 
         RecipeSerializer.register("hcs_extract_water_from_bamboo", EXTRACT_WATER_FROM_BAMBOO_RECIPE);
         RecipeSerializer.register("hcs_extract_water_from_snow", EXTRACT_WATER_FROM_SNOW_RECIPE);

@@ -36,14 +36,14 @@ public class BreakBlockEvent {
                 int z = pos.getZ();
                 if (mainHand != Items.SHEARS) {//This type can't use switch(){}
                     if (block == Blocks.GRASS) {
-                        if (rand < 0.0015) EntityHelper.dropItem(player, x, y, z, Reg.SELAGINELLA, 1);
+                        if (rand < 0.0035) EntityHelper.dropItem(player, x, y, z, Reg.SELAGINELLA, 1);
                         else if (rand < 0.01) EntityHelper.dropItem(player, x, y, z, Reg.WORM, 1);
                         else if (rand < 0.02) EntityHelper.dropItem(player, x, y, z, Reg.POTHERB, 1);
                         else if (rand < 0.35) EntityHelper.dropItem(player, x, y, z, Reg.ROCK, 1);
                         else if (rand < 0.55) EntityHelper.dropItem(player, x, y, z, Reg.GRASS_FIBER, 1);
                         else if (rand < 0.6) EntityHelper.dropItem(player, x, y, z, Items.STICK, 1);
                     } else if (block == Blocks.TALL_GRASS) {
-                        if (rand < 0.0015) EntityHelper.dropItem(player, x, y, z, Reg.SELAGINELLA, 2);
+                        if (rand < 0.0035) EntityHelper.dropItem(player, x, y, z, Reg.SELAGINELLA, 2);
                         else if (rand < 0.01) EntityHelper.dropItem(player, x, y, z, Reg.WORM, 2);
                         else if (rand < 0.02) EntityHelper.dropItem(player, x, y, z, Reg.POTHERB, 2);
                         else if (rand < 0.35) EntityHelper.dropItem(player, x, y, z, Reg.ROCK, 2);

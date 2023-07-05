@@ -1,21 +1,23 @@
 package com.hcs.event;
 
-import com.hcs.status.manager.TemperatureManager;
 import com.hcs.status.accessor.StatAccessor;
+import com.hcs.status.manager.StatusManager;
+import com.hcs.status.manager.TemperatureManager;
 import net.fabricmc.fabric.api.entity.event.v1.EntitySleepEvents;
 import net.minecraft.entity.player.HungerManager;
-import net.minecraft.entity.player.PlayerEntity;
 
 public class EntitySleepEvent {
     public static void init() {
-        EntitySleepEvents.ALLOW_RESETTING_TIME.register(((playerEntity) -> {
-            for (PlayerEntity player : playerEntity.getWorld().getPlayers()) {
-                if (player.isSleeping()) {
-                    //Add: recovery depends on how long a player slept; restore san
-                    player.heal(20.0F);
+        EntitySleepEvents.ALLOW_RESETTING_TIME.register(((player) -> {
+            if (player != null && player.isSleeping()) {
+                //Add: recovery depends on how long a player slept
+                StatusManager statusManager = ((StatAccessor) player).getStatusManager();
+                if (statusManager.getRecentSleepTicks() <= 0) {
+                    statusManager.setRecentSleepTicks(600);
+                    player.heal(player.getMaxHealth());
                     ((StatAccessor) player).getStaminaManager().reset();
                     ((StatAccessor) player).getThirstManager().addDirectly(-0.25);
-                    ((StatAccessor) player).getSanityManager().reset(false);
+                    ((StatAccessor) player).getSanityManager().reset();
                     HungerManager hungerManager = player.getHungerManager();
                     hungerManager.setExhaustion(0.0F);
                     hungerManager.setFoodLevel(Math.max(0, hungerManager.getFoodLevel() - 4));

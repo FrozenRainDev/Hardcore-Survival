@@ -33,6 +33,8 @@
   "effect.hcs.wet": "Wet",
   "effect.hcs.wet.description": "Feeling colder",
   "effect.hcs.constant_temperature": "Constant Temperature",
+  "effect.hcs.soul_impaired": "Soul Impaired",
+  "effect.hcs.soul_impaired.description": "Reduce max health, needs selaginella or golden apple to recover",
 
   "hcs.food_info.fresh": "Fresh",
   "hcs.food_info.stale": "Stale",

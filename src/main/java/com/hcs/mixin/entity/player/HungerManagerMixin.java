@@ -34,9 +34,9 @@ public class HungerManagerMixin {
     private void addExhaustion(float exhaustion, CallbackInfo ci) {
         if (this.saturationLevel < 0.01F) {
             //Slower hunger rate when foodLevel is low
-            float rate = 1.5F;
-            if (foodLevel <= 1) rate = 0.1F;
-            else if (foodLevel == 2) rate = 0.2F;
+            float rate = 1.6F;
+            if (foodLevel <= 1) rate = 0.05F;
+            else if (foodLevel == 2) rate = 0.15F;
             else if (foodLevel <= 4) rate = 0.4F;
             else if (foodLevel <= 6) rate = 0.75F;
             this.exhaustion += exhaustion * rate;

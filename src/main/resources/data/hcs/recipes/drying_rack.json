@@ -3,10 +3,9 @@
   "pattern": [
 	"SSS",
 	"SFS",
-    "SCS"
+    "S S"
   ],
   "key": {
-    "C": {"item": "minecraft:coal"},
     "F": {"item": "hcs:fiber_string"},
     "S": {"item": "minecraft:stick"}
   },

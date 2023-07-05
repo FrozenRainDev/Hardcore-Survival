@@ -14,6 +14,6 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 public class SweetBerryBushBlockMixin {
     @Inject(at = @At("HEAD"), method = "randomTick", cancellable = true)
     private void randomTick(BlockState state, ServerWorld world, BlockPos pos, Random random, CallbackInfo ci) {
-        if (Math.random() > 0.025) ci.cancel();
+        if (Math.random() > 0.2) ci.cancel();
     }
 }

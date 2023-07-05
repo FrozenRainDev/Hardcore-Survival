@@ -95,7 +95,7 @@ public class BlockMixin {
 
     @Inject(at = @At("HEAD"), method = "randomDisplayTick")
     public void randomDisplayTick(@NotNull BlockState state, World world, BlockPos pos, Random random, CallbackInfo ci) {
-        if (state.isOf(Blocks.DIRT) || state.isOf(Blocks.DIRT_PATH)) {
+        if (state.isOf(Blocks.DIRT) || state.isOf(Blocks.DIRT_PATH) || state.isOf(Blocks.CLAY)) {
             if (random.nextInt(16) == 0 && FallingBlock.canFallThrough(world.getBlockState(pos.down()))) {
                 double d = (double) pos.getX() + random.nextDouble();
                 double e = (double) pos.getY() - 0.05;

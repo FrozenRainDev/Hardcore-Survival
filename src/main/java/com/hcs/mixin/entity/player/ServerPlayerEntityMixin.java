@@ -100,8 +100,8 @@ public abstract class ServerPlayerEntityMixin extends PlayerEntity {
                 if (damageSource != null) this.damage(damageSource, 1.0F);
             }
             thirstManager.updateThirstRateAffectedByTemp(envTemp, (float) playerTemp);
-            if (thirstManager.get() <= 0.3) EntityHelper.addHcsDebuff(this, HcsEffects.DEHYDRATED, 0);
-            if (this.getHungerManager().getFoodLevel() <= 6) EntityHelper.addHcsDebuff(this, HcsEffects.STARVING, 0);
+            if (thirstManager.get() <= 0.3) EntityHelper.addHcsDebuff(this, HcsEffects.DEHYDRATED);
+            if (this.getHungerManager().getFoodLevel() <= 6) EntityHelper.addHcsDebuff(this, HcsEffects.STARVING);
             if (currentStaminaVal <= 0.3)
                 EntityHelper.addHcsDebuff(this, HcsEffects.EXHAUSTED, currentStaminaVal <= 0.15 ? 1 : 0);
             if (playerTemp >= 1.0) EntityHelper.addHcsDebuff(this, HcsEffects.HEATSTROKE, (int) tempSatuPercent);
@@ -120,10 +120,16 @@ public abstract class ServerPlayerEntityMixin extends PlayerEntity {
                 EntityHelper.addHcsDebuff(this, HcsEffects.INSANITY, san < 0.15 ? (san < 0.1 ? (san < 0.05 ? 3 : 2) : 1) : 0);
             //Debuff for malnutrition
             double vegetable = ((StatAccessor) this).getNutritionManager().getVegetable();
-            if (vegetable < 0.00001) EntityHelper.addHcsDebuff(this, HcsEffects.MALNUTRITION, 0);
+            if (vegetable < 0.00001) EntityHelper.addHcsDebuff(this, HcsEffects.MALNUTRITION);
             //Debuff for malnutrition
-            if (((StatAccessor) this).getWetnessManager().get() >= 0.3)
-                EntityHelper.addHcsDebuff(this, HcsEffects.WET, 0);
+            double wet = ((StatAccessor) this).getWetnessManager().get();
+            if (wet >= 0.3) EntityHelper.addHcsDebuff(this, HcsEffects.WET, wet > 0.7 ? 0 : 1);
+            //Debuff for soul impaired(death punishment)
+            int soulImpairedStat = ((StatAccessor) this).getStatusManager().getSoulImpairedStat();
+            if (soulImpairedStat > 0) {
+                if (this.getHealth() > this.getMaxHealth()) this.setHealth(this.getMaxHealth());
+                EntityHelper.addHcsDebuff(this, HcsEffects.SOUL_IMPAIRED, soulImpairedStat - 1);
+            }
         }
     }
 }

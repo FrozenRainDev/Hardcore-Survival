@@ -23,7 +23,7 @@ public class ServerEntityEvent {
                     //Novice gift
                     player.getHungerManager().setExhaustion(2.0F);
                     EntityHelper.dropItem(player, Reg.STONE_CONE, 1);
-                    EntityHelper.dropItem(player, Reg.PURIFIED_WATER_BOTTLE, 1);
+                    EntityHelper.dropItem(player, Reg.PURIFIED_WATER_BOTTLE, 3);
                     EntityHelper.dropItem(player, PotionUtil.setPotion(new ItemStack(Items.POTION), Reg.LONG_CONSTANT_TEMPERATURE_POTION));
                 }
             }

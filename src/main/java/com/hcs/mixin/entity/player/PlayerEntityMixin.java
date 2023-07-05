@@ -21,10 +21,7 @@ import net.minecraft.entity.mob.SpiderEntity;
 import net.minecraft.entity.player.HungerManager;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.item.FoodComponent;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
+import net.minecraft.item.*;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtElement;
 import net.minecraft.registry.tag.BlockTags;
@@ -165,6 +162,7 @@ public abstract class PlayerEntityMixin extends LivingEntity implements StatAcce
             this.sanityManager.set(nbt.contains(SanityManager.SANITY_NBT, NbtElement.DOUBLE_TYPE) ? nbt.getDouble(SanityManager.SANITY_NBT) : 1.0);
             this.nutritionManager.setVegetable(nbt.contains(NutritionManager.NUTRITION_VEGETABLE_NBT, NbtElement.DOUBLE_TYPE) ? nbt.getDouble(NutritionManager.NUTRITION_VEGETABLE_NBT) : 1.0);
             this.wetnessManager.set(nbt.contains(WetnessManager.WETNESS_NBT, NbtElement.DOUBLE_TYPE) ? nbt.getDouble(WetnessManager.WETNESS_NBT) : 0.0);
+            this.statusManager.setSoulImpairedStat(nbt.contains(StatusManager.IS_SOUL_IMPAIRED_NBT) ? nbt.getInt(StatusManager.IS_SOUL_IMPAIRED_NBT) : 0);
         }
     }
 
@@ -180,30 +178,34 @@ public abstract class PlayerEntityMixin extends LivingEntity implements StatAcce
             nbt.putDouble(SanityManager.SANITY_NBT, this.sanityManager.get());
             nbt.putDouble(NutritionManager.NUTRITION_VEGETABLE_NBT, this.nutritionManager.getVegetable());
             nbt.putDouble(WetnessManager.WETNESS_NBT, this.wetnessManager.get());
+            nbt.putInt(StatusManager.IS_SOUL_IMPAIRED_NBT, this.statusManager.getSoulImpairedStat());
         }
     }
 
     @Inject(method = "getBlockBreakingSpeed", at = @At("RETURN"), cancellable = true)
     public void getBlockBreakingSpeed(@NotNull BlockState state, @NotNull CallbackInfoReturnable<Float> cir) {
         this.statusManager.setRecentMiningTicks(200);
-        this.staminaManager.add(-0.00015, this);
+        this.staminaManager.add(-0.00035, this);
         this.staminaManager.pauseRestoring();
-        float speed = cir.getReturnValue();
+        float speed = cir.getReturnValue() / 3.5F;
+        boolean shovelMineable = state.isIn(BlockTags.SHOVEL_MINEABLE);
         ItemStack mainHandStack = this.getMainHandStack();
         Item mainHand = mainHandStack.getItem();
         Block block = state.getBlock();
         if (!canBreak(mainHand, state)) {
-            if (state.isIn(BlockTags.SHOVEL_MINEABLE))
-                speed /= 60.0F;//if((Object)this instanceof PlayerEntity)((PlayerEntity)(Object)this).damage(DamageSource.CACTUS,0.0001F);
+            if (shovelMineable)
+                speed /= 30.0F;//if((Object)this instanceof PlayerEntity)((PlayerEntity)(Object)this).damage(DamageSource.CACTUS,0.0001F);
             else speed = -1.0F;
         }
-        if (mainHand != Reg.FLINT_HATCHET && (state.isIn(BlockTags.AXE_MINEABLE))) speed /= 2.0F;
+        if (mainHand != Reg.FLINT_HATCHET && (state.isIn(BlockTags.AXE_MINEABLE)) || mainHand instanceof SwordItem)
+            speed /= 2.0F;
         if (this.hasStatusEffect(HcsEffects.DEHYDRATED) || this.hasStatusEffect(HcsEffects.STARVING) || this.hasStatusEffect(HcsEffects.EXHAUSTED))
             speed /= 2.0F;
         if (DigRestrictHelper.isBreakableFunctionalBlock(block))
             speed *= (block instanceof AbstractFurnaceBlock || block == Blocks.ENDER_CHEST) ? 16.0F : 4.0F;
-        if (block == Blocks.SUGAR_CANE) speed /= 9.0F;
-        else if (block instanceof LeavesBlock) speed /= 25.0F;
+        if (block == Blocks.SUGAR_CANE || block == Blocks.CLAY) speed /= 9.0F;
+        else if (block instanceof LeavesBlock && !(mainHand instanceof SwordItem) && !(mainHand instanceof AxeItem))
+            speed /= 25.0F;
         if (block instanceof TorchBlock || state.isIn(BlockTags.FLOWERS)) speed = 999999.0F;
         cir.setReturnValue(speed);
     }
@@ -235,14 +237,16 @@ public abstract class PlayerEntityMixin extends LivingEntity implements StatAcce
             EntityHelper.checkOvereaten(player, false);
             if (food != null) {
                 if (food.isMeat() || name.contains("egg"))
-                    this.nutritionManager.addVegetable(-0.08);
-                else if (name.contains("kelp") || name.contains("sugar_cane")) this.nutritionManager.addVegetable(0.15);
-                else if (name.contains("berries") || name.contains("berry")) this.nutritionManager.addVegetable(0.17);
+                    this.nutritionManager.addVegetable(-0.1);
+                else if (name.contains("kelp") || name.contains("sugar_cane")) this.nutritionManager.addVegetable(0.19);
+                else if (name.contains("berries") || name.contains("berry")) this.nutritionManager.addVegetable(0.21);
                 else if (name.contains("apple") || name.contains("orange") || name.contains("carrot") || name.contains("cactus") || name.contains("melon") || name.contains("potherb") || name.contains("shoot") || name.contains("salad") || name.contains("fruit"))
-                    this.nutritionManager.addVegetable(0.3);
+                    this.nutritionManager.addVegetable(0.35);
                 int freshLevel = RotHelper.addDebuff(world, player, stack);
-                if (item == Items.GOLDEN_APPLE || item == Items.ENCHANTED_GOLDEN_APPLE) this.sanityManager.add(1.0);
-                else if (item == Items.KELP) this.sanityManager.add(-0.04);
+                if (item == Items.GOLDEN_APPLE || item == Items.ENCHANTED_GOLDEN_APPLE) {
+                    this.sanityManager.add(1.0);
+                    this.statusManager.setSoulImpairedStat(0);
+                } else if (item == Items.KELP) this.sanityManager.add(-0.04);
                 else if (item == Items.POISONOUS_POTATO || item == Items.SPIDER_EYE || item == Items.CHORUS_FRUIT)
                     this.sanityManager.add(-0.07);
                 else if (item == Items.ROTTEN_FLESH) this.sanityManager.add(-0.1);
@@ -313,14 +317,14 @@ public abstract class PlayerEntityMixin extends LivingEntity implements StatAcce
         this.staminaManager.pauseRestoring();
         this.addExhaustion(0.025F * rate);
         this.staminaManager.pauseRestoring();
-        this.staminaManager.add(-0.002 * rate, this);
+        this.staminaManager.add(-0.005, this);
         ci.cancel();
     }
 
     @Inject(method = "attack", at = @At("TAIL"))
     public void attack(Entity target, CallbackInfo ci) {
         this.staminaManager.pauseRestoring(50);
-        this.staminaManager.add(-0.01, this);
+        this.staminaManager.add(-0.025, this);
         this.statusManager.setRecentAttackTicks(200);
     }
 
@@ -335,6 +339,7 @@ public abstract class PlayerEntityMixin extends LivingEntity implements StatAcce
         this.statusManager.setRecentHasColdWaterBagTicks(Math.max(0, this.statusManager.getRecentHasColdWaterBagTicks() - 1));
         this.statusManager.setRecentHasHotWaterBagTicks(Math.max(0, this.statusManager.getRecentHasHotWaterBagTicks() - 1));
         this.statusManager.setRecentLittleOvereatenTicks(this.hungerManager.getFoodLevel() < 20 ? 0 : Math.max(0, this.statusManager.getRecentLittleOvereatenTicks() - 1));
+        this.statusManager.setRecentSleepTicks(Math.max(0, this.statusManager.getRecentSleepTicks() - 1));
         if (this.sanityManager.getMonsterWitnessingTicks() > 0) {
             this.sanityManager.add(-0.00004);
             this.sanityManager.setMonsterWitnessingTicks(this.sanityManager.getMonsterWitnessingTicks() - 1);

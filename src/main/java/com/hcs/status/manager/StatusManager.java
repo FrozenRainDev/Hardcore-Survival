@@ -14,14 +14,19 @@ public class StatusManager {
     private int oxygenGenLevelAccumulation = 0;
     private int oxygenGenLevel = 0;
     private boolean shouldLockDestroying = false; //Client only
+    private int soulImpairedStat = 0; //Server only
+    public static String IS_SOUL_IMPAIRED_NBT = "hcs_is_soul_impaired";
 
-    public void reset(int lvlReached) {
+    private int recentSleepTicks = 0;
+
+    public void reset(int lvlReached, int soulImpaired) {
         exhaustion = 0.0F;
         recentAttackTicks = 0;
         recentMiningTicks = 0;
         recentHasColdWaterBagTicks = 0;
         recentHasHotWaterBagTicks = 0;
         maxExpLevelReached = lvlReached;
+        setSoulImpairedStat(soulImpaired);
     }
 
     public float getExhaustion() {
@@ -124,5 +129,25 @@ public class StatusManager {
 
     public void setLockDestroying(boolean val) {
         shouldLockDestroying = val;
+    }
+
+    public int getSoulImpairedStat() {
+        if (soulImpairedStat > 4) soulImpairedStat = 4;
+        else if (soulImpairedStat < 0) soulImpairedStat = 0;
+        return soulImpairedStat;
+    }
+
+    public void setSoulImpairedStat(int val) {
+        if (val > 4) val = 4;
+        else if (val < 0) val = 0;
+        soulImpairedStat = val;
+    }
+
+    public int getRecentSleepTicks() {
+        return recentSleepTicks;
+    }
+
+    public void setRecentSleepTicks(int val) {
+        recentSleepTicks = val;
     }
 }
