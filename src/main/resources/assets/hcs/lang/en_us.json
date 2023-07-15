@@ -31,7 +31,7 @@
   "effect.hcs.malnutrition": "Malnutrition",
   "effect.hcs.malnutrition.description": "Slower regeneration and faster hungering",
   "effect.hcs.wet": "Wet",
-  "effect.hcs.wet.description": "Feeling colder and sanity decreasing",
+  "effect.hcs.wet.description": "Becoming colder and decreasing sanity",
   "effect.hcs.constant_temperature": "Constant Temperature",
   "effect.hcs.soul_impaired": "Soul Impaired",
   "effect.hcs.soul_impaired.description": "Reduce max health, needs selaginella or golden apple to recover",

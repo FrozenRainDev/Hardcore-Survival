@@ -108,7 +108,7 @@ public class HotWaterBottleItem extends Item {
         boolean isHot = nbt.contains(HHS) && nbt.getInt(HHS) > 0;
         setStatus(stack, isHot ? 1 : -1);
         float percent = getExpPercent(world, stack, nbt.contains(HHES));
-        if (isHot) percent = 1.0F - percent;
+        /*if (isHot)*/ percent = 1.0F - percent;
         nbt.putLong(HHCI, Math.max(0L, world.getTime() - (long) (percent * MAX_COOL_DOWN_LENGTH / ICEBOX_FREEZING_RATE)));
     }
 
