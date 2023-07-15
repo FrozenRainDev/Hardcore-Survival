@@ -31,7 +31,7 @@ public abstract class ClientPlayerEntityMixin extends AbstractClientPlayerEntity
     @Final
     protected MinecraftClient client;
     private static final SoundEvent[] HALLUCINATION_SOUNDS = {ENTITY_ENDERMAN_DEATH, ENTITY_ENDERMAN_HURT, ENTITY_ENDERMAN_AMBIENT, ENTITY_HUSK_DEATH, ENTITY_ENDERMITE_DEATH, ENTITY_BLAZE_AMBIENT, ENTITY_BLAZE_DEATH, ENTITY_PIG_DEATH, ENTITY_DROWNED_DEATH, ENTITY_STRAY_DEATH, BLOCK_ROOTED_DIRT_BREAK, BLOCK_BONE_BLOCK_HIT, BLOCK_FIRE_AMBIENT, BLOCK_VINE_PLACE, ENTITY_LIGHTNING_BOLT_THUNDER, ENTITY_GHAST_SCREAM, ENTITY_GENERIC_EXPLODE, ENTITY_ZOMBIE_ATTACK_IRON_DOOR, ENTITY_ZOMBIE_ATTACK_WOODEN_DOOR, ENTITY_SKELETON_AMBIENT, ENTITY_CREEPER_PRIMED, ENTITY_SPIDER_AMBIENT};
-    private static final SoundEvent[] HALLUCINATION_SOUNDS_VERY_HORRIBLE = {ENTITY_ENDERMAN_SCREAM, ENTITY_ENDERMAN_STARE};
+//    private static final SoundEvent[] HALLUCINATION_SOUNDS_VERY_HORRIBLE = {ENTITY_ENDERMAN_SCREAM, ENTITY_ENDERMAN_STARE};
     private static final SoundEvent[] HALLUCINATION_AMBIENT_SOUNDS = {AMBIENT_CAVE.value(), AMBIENT_UNDERWATER_LOOP_ADDITIONS_ULTRA_RARE, AMBIENT_BASALT_DELTAS_MOOD.value(), AMBIENT_WARPED_FOREST_MOOD.value(), AMBIENT_BASALT_DELTAS_MOOD.value(), AMBIENT_SOUL_SAND_VALLEY_MOOD.value(), AMBIENT_UNDERWATER_LOOP, AMBIENT_BASALT_DELTAS_ADDITIONS.value(), AMBIENT_NETHER_WASTES_LOOP.value(), AMBIENT_NETHER_WASTES_ADDITIONS.value()};
     private boolean prevIsThirdPerson = false;
     private int prevInsanityEffectId = 0;
@@ -42,6 +42,7 @@ public abstract class ClientPlayerEntityMixin extends AbstractClientPlayerEntity
         super(world, profile);
     }
 
+    @SuppressWarnings("all")
     @Inject(method = "tick", at = @At("TAIL"))
     public void tick(CallbackInfo ci) {
         ++ticks;
@@ -69,10 +70,12 @@ public abstract class ClientPlayerEntityMixin extends AbstractClientPlayerEntity
                     this.world.playSound(this.getX(), this.getY(), this.getZ(), HALLUCINATION_AMBIENT_SOUNDS[(int) (HALLUCINATION_AMBIENT_SOUNDS.length * Math.random())], SoundCategory.AMBIENT, 26, -13, false);
                 if (this.world.getTime() % (sanityManager.get() < 0.15F ? 60 : 1200) == 0)
                     this.world.playSound(this.getX(), this.getY(), this.getZ(), HALLUCINATION_SOUNDS[(int) (HALLUCINATION_SOUNDS.length * Math.random())], SoundCategory.AMBIENT, 13, -26, false);
+                /*
                 if (sanityManager.get() < 0.05F && this.world.getTime() % 80 == 0) {
                     this.horriblyPlayedTicks = 2400;
                     this.world.playSound(this.getX(), this.getY(), this.getZ(), HALLUCINATION_SOUNDS_VERY_HORRIBLE[(int) (HALLUCINATION_SOUNDS_VERY_HORRIBLE.length * Math.random())], SoundCategory.AMBIENT, 13, -26, false);
                 }
+                 */
             }
         } else if (this.client.gameRenderer.getPostProcessor() != null) {
             this.client.gameRenderer.getPostProcessor().close();

@@ -66,7 +66,7 @@ public class HotWaterBottleItem extends Item {
         if (world == null) return 1.0F;
         NbtCompound nbt = stack.getOrCreateNbt();
         if (nbt.contains(HHS) && nbt.getInt(HHS) == 0) return 0.0F;
-        float percent = (float) (getExp(stack, shouldSlowDown) - world.getTime()) / (MAX_COOL_DOWN_LENGTH * (shouldSlowDown ? 3.0F : 1.0F));
+        float percent = (float) (getExp(stack, shouldSlowDown) - world.getTime()) / (MAX_COOL_DOWN_LENGTH * (shouldSlowDown ? 3 : 1));
         if (percent > 1.0F) percent = 1.0F;
         else if (percent < 0.0F) percent = 0.0F;
         return percent;
