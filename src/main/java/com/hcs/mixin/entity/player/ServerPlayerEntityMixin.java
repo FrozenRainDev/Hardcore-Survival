@@ -121,9 +121,9 @@ public abstract class ServerPlayerEntityMixin extends PlayerEntity {
             //Debuff for malnutrition
             double vegetable = ((StatAccessor) this).getNutritionManager().getVegetable();
             if (vegetable < 0.00001) EntityHelper.addHcsDebuff(this, HcsEffects.MALNUTRITION);
-            //Debuff for malnutrition
+            //Debuff for wet
             double wet = ((StatAccessor) this).getWetnessManager().get();
-            if (wet >= 0.3) EntityHelper.addHcsDebuff(this, HcsEffects.WET, wet > 0.7 ? 0 : 1);
+            if (wet >= 0.3) EntityHelper.addHcsDebuff(this, HcsEffects.WET, wet > 0.7 ? 1 : 0);
             //Debuff for soul impaired(death punishment)
             int soulImpairedStat = ((StatAccessor) this).getStatusManager().getSoulImpairedStat();
             if (soulImpairedStat > 0) {

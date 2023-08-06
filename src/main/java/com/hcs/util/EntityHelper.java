@@ -46,6 +46,7 @@ import java.util.Optional;
 public class EntityHelper {
     public static final double[][] FIND_NEAREST = {{0, -1, 0}, {0, 1, 0}, {0, 2, 0}, {-1, 0, 0}, {-1, 1, 0}, {1, 0, 0}, {1, 1, 0}, {0, 0, 1}, {0, 1, 1}, {0, 0, -1}, {0, 1, -1}};
     public static final double ZOMBIE_SENSING_RANGE = 32.0;
+    public static final float HOLDING_BLOCK_REACHING_RANGE_ADDITION = 2.0F;
     @Deprecated
     public static PlayerEntity thePlayer;
     @Deprecated
@@ -213,8 +214,10 @@ public class EntityHelper {
             dist += 0.75F;
         else if ((name.contains("bone") && !mainHandStack.isOf(Items.BONE_MEAL)) || name.contains("rod") || item == Items.STICK)
             dist += 1.0F;
-        else if (item instanceof RangedWeaponItem || item == Items.WOODEN_SWORD || ((item instanceof BlockItem && (!RotHelper.canRot(item) || (!(name.contains("seed") && (name.contains("pumpkin") || name.contains("melon"))))))))
+        else if (item instanceof RangedWeaponItem || item == Items.WOODEN_SWORD)
             dist += 1.5F;
+        else if (((item instanceof BlockItem && (!RotHelper.canRot(item) || (!(name.contains("seed") && (name.contains("pumpkin") || name.contains("melon"))))))))
+            return HOLDING_BLOCK_REACHING_RANGE_ADDITION;
         else if (name.contains("spear") || (item instanceof TridentItem)) dist += 2.0F;
         else if ((item instanceof ShovelItem) || (item instanceof PickaxeItem) || (item instanceof AxeItem) || (item instanceof SwordItem) || (item instanceof HoeItem))
             dist += 2.0F;

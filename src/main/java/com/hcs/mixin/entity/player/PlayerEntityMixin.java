@@ -363,7 +363,7 @@ public abstract class PlayerEntityMixin extends LivingEntity implements StatAcce
                 if (!this.hasVehicle()) {
                     boolean shouldPauseRestoring = true;
                     if (this.onGround) {
-                        if (this.isSprinting()) this.staminaManager.add(-0.0007, this);
+                        if (this.isSprinting()) this.staminaManager.add(-0.001, this);
                         else if (this.isInSneakingPose()) this.staminaManager.add(-0.0001, this);
                         else if (this.staminaManager.get() < 0.7) {//walking while stamina < 0.7 will get a recovery
                             shouldPauseRestoring = false;

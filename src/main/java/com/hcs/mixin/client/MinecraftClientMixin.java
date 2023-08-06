@@ -79,7 +79,7 @@ public abstract class MinecraftClientMixin extends ReentrantThreadExecutor<Runna
                 attack entity: 2 - 0.5 = 1.5
                 */
                 Item item = player.getMainHandStack().getItem();
-                if (crosshairTarget.getPos().distanceTo(player.getEyePos()) + ((item instanceof BlockItem && !RotHelper.canRot(item)) ? 1.5F : 0.5F) > interactionManager.getReachDistance()) {
+                if (crosshairTarget.getPos().distanceTo(player.getEyePos()) + ((item instanceof BlockItem && !RotHelper.canRot(item)) ? EntityHelper.HOLDING_BLOCK_REACHING_RANGE_ADDITION : 0.5F) > interactionManager.getReachDistance()) {
                     player.swingHand(Hand.MAIN_HAND);
                     cir.cancel();
                 }
