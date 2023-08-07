@@ -1,6 +1,7 @@
 package com.hcs.mixin.entity;
 
 import com.hcs.Reg;
+import com.hcs.status.HcsEffects;
 import com.hcs.status.accessor.StatAccessor;
 import com.hcs.util.EntityHelper;
 import net.minecraft.entity.Entity;
@@ -13,6 +14,7 @@ import net.minecraft.entity.mob.HostileEntity;
 import net.minecraft.entity.passive.*;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Items;
+import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
 import org.spongepowered.asm.mixin.Mixin;
@@ -89,6 +91,16 @@ public abstract class LivingEntityMixin extends Entity {
                 EntityHelper.dropItem(this, Reg.ANIMAL_VISCERA, 1);
             }
             //Also see at BatEntityMixin
+        }
+    }
+
+    @SuppressWarnings("all")
+    @Inject(method = "getJumpBoostVelocityModifier", at = @At("RETURN"), cancellable = true)
+    public void getJumpBoostVelocityModifier(CallbackInfoReturnable<Double> cir) {
+        if (((Object) this) instanceof ServerPlayerEntity player) {
+            if (player.hasStatusEffect(HcsEffects.EXHAUSTED)) {
+                cir.setReturnValue(cir.getReturnValue() * (player.getStatusEffect(HcsEffects.EXHAUSTED).getAmplifier() > 0 ? 0.05 : 0.3));
+            }
         }
     }
 }

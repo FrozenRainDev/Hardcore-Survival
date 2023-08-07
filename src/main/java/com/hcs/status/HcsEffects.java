@@ -168,7 +168,7 @@ public class HcsEffects {
 
         @Override
         public void applyUpdateEffect(LivingEntity entity, int amplifier) {
-            if (entity instanceof ServerPlayerEntity player && !player.isWet())
+            if (entity instanceof ServerPlayerEntity player && (!player.isWet() || player.isBeingRainedOn()))
                 ((StatAccessor) player).getSanityManager().add(-0.00001 * (amplifier + 1));
         }
     };

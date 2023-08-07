@@ -79,7 +79,7 @@ public abstract class MinecraftClientMixin extends ReentrantThreadExecutor<Runna
                 attack entity: 2 - 0.5 = 1.5
                 */
                 Item item = player.getMainHandStack().getItem();
-                if (crosshairTarget.getPos().distanceTo(player.getEyePos()) + ((item instanceof BlockItem && !RotHelper.canRot(item)) ? EntityHelper.HOLDING_BLOCK_REACHING_RANGE_ADDITION : 0.5F) > interactionManager.getReachDistance()) {
+                if (crosshairTarget.getPos().distanceTo(player.getEyePos()) + ((item instanceof BlockItem && !RotHelper.canRot(item)) ? EntityHelper.HOLDING_BLOCK_REACHING_RANGE_ADDITION : 0.0F) + 0.5F > interactionManager.getReachDistance()) {
                     player.swingHand(Hand.MAIN_HAND);
                     cir.cancel();
                 }
@@ -93,7 +93,6 @@ public abstract class MinecraftClientMixin extends ReentrantThreadExecutor<Runna
         if (world == null) return;
         BlockHitResult customHitResult = EntityHelper.rayCast(world, player, RaycastContext.FluidHandling.SOURCE_ONLY, 2.5);
         BlockPos pos = customHitResult.getBlockPos();
-//        System.out.println(world.getBlockState(pos).getBlock());
         if (player != null && world.getFluidState(pos).isIn(FluidTags.WATER))
             ClientC2S.writeC2SPacketOnDrinkWater(player, pos.getX(), pos.getY(), pos.getZ());
     }

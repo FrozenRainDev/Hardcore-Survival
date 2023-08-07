@@ -3,10 +3,7 @@ package com.hcs.mixin.block;
 import com.hcs.Reg;
 import com.hcs.util.RotHelper;
 import com.hcs.util.WorldHelper;
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.Blocks;
-import net.minecraft.block.FallingBlock;
+import net.minecraft.block.*;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
@@ -114,6 +111,19 @@ public class BlockMixin {
         checkFreshnessForReapingCrops(Blocks.MELON_STEM, Items.MELON_SEEDS, state, world, cir);
         checkFreshnessForReapingCrops(Blocks.PUMPKIN_STEM, Items.PUMPKIN_SEEDS, state, world, cir);
 //        checkFreshnessForReapingCrops(Blocks.SUGAR_CANE,Items.SUGAR_CANE,state,world,cir); //age always 0
+    }
+
+    @Inject(at = @At("HEAD"), method = "onLandedUpon", cancellable = true)
+    public void onLandedUpon(World world, @NotNull BlockState state, BlockPos pos, Entity entity, float fallDistance, CallbackInfo ci) {
+        Block block = state.getBlock();
+        float multiplier = 1.0F;
+        if (block instanceof GrassBlock) multiplier = 0.8F;
+        else if (block instanceof SandBlock) multiplier = 0.7F;
+        else if (block == Blocks.PODZOL || block == Blocks.MYCELIUM) multiplier = 0.9F;
+        if(multiplier!=1.0F){
+            entity.handleFallDamage(fallDistance, multiplier, entity.getDamageSources().fall());
+            ci.cancel();
+        }
     }
 
 }

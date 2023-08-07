@@ -35,10 +35,10 @@ public class HungerManagerMixin {
         if (this.saturationLevel < 0.01F) {
             //Slower hunger rate when foodLevel is low
             float rate = 1.6F;
-            if (foodLevel <= 1) rate = 0.05F;
-            else if (foodLevel == 2) rate = 0.15F;
-            else if (foodLevel <= 4) rate = 0.4F;
-            else if (foodLevel <= 6) rate = 0.75F;
+            if (foodLevel == 2) rate = 0.3F;
+            else if (foodLevel <= 4) rate = 0.5F;
+            else if (foodLevel <= 6) rate = 0.8F;
+            else if (foodLevel <= 8) rate = 1.0F;
             this.exhaustion += exhaustion * rate;
             ci.cancel();
         }

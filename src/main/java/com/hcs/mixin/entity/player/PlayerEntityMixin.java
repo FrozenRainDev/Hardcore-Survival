@@ -316,7 +316,7 @@ public abstract class PlayerEntityMixin extends LivingEntity implements StatAcce
         float rate = this.isSprinting() ? 3.0F : 1.0F;
         this.staminaManager.pauseRestoring();
         this.addExhaustion(0.025F * rate);
-        this.staminaManager.pauseRestoring();
+        this.staminaManager.pauseRestoring(40);
         this.staminaManager.add(-0.005, this);
         ci.cancel();
     }
