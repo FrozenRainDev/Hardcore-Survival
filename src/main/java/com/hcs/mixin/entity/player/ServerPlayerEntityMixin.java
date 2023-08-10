@@ -81,7 +81,8 @@ public abstract class ServerPlayerEntityMixin extends PlayerEntity {
                 else temperatureManager.set(Math.max(0.01, temperatureManager.get() - 0.005));
             } else if (playerTemp > 0.9F && this.hasStatusEffect(StatusEffects.FIRE_RESISTANCE))
                 temperatureManager.set(0.9);
-            else if (this.getFireTicks() > 1 || temperatureManager.getAmbientCache() > 1.2F) temperatureManager.add(0.003);
+            else if (this.getFireTicks() > 1) temperatureManager.add(0.002);
+            else if (temperatureManager.getAmbientCache() > 1.5F) temperatureManager.add(0.0005);
             else if (envTemp - playerTemp > span1) {
                 temperatureManager.setTrendType(1);
                 temperatureManager.add(span1);

@@ -7,12 +7,15 @@ import net.minecraft.block.*;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.particle.BlockStateParticleEffect;
 import net.minecraft.particle.ParticleTypes;
+import net.minecraft.registry.tag.BlockTags;
 import net.minecraft.server.world.ServerWorld;
+import net.minecraft.stat.Stats;
 import net.minecraft.state.property.Properties;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.random.Random;
@@ -21,6 +24,7 @@ import net.minecraft.world.WorldAccess;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
@@ -32,6 +36,7 @@ import java.util.List;
 @Mixin(Block.class)
 public class BlockMixin {
 
+    @Unique
     private static void checkFreshnessForReapingCrops(Block crop, Item seed, @NotNull BlockState state, ServerWorld world, CallbackInfoReturnable<List<ItemStack>> cir) {
         if (state.isOf(crop)) {
             if (state.contains(Properties.AGE_1)) {
@@ -71,7 +76,8 @@ public class BlockMixin {
         }
     }
 
-    private static void halveFreshness(Item item, ServerWorld world, CallbackInfoReturnable<List<ItemStack>> cir) {
+    @Unique
+    private static void halveFreshness(Item item, ServerWorld world, @NotNull CallbackInfoReturnable<List<ItemStack>> cir) {
         ItemStack stack = new ItemStack(item);
         RotHelper.setFresh(world, stack, 0.5F);
         ArrayList<ItemStack> dropList = new ArrayList<>();
@@ -117,13 +123,18 @@ public class BlockMixin {
     public void onLandedUpon(World world, @NotNull BlockState state, BlockPos pos, Entity entity, float fallDistance, CallbackInfo ci) {
         Block block = state.getBlock();
         float multiplier = 1.0F;
-        if (block instanceof GrassBlock) multiplier = 0.8F;
+        if (state.isIn(BlockTags.WOOL)) multiplier = 0.5F;
+        else if (block instanceof GrassBlock) multiplier = 0.8F;
         else if (block instanceof SandBlock) multiplier = 0.7F;
         else if (block == Blocks.PODZOL || block == Blocks.MYCELIUM) multiplier = 0.9F;
-        if(multiplier!=1.0F){
-            entity.handleFallDamage(fallDistance, multiplier, entity.getDamageSources().fall());
-            ci.cancel();
+        else if (block.getHardness() > 2.0F) multiplier = 1.2F;
+        float exaggeratedFallDistance = (float) Math.pow(fallDistance, 1.2); //Gain more falling damage than before
+        if (!(fallDistance <= 4.5 && multiplier < 1)) {
+            if (entity instanceof PlayerEntity player && fallDistance >= 2.0F) //Moved from PlayerEntity/handleFallDamage()
+                player.increaseStat(Stats.FALL_ONE_CM, (int) Math.round((double) fallDistance * 100.0));
+            entity.handleFallDamage(multiplier < 1 ? exaggeratedFallDistance - 1 : exaggeratedFallDistance, multiplier, entity.getDamageSources().fall());
         }
+        ci.cancel();
     }
 
 }

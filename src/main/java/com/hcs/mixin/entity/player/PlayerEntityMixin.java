@@ -39,6 +39,7 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.ModifyArg;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
@@ -317,7 +318,7 @@ public abstract class PlayerEntityMixin extends LivingEntity implements StatAcce
         this.staminaManager.pauseRestoring();
         this.addExhaustion(0.025F * rate);
         this.staminaManager.pauseRestoring(40);
-        this.staminaManager.add(-0.005, this);
+        this.staminaManager.add(-0.005F * rate, this);
         ci.cancel();
     }
 
@@ -376,9 +377,9 @@ public abstract class PlayerEntityMixin extends LivingEntity implements StatAcce
                 }
             } else {
                 if (this.getThirstManager().get() > 0.6 && this.getHungerManager().getFoodLevel() > 12)
-                    this.staminaManager.add(0.0045, this);
+                    this.staminaManager.add(0.006, this);
                 else if (this.getThirstManager().get() > 0.3 && this.getHungerManager().getFoodLevel() > 6)
-                    this.staminaManager.add(0.0025, this);
+                    this.staminaManager.add(0.003, this);
                 else this.staminaManager.add(0.001, this);
             }
             //Gain sanity when being exposed in the sun with flower in hand
@@ -444,6 +445,11 @@ public abstract class PlayerEntityMixin extends LivingEntity implements StatAcce
             }
             cir.setReturnValue(xpSum);
         }
+    }
+
+    @ModifyArg(method = "handleFallDamage", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/player/PlayerEntity;increaseStat(Lnet/minecraft/util/Identifier;I)V"), index = 1)
+    public int handleFallDamage(int amount) {
+        return 0; //See at BlockMixin/onLandedUpon()
     }
 
 }
