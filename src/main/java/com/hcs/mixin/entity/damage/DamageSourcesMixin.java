@@ -12,29 +12,36 @@ import net.minecraft.text.Text;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(DamageSources.class)
 public abstract class DamageSourcesMixin implements DamageSourcesAccessor {
+    @Unique
     private DamageSource dehydrate;
+    @Unique
     private DamageSource heatstroke;
+    @Unique
     private DamageSource oxygenDeficiency;
     @Shadow
     @Final
     public Registry<DamageType> registry;
 
+    @SuppressWarnings("AddedMixinMembersNamePattern")
     @Override
     public DamageSource dehydrate() {
         return this.dehydrate;
     }
 
+    @SuppressWarnings("AddedMixinMembersNamePattern")
     @Override
     public DamageSource heatstroke() {
         return this.heatstroke;
     }
 
+    @SuppressWarnings("AddedMixinMembersNamePattern")
     @Override
     public DamageSource oxygenDeficiency() {
         return this.oxygenDeficiency;

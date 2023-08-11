@@ -31,6 +31,7 @@ import net.minecraft.world.WorldAccess;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+@SuppressWarnings("deprecation")
 public class IceboxBlock extends BlockWithEntity implements Waterloggable {
     private static final VoxelShape SHAPE_1 = Block.createCuboidShape(1.0F, 0.0F, 3.0F, 15.0F, 16.0F, 13.0F);
     private static final VoxelShape SHAPE_2 = Block.createCuboidShape(3.0F, 0.0F, 1.0F, 13.0F, 16.0F, 15.0F);
@@ -83,12 +84,12 @@ public class IceboxBlock extends BlockWithEntity implements Waterloggable {
                 .with(Properties.HORIZONTAL_FACING, ctx.getHorizontalPlayerFacing().getOpposite())
                 .with(Properties.WATERLOGGED, ctx.getWorld().getFluidState(ctx.getBlockPos()).getFluid() == Fluids.WATER);
     }
-
+    @SuppressWarnings("deprecation")
     @Override
     public FluidState getFluidState(@NotNull BlockState state) {
         return state.get(Properties.WATERLOGGED) ? Fluids.WATER.getStill(false) : super.getFluidState(state);
     }
-
+    @SuppressWarnings("deprecation")
     @Override
     public BlockState getStateForNeighborUpdate(@NotNull BlockState state, Direction direction, BlockState neighborState, WorldAccess world, BlockPos pos, BlockPos neighborPos) {
         if (state.get(Properties.WATERLOGGED))

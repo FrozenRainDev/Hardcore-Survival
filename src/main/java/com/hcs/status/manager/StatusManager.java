@@ -15,7 +15,7 @@ public class StatusManager {
     private int oxygenGenLevel = 0;
     private boolean shouldLockDestroying = false; //Client only
     private int soulImpairedStat = 0; //Server only
-    public static String IS_SOUL_IMPAIRED_NBT = "hcs_is_soul_impaired";
+    public static final String IS_SOUL_IMPAIRED_NBT = "hcs_is_soul_impaired";
 
     private int recentSleepTicks = 0;
 

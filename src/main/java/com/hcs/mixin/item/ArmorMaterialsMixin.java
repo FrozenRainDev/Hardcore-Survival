@@ -1,10 +1,10 @@
 package com.hcs.mixin.item;
 
-import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.item.ArmorItem;
 import net.minecraft.item.ArmorMaterials;
 import org.jetbrains.annotations.NotNull;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
@@ -17,8 +17,10 @@ public class ArmorMaterialsMixin {
      getName() is not invoked spontaneously, so must use getDurability()
      overwriting is both tricky and dangerous
      */
+    @Unique
     int dur;
 
+    @SuppressWarnings("SpellCheckingInspection")
     @Inject(method = "getProtection", at = @At("HEAD"), cancellable = true)
     public void getProtection(ArmorItem.Type type, CallbackInfoReturnable<Integer> cir) {
         switch (dur) {

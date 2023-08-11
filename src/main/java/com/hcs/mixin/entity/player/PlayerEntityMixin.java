@@ -108,18 +108,25 @@ public abstract class PlayerEntityMixin extends LivingEntity implements StatAcce
     @Shadow
     public abstract void setFireTicks(int fireTicks);
 
+    @SuppressWarnings("CanBeFinal")
     @Unique
     ThirstManager thirstManager = new ThirstManager();
+    @SuppressWarnings("CanBeFinal")
     @Unique
     StaminaManager staminaManager = new StaminaManager();
+    @SuppressWarnings("CanBeFinal")
     @Unique
     TemperatureManager temperatureManager = new TemperatureManager();
+    @SuppressWarnings("CanBeFinal")
     @Unique
     StatusManager statusManager = new StatusManager();
+    @SuppressWarnings("CanBeFinal")
     @Unique
     SanityManager sanityManager = new SanityManager();
+    @SuppressWarnings("CanBeFinal")
     @Unique
     NutritionManager nutritionManager = new NutritionManager();
+    @SuppressWarnings("CanBeFinal")
     @Unique
     WetnessManager wetnessManager = new WetnessManager();
 
@@ -464,6 +471,7 @@ public abstract class PlayerEntityMixin extends LivingEntity implements StatAcce
         }
     }
 
+    @SuppressWarnings("SameReturnValue")
     @ModifyArg(method = "handleFallDamage", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/player/PlayerEntity;increaseStat(Lnet/minecraft/util/Identifier;I)V"), index = 1)
     public int handleFallDamage(int amount) {
         return 0; //See at BlockMixin/onLandedUpon()

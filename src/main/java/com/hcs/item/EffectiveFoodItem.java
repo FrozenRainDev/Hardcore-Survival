@@ -8,8 +8,10 @@ import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.world.World;
 
 public class EffectiveFoodItem extends Item {
-    float health;
-    double sanity;
+
+    final float health;
+
+    final double sanity;
 
     public EffectiveFoodItem(Settings settings, float health, double sanity) {
         super(settings);

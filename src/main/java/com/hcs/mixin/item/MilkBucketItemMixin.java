@@ -16,14 +16,17 @@ import net.minecraft.util.TypedActionResult;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(MilkBucketItem.class)
 public class MilkBucketItemMixin {
+    @Unique
     private ItemStack oriStack = new ItemStack(Items.BUCKET);
 
+    @Unique
     private @NotNull ItemStack judgeMilkStack(@NotNull ItemStack mainHand, ItemStack offHand) {
         if (mainHand.isOf(Items.MILK_BUCKET)) return mainHand;
         if (offHand.isOf(Items.MILK_BUCKET)) return offHand;

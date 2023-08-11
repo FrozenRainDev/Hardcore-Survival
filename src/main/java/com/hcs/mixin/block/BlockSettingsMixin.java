@@ -4,6 +4,7 @@ import net.minecraft.block.AbstractBlock.Settings;
 import org.jetbrains.annotations.NotNull;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
@@ -12,6 +13,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 public abstract class BlockSettingsMixin {
     //There is no better solution up to now
     @Shadow float hardness, resistance;
+    @Unique
     private static int number = 0, number2 = 0;
 
     @Inject(method = "breakInstantly", at = @At("RETURN"), cancellable = true)

@@ -12,7 +12,7 @@ import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
 
 public class SpiderGlandItem extends ItemWithTip {
-    int durationSeconds;
+    final int durationSeconds;
 
     public SpiderGlandItem(Settings settings, String tip, int durationSeconds) {
         super(settings, tip);

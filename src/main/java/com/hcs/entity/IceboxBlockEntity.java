@@ -56,6 +56,7 @@ public class IceboxBlockEntity extends LootableContainerBlockEntity implements B
         return INV_SIZE;
     }
 
+    @SuppressWarnings("EmptyMethod")
     @Override
     public int getMaxCountPerStack() {
         return super.getMaxCountPerStack();

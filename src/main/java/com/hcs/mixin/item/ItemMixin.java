@@ -14,6 +14,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
@@ -25,26 +26,45 @@ import java.util.List;
 public class ItemMixin {
     //The saturationModifier is invalid as saturation is added as same as food level
     //e.g. Cooked chicken increases 6 food levels,and 6 saturation levels,while its saturationModifier=0.6F
+    @Unique
     private static final FoodComponent SEEDS = new FoodComponent.Builder().hunger(0).saturationModifier(1.0f).alwaysEdible().build();
+    @Unique
     private static final FoodComponent WHEAT = new FoodComponent.Builder().hunger(0).saturationModifier(1.0f).build();
+    @Unique
     private static final FoodComponent SUGAR = new FoodComponent.Builder().hunger(0).saturationModifier(1.0f).build();
+    @Unique
     private static final FoodComponent COCA_BEANS = new FoodComponent.Builder().hunger(1).saturationModifier(1.0f).build();
+    @Unique
     private static final FoodComponent SUGAR_CANE = new FoodComponent.Builder().hunger(0).saturationModifier(1.0f).build();
+    @Unique
     private static final FoodComponent HONEYCOMB = new FoodComponent.Builder().hunger(4).saturationModifier(2.0f).build();
+    @Unique
     private static final FoodComponent BROWN_MUSHROOM = new FoodComponent.Builder().hunger(1).saturationModifier(1.0f).build();
+    @Unique
     private static final FoodComponent RED_MUSHROOM = new FoodComponent.Builder().hunger(1).saturationModifier(1.0f).statusEffect(new StatusEffectInstance(StatusEffects.NAUSEA, 200), 1).statusEffect(new StatusEffectInstance(StatusEffects.POISON, 600), 1).build();
+    @Unique
     private static final FoodComponent CRIMSON_FUNGUS = new FoodComponent.Builder().hunger(1).saturationModifier(1.0f).statusEffect(new StatusEffectInstance(StatusEffects.NAUSEA, 200), 1).statusEffect(new StatusEffectInstance(StatusEffects.POISON, 600), 1).build();
+    @Unique
     private static final FoodComponent WARPED_FUNGUS = new FoodComponent.Builder().hunger(1).saturationModifier(1.0f).statusEffect(new StatusEffectInstance(StatusEffects.NAUSEA, 200), 1).statusEffect(new StatusEffectInstance(StatusEffects.POISON, 600), 1).build();
+    @Unique
     private static final FoodComponent KELP = new FoodComponent.Builder().hunger(0).saturationModifier(0.0f).build();
+    @Unique
     private static final FoodComponent SEAGRASS = new FoodComponent.Builder().hunger(0).saturationModifier(1.0f).build();
+    @Unique
     private static final FoodComponent SEA_PICKLE = new FoodComponent.Builder().hunger(0).saturationModifier(1.0f).build();
+    @Unique
     private static final FoodComponent ROTTEN_FLESH = new FoodComponent.Builder().hunger(1).saturationModifier(1.0f).statusEffect(new StatusEffectInstance(StatusEffects.NAUSEA, 200), 1).statusEffect(new StatusEffectInstance(StatusEffects.POISON, 300), 1).statusEffect(new StatusEffectInstance(StatusEffects.HUNGER, 600), 1).statusEffect(new StatusEffectInstance(HcsEffects.DIARRHEA, 600, 1), 1).build();
+    @Unique
     private static final FoodComponent COOKED_BEEF = new FoodComponent.Builder().hunger(10).saturationModifier(0.8f).meat().build();
+    @Unique
     private static final FoodComponent NETHER_WART = new FoodComponent.Builder().hunger(1).saturationModifier(1.0f).build();
+    @Unique
     private static final FoodComponent SWEET_BERRIES = new FoodComponent.Builder().hunger(1).saturationModifier(1.0f).build();
+    @Unique
     private static final FoodComponent RABBIT_FOOT = new FoodComponent.Builder().hunger(2).saturationModifier(1.0f).build();
 
 
+    @SuppressWarnings("SameReturnValue")
     @Shadow
     public FoodComponent getFoodComponent() {
         return null;

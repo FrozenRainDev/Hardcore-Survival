@@ -15,8 +15,7 @@ import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
 
 public class ExtractWaterFromBambooRecipe extends SpecialCraftingRecipe {
-
-    public static int slotBamboo = 0;
+    public static final int slotBamboo = 0;
 
     public ExtractWaterFromBambooRecipe(Identifier id, CraftingRecipeCategory category) {
         super(id, category);

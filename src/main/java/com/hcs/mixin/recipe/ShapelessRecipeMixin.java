@@ -7,10 +7,7 @@ import net.minecraft.recipe.Ingredient;
 import net.minecraft.recipe.ShapelessRecipe;
 import net.minecraft.util.collection.DefaultedList;
 import net.minecraft.world.World;
-import org.spongepowered.asm.mixin.Final;
-import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Mutable;
-import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.*;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
@@ -23,13 +20,17 @@ public class ShapelessRecipeMixin {
     @Shadow
     ItemStack output;
 
+    @SuppressWarnings("SameReturnValue")
     @Shadow
     public DefaultedList<Ingredient> getIngredients() {
         return null;
     }
 
+    @Unique
     private static World theWorld = null;
+    @Unique
     private static float freshSum = 0.0F;
+    @Unique
     private static int freshCou = 0;
 
     public ShapelessRecipeMixin(ItemStack output) {

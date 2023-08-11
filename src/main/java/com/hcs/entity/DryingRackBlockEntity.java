@@ -28,6 +28,7 @@ public class DryingRackBlockEntity extends BlockEntity implements BlockEntityPro
         super(Reg.DRYING_RACK_BLOCK_ENTITY, pos, state);
     }
 
+    @SuppressWarnings({"FieldMayBeFinal", "CanBeFinal"})
     private DefaultedList<ItemStack> inventory = DefaultedList.ofSize(1, ItemStack.EMPTY);
 
     public DefaultedList<ItemStack> getInventory() {

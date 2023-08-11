@@ -26,6 +26,7 @@ public class HungerManagerMixin {
     @Shadow
     private int prevFoodLevel = 20;
 
+    @SuppressWarnings("EmptyMethod")
     @Shadow
     public void addExhaustion(float exhaustion) {
     }

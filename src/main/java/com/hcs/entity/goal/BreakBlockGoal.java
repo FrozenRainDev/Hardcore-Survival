@@ -16,7 +16,7 @@ import net.minecraft.world.WorldEvents;
 import org.jetbrains.annotations.NotNull;
 
 public class BreakBlockGoal extends Goal {
-    protected MobEntity mob;
+    protected final MobEntity mob;
     protected BlockPos breakPos = BlockPos.ORIGIN;
     protected BlockState breakState = Blocks.AIR.getDefaultState();
     protected boolean shouldStop;

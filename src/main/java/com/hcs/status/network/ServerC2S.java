@@ -44,6 +44,7 @@ public class ServerC2S {
                                 list.add(type);
                         }
                         Iterator<StatusEffect> iterator = list.iterator();
+                        //noinspection WhileLoopReplaceableByForEach
                         while (iterator.hasNext()) {
                             //Avoid java.util.ConcurrentModificationException: null
                             StatusEffect next = iterator.next();

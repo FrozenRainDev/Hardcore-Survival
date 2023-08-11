@@ -17,7 +17,7 @@ public class ItemWithTip extends Item {
         this.key = tip;
     }
 
-    String key;
+    final String key;
 
     @Override
     public void appendTooltip(@NotNull ItemStack stack, World world, @NotNull List<Text> tooltip, TooltipContext tooltipContext) {

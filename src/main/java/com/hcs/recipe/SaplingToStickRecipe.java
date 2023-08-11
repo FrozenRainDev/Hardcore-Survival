@@ -4,7 +4,6 @@ import com.hcs.Reg;
 import net.minecraft.block.SaplingBlock;
 import net.minecraft.inventory.CraftingInventory;
 import net.minecraft.item.BlockItem;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.recipe.RecipeSerializer;

@@ -26,6 +26,7 @@ import org.jetbrains.annotations.NotNull;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.ModifyArg;
@@ -57,6 +58,7 @@ public abstract class InGameHudMixin extends DrawableHelper {
     @Shadow
     public abstract TextRenderer getTextRenderer();
 
+    @SuppressWarnings("EmptyMethod")
     @Shadow
     private void renderOverlay(MatrixStack matrices, Identifier texture, float opacity) {
     }
@@ -64,16 +66,26 @@ public abstract class InGameHudMixin extends DrawableHelper {
     @Shadow
     @Final
     private static Identifier POWDER_SNOW_OUTLINE;
+    @Unique
     private float heaLast = 0.0F;
+    @Unique
     private final Map<String, Boolean> displacement = new HashMap<>();
+    @Unique
     private Boolean shouldRenderMountHealth = false, shouldRenderMountJumpBar = false;
+    @Unique
     private int renderExperienceBarX;
+    @Unique
     private int heaTwinkleCoolDown = 0, sanTwinkleCoolDown = 0;
+    @Unique
     private static final Identifier HCS_ICONS_TEXTURE = new Identifier("hcs", "textures/gui/hcs_stat.png");
+    @Unique
     private static final Identifier EMPTY_TEXTURE = new Identifier("hcs", "textures/gui/empty.png");
+    @Unique
     private static final Identifier HEATSTROKE_BLUR = new Identifier("hcs", "textures/misc/heatstroke_blur.png");
+    @Unique
     private static final Identifier INSANITY_OUTLINE = new Identifier("hcs", "textures/misc/insanity_outline.png");
 
+    @Unique
     public void drawHCSTexture(MatrixStack matrices, int x, int y, int u, int v, int width, int height) {
         //(u,v) is the coordinate of texture
         RenderSystem.setShaderTexture(0, HCS_ICONS_TEXTURE);
@@ -81,6 +93,7 @@ public abstract class InGameHudMixin extends DrawableHelper {
         RenderSystem.setShaderTexture(0, GUI_ICONS_TEXTURE);
     }
 
+    @Unique
     @Deprecated
     public void drawHCSTexture(@NotNull MatrixStack matrices, int x, int y, int u, int v, int width, int height, float scale) {
         float descale = 1 / scale;
@@ -91,6 +104,7 @@ public abstract class InGameHudMixin extends DrawableHelper {
         matrices.scale(descale, descale, descale);//reset to default scale
     }
 
+    @Unique
     public void drawTextWithThickShadow(@NotNull MatrixStack matrices, String text, int x, int y, int color, float scale) {
         // 1/(1/0.75)==0.75
         TextRenderer renderer = this.getTextRenderer();
@@ -106,6 +120,7 @@ public abstract class InGameHudMixin extends DrawableHelper {
         matrices.scale(descale, descale, descale);
     }
 
+    @Unique
     public int getDrawIconHeight(float val) {
         int result = Math.round(val * 14) + 1;//+2
         if ((val <= 0 && result >= 2) || result < 0) result = 0;
@@ -113,6 +128,7 @@ public abstract class InGameHudMixin extends DrawableHelper {
         return result;
     }
 
+    @Unique
     public int getDrawIconHeight(double val, int initAdd, int maxCut) {
         int result = Math.round((float) val * ((14 - maxCut) - initAdd)) + initAdd;
         if ((val <= 0 && result >= 2) || result < 0) result = 0;
@@ -120,6 +136,7 @@ public abstract class InGameHudMixin extends DrawableHelper {
         return result;
     }
 
+    @Unique
     public int getColorByPercentage(double val) {
         int r, g;
         String R, G;
@@ -139,6 +156,7 @@ public abstract class InGameHudMixin extends DrawableHelper {
         return Integer.parseInt(R + G + "00", 16);
     }
 
+    @Unique
     public double getTempForDisplay(double x) {
         if (x <= 0.5F) return 0.5 - Math.pow(0.5 - x, 1.6) * 1.5;
         return Math.pow(x - 0.5, 1.6) * 1.5 + 0.5;

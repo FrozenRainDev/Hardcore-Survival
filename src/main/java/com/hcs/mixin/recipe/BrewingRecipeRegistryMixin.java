@@ -25,6 +25,7 @@ public class BrewingRecipeRegistryMixin {
     }
 
 //    @Invoker("registerPotionRecipe")
+    @SuppressWarnings("EmptyMethod")
     @Shadow
     public static void registerPotionRecipe(Potion input, Item item, Potion output){}
 }

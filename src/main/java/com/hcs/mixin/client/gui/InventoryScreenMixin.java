@@ -21,6 +21,7 @@ public abstract class InventoryScreenMixin extends AbstractInventoryScreen<Playe
         super(screenHandler, playerInventory, text);
     }
 
+    @SuppressWarnings("SpellCheckingInspection")
     @ModifyArg(method = "drawBackground", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/screen/ingame/InventoryScreen;drawEntity(Lnet/minecraft/client/util/math/MatrixStack;IIIFFLnet/minecraft/entity/LivingEntity;)V"), index = 6)
     public LivingEntity drawBackground(LivingEntity entity) {
         if (this.client != null)
