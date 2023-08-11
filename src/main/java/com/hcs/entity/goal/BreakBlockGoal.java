@@ -78,10 +78,10 @@ public class BreakBlockGoal extends Goal {
         return true;
     }
 
-    @SuppressWarnings("all")
+
     @Override
     public boolean shouldContinue() {
-//        System.out.println("state=" + this.breakState + "\t!shouldStop=" + !this.shouldStop + "\tbreakProgress=" + this.breakProgress + "\tmax=" + this.getMaxProgress() + "\tcanBreak=" + canBreakBlock(this.breakState) + "\twithinDistance=" + this.breakPos.isWithinDistance(this.mob.getPos(), 5) + "\tTimeSinceLastAttack=" + this.mob.getDamageTracker().getTimeSinceLastAttack() + "\tRecently attacked=" + this.mob.getDamageTracker().wasRecentlyAttacked());
+//        System.out.println("state=" + this.breakState + "\t!shouldStop=" + !this.shouldStop + "\t breakProgress=" + this.breakProgress + "\t max=" + this.getMaxProgress() + "\t canBreak=" + canBreakBlock(this.breakState) + "\t withinDistance=" + this.breakPos.isWithinDistance(this.mob.getPos(), 5) + "\tTimeSinceLastAttack=" + this.mob.getDamageTracker().getTimeSinceLastAttack() + "\tRecently attacked=" + this.mob.getDamageTracker().wasRecentlyAttacked());
         return !this.shouldStop && this.breakProgress <= this.getMaxProgress() && canBreakBlock(this.breakState) && this.breakPos.isWithinDistance(this.mob.getPos(), 5) && (!this.mob.getDamageTracker().wasRecentlyAttacked() || this.mob.getDamageTracker().getTimeSinceLastAttack() > 20);
     }
 

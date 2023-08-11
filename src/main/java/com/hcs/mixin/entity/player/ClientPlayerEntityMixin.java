@@ -18,6 +18,7 @@ import net.minecraft.util.Identifier;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
@@ -30,19 +31,25 @@ public abstract class ClientPlayerEntityMixin extends AbstractClientPlayerEntity
     @Shadow
     @Final
     protected MinecraftClient client;
+    @Unique
     private static final SoundEvent[] HALLUCINATION_SOUNDS = {ENTITY_ENDERMAN_DEATH, ENTITY_ENDERMAN_HURT, ENTITY_ENDERMAN_AMBIENT, ENTITY_HUSK_DEATH, ENTITY_ENDERMITE_DEATH, ENTITY_BLAZE_AMBIENT, ENTITY_BLAZE_DEATH, ENTITY_PIG_DEATH, ENTITY_DROWNED_DEATH, ENTITY_STRAY_DEATH, BLOCK_ROOTED_DIRT_BREAK, BLOCK_BONE_BLOCK_HIT, BLOCK_FIRE_AMBIENT, BLOCK_VINE_PLACE, ENTITY_LIGHTNING_BOLT_THUNDER, ENTITY_GHAST_SCREAM, ENTITY_GENERIC_EXPLODE, ENTITY_ZOMBIE_ATTACK_IRON_DOOR, ENTITY_ZOMBIE_ATTACK_WOODEN_DOOR, ENTITY_SKELETON_AMBIENT, ENTITY_CREEPER_PRIMED, ENTITY_SPIDER_AMBIENT};
 //    private static final SoundEvent[] HALLUCINATION_SOUNDS_VERY_HORRIBLE = {ENTITY_ENDERMAN_SCREAM, ENTITY_ENDERMAN_STARE};
+    @Unique
     private static final SoundEvent[] HALLUCINATION_AMBIENT_SOUNDS = {AMBIENT_CAVE.value(), AMBIENT_UNDERWATER_LOOP_ADDITIONS_ULTRA_RARE, AMBIENT_BASALT_DELTAS_MOOD.value(), AMBIENT_WARPED_FOREST_MOOD.value(), AMBIENT_BASALT_DELTAS_MOOD.value(), AMBIENT_SOUL_SAND_VALLEY_MOOD.value(), AMBIENT_UNDERWATER_LOOP, AMBIENT_BASALT_DELTAS_ADDITIONS.value(), AMBIENT_NETHER_WASTES_LOOP.value(), AMBIENT_NETHER_WASTES_ADDITIONS.value()};
+    @Unique
     private boolean prevIsThirdPerson = false;
+    @Unique
     private int prevInsanityEffectId = 0;
+    @Unique
     private int ticks = 0;
+    @Unique
     private int horriblyPlayedTicks = 0;
 
     public ClientPlayerEntityMixin(ClientWorld world, GameProfile profile) {
         super(world, profile);
     }
 
-    @SuppressWarnings("all")
+
     @Inject(method = "tick", at = @At("TAIL"))
     public void tick(CallbackInfo ci) {
         ++ticks;
@@ -60,7 +67,8 @@ public abstract class ClientPlayerEntityMixin extends AbstractClientPlayerEntity
                 this.client.gameRenderer.loadPostProcessor(new Identifier("hcs", "shaders/post/insanity_" + insanityEffectId + ".json"));
                 this.prevInsanityEffectId = insanityEffectId;
             }
-            if (hasInsanity) {
+            if (hasInsanity) //noinspection CommentedOutCode
+            {
                 if (sanityManager.get() < 0.15) {
                     for (SoundCategory cate : new SoundCategory[]{SoundCategory.BLOCKS, SoundCategory.HOSTILE, SoundCategory.MUSIC, SoundCategory.NEUTRAL, SoundCategory.RECORDS, SoundCategory.VOICE, SoundCategory.WEATHER, SoundCategory.PLAYERS})
                         this.client.getSoundManager().stopSounds(null, cate);

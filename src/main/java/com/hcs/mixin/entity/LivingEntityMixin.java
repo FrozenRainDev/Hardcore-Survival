@@ -8,7 +8,6 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.damage.DamageSource;
-import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.entity.effect.StatusEffects;
 import net.minecraft.entity.mob.EndermanEntity;
 import net.minecraft.entity.mob.HostileEntity;
@@ -16,13 +15,13 @@ import net.minecraft.entity.passive.*;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Items;
 import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.ModifyArg;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
@@ -47,19 +46,22 @@ public abstract class LivingEntityMixin extends Entity {
         ++lastAttackedTime;
     }
 
-    @SuppressWarnings("all")
+
     @Inject(method = "onAttacking", at = @At("HEAD"))
     public void onAttacking(Entity target, CallbackInfo ci) {
+        //noinspection ConstantValue
         if ((Object) this instanceof HostileEntity && target instanceof PlayerEntity player)
             ((StatAccessor) player).getSanityManager().add((Object) this instanceof EndermanEntity ? -0.08 : -0.005);
     }
 
-    @SuppressWarnings("all")
+
     @Inject(method = "getNextAirOnLand", at = @At("RETURN"), cancellable = true)
     protected void getNextAirOnLand(int air, @NotNull CallbackInfoReturnable<Integer> cir) {
+        //noinspection ConstantValue
         if ((Object) this instanceof PlayerEntity player) {
             int lvl = ((StatAccessor) player).getStatusManager().getFinalOxygenLackLevel();
             if (lvl > 0 && !player.hasStatusEffect(StatusEffects.WATER_BREATHING)) {
+                //noinspection ConditionalExpression
                 cir.setReturnValue(air + ((air + 1 >= this.getMaxAir()) ? 0 : switch (lvl) {
                     case 1 -> 1;
                     default -> 0;
@@ -68,7 +70,8 @@ public abstract class LivingEntityMixin extends Entity {
         }
     }
 
-    @SuppressWarnings("all")
+
+    @SuppressWarnings("ConstantValue")
     @Inject(method = "damage", at = @At("HEAD"))
     public void damage(DamageSource source, float amount, CallbackInfoReturnable<Integer> cir) {
         Object ent = this;
@@ -96,13 +99,18 @@ public abstract class LivingEntityMixin extends Entity {
         }
     }
 
-    @SuppressWarnings("all")
-    @Inject(method = "getJumpBoostVelocityModifier", at = @At("RETURN"), cancellable = true)
-    public void getJumpBoostVelocityModifier(CallbackInfoReturnable<Double> cir) {
+    @ModifyArg(method = "jump", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/LivingEntity;setVelocity(DDD)V"), index = 1)
+    public double jump(double velY) {
+        //noinspection ConstantValue
         if (((Object) this) instanceof ServerPlayerEntity player) {
             if (player.hasStatusEffect(HcsEffects.EXHAUSTED)) {
-                cir.setReturnValue(cir.getReturnValue() * (player.getStatusEffect(HcsEffects.EXHAUSTED).getAmplifier() > 0 ? 0.05 : 0.3));
+                System.out.println(velY);
+//                return (velY * (player.getStatusEffect(HcsEffects.EXHAUSTED).getAmplifier() > 0 ? 0.05 : 0.3));
+                return 11;
             }
         }
+        return velY;
     }
+
+
 }

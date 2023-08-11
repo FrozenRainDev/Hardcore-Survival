@@ -36,9 +36,9 @@ public abstract class MobEntityMixin extends LivingEntity {
         cir.setReturnValue(Math.max(1, (int) ((double) cir.getReturnValue() / 3.0)));
     }
 
-    @SuppressWarnings("all")
     @Inject(method = "tick", at = @At("HEAD"))
     public void tick(CallbackInfo ci) {
+        //noinspection RedundantCast
         if (!this.world.isClient && (Object) this instanceof Monster && this.getTarget() instanceof PlayerEntity player && this.distanceTo(player) < 7 && player.canSee(this))
             ((StatAccessor) player).getSanityManager().setMonsterWitnessingTicks(10);
     }

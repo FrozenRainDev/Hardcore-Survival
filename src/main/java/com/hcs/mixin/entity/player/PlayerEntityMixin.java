@@ -37,6 +37,7 @@ import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.ModifyArg;
@@ -107,44 +108,59 @@ public abstract class PlayerEntityMixin extends LivingEntity implements StatAcce
     @Shadow
     public abstract void setFireTicks(int fireTicks);
 
+    @Unique
     ThirstManager thirstManager = new ThirstManager();
+    @Unique
     StaminaManager staminaManager = new StaminaManager();
+    @Unique
     TemperatureManager temperatureManager = new TemperatureManager();
+    @Unique
     StatusManager statusManager = new StatusManager();
+    @Unique
     SanityManager sanityManager = new SanityManager();
+    @Unique
     NutritionManager nutritionManager = new NutritionManager();
+    @Unique
     WetnessManager wetnessManager = new WetnessManager();
 
+    @SuppressWarnings("AddedMixinMembersNamePattern")
     @Override
     public ThirstManager getThirstManager() {
         return this.thirstManager;
     }
 
+    @SuppressWarnings("AddedMixinMembersNamePattern")
     @Override
     public StaminaManager getStaminaManager() {
         return this.staminaManager;
     }
 
+    @SuppressWarnings("AddedMixinMembersNamePattern")
     @Override
     public TemperatureManager getTemperatureManager() {
         return this.temperatureManager;
     }
 
+    @SuppressWarnings("AddedMixinMembersNamePattern")
     @Override
     public StatusManager getStatusManager() {
         return this.statusManager;
     }
 
+    @SuppressWarnings("AddedMixinMembersNamePattern")
     @Override
     public SanityManager getSanityManager() {
         return this.sanityManager;
     }
 
+    @SuppressWarnings("AddedMixinMembersNamePattern")
     @Override
     public NutritionManager getNutritionManager() {
         return this.nutritionManager;
     }
 
+
+    @SuppressWarnings("AddedMixinMembersNamePattern")
     @Override
     public WetnessManager getWetnessManager() {
         return this.wetnessManager;
@@ -228,7 +244,8 @@ public abstract class PlayerEntityMixin extends LivingEntity implements StatAcce
     }
 
 
-    @SuppressWarnings("all")
+
+    @SuppressWarnings("ConstantValue")
     @Inject(method = "eatFood", at = @At("HEAD"))
     public void eatFood(World world, ItemStack stack, CallbackInfoReturnable<ItemStack> cir) {
         if ((Object) this instanceof ServerPlayerEntity player && !stack.isEmpty()) {
@@ -312,7 +329,7 @@ public abstract class PlayerEntityMixin extends LivingEntity implements StatAcce
         }
     }
 
-    @Inject(method = "jump", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/player/PlayerEntity;incrementStat(Lnet/minecraft/util/Identifier;)V"), cancellable = true)
+    @Inject(method = "jump", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/player/PlayerEntity;incrementStat(Lnet/minecraft/util/Identifier;)V", shift = At.Shift.AFTER), cancellable = true)
     public void jump(@NotNull CallbackInfo ci) {
         float rate = this.isSprinting() ? 3.0F : 1.0F;
         this.staminaManager.pauseRestoring();

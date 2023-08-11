@@ -35,7 +35,7 @@ public class WorldHelper {
     }
 
     //Do not abuse
-    @SuppressWarnings("all")
+    @SuppressWarnings("CommentedOutCode")
     public static @Nullable ServerWorld getServerWorld() {
         if (RotHelper.theWorld instanceof ServerWorld serverWorld) return serverWorld;
         return null;

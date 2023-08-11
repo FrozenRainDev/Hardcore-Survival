@@ -126,13 +126,15 @@ public class BlockMixin {
         if (state.isIn(BlockTags.WOOL)) multiplier = 0.5F;
         else if (block instanceof GrassBlock) multiplier = 0.8F;
         else if (block instanceof SandBlock) multiplier = 0.7F;
-        else if (block == Blocks.PODZOL || block == Blocks.MYCELIUM) multiplier = 0.9F;
+        else if (block == Blocks.PODZOL || block == Blocks.MYCELIUM || block == Blocks.DIRT_PATH || block == Blocks.DIRT)
+            multiplier = 0.9F;
         else if (block.getHardness() > 2.0F) multiplier = 1.2F;
         float exaggeratedFallDistance = (float) Math.pow(fallDistance, 1.2); //Gain more falling damage than before
         if (!(fallDistance <= 4.5 && multiplier < 1)) {
             if (entity instanceof PlayerEntity player && fallDistance >= 2.0F) //Moved from PlayerEntity/handleFallDamage()
                 player.increaseStat(Stats.FALL_ONE_CM, (int) Math.round((double) fallDistance * 100.0));
-            entity.handleFallDamage(multiplier < 1 ? exaggeratedFallDistance - 1 : exaggeratedFallDistance, multiplier, entity.getDamageSources().fall());
+            if (fallDistance > 3.0F)
+                entity.handleFallDamage(multiplier < 1 ? exaggeratedFallDistance - 1 : exaggeratedFallDistance, multiplier, entity.getDamageSources().fall());
         }
         ci.cancel();
     }

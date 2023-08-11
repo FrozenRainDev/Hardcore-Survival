@@ -61,14 +61,7 @@ public abstract class MinecraftClientMixin extends ReentrantThreadExecutor<Runna
     }
 
 
-    /*
-    The code of doAttack is from https://github.com/Kelvin285/MITE-Reborn
-    license:
-    Copyright (C) 2020 Kelvin285
-    https://mit-license.org/
-    */
-
-    @SuppressWarnings("all")
+    @SuppressWarnings("CancellableInjectionUsage")
     @Inject(method = "doAttack", at = @At("HEAD"), cancellable = true)
     private void doAttack(CallbackInfoReturnable<Boolean> cir) {
         if (crosshairTarget != null && player != null) {
