@@ -19,9 +19,9 @@ import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.ModifyArg;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
@@ -99,14 +99,14 @@ public abstract class LivingEntityMixin extends Entity {
         }
     }
 
-    @ModifyArg(method = "jump", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/LivingEntity;setVelocity(DDD)V"), index = 1)
+    @Unique
+    @Deprecated
+//    @ModifyArg(method = "jump", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/LivingEntity;setVelocity(DDD)V"), index = 1)
     public double jump(double velY) {
         //noinspection ConstantValue
-        if (((Object) this) instanceof ServerPlayerEntity player) {
+        if (((Object) this) instanceof ServerPlayerEntity player) {//Does not work for players to limit jump height, which is at least 1.2 blocks
             if (player.hasStatusEffect(HcsEffects.EXHAUSTED)) {
-                System.out.println(velY);
-//                return (velY * (player.getStatusEffect(HcsEffects.EXHAUSTED).getAmplifier() > 0 ? 0.05 : 0.3));
-                return 11;
+                return (velY * (player.getStatusEffect(HcsEffects.EXHAUSTED).getAmplifier() > 0 ? 0.05 : 0.3));
             }
         }
         return velY;

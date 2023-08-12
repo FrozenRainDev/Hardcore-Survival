@@ -251,7 +251,6 @@ public abstract class PlayerEntityMixin extends LivingEntity implements StatAcce
     }
 
 
-
     @SuppressWarnings("ConstantValue")
     @Inject(method = "eatFood", at = @At("HEAD"))
     public void eatFood(World world, ItemStack stack, CallbackInfoReturnable<ItemStack> cir) {
@@ -336,8 +335,16 @@ public abstract class PlayerEntityMixin extends LivingEntity implements StatAcce
         }
     }
 
+    @Inject(method = "jump", at = @At("HEAD"), cancellable = true)
+    public void jump1(@NotNull CallbackInfo ci) {
+        if (this.hasStatusEffect(HcsEffects.EXHAUSTED)) {
+            StatusEffectInstance exhaustedEffectInstance = this.getStatusEffect(HcsEffects.EXHAUSTED);
+            if (exhaustedEffectInstance != null && exhaustedEffectInstance.getAmplifier() > 0) ci.cancel();
+        }
+    }
+
     @Inject(method = "jump", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/player/PlayerEntity;incrementStat(Lnet/minecraft/util/Identifier;)V", shift = At.Shift.AFTER), cancellable = true)
-    public void jump(@NotNull CallbackInfo ci) {
+    public void jump2(@NotNull CallbackInfo ci) {
         float rate = this.isSprinting() ? 3.0F : 1.0F;
         this.staminaManager.pauseRestoring();
         this.addExhaustion(0.025F * rate);
@@ -369,6 +376,8 @@ public abstract class PlayerEntityMixin extends LivingEntity implements StatAcce
             this.sanityManager.add(-0.00004);
             this.sanityManager.setMonsterWitnessingTicks(this.sanityManager.getMonsterWitnessingTicks() - 1);
         }
+        if (this.isWet()) this.statusManager.setRecentWetTicks(20);
+        else this.statusManager.setRecentWetTicks(Math.max(0, this.statusManager.getRecentWetTicks() - 1));
         //Set max health according to max exp level reached
         if (this.experienceLevel > this.statusManager.getMaxExpLevelReached())
             this.statusManager.setMaxExpLevelReached(this.experienceLevel);

@@ -16,8 +16,8 @@ public class StatusManager {
     private boolean shouldLockDestroying = false; //Client only
     private int soulImpairedStat = 0; //Server only
     public static final String IS_SOUL_IMPAIRED_NBT = "hcs_is_soul_impaired";
-
     private int recentSleepTicks = 0;
+    private int recentWetTicks = 0;
 
     public void reset(int lvlReached, int soulImpaired) {
         exhaustion = 0.0F;
@@ -149,5 +149,13 @@ public class StatusManager {
 
     public void setRecentSleepTicks(int val) {
         recentSleepTicks = val;
+    }
+
+    public int getRecentWetTicks() {
+        return recentWetTicks;
+    }
+
+    public void setRecentWetTicks(int recentWetTicks) {
+        this.recentWetTicks = recentWetTicks;
     }
 }

@@ -88,6 +88,7 @@ public class ClientS2C {
                         statusManager.setOxygenLackLevel(bufArr[9]);
                         statusManager.setOxygenGenLevel(bufArr[10]);
                         statusManager.setRecentSleepTicks(bufArr[11]);
+                        statusManager.setRecentWetTicks(bufArr[12]);
                     }
                 }
             });
