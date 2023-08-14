@@ -24,7 +24,7 @@ public class MouseMixin {
     private void onMouseButton(long window, int button, int action, int mods, CallbackInfo ci) {
         if (this.client.player == null) return;
         StatusManager statusManager = ((StatAccessor) this.client.player).getStatusManager();
-        if (button == 1 && this.client.mouse.wasLeftButtonClicked() && this.client.currentScreen == null/*In game*/) {
+        if (button == 1 && this.client.mouse.wasLeftButtonClicked() && this.client.currentScreen == null/*In game*/ && !(this.client.player.isCreative() || this.client.player.isSpectator())) {
             statusManager.setLockDestroying(true);
         } else if ((button == 0 || button == 1) && action == 1 && statusManager.lockDestroying()) {
             statusManager.setLockDestroying(false);

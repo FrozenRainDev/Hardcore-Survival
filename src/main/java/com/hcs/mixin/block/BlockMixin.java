@@ -98,7 +98,7 @@ public class BlockMixin {
 
     @Inject(at = @At("HEAD"), method = "randomDisplayTick")
     public void randomDisplayTick(@NotNull BlockState state, World world, BlockPos pos, Random random, CallbackInfo ci) {
-        if (state.isOf(Blocks.DIRT) || state.isOf(Blocks.DIRT_PATH) || state.isOf(Blocks.CLAY)) {
+        if (WorldHelper.isAffectedByGravityInHCS(state)) {
             if (random.nextInt(16) == 0 && FallingBlock.canFallThrough(world.getBlockState(pos.down()))) {
                 double d = (double) pos.getX() + random.nextDouble();
                 double e = (double) pos.getY() - 0.05;
@@ -134,7 +134,7 @@ public class BlockMixin {
             if (entity instanceof PlayerEntity player && fallDistance >= 2.0F) //Moved from PlayerEntity/handleFallDamage()
                 player.increaseStat(Stats.FALL_ONE_CM, (int) Math.round((double) fallDistance * 100.0));
             if (fallDistance > 3.0F)
-                entity.handleFallDamage(multiplier < 1 ? exaggeratedFallDistance - 1 : exaggeratedFallDistance, multiplier, entity.getDamageSources().fall());
+                entity.handleFallDamage(multiplier < 1 ? exaggeratedFallDistance - 2 : exaggeratedFallDistance, multiplier, entity.getDamageSources().fall());
         }
         ci.cancel();
     }

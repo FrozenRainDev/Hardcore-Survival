@@ -29,6 +29,6 @@ public abstract class ZombieEntityMixin extends HostileEntity {
         //Zombies will break blocks when its path is obstructed
         this.targetSelector.add(1, new BreakBlockGoal(this));
         //Zombies will attack animals spontaneously
-        if (!this.isBaby()) this.targetSelector.add(5, new ActiveTargetGoal<>(this, AnimalEntity.class, false));
+        if (!this.isBaby()) this.targetSelector.add(2/*prev 5*/, new ActiveTargetGoal<>(this, AnimalEntity.class, false));
     }
 }

@@ -15,14 +15,19 @@ import net.minecraft.world.biome.source.MultiNoiseBiomeSource;
 import org.jetbrains.annotations.Nullable;
 
 public class WorldHelper {
+    public static boolean isAffectedByGravityInHCS(BlockState state) {
+        if (state == null) return false;
+        return state.isOf(Blocks.DIRT) || state.isOf(Blocks.DIRT_PATH) || state.isOf(Blocks.CLAY) || state.isOf(Blocks.COARSE_DIRT);
+    }
+
     public static void checkBlockGravity(World world, BlockPos pos) {
         if (!(world instanceof ServerWorld)) return;
         for (BlockPos bp : new BlockPos[]{pos, pos.up(), pos.down(), pos.east(), pos.west(), pos.south(), pos.north()}) {
             //Check the pos and its immediate pos
             BlockState state = world.getBlockState(bp);
-            if (state.isOf(Blocks.DIRT) || state.isOf(Blocks.DIRT_PATH) || state.isOf(Blocks.CLAY)) {
+            if (isAffectedByGravityInHCS(state)) {
                 if (FallingBlock.canFallThrough(world.getBlockState(bp.down())) || bp.getY() < world.getBottomY()) {
-                    if (state.isOf(Blocks.DIRT) || state.isOf(Blocks.DIRT_PATH) || state.isOf(Blocks.CLAY)) {
+                    if (isAffectedByGravityInHCS(state)) {
                         FallingBlockEntity.spawnFromBlock(world, bp, state);
                     }
                     //Recurse for further neighbor update
