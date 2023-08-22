@@ -221,10 +221,9 @@ public abstract class PlayerEntityMixin extends LivingEntity implements StatAcce
                 speed /= 30.0F;//if((Object)this instanceof PlayerEntity)((PlayerEntity)(Object)this).damage(DamageSource.CACTUS,0.0001F);
             else speed = -1.0F;
         }
-        if (mainHand != Reg.FLINT_HATCHET && (state.isIn(BlockTags.AXE_MINEABLE)) || mainHand instanceof SwordItem)
-            speed /= 2.0F;
-        if (this.hasStatusEffect(HcsEffects.DEHYDRATED) || this.hasStatusEffect(HcsEffects.STARVING) || this.hasStatusEffect(HcsEffects.EXHAUSTED))
-            speed /= 2.0F;
+        if ((mainHand != Reg.FLINT_HATCHET && (state.isIn(BlockTags.AXE_MINEABLE))) || ((mainHand == Reg.STONE_CONE || mainHand == Reg.FLINT_CONE) && block == Blocks.GRAVEL) || mainHand instanceof SwordItem)
+            speed /= 3.0F;
+        speed /= ((this.hasStatusEffect(HcsEffects.DEHYDRATED) ? 2.0F : 1.0F) * (this.hasStatusEffect(HcsEffects.STARVING) ? 2.0F : 1.0F) * (this.hasStatusEffect(HcsEffects.EXHAUSTED) ? 2.0F : 1.0F));
         if (DigRestrictHelper.isBreakableFunctionalBlock(block))
             speed *= (block instanceof AbstractFurnaceBlock || block == Blocks.ENDER_CHEST) ? 16.0F : 4.0F;
         if (block == Blocks.SUGAR_CANE || block == Blocks.CLAY) speed /= 9.0F;

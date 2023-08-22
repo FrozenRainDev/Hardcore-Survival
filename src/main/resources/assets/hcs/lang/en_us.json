@@ -99,6 +99,8 @@
   "item.minecraft.tipped_arrow.effect.hcs_constant_temperature": "Arrow of Constant Temperature",
   "item.minecraft.tipped_arrow.effect.hcs_long_constant_temperature": "Arrow of Constant Temperature",
 
+  "item.minecraft.bone_meal.description": "Your crops will WITHER if you abuse it!",
+
   "item.hcs.fiber_string": "Fiber String",
   "item.hcs.fiber_string.tooltip": "Used for making tools",
   "item.hcs.grass_fiber": "Grass Fiber",

@@ -3,7 +3,7 @@ package com.hcs.event;
 import com.hcs.Reg;
 import com.hcs.status.accessor.StatAccessor;
 import com.hcs.util.EntityHelper;
-import com.hcs.util.RotHelper;
+import com.hcs.util.WorldHelper;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerEntityEvents;
 import net.minecraft.entity.Entity;
 import net.minecraft.item.ItemStack;
@@ -18,7 +18,7 @@ public class ServerEntityEvent {
         ServerEntityEvents.ENTITY_LOAD.register((
                 Entity entity, ServerWorld world) -> {
             if (entity instanceof ServerPlayerEntity player) {
-                RotHelper.theWorld = world;
+                WorldHelper.theWorld = world;
                 if (player.getLastDeathPos().isEmpty() && player.getHungerManager().getFoodLevel() == 20 && player.getHungerManager().getExhaustion() == 0.0F && ((StatAccessor) player).getThirstManager().get() == 1.0 && player.getScore() == 0 && player.totalExperience == 0 && player.getInventory().isEmpty()) {
                     //Novice gift
                     player.getHungerManager().setExhaustion(2.0F);

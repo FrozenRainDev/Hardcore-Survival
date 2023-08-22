@@ -16,7 +16,7 @@ public class DigRestrictHelper {
     };
 
     public static final Item[] UNDIGABLE_TOOLS = {
-            Items.WOODEN_AXE, Items.WOODEN_HOE, Items.WOODEN_PICKAXE, Items.WOODEN_SHOVEL,
+            Items.WOODEN_AXE, Items.WOODEN_HOE, Items.WOODEN_PICKAXE,
             Items.STONE_AXE, Items.STONE_HOE, Items.STONE_PICKAXE, Items.STONE_SHOVEL, Items.STONE_SWORD,
             Items.BOW, Items.CROSSBOW, Items.FISHING_ROD, Items.CARROT_ON_A_STICK, Items.WARPED_FUNGUS_ON_A_STICK, Items.SHIELD, Items.TRIDENT
     };

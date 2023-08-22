@@ -97,8 +97,8 @@ public abstract class InGameHudMixin extends DrawableHelper {
     @Deprecated
     public void drawHCSTexture(@NotNull MatrixStack matrices, int x, int y, int u, int v, int width, int height, float scale) {
         float descale = 1 / scale;
-        x *= descale;
-        y *= descale;
+        x = (int) (x * descale);
+        y = (int) (y * descale);
         matrices.scale(scale, scale, scale);
         this.drawHCSTexture(matrices, x, y, u, v, width, height);
         matrices.scale(descale, descale, descale);//reset to default scale
@@ -110,8 +110,8 @@ public abstract class InGameHudMixin extends DrawableHelper {
         TextRenderer renderer = this.getTextRenderer();
         float descale = 1 / scale;
         matrices.scale(scale, scale, scale);
-        x *= descale;
-        y *= descale;
+        x = (int) (x * descale);
+        y = (int) (y * descale);
         renderer.draw(matrices, text, (float) (x + 1), (float) y, 0);
         renderer.draw(matrices, text, (float) (x - 1), (float) y, 0);
         renderer.draw(matrices, text, (float) x, (float) (y + 1), 0);

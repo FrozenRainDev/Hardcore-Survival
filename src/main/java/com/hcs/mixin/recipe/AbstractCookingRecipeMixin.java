@@ -3,6 +3,7 @@ package com.hcs.mixin.recipe;
 import com.hcs.item.HotWaterBottleItem;
 import com.hcs.Reg;
 import com.hcs.util.RotHelper;
+import com.hcs.util.WorldHelper;
 import net.minecraft.inventory.Inventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
@@ -56,7 +57,7 @@ public class AbstractCookingRecipeMixin {
         if (stackOut.isOf(Reg.HOT_WATER_BOTTLE)) {
             int stat = 1;
             NbtCompound nbt = stackOut.getOrCreateNbt();
-            HotWaterBottleItem.createExp(RotHelper.theWorld, stackOut, true);
+            HotWaterBottleItem.createExp(WorldHelper.theWorld, stackOut, true);
             if (nbt.contains(HotWaterBottleItem.HHSM) && nbt.getBoolean(HotWaterBottleItem.HHSM))
                 stat = -1;
             HotWaterBottleItem.setStatus(stackOut, stat);

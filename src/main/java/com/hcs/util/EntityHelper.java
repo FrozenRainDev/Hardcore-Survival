@@ -79,6 +79,7 @@ public class EntityHelper {
         }
     }
 
+    @Deprecated
     public static void msg(@NotNull PlayerEntity player, String text, Boolean isTipMessage) {
         player.sendMessage(MutableText.of(new LiteralTextContent(text)), isTipMessage);
     }

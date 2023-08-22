@@ -2,6 +2,7 @@ package com.hcs.mixin.entity.effect;
 
 import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.entity.effect.StatusEffectUtil;
+import net.minecraft.text.MutableText;
 import net.minecraft.text.Text;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
@@ -15,7 +16,7 @@ public class StatusEffectUtilMixin {
         if (instance == null) return;
         if (instance.getTranslationKey().contains("effect.hcs.") && instance.getDuration() <= 210 && instance.getDuration() > 201) {
             String descriptionKey = instance.getTranslationKey() + ".description";
-            Text description = Text.translatable(descriptionKey);
+            MutableText description = Text.translatable(descriptionKey);
             if (!description.getString().equals(descriptionKey)) cir.setReturnValue(description);
         }
     }

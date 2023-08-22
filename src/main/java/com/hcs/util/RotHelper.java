@@ -26,10 +26,9 @@ import org.jetbrains.annotations.NotNull;
 import java.util.List;
 
 public class RotHelper {
-    public static World theWorld = null;
-    public static final String HFE = "hcs_food_exp";
-    public static final String HFF = "hcs_food_fresh";
-    public static final String HFI = "hcs_food_exp_icebox";
+    public static final String HFE = "hcs_food_exp";//food expiry (ticks)
+    public static final String HFF = "hcs_food_fresh";//percentage of food freshness
+    public static final String HFI = "hcs_food_exp_icebox";//food expiry when in icebox
 
     public static void combineNBT(@NotNull ItemStack stackA, @NotNull ItemStack stackB) {
         int countA = stackA.getCount();
@@ -40,9 +39,9 @@ public class RotHelper {
             Reg.LOGGER.error("RotHelper/combineNBT();countA+countB=" + (countA + countB));
             return;
         }
-        float avgFresh = (getFresh(theWorld, stackA) * countA + getFresh(theWorld, stackB) * countB) / (float) (countA + countB);
-        if (nbtA.contains(HFE) || nbtA.contains(HFI)) createExp(theWorld, stackA, avgFresh, nbtA.contains(HFI));
-        if (nbtB.contains(HFE) || nbtB.contains(HFI)) createExp(theWorld, stackB, avgFresh, nbtB.contains(HFI));
+        float avgFresh = (getFresh(WorldHelper.theWorld, stackA) * countA + getFresh(WorldHelper.theWorld, stackB) * countB) / (float) (countA + countB);
+        if (nbtA.contains(HFE) || nbtA.contains(HFI)) createExp(WorldHelper.theWorld, stackA, avgFresh, nbtA.contains(HFI));
+        if (nbtB.contains(HFE) || nbtB.contains(HFI)) createExp(WorldHelper.theWorld, stackB, avgFresh, nbtB.contains(HFI));
     }
 
     //To optimize performance, do not use stack.isOf
@@ -117,7 +116,7 @@ public class RotHelper {
     public static long getExp(@NotNull ItemStack stack) {
         if (stack.getOrCreateNbt().contains(HFI)) return stack.getOrCreateNbt().getLong(HFI);
         if (stack.getOrCreateNbt().contains(HFE)) return stack.getOrCreateNbt().getLong(HFE);
-        return createExp(theWorld, stack);
+        return createExp(WorldHelper.theWorld, stack);
     }
 
     public static long getExp(@NotNull ItemStack stack, boolean isInIcebox) {
@@ -181,7 +180,7 @@ public class RotHelper {
             Reg.LOGGER.error("RotHelper/update();world==null||inv==null");
             return;
         }
-        theWorld = world;
+        WorldHelper.theWorld = world;
         for (int i = 0; i < inv.size(); ++i) {
             ItemStack stack = inv.getStack(i);
             Item item = stack.getItem();
@@ -247,7 +246,7 @@ public class RotHelper {
 
     public static void appendInfo(World world, ItemStack stack, List<Text> tooltip) {
         if (world == null) return;
-        theWorld = world;
+        WorldHelper.theWorld = world;
         tooltip.add(getModifierText(world, stack));
     }
 

@@ -41,7 +41,7 @@ import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-//Do not implement ModInitializer to abstract classes as it will crash
+//DO NOT implement ModInitializer to abstract classes as it will crash
 //See customized damage sources in DamageSourcesMixin
 public class Reg implements ModInitializer {
     public static final Logger LOGGER = LoggerFactory.getLogger("hcs");

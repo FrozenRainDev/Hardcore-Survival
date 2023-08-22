@@ -1,7 +1,7 @@
 package com.hcs.recipe;
 
 import com.hcs.Reg;
-import com.hcs.util.RotHelper;
+import com.hcs.util.WorldHelper;
 import net.minecraft.inventory.Inventory;
 import net.minecraft.inventory.SimpleInventory;
 import net.minecraft.item.*;
@@ -38,13 +38,13 @@ public class CustomDryingRackRecipe {
     }
 
     public static Item getCooked(Item rawMaterial) {
-        if (RotHelper.theWorld == null) {
+        if (WorldHelper.theWorld == null) {
             Reg.LOGGER.error("CustomDryingRackRecipe/getCooked;RotHelper.theWorld==null");
             return rawMaterial;
         }
         ItemStack stack = new ItemStack(rawMaterial);
         Inventory inventory = new SimpleInventory(stack);
-        return (RecipeManager.createCachedMatchGetter(RecipeType.CAMPFIRE_COOKING).getFirstMatch(inventory, RotHelper.theWorld).map((recipe) -> recipe.craft(inventory, RotHelper.theWorld.getRegistryManager())).orElse(stack)).getItem();
+        return (RecipeManager.createCachedMatchGetter(RecipeType.CAMPFIRE_COOKING).getFirstMatch(inventory, WorldHelper.theWorld).map((recipe) -> recipe.craft(inventory, WorldHelper.theWorld.getRegistryManager())).orElse(stack)).getItem();
     }
 
     private static Item checkNull(Item item) {

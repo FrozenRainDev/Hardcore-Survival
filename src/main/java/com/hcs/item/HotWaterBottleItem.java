@@ -2,9 +2,9 @@ package com.hcs.item;
 
 import com.hcs.entity.IceboxBlockEntity;
 import com.hcs.Reg;
-import com.hcs.util.RotHelper;
 import com.hcs.status.manager.StatusManager;
 import com.hcs.status.accessor.StatAccessor;
+import com.hcs.util.WorldHelper;
 import net.minecraft.client.item.TooltipContext;
 import net.minecraft.entity.Entity;
 import net.minecraft.inventory.Inventory;
@@ -83,7 +83,7 @@ public class HotWaterBottleItem extends Item {
     public static float getUnsignedPercentByInitTimeAdvanced(World world, @NotNull ItemStack stack) {
         //hot water bottle will get inverse percent for debug
         NbtCompound nbt = stack.getOrCreateNbt();
-        return nbt.contains(HHS) && nbt.getInt(HHS) > 0 ? 1.0F - getUnsignedPercentByInitTime(world, nbt.getLong(HHCI)) : getUnsignedPercentByInitTime(RotHelper.theWorld, nbt.getLong(HHCI));
+        return nbt.contains(HHS) && nbt.getInt(HHS) > 0 ? 1.0F - getUnsignedPercentByInitTime(world, nbt.getLong(HHCI)) : getUnsignedPercentByInitTime(WorldHelper.theWorld, nbt.getLong(HHCI));
     }
 
     public static void createExp(World world, ItemStack stack, boolean shouldSlowDown) {
@@ -254,9 +254,9 @@ public class HotWaterBottleItem extends Item {
 
     @Override
     public int getItemBarStep(ItemStack stack) {
-        if (stack == null || RotHelper.theWorld == null) return super.getItemBarStep(stack);
+        if (stack == null || WorldHelper.theWorld == null) return super.getItemBarStep(stack);
         NbtCompound nbt = stack.getOrCreateNbt();
-        return Math.round(13.0F * (nbt.contains(HHCI) ? getUnsignedPercentByInitTimeAdvanced(RotHelper.theWorld, stack) : getExpPercent(RotHelper.theWorld, stack, stack.getOrCreateNbt().contains(HHES))));
+        return Math.round(13.0F * (nbt.contains(HHCI) ? getUnsignedPercentByInitTimeAdvanced(WorldHelper.theWorld, stack) : getExpPercent(WorldHelper.theWorld, stack, stack.getOrCreateNbt().contains(HHES))));
     }
 
     @Override

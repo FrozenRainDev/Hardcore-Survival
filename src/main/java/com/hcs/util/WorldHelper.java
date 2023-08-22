@@ -1,20 +1,26 @@
 package com.hcs.util;
 
-import net.minecraft.block.BlockState;
-import net.minecraft.block.Blocks;
-import net.minecraft.block.FallingBlock;
+import com.hcs.Reg;
+import net.minecraft.block.*;
 import net.minecraft.entity.FallingBlockEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
+import net.minecraft.state.property.BooleanProperty;
+import net.minecraft.state.property.IntProperty;
+import net.minecraft.state.property.Properties;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.Heightmap;
 import net.minecraft.world.LightType;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.source.MultiNoiseBiomeSource;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public class WorldHelper {
+    public static World theWorld = null;
+    public static final BooleanProperty FERTILIZER_FREE = BooleanProperty.of("hcs_fertilizer_free");
+
     public static boolean isAffectedByGravityInHCS(BlockState state) {
         if (state == null) return false;
         return state.isOf(Blocks.DIRT) || state.isOf(Blocks.DIRT_PATH) || state.isOf(Blocks.CLAY) || state.isOf(Blocks.COARSE_DIRT);
@@ -40,9 +46,9 @@ public class WorldHelper {
     }
 
     //Do not abuse
-    @SuppressWarnings("CommentedOutCode")
+    @SuppressWarnings({"CommentedOutCode", "GrazieInspection"})
     public static @Nullable ServerWorld getServerWorld() {
-        if (RotHelper.theWorld instanceof ServerWorld serverWorld) return serverWorld;
+        if (theWorld instanceof ServerWorld serverWorld) return serverWorld;
         return null;
         //NOTE: Using MinecraftClient.class will crash in server env
         /*
@@ -82,5 +88,18 @@ public class WorldHelper {
         if (!(serverWorld.getChunkManager().getChunkGenerator().getBiomeSource() instanceof MultiNoiseBiomeSource))
             return false;//Superflat is not included
         return world.getLightLevel(LightType.SKY, pos) <= maxSkyBrightness && world.getTopPosition(Heightmap.Type.MOTION_BLOCKING, pos).getY() > pos.getY() && pos.getY() <= maxHeight;
+    }
+
+    public static int getCropAge(@NotNull BlockState state) {
+        Block block = state.getBlock();
+        if (block instanceof CropBlock) {
+            for (IntProperty property : new IntProperty[]{Properties.AGE_1, Properties.AGE_2, Properties.AGE_3, Properties.AGE_4, Properties.AGE_5, Properties.AGE_7, Properties.AGE_15, Properties.AGE_25}) {
+                if (state.contains(property)) {
+                    return state.get(property);
+                }
+            }
+        }
+        Reg.LOGGER.warn("WorldHelper/getCropAge/!state.contains(Properties.AGE_*);block=" + block);
+        return 0;
     }
 }

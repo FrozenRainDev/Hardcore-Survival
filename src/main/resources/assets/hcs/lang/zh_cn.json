@@ -89,6 +89,8 @@
   "item.minecraft.tipped_arrow.effect.hcs_constant_temperature": "恒温之箭",
   "item.minecraft.tipped_arrow.effect.hcs_long_constant_temperature": "恒温之箭",
 
+  "item.minecraft.bone_meal.description": "如果滥用，你的作物会枯萎！",
+
   "item.hcs.fiber_string": "纤维绳",
   "item.hcs.fiber_string.tooltip":"用于制作工具",
   "item.hcs.grass_fiber": "草纤维",
