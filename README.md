@@ -1,6 +1,6 @@
 # Hardcore Survival
 
-**A Minecraft mod brings incredibly realistic and tough survival experience with ambitious playing goals.**
+> **A Minecraft mod brings incredibly realistic and tough survival experience with ambitious playing goals.**
 
 
 - Current compatible version: Minecraft 1.19.4, Fabric (Considering to be compatible with NeoForge in the future)
