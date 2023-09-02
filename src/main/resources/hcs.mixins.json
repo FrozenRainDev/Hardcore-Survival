@@ -10,6 +10,7 @@
     "block.ChestBlockMixin",
     "block.CropBlockMixin",
     "block.ExperienceDroppingBlockMixin",
+    "block.FarmlandBlockMixin",
     "block.HopperBlockMixin",
     "block.LeavesBlockMixin",
     "block.StemBlockMixin",

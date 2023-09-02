@@ -1,7 +1,7 @@
 package com.hcs.mixin.item;
 
-import com.hcs.util.WorldHelper;
 import net.minecraft.block.BlockState;
+import net.minecraft.block.Blocks;
 import net.minecraft.block.CropBlock;
 import net.minecraft.item.BoneMealItem;
 import net.minecraft.item.ItemStack;
@@ -14,23 +14,29 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
+import static com.hcs.util.WorldHelper.FERTILIZER_FREE;
+
 @Mixin(BoneMealItem.class)
 public class BoneMealItemMixin {
-    //Also see CropBlockMixin/appendProperties()
     @Inject(method = "useOnFertilizable", at = @At("RETURN"))
     private static void useOnFertilizable(ItemStack stack, @NotNull World world, BlockPos pos, CallbackInfoReturnable<Boolean> cir) {
         BlockState state = world.getBlockState(pos);
         if (state.getBlock() instanceof CropBlock && cir.getReturnValueZ()) {
-            //Cant change it to FarmlandBlock as it will refresh after block update
-            //See CropBlockMixin/withAge()
-            if (state.getEntries().containsKey(WorldHelper.FERTILIZER_FREE)) {
-                if (state.get(WorldHelper.FERTILIZER_FREE))
-                    world.setBlockState(pos, state.with(WorldHelper.FERTILIZER_FREE, false));
+            BlockPos posDown = pos.down();
+            BlockState stateDown = world.getBlockState(posDown);
+            if (stateDown.isOf(Blocks.FARMLAND) && stateDown.getEntries().containsKey(FERTILIZER_FREE)) {
+                if (stateDown.get(FERTILIZER_FREE))
+                    world.setBlockState(posDown, stateDown.with(FERTILIZER_FREE, false));
                 else {
-                    //Abuse bone meal
-                    world.syncWorldEvent(WorldEvents.LAVA_EXTINGUISHED, pos, 0);
+                    /*
+                    The case of abusing bone meals
+                    Also see:
+                        WorldHelper.FERTILIZER_FREE     - A block property indicates whether a crop was fertilized
+                        FarmlandBlockMixin              - Farmland blocks stores the FERTILIZER_FREE property (Give up to use CropBlock, as it has more frequent block update and sophisticated links, and it also has many subclasses(include other mods) that override too many methods)
+                        CropBlockMixin/applyGrowth()    - Prevent block update when the crop needs to wither (If not, world.breakBlock becomes invalid as updating will regenerate that block)
+                    */
                     world.breakBlock(pos, false);
-                    //Also see break block at CropBlock/withAge()
+                    world.syncWorldEvent(WorldEvents.LAVA_EXTINGUISHED, pos, 0);
                 }
             }
         }
