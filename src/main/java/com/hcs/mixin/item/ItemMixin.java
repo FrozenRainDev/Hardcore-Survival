@@ -109,13 +109,11 @@ public class ItemMixin {
         float reachRangeAddition = EntityHelper.getReachRangeAddition(stack);
         if (reachRangeAddition > 0.0F && !(item instanceof BlockItem))
             tooltip.add(Text.translatable(Text.translatable("hcs.tip.reach_range_addition").getString() + reachRangeAddition).formatted(Formatting.GRAY));
-        else {
-            String descriptionKey = item.getTranslationKey() + ".description";
-            MutableText description = Text.translatable(descriptionKey);
-            String descriptionContent = description.getString();
-            if (!descriptionContent.equals(descriptionKey))
-                tooltip.add(description.formatted((descriptionContent.contains("!") || descriptionContent.contains("！")) ? Formatting.RED : Formatting.GRAY));
-        }
+        String descriptionKey = item.getTranslationKey() + ".description";
+        MutableText description = Text.translatable(descriptionKey);
+        String descriptionContent = description.getString();
+        if (!descriptionContent.equals(descriptionKey))
+            tooltip.add(description.formatted((descriptionContent.contains("!") || descriptionContent.contains("！")) ? Formatting.RED : Formatting.GRAY));
     }
 
 }
