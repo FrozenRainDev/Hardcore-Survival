@@ -54,10 +54,10 @@ public class Reg implements ModInitializer {
     public static final Potion STRONG_MINING_POTION = new Potion("hcs_strong_mining", new StatusEffectInstance(StatusEffects.HASTE, 1800, 1));
     public static final Potion CONSTANT_TEMPERATURE_POTION = new Potion("hcs_constant_temperature", new StatusEffectInstance(HcsEffects.CONSTANT_TEMPERATURE, 3600));
     public static final Potion LONG_CONSTANT_TEMPERATURE_POTION = new Potion("hcs_long_constant_temperature", new StatusEffectInstance(HcsEffects.CONSTANT_TEMPERATURE, 9600));
-    public static final Item FIBER_STRING = new ItemWithTip(new Item.Settings(), "item.hcs.fiber_string.tooltip");
+    public static final Item FIBER_STRING = new Item(new Item.Settings());
     public static final Item GRASS_FIBER = new Item(new Item.Settings());
     public static final Item ROASTED_SEEDS = new Item(new Item.Settings().food(new FoodComponent.Builder().hunger(0).snack().saturationModifier(0.5f).build()));
-    public static final Item ROCK = new RockItem(new Item.Settings(), "item.hcs.rock.tooltip");
+    public static final Item ROCK = new RockItem(new Item.Settings());
     public static final Item SHARP_ROCK = new Item(new Item.Settings());
     public static final Item SHARP_FLINT = new Item(new Item.Settings());
     public static final Item FIREWOOD = new Item(new Item.Settings());
@@ -85,8 +85,8 @@ public class Reg implements ModInitializer {
     public static final Item COPPER_CHESTPLATE = new ArmorItem(HcsArmorMaterials.COPPER, ArmorItem.Type.CHESTPLATE, new Item.Settings());
     public static final Item COPPER_LEGGINGS = new ArmorItem(HcsArmorMaterials.COPPER, ArmorItem.Type.LEGGINGS, new Item.Settings());
     public static final Item COPPER_BOOTS = new ArmorItem(HcsArmorMaterials.COPPER, ArmorItem.Type.BOOTS, new Item.Settings());
-    public static final Item SPIDER_GLAND = new SpiderGlandItem(new Item.Settings(), "item.hcs.spider_gland.tooltip", 8);
-    public static final Item SELAGINELLA = new SpiderGlandItem(new Item.Settings(), "item.hcs.spider_gland.tooltip", 20);
+    public static final Item SPIDER_GLAND = new SpiderGlandItem(new Item.Settings(), 8);
+    public static final Item SELAGINELLA = new SpiderGlandItem(new Item.Settings(), 20);
     public static final Item RAW_MEAT = new Item(new Item.Settings().food(new FoodComponent.Builder().hunger(2).saturationModifier(1f).meat().build()));
     public static final Item COOKED_MEAT = new Item(new Item.Settings().food(new FoodComponent.Builder().hunger(5).saturationModifier(3f).meat().build()));
     public static final Item CACTUS_FLESH = new Item(new Item.Settings().food(new FoodComponent.Builder().hunger(1).saturationModifier(1f).statusEffect(new StatusEffectInstance(StatusEffects.POISON, 160), 1).statusEffect(new StatusEffectInstance(HcsEffects.DIARRHEA, 300), 1).build()));

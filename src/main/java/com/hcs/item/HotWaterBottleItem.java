@@ -216,8 +216,8 @@ public class HotWaterBottleItem extends Item {
             else if (percent < 0.8F) tempId = 4;
             else tempId = 5;
         }
-        tooltip.add(Text.translatable("item.hcs.hot_water_bottle.tooltip.temp").formatted(Formatting.GRAY)
-                .append(Text.translatable("item.hcs.hot_water_bottle.tooltip.temp." + tempId).formatted(switch (tempId) {
+        tooltip.add(Text.translatable("item.hcs.hot_water_bottle.description.temp").formatted(Formatting.GRAY)
+                .append(Text.translatable("item.hcs.hot_water_bottle.description.temp." + tempId).formatted(switch (tempId) {
                     case -5 -> Formatting.DARK_BLUE;
                     case -4 -> Formatting.BLUE;
                     case -3 -> Formatting.DARK_AQUA;
@@ -228,8 +228,8 @@ public class HotWaterBottleItem extends Item {
                     case 5 -> Formatting.DARK_RED;
                     default -> Formatting.WHITE;
                 })));
-        tooltip.add(Text.translatable("item.hcs.hot_water_bottle.tooltip1").formatted(Formatting.DARK_GRAY));
-        tooltip.add(Text.translatable("item.hcs.hot_water_bottle.tooltip2").formatted(Formatting.DARK_GRAY));
+        tooltip.add(Text.translatable("item.hcs.hot_water_bottle.description1").formatted(Formatting.DARK_GRAY));
+        tooltip.add(Text.translatable("item.hcs.hot_water_bottle.description2").formatted(Formatting.DARK_GRAY));
     }
 
     @Override

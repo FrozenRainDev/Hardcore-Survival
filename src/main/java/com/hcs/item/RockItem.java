@@ -1,9 +1,10 @@
 package com.hcs.item;
 
 import com.hcs.entity.RockProjectileEntity;
-import com.hcs.status.manager.StaminaManager;
 import com.hcs.status.accessor.StatAccessor;
+import com.hcs.status.manager.StaminaManager;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvents;
@@ -13,9 +14,9 @@ import net.minecraft.util.TypedActionResult;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
 
-public class RockItem extends ItemWithTip {
-    public RockItem(Settings settings, String tip) {
-        super(settings, tip);
+public class RockItem extends Item {
+    public RockItem(Item.Settings settings) {
+        super(settings);
     }
 
     @Override

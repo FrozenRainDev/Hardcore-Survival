@@ -5,17 +5,18 @@ import com.hcs.status.accessor.StatAccessor;
 import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.entity.effect.StatusEffects;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.Hand;
 import net.minecraft.util.TypedActionResult;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
 
-public class SpiderGlandItem extends ItemWithTip {
+public class SpiderGlandItem extends Item {
     final int durationSeconds;
 
-    public SpiderGlandItem(Settings settings, String tip, int durationSeconds) {
-        super(settings, tip);
+    public SpiderGlandItem(Item.Settings settings, int durationSeconds) {
+        super(settings);
         this.durationSeconds = durationSeconds;
     }
 
