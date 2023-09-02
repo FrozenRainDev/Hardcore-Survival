@@ -5,6 +5,7 @@ import net.minecraft.block.*;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
+import net.minecraft.item.SwordItem;
 import net.minecraft.registry.tag.BlockTags;
 
 public class DigRestrictHelper {
@@ -33,13 +34,13 @@ public class DigRestrictHelper {
         Block block = state.getBlock();
         if (isBreakableFunctionalBlock(block)) return true;
         for (Block blk : BEAKABLE_MISC) if (blk == block) return true;
-        if (mainHand.isEnchantable(new ItemStack(mainHand))) {//tool
+        if (mainHand.isEnchantable(new ItemStack(mainHand))) { //tools
             for (Item itm : UNDIGABLE_TOOLS) if (itm == mainHand) return false;
             if (block == Blocks.BAMBOO) return true;
             boolean isPlant = block instanceof PlantBlock || block instanceof LeavesBlock || block instanceof VineBlock;
-            if (mainHand == Reg.STONE_KNIFE || mainHand == Reg.FLINT_KNIFE || mainHand == Reg.STONE_SPEAR || mainHand == Reg.FLINT_SPEAR)
+            if (mainHand instanceof SwordItem) // mainHand == Reg.STONE_KNIFE || mainHand == Reg.FLINT_KNIFE || mainHand == Reg.STONE_SPEAR || mainHand == Reg.FLINT_SPEAR || mainHand == Items.WOODEN_SWORD || mainHand == Reg.SPIKED_CLUB
                 return isPlant || block instanceof CobwebBlock;
-            if (mainHand == Reg.STONE_CONE || mainHand == Reg.FLINT_CONE || mainHand == Reg.SHARP_BROKEN_BONE)
+            if (mainHand == Reg.STONE_CONE || mainHand == Reg.FLINT_CONE || mainHand == Reg.SHARP_BROKEN_BONE || mainHand == Items.WOODEN_SHOVEL)
                 return isPlant || state.isIn(BlockTags.SHOVEL_MINEABLE);
             if (mainHand == Reg.FLINT_HATCHET)
                 return isPlant || state.isIn(BlockTags.AXE_MINEABLE);
