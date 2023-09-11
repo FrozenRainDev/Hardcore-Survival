@@ -1,10 +1,21 @@
 {
   "type": "minecraft:crafting_shapeless",
+  "category": "misc",
   "ingredients": [
-    {"item": "minecraft:stick"},
-    {"item": "minecraft:stick"},
-    {"item": "minecraft:stick"},
-    {"item": "minecraft:stick"}
+    {
+      "item": "minecraft:stick"
+    },
+    {
+      "item": "minecraft:stick"
+    },
+    {
+      "item": "minecraft:stick"
+    },
+    {
+      "item": "minecraft:stick"
+    }
   ],
-  "result": {"item": "hcs:firewood"}
+  "result": {
+    "item": "hcs:firewood"
+  }
 }

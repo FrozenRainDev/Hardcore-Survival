@@ -1,9 +1,11 @@
 {
   "type": "minecraft:smoking",
   "ingredient": [
-    {"item": "hcs:pumpkin_slice"}
+    {
+      "item": "hcs:pumpkin_slice"
+    }
   ],
-  "result":"hcs:cooked_pumpkin_slice",
-  "experience":0.35,
-  "cookingtime":100
+  "result": "hcs:cooked_pumpkin_slice",
+  "experience": 0.35,
+  "cookingtime": 100
 }

@@ -1,9 +1,11 @@
 {
   "type": "minecraft:smoking",
   "ingredient": [
-    {"item": "minecraft:sweet_berries"}
+    {
+      "item": "minecraft:sweet_berries"
+    }
   ],
-  "result":"hcs:cooked_sweet_berries",
-  "experience":0.35,
-  "cookingtime":100
+  "result": "hcs:cooked_sweet_berries",
+  "experience": 0.35,
+  "cookingtime": 100
 }

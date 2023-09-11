@@ -1,5 +1,12 @@
 {
   "type": "minecraft:crafting_shapeless",
-  "ingredients": [{"item": "hcs:grass_fiber"}],
-  "result": {"item": "hcs:tinder"}
+  "category": "equipment",
+  "ingredients": [
+    {
+      "item": "hcs:grass_fiber"
+    }
+  ],
+  "result": {
+    "item": "hcs:tinder"
+  }
 }

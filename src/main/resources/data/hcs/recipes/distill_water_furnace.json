@@ -1,9 +1,11 @@
 {
   "type": "minecraft:smelting",
   "ingredient": [
-    {"item": "hcs:saltwater_bottle"}
+    {
+      "item": "hcs:saltwater_bottle"
+    }
   ],
-  "result":"hcs:purified_water_bottle",
-  "experience":0.35,
-  "cookingtime":200
+  "result": "hcs:purified_water_bottle",
+  "experience": 0.35,
+  "cookingtime": 200
 }

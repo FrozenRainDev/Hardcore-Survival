@@ -1,14 +1,23 @@
 {
   "type": "minecraft:crafting_shaped",
+  "category": "misc",
   "pattern": [
-	"IRI",
-	"ICI",
+    "IRI",
+    "ICI",
     "III"
   ],
   "key": {
-    "I": {"item": "minecraft:iron_ingot"},
-    "R": {"item": "minecraft:redstone_block"},
-    "C": {"item": "minecraft:chest"}
+    "I": {
+      "item": "minecraft:iron_ingot"
+    },
+    "R": {
+      "item": "minecraft:redstone_block"
+    },
+    "C": {
+      "item": "minecraft:chest"
+    }
   },
-  "result": {"item": "hcs:icebox"}
+  "result": {
+    "item": "hcs:icebox"
+  }
 }

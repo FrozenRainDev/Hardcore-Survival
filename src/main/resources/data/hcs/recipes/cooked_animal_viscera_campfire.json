@@ -1,9 +1,11 @@
 {
   "type": "minecraft:campfire_cooking",
   "ingredient": [
-    {"item": "hcs:animal_viscera"}
+    {
+      "item": "hcs:animal_viscera"
+    }
   ],
-  "result":"hcs:cooked_animal_viscera",
-  "experience":0.35,
-  "cookingtime":400
+  "result": "hcs:cooked_animal_viscera",
+  "experience": 0.35,
+  "cookingtime": 400
 }

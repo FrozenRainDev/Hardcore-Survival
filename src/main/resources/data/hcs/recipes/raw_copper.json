@@ -1,15 +1,36 @@
 {
   "type": "minecraft:crafting_shapeless",
+  "category": "misc",
   "ingredients": [
-    {"item": "hcs:raw_copper_powder"},
-    {"item": "hcs:raw_copper_powder"},
-    {"item": "hcs:raw_copper_powder"},
-    {"item": "hcs:raw_copper_powder"},
-    {"item": "hcs:raw_copper_powder"},
-    {"item": "hcs:raw_copper_powder"},
-    {"item": "hcs:raw_copper_powder"},
-    {"item": "hcs:raw_copper_powder"},
-    {"item": "hcs:raw_copper_powder"}
+    {
+      "item": "hcs:raw_copper_powder"
+    },
+    {
+      "item": "hcs:raw_copper_powder"
+    },
+    {
+      "item": "hcs:raw_copper_powder"
+    },
+    {
+      "item": "hcs:raw_copper_powder"
+    },
+    {
+      "item": "hcs:raw_copper_powder"
+    },
+    {
+      "item": "hcs:raw_copper_powder"
+    },
+    {
+      "item": "hcs:raw_copper_powder"
+    },
+    {
+      "item": "hcs:raw_copper_powder"
+    },
+    {
+      "item": "hcs:raw_copper_powder"
+    }
   ],
-  "result": {"item": "minecraft:raw_copper"}
+  "result": {
+    "item": "minecraft:raw_copper"
+  }
 }

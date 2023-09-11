@@ -1,13 +1,20 @@
 {
   "type": "minecraft:crafting_shaped",
+  "category": "equipment",
   "pattern": [
-	"CCC",
-	" S ",
+    "CCC",
+    " S ",
     " S "
   ],
   "key": {
-    "S": {"item": "minecraft:stick"},
-    "C": {"item": "minecraft:copper_ingot"}
+    "S": {
+      "item": "minecraft:stick"
+    },
+    "C": {
+      "item": "minecraft:copper_ingot"
+    }
   },
-  "result": {"item": "hcs:copper_pickaxe"}
+  "result": {
+    "item": "hcs:copper_pickaxe"
+  }
 }

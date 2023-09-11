@@ -1,9 +1,11 @@
 {
   "type": "minecraft:smoking",
   "ingredient": [
-    {"item": "hcs:worm"}
+    {
+      "item": "hcs:worm"
+    }
   ],
-  "result":"hcs:roasted_worm",
-  "experience":0.35,
-  "cookingtime":100
+  "result": "hcs:roasted_worm",
+  "experience": 0.35,
+  "cookingtime": 100
 }

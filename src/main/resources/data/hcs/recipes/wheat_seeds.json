@@ -3,11 +3,11 @@
   "category": "misc",
   "ingredients": [
     {
-      "item": "minecraft:stick"
+      "item": "minecraft:wheat"
     }
   ],
   "result": {
-    "item": "hcs:short_stick",
-    "count": 2
+    "count": 2,
+    "item": "minecraft:wheat_seeds"
   }
 }

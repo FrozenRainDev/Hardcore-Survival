@@ -1,13 +1,20 @@
 {
   "type": "minecraft:crafting_shaped",
+  "category": "misc",
   "pattern": [
-	"SSS",
-	"SFS",
+    "SSS",
+    "SFS",
     "S S"
   ],
   "key": {
-    "F": {"item": "hcs:fiber_string"},
-    "S": {"item": "minecraft:stick"}
+    "F": {
+      "item": "hcs:fiber_string"
+    },
+    "S": {
+      "item": "minecraft:stick"
+    }
   },
-  "result": {"item": "hcs:drying_rack"}
+  "result": {
+    "item": "hcs:drying_rack"
+  }
 }

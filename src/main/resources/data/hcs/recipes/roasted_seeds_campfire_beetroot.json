@@ -1,9 +1,11 @@
 {
   "type": "minecraft:campfire_cooking",
   "ingredient": [
-    {"item": "minecraft:beetroot_seeds"}
+    {
+      "item": "minecraft:beetroot_seeds"
+    }
   ],
   "result": "hcs:roasted_seeds",
-  "experience":0.1,
-  "cookingtime":300
+  "experience": 0.1,
+  "cookingtime": 300
 }

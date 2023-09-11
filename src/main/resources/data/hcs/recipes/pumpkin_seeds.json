@@ -1,7 +1,12 @@
 {
   "type": "minecraft:crafting_shapeless",
+  "category": "misc",
   "ingredients": [
-    {"item": "hcs:pumpkin_slice"}
+    {
+      "item": "hcs:pumpkin_slice"
+    }
   ],
-  "result": {"item": "minecraft:pumpkin_seeds"}
+  "result": {
+    "item": "minecraft:pumpkin_seeds"
+  }
 }

@@ -1,9 +1,11 @@
 {
   "type": "minecraft:smoking",
   "ingredient": [
-    {"item": "hcs:animal_viscera"}
+    {
+      "item": "hcs:animal_viscera"
+    }
   ],
-  "result":"hcs:cooked_animal_viscera",
-  "experience":0.35,
-  "cookingtime":100
+  "result": "hcs:cooked_animal_viscera",
+  "experience": 0.35,
+  "cookingtime": 100
 }

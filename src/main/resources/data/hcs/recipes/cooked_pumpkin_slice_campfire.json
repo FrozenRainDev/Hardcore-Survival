@@ -1,9 +1,11 @@
 {
   "type": "minecraft:campfire_cooking",
   "ingredient": [
-    {"item": "hcs:pumpkin_slice"}
+    {
+      "item": "hcs:pumpkin_slice"
+    }
   ],
-  "result":"hcs:cooked_pumpkin_slice",
-  "experience":0.35,
-  "cookingtime":400
+  "result": "hcs:cooked_pumpkin_slice",
+  "experience": 0.35,
+  "cookingtime": 400
 }

@@ -1,9 +1,11 @@
 {
   "type": "minecraft:smoking",
   "ingredient": [
-    {"item": "minecraft:egg"}
+    {
+      "item": "minecraft:egg"
+    }
   ],
-  "result":"hcs:fried_egg",
-  "experience":0.35,
-  "cookingtime":100
+  "result": "hcs:fried_egg",
+  "experience": 0.35,
+  "cookingtime": 100
 }

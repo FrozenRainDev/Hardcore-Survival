@@ -1,15 +1,34 @@
 {
   "type": "minecraft:crafting_shapeless",
+  "category": "misc",
   "ingredients": [
-    {"item": "hcs:berry_bush"},
-    {"item": "minecraft:bone_meal"},
-    {"item": "minecraft:bone_meal"},
-    {"item": "minecraft:bone_meal"},
-    {"item": "minecraft:bone_meal"},
-    {"item": "minecraft:bone_meal"},
-    {"item": "minecraft:bone_meal"},
-    {"item": "minecraft:bone_meal"},
-    {"item": "minecraft:bone_meal"}
+    {
+      "item": "hcs:berry_bush"
+    },
+    {
+      "item": "minecraft:bone_meal"
+    },
+    {
+      "item": "minecraft:bone_meal"
+    },
+    {
+      "item": "minecraft:bone_meal"
+    },
+    {
+      "item": "minecraft:bone_meal"
+    },
+    {
+      "item": "minecraft:bone_meal"
+    },
+    {
+      "item": "minecraft:bone_meal"
+    },
+    {
+      "item": "minecraft:bone_meal"
+    },
+    {
+      "item": "minecraft:bone_meal"
+    }
   ],
   "result": {
     "item": "hcs:berry_bush",

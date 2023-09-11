@@ -1,9 +1,11 @@
 {
   "type": "minecraft:smoking",
   "ingredient": [
-    {"item": "hcs:raw_small_jerky"}
+    {
+      "item": "hcs:raw_small_jerky"
+    }
   ],
-  "result":"hcs:small_jerky",
-  "experience":0.35,
-  "cookingtime":100
+  "result": "hcs:small_jerky",
+  "experience": 0.35,
+  "cookingtime": 100
 }

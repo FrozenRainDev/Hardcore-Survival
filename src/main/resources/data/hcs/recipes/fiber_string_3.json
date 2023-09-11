@@ -1,7 +1,12 @@
 {
   "type": "minecraft:crafting_shapeless",
+  "category": "misc",
   "ingredients": [
-    {"item": "minecraft:string"}
+    {
+      "item": "minecraft:string"
+    }
   ],
-  "result": {"item": "hcs:fiber_string"}
+  "result": {
+    "item": "hcs:fiber_string"
+  }
 }

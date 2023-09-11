@@ -1,10 +1,21 @@
 {
   "type": "minecraft:crafting_shapeless",
+  "category": "misc",
   "ingredients": [
-    {"item": "hcs:grass_fiber"},
-    {"item": "hcs:grass_fiber"},
-    {"item": "hcs:grass_fiber"},
-    {"item": "hcs:grass_fiber"}
+    {
+      "item": "hcs:grass_fiber"
+    },
+    {
+      "item": "hcs:grass_fiber"
+    },
+    {
+      "item": "hcs:grass_fiber"
+    },
+    {
+      "item": "hcs:grass_fiber"
+    }
   ],
-  "result": {"item": "hcs:fiber_string"}
+  "result": {
+    "item": "hcs:fiber_string"
+  }
 }

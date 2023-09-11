@@ -1,10 +1,21 @@
 {
   "type": "minecraft:crafting_shapeless",
+  "category": "misc",
   "ingredients": [
-    {"item": "hcs:firewood"},
-    {"item": "hcs:firewood"},
-    {"item": "hcs:firewood"},
-    {"item": "hcs:firewood"}
+    {
+      "item": "hcs:firewood"
+    },
+    {
+      "item": "hcs:firewood"
+    },
+    {
+      "item": "hcs:firewood"
+    },
+    {
+      "item": "hcs:firewood"
+    }
   ],
-  "result": {"item": "hcs:extinguished_campfire"}
+  "result": {
+    "item": "hcs:extinguished_campfire"
+  }
 }

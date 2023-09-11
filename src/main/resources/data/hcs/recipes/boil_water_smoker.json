@@ -1,9 +1,11 @@
 {
   "type": "minecraft:smoking",
   "ingredient": [
-    {"item": "minecraft:potion"}
+    {
+      "item": "minecraft:potion"
+    }
   ],
-  "result":"hcs:purified_water_bottle",
-  "experience":0.1,
-  "cookingtime":100
+  "result": "hcs:purified_water_bottle",
+  "experience": 0.1,
+  "cookingtime": 100
 }

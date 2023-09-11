@@ -1,11 +1,16 @@
 {
   "type": "minecraft:crafting_shaped",
+  "category": "equipment",
   "pattern": [
-	"CCC",
-	"C C"
+    "CCC",
+    "C C"
   ],
   "key": {
-    "C": {"item": "minecraft:copper_ingot"}
+    "C": {
+      "item": "minecraft:copper_ingot"
+    }
   },
-  "result": {"item": "hcs:copper_helmet"}
+  "result": {
+    "item": "hcs:copper_helmet"
+  }
 }
