@@ -1,5 +1,7 @@
 package com.hcs.status.manager;
 
+import com.hcs.Reg;
+
 public class ThirstManager {
     private double thirst = 1.0;
     private float saturation = 0.05F;
@@ -16,7 +18,7 @@ public class ThirstManager {
 
     public void set(double val) {
         if (Double.isNaN(val)) {
-            new NumberFormatException("Val is NaN").printStackTrace();
+            Reg.LOGGER.error(this.getClass().getSimpleName() + ": Val is NaN");
             return;
         }
         if (val > 1.0F) val = 1.0F;
@@ -26,7 +28,7 @@ public class ThirstManager {
 
     public void add(double val) {
         if (Double.isNaN(val)) {
-            new NumberFormatException("Val is NaN").printStackTrace();
+            Reg.LOGGER.error(this.getClass().getSimpleName() + ": Val is NaN");
             return;
         }
         if (val < 0.01F) {
@@ -39,7 +41,7 @@ public class ThirstManager {
                 else if (thirst < 0.2) rate = 0.4F;
                 else if (thirst < 0.3) rate = 0.6F;
                 addDirectly(val * rate * getThirstRateAffectedByTemp());
-            } else saturation += val;
+            } else saturation += (float) val;
         } else {
             saturation = Math.min(saturation + (float) val * 0.33F, 0.12F);
             addDirectly(val);
@@ -56,7 +58,7 @@ public class ThirstManager {
 
     public void setSaturation(float val) {
         if (Float.isNaN(val)) {
-            new NumberFormatException("Val is NaN").printStackTrace();
+            Reg.LOGGER.error(this.getClass().getSimpleName() + "/setSaturation(): Val is NaN");
             return;
         }
         saturation = val;

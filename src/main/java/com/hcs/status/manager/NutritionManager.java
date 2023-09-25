@@ -1,5 +1,7 @@
 package com.hcs.status.manager;
 
+import com.hcs.Reg;
+
 public class NutritionManager {
     private double vegetable = 1.0;
     public static final String NUTRITION_VEGETABLE_NBT = "hcs_nutrition_vegetable";
@@ -12,7 +14,7 @@ public class NutritionManager {
 
     public void setVegetable(double val) {
         if (Double.isNaN(val)) {
-            new NumberFormatException("Val is NaN").printStackTrace();
+            Reg.LOGGER.error(this.getClass().getSimpleName() + ": Val is NaN");
             return;
         }
         if (val > 1.0) val = 1.0;

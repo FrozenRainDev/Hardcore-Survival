@@ -1,5 +1,7 @@
 package com.hcs.status.manager;
 
+import com.hcs.Reg;
+
 public class WetnessManager {
     private double wetness = 0.0;
     public static final String WETNESS_NBT = "hcs_wetness";
@@ -12,7 +14,7 @@ public class WetnessManager {
 
     public void set(double val) {
         if (Double.isNaN(val)) {
-            new NumberFormatException("Val is NaN").printStackTrace();
+            Reg.LOGGER.error(this.getClass().getSimpleName() + ": Val is NaN");
             return;
         }
         if (val > 1.0) val = 1.0;

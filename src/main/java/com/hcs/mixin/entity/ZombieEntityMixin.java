@@ -23,12 +23,13 @@ public abstract class ZombieEntityMixin extends HostileEntity {
         super(entityType, world);
     }
 
-    //Use "protected" will crash even the original method is modified by "protected"
+    //Use "protected" will crash even the original method has "protected"
     @Inject(method = "initCustomGoals", at = @At("TAIL"))
     public void initCustomGoals(CallbackInfo ci) {
         //Zombies will break blocks when its path is obstructed
         this.targetSelector.add(1, new BreakBlockGoal(this));
-        //Zombies will attack animals spontaneously
-        if (!this.isBaby()) this.targetSelector.add(2/*prev 5*/, new ActiveTargetGoal<>(this, AnimalEntity.class, false));
+        //Add animal target for adult zombies
+        //Prioritize player(s) within 16 blocks in **TrackTargetGoalMixin/shouldContinue()**
+        if (!this.isBaby()) this.targetSelector.add(2, new ActiveTargetGoal<>(this, AnimalEntity.class, false));
     }
 }

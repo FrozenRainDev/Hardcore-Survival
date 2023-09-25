@@ -1,5 +1,7 @@
 package com.hcs.status.manager;
 
+import com.hcs.Reg;
+
 public class SanityManager {
     private double sanity = 1.0;
     private double lastSanity = 1.0;
@@ -16,7 +18,7 @@ public class SanityManager {
 
     public void set(double val) {
         if (Double.isNaN(val)) {
-            new NumberFormatException("Val is NaN").printStackTrace();
+            Reg.LOGGER.error(this.getClass().getSimpleName() + ": Val is NaN");
             return;
         }
         if (val > 1.0) val = 1.0;

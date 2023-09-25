@@ -1,10 +1,12 @@
 package com.hcs.mixin.item;
 
+import com.hcs.util.WorldHelper;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.block.CropBlock;
 import net.minecraft.item.BoneMealItem;
 import net.minecraft.item.ItemStack;
+import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldEvents;
@@ -36,6 +38,8 @@ public class BoneMealItemMixin {
                         CropBlockMixin/applyGrowth()    - Prevent block update when the crop needs to wither (If not, world.breakBlock becomes invalid as updating will regenerate that block)
                     */
                     world.breakBlock(pos, false);
+                    if (world instanceof ServerWorld serverWorld)
+                        WorldHelper.modifyDroppedStacks(state, serverWorld, pos, null);
                     world.syncWorldEvent(WorldEvents.LAVA_EXTINGUISHED, pos, 0);
                 }
             }

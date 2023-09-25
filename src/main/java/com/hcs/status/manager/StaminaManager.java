@@ -1,5 +1,6 @@
 package com.hcs.status.manager;
 
+import com.hcs.Reg;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.effect.StatusEffects;
 import net.minecraft.entity.player.PlayerEntity;
@@ -19,7 +20,7 @@ public class StaminaManager {
 
     public void set(double val) {
         if (Double.isNaN(val)) {
-            new NumberFormatException("Val is NaN").printStackTrace();
+            Reg.LOGGER.error(this.getClass().getSimpleName() + ": Val is NaN");
             return;
         }
         if (val > 1.0) val = 1.0;

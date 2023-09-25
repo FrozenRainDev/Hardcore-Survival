@@ -2,8 +2,14 @@ package com.hcs.util;
 
 import com.hcs.Reg;
 import net.minecraft.block.*;
+import net.minecraft.enchantment.Enchantments;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.FallingBlockEntity;
+import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
+import net.minecraft.item.Items;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.state.property.BooleanProperty;
@@ -14,8 +20,13 @@ import net.minecraft.world.Heightmap;
 import net.minecraft.world.LightType;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.source.MultiNoiseBiomeSource;
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class WorldHelper {
     public static World theWorld = null;
@@ -27,21 +38,25 @@ public class WorldHelper {
     }
 
     public static void checkBlockGravity(World world, BlockPos pos) {
-        if (!(world instanceof ServerWorld)) return;
-        for (BlockPos bp : new BlockPos[]{pos, pos.up(), pos.down(), pos.east(), pos.west(), pos.south(), pos.north()}) {
-            //Check the pos and its immediate pos
-            BlockState state = world.getBlockState(bp);
-            if (isAffectedByGravityInHCS(state)) {
-                if (FallingBlock.canFallThrough(world.getBlockState(bp.down())) || bp.getY() < world.getBottomY()) {
-                    if (isAffectedByGravityInHCS(state)) {
-                        FallingBlockEntity.spawnFromBlock(world, bp, state);
-                    }
-                    //Recurse for further neighbor update
-                    for (BlockPos bpn : new BlockPos[]{bp.up(), bp.down(), bp.east(), bp.west(), bp.south(), bp.north()}) {
-                        checkBlockGravity(world, bpn);
+        try {
+            if (!(world instanceof ServerWorld)) return;
+            for (BlockPos bp : new BlockPos[]{pos, pos.up(), pos.down(), pos.east(), pos.west(), pos.south(), pos.north()}) {
+                //Check the pos and its immediate pos
+                BlockState state = world.getBlockState(bp);
+                if (isAffectedByGravityInHCS(state)) {
+                    if (FallingBlock.canFallThrough(world.getBlockState(bp.down())) || bp.getY() < world.getBottomY()) {
+                        if (isAffectedByGravityInHCS(state)) {
+                            FallingBlockEntity.spawnFromBlock(world, bp, state);
+                        }
+                        //Recurse for further neighbor update
+                        for (BlockPos bpn : new BlockPos[]{bp.up(), bp.down(), bp.east(), bp.west(), bp.south(), bp.north()}) {
+                            checkBlockGravity(world, bpn);
+                        }
                     }
                 }
             }
+        } catch (StackOverflowError error) {
+            Reg.LOGGER.error("WorldHelper/checkBlockGravity(): StackOverflowError");
         }
     }
 
@@ -92,14 +107,70 @@ public class WorldHelper {
 
     public static int getCropAge(@NotNull BlockState state) {
         Block block = state.getBlock();
-        if (block instanceof CropBlock) {
-            for (IntProperty property : new IntProperty[]{Properties.AGE_1, Properties.AGE_2, Properties.AGE_3, Properties.AGE_4, Properties.AGE_5, Properties.AGE_7, Properties.AGE_15, Properties.AGE_25}) {
-                if (state.contains(property)) {
-                    return state.get(property);
+        if (block instanceof CropBlock)
+            for (IntProperty property : new IntProperty[]{Properties.AGE_1, Properties.AGE_2, Properties.AGE_3, Properties.AGE_4, Properties.AGE_5, Properties.AGE_7, Properties.AGE_15, Properties.AGE_25})
+                if (state.contains(property)) return state.get(property);
+        Reg.LOGGER.warn("WorldHelper/getCropAge/!state.contains(Properties.AGE_*);block=" + block);
+        return 0;
+    }
+
+    public static void modifyDroppedStacks(Block crop, Item seed, @NotNull BlockState state, ServerWorld world, CallbackInfoReturnable<List<ItemStack>> cir) {
+        if (state.isOf(crop)) {
+            int age = getCropAge(state);
+            if (age == 0) loseFreshness(seed, world, cir);
+        }
+    }
+
+    public static boolean modifyDroppedStacks(@NotNull BlockState state, ServerWorld world, BlockPos pos, CallbackInfoReturnable<List<ItemStack>> cir) {
+        // modifyDroppedStacks for all CropBlocks and StemBlocks
+        boolean isEligible = false;
+        Item seedItem = Items.AIR;
+        Block block = state.getBlock();
+        Block crop = Blocks.AIR;
+        if (block instanceof CropBlock cropBlock) {
+            crop = cropBlock;
+            seedItem = cropBlock.getSeedsItem().asItem();
+            isEligible = true;
+        } else if (block instanceof StemBlock stemBlock) {
+            crop = stemBlock;
+            seedItem = stemBlock.pickBlockItem.get();
+            isEligible = true;
+        }
+        if (isEligible) {
+            if (cir == null) loseFreshness(seedItem, world, pos);
+            else modifyDroppedStacks(crop, seedItem, state, world, cir);
+        }
+        return isEligible;
+    }
+
+    @Contract(pure = true)
+    public static void decreaseOreHarvest(Block @NotNull [] ores, Item oreItem, @NotNull BlockState state, @Nullable Entity entity, CallbackInfoReturnable<List<ItemStack>> cir) {
+        if (entity instanceof LivingEntity breaker) {
+            for (Block ore : ores) {
+                //noinspection SuspiciousMethodCalls
+                if (state.isOf(ore) && !breaker.getMainHandStack().getEnchantments().contains(Enchantments.FORTUNE)) {
+                    Item prevDrop = cir.getReturnValue().get(0).getItem();
+                    if (prevDrop == oreItem) { //exclude silk touch
+                        ArrayList<ItemStack> dropList = new ArrayList<>();
+                        dropList.add(new ItemStack(oreItem));
+                        cir.setReturnValue(dropList);
+                    }
                 }
             }
         }
-        Reg.LOGGER.warn("WorldHelper/getCropAge/!state.contains(Properties.AGE_*);block=" + block);
-        return 0;
+    }
+
+    public static void loseFreshness(Item item, ServerWorld world, @NotNull CallbackInfoReturnable<List<ItemStack>> cir) {
+        ItemStack stack = new ItemStack(item);
+        RotHelper.setFresh(world, stack, 0.3F);
+        ArrayList<ItemStack> dropList = new ArrayList<>();
+        dropList.add(stack);
+        cir.setReturnValue(dropList);
+    }
+
+    public static void loseFreshness(Item item, ServerWorld world, BlockPos pos) {
+        ItemStack stack = new ItemStack(item);
+        RotHelper.setFresh(world, stack, 0.3F);
+        EntityHelper.dropItem(world, pos, stack);
     }
 }

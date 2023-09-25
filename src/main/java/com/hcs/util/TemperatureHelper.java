@@ -65,74 +65,79 @@ public abstract class TemperatureHelper implements WorldView {
     */
 
     public static float getTemp(World world, BlockPos pos, boolean allowRecursion) {
-        float temp = 0.5F;
-        if (world == null || pos == null) {
-            Reg.LOGGER.error("TemperatureHelper/getTemp;world or pos is null");
-            return temp;
+        try {
+            float temp = 0.5F;
+            if (world == null || pos == null) {
+                Reg.LOGGER.error("TemperatureHelper/getTemp;world or pos is null");
+                return temp;
+            }
+            RegistryEntry<Biome> biomeEntry = world.getBiome(pos);
+            if (biomeEntry == null || biomeEntry.value() == null) {
+                Reg.LOGGER.error("TemperatureHelper/getTemp;biomeEntry is empty");
+                return temp;
+            }
+            Biome biome = biomeEntry.value();
+            String biomeName = getBiomeName(biomeEntry);
+            float biomeTemp = biome.computeTemperature(pos);
+            temp = transferToApparentTemp(biomeTemp);
+            if (world.getRegistryKey() == World.OVERWORLD) {
+                float dailyTempAmplitude = getBasicDailyTempAmplitude(biomeName, biome.weather.downfall());
+                //If biome is normal beach or river, get basic temperature nearby
+                if ((biomeName.contains("river") || biomeName.contains("beach")) && allowRecursion) {
+                    List<Float> list = new ArrayList<>();
+                    for (int[] bp : POS_IN_NEARBY_CHUNKS) {
+                        list.add(getTemp(world, pos.add(bp[0], 0, bp[1]), false));
+                    }
+                    float tempSum = 0.0F;
+                    for (float temperature : list) {
+                        tempSum += temperature;
+                    }
+                    return tempSum / (float) list.size();
+                }
+                //Customize some biomes' temp
+                if (biomeName.contains("desert") || biomeName.contains("badlands")) temp -= 1.2F;
+                else if (biomeName.contains("savanna")) temp -= 1.05F;
+                else if (biomeName.contains("dark_forest") || biomeName.contains("cherry_grove") || biomeName.contains("lukewarm_ocean"))
+                    temp += 0.1F;
+                else if (biomeName.contains("warm_ocean") || biomeName.contains("lush_cave")) temp += 0.23F;
+                else if (biomeName.contains("stony_shore") || biomeName.contains("snowy_slope")) temp += 0.4F;
+                else if (biomeName.contains("snowy_taiga")) temp += 0.5F;
+                else if (biomeName.contains("meadow") || biomeName.contains("birch")) temp -= 0.132F;
+                else if (biomeName.contains("cold_ocean")) temp -= 0.27F;
+                else if (biomeName.contains("deep_frozen_ocean")) temp = 0.0F;
+                else if (biomeName.contains("stony_peak")) temp -= 0.3F;
+                else if (biomeName.contains("forest")) temp -= 0.05F;
+                //Height Factor
+                float y = (float) pos.getY();
+                float surfaceWeight = 1.0F;
+                if (WorldHelper.isDeepInCave(world, pos) && !biomeName.contains("ocean")) {
+                    //Hotter in deep layer
+                    if (y < 44) {
+                        surfaceWeight = 0.0F;
+                        temp = Math.min(2.0F, 0.4F + Math.abs(44 - y) / 90.0F);
+                        dailyTempAmplitude = 0.0F;
+                    } else if (y < 64) {
+                        //The shallower the layer is, the closer it is to the surface temperature
+                        surfaceWeight = (y - 44.0F) / 20.0F;
+                        temp = 0.4F * (1 - surfaceWeight) + temp * surfaceWeight;
+                        dailyTempAmplitude *= surfaceWeight;
+                    }
+                }
+                //Colder in high place
+                if (y > 80) temp = Math.max(-2.0F, temp - 0.00125F * (y - 80.0F));
+                //Effect of weather on temp
+                if (world.isRaining() && biome.weather.downfall() > 0.0F) {
+                    dailyTempAmplitude *= 0.5F;
+                    if (biomeTemp >= 0.9F || (biomeTemp > 0.0F && biomeTemp < 0.3F)) temp -= 0.06F * surfaceWeight;
+                    else temp -= 0.1F * surfaceWeight;
+                }
+                //Effect of time on temp
+                return getDailyTemp(world.getLunarTime(), temp, dailyTempAmplitude);
+            } else return temp;
+        } catch (StackOverflowError error) {
+            Reg.LOGGER.error("TemperatureHelper/getTemp(): StackOverflowError");
+            return 0.5F;
         }
-        RegistryEntry<Biome> biomeEntry = world.getBiome(pos);
-        if (biomeEntry == null || biomeEntry.value() == null) {
-            Reg.LOGGER.error("TemperatureHelper/getTemp;biomeEntry is empty");
-            return temp;
-        }
-        Biome biome = biomeEntry.value();
-        String biomeName = getBiomeName(biomeEntry);
-        float biomeTemp = biome.computeTemperature(pos);
-        temp = transferToApparentTemp(biomeTemp);
-        if (world.getRegistryKey() == World.OVERWORLD) {
-            float dailyTempAmplitude = getBasicDailyTempAmplitude(biomeName, biome.weather.downfall());
-            //If biome is normal beach or river, get basic temperature nearby
-            if ((biomeName.contains("river") || biomeName.contains("beach")) && allowRecursion) {
-                List<Float> list = new ArrayList<>();
-                for (int[] bp : POS_IN_NEARBY_CHUNKS) {
-                    list.add(getTemp(world, pos.add(bp[0], 0, bp[1]), false));
-                }
-                float tempSum = 0.0F;
-                for (float temperature : list) {
-                    tempSum += temperature;
-                }
-                return tempSum / (float) list.size();
-            }
-            //Customize some biomes' temp
-            if (biomeName.contains("desert") || biomeName.contains("badlands")) temp -= 1.2F;
-            else if (biomeName.contains("savanna")) temp -= 1.05F;
-            else if (biomeName.contains("dark_forest") || biomeName.contains("cherry_grove") || biomeName.contains("lukewarm_ocean"))
-                temp += 0.1F;
-            else if (biomeName.contains("warm_ocean") || biomeName.contains("lush_cave")) temp += 0.23F;
-            else if (biomeName.contains("stony_shore") || biomeName.contains("snowy_slope")) temp += 0.4F;
-            else if (biomeName.contains("snowy_taiga")) temp += 0.5F;
-            else if (biomeName.contains("meadow") || biomeName.contains("birch")) temp -= 0.132F;
-            else if (biomeName.contains("cold_ocean")) temp -= 0.27F;
-            else if (biomeName.contains("deep_frozen_ocean")) temp = 0.0F;
-            else if (biomeName.contains("stony_peak")) temp -= 0.3F;
-            else if (biomeName.contains("forest")) temp -= 0.05F;
-            //Height Factor
-            float y = (float) pos.getY();
-            float surfaceWeight = 1.0F;
-            if (WorldHelper.isDeepInCave(world, pos) && !biomeName.contains("ocean")) {
-                //Hotter in deep layer
-                if (y < 44) {
-                    surfaceWeight = 0.0F;
-                    temp = Math.min(2.0F, 0.4F + Math.abs(44 - y) / 90.0F);
-                    dailyTempAmplitude = 0.0F;
-                } else if (y < 64) {
-                    //The shallower the layer is, the closer it is to the surface temperature
-                    surfaceWeight = (y - 44.0F) / 20.0F;
-                    temp = 0.4F * (1 - surfaceWeight) + temp * surfaceWeight;
-                    dailyTempAmplitude *= surfaceWeight;
-                }
-            }
-            //Colder in high place
-            if (y > 80) temp = Math.max(-2.0F, temp - 0.00125F * (y - 80.0F));
-            //Effect of weather on temp
-            if (world.isRaining() && biome.weather.downfall() > 0.0F) {
-                dailyTempAmplitude *= 0.5F;
-                if (biomeTemp >= 0.9F || (biomeTemp > 0.0F && biomeTemp < 0.3F)) temp -= 0.06F * surfaceWeight;
-                else temp -= 0.1F * surfaceWeight;
-            }
-            //Effect of time on temp
-            return getDailyTemp(world.getLunarTime(), temp, dailyTempAmplitude);
-        } else return temp;
     }
 
     public static float getTemp(Object playerObj) {
