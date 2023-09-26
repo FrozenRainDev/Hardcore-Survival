@@ -23,7 +23,7 @@ public class ClientPlayerInteractionManagerMixin {
     @Inject(method = "getReachDistance", at = @At("RETURN"), cancellable = true)
     public void getReachDistance(CallbackInfoReturnable<Float> cir) {
         if (client.player == null || !this.gameMode.isSurvivalLike()) return;
-        float rangeAddition = EntityHelper.getReachRangeAddition(client.player.getMainHandStack());
+        float rangeAddition = EntityHelper.getReachRangeAddition(client.player);
         cir.setReturnValue(2.0F + ((client.player.isSneaking() && rangeAddition > 0.0F) ? 0.5F : 0.0F) + rangeAddition);
     }
 

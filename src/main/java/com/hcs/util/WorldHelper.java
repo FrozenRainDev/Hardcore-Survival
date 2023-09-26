@@ -27,15 +27,12 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Predicate;
 
 public class WorldHelper {
     public static World theWorld = null;
     public static final BooleanProperty FERTILIZER_FREE = BooleanProperty.of("hcs_fertilizer_free");
-
-    public static boolean isAffectedByGravityInHCS(BlockState state) {
-        if (state == null) return false;
-        return state.isOf(Blocks.DIRT) || state.isOf(Blocks.DIRT_PATH) || state.isOf(Blocks.CLAY) || state.isOf(Blocks.COARSE_DIRT);
-    }
+    public static final Predicate<BlockState> IS_GRAVITY_AFFECTED = state -> state != null && (state.isOf(Blocks.DIRT) || state.isOf(Blocks.DIRT_PATH) || state.isOf(Blocks.CLAY) || state.isOf(Blocks.COARSE_DIRT));
 
     public static void checkBlockGravity(World world, BlockPos pos) {
         try {
@@ -43,15 +40,12 @@ public class WorldHelper {
             for (BlockPos bp : new BlockPos[]{pos, pos.up(), pos.down(), pos.east(), pos.west(), pos.south(), pos.north()}) {
                 //Check the pos and its immediate pos
                 BlockState state = world.getBlockState(bp);
-                if (isAffectedByGravityInHCS(state)) {
+                if (IS_GRAVITY_AFFECTED.test(state)) {
                     if (FallingBlock.canFallThrough(world.getBlockState(bp.down())) || bp.getY() < world.getBottomY()) {
-                        if (isAffectedByGravityInHCS(state)) {
-                            FallingBlockEntity.spawnFromBlock(world, bp, state);
-                        }
+                        if (IS_GRAVITY_AFFECTED.test(state)) FallingBlockEntity.spawnFromBlock(world, bp, state);
                         //Recurse for further neighbor update
-                        for (BlockPos bpn : new BlockPos[]{bp.up(), bp.down(), bp.east(), bp.west(), bp.south(), bp.north()}) {
+                        for (BlockPos bpn : new BlockPos[]{bp.up(), bp.down(), bp.east(), bp.west(), bp.south(), bp.north()})
                             checkBlockGravity(world, bpn);
-                        }
                     }
                 }
             }
@@ -161,8 +155,9 @@ public class WorldHelper {
     }
 
     public static void loseFreshness(Item item, ServerWorld world, @NotNull CallbackInfoReturnable<List<ItemStack>> cir) {
+        // Crops will lose freshness when they are harvested at the initial stage of growth or being applied to excessive bone meals
         ItemStack stack = new ItemStack(item);
-        RotHelper.setFresh(world, stack, 0.3F);
+        RotHelper.setFresh(world, stack, 0.2F);
         ArrayList<ItemStack> dropList = new ArrayList<>();
         dropList.add(stack);
         cir.setReturnValue(dropList);
@@ -170,7 +165,7 @@ public class WorldHelper {
 
     public static void loseFreshness(Item item, ServerWorld world, BlockPos pos) {
         ItemStack stack = new ItemStack(item);
-        RotHelper.setFresh(world, stack, 0.3F);
+        RotHelper.setFresh(world, stack, 0.2F);
         EntityHelper.dropItem(world, pos, stack);
     }
 }

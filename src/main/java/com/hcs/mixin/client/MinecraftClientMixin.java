@@ -3,7 +3,6 @@ package com.hcs.mixin.client;
 import com.hcs.status.accessor.StatAccessor;
 import com.hcs.status.network.ClientC2S;
 import com.hcs.util.EntityHelper;
-import com.hcs.util.RotHelper;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.MinecraftClient;
@@ -13,8 +12,7 @@ import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.client.network.ClientPlayerInteractionManager;
 import net.minecraft.client.world.ClientWorld;
-import net.minecraft.item.BlockItem;
-import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
 import net.minecraft.registry.tag.FluidTags;
 import net.minecraft.util.Hand;
 import net.minecraft.util.hit.BlockHitResult;
@@ -71,8 +69,7 @@ public abstract class MinecraftClientMixin extends ReentrantThreadExecutor<Runna
                 block or interact with entity: 2
                 attack entity: 2 - 0.5 = 1.5
                 */
-                Item item = player.getMainHandStack().getItem();
-                if (crosshairTarget.getPos().distanceTo(player.getEyePos()) + ((item instanceof BlockItem && !RotHelper.canRot(item)) ? EntityHelper.HOLDING_BLOCK_REACHING_RANGE_ADDITION : 0.0F) + 0.5F > interactionManager.getReachDistance()) {
+                if (crosshairTarget.getPos().distanceTo(player.getEyePos()) + (EntityHelper.HOLDING_BLOCK.test(new ItemStack[]{player.getMainHandStack(), player.getOffHandStack()}) ? EntityHelper.HOLDING_BLOCK_REACHING_RANGE_ADDITION : 0.0F) + 0.5F > interactionManager.getReachDistance()) {
                     player.swingHand(Hand.MAIN_HAND);
                     cir.cancel();
                 }

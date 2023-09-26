@@ -7,11 +7,11 @@ import net.minecraft.recipe.Ingredient;
 
 public enum HcsToolMaterials implements ToolMaterial {
     COPPER(1, 32, 4.0F, 0.0F, 10, Ingredient.ofItems(Items.COPPER_INGOT)),
-    FLINT_CONE(0, 12, 0.36F, 0.0F, 0, Ingredient.ofItems(Items.FLINT)),
+    FLINT_CONE(0, 12, 0.48F, 0.0F, 0, Ingredient.ofItems(Items.FLINT)),
     FLINT_HATCHET(0, 4, 0.24F, 0.0F, 0, Ingredient.ofItems(Items.FLINT)),
     FLINT_WEAPON(0, 24, 0.0F, 0.0F, 0, Ingredient.ofItems(Items.FLINT)),
     SHARP_BROKEN_BONE(0, 8, 0.36F, 0.0F, 0, Ingredient.ofItems(Items.BONE)),
-    STONE_CONE(0, 8, 0.24F, 0.0F, 0, Ingredient.ofItems(Reg.ROCK)),
+    STONE_CONE(0, 8, 0.36F, 0.0F, 0, Ingredient.ofItems(Reg.ROCK)),
     STONE_WEAPON(0, 16, 0.0F, 0.0F, 0, Ingredient.ofItems(Reg.ROCK));
 
     private final int miningLevel;

@@ -42,11 +42,22 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import java.text.DecimalFormat;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.function.Predicate;
 
 public class EntityHelper {
     public static final double[][] FIND_NEAREST = {{0, -1, 0}, {0, 1, 0}, {0, 2, 0}, {-1, 0, 0}, {-1, 1, 0}, {1, 0, 0}, {1, 1, 0}, {0, 0, 1}, {0, 1, 1}, {0, 0, -1}, {0, 1, -1}};
     public static final double ZOMBIE_SENSING_RANGE = 48.0;
     public static final float HOLDING_BLOCK_REACHING_RANGE_ADDITION = 1.0F;
+    public static final Predicate<ItemStack[]> HOLDING_BLOCK = (stacks) -> {
+        if (stacks.length != 2 || stacks[0] == null || stacks[1] == null) return false;
+        boolean result = false;
+        for (Item item : new Item[]{stacks[0].getItem(), stacks[1].getItem()}) {
+            String name = item.getTranslationKey();
+            result = (result || ((item instanceof BlockItem && (!RotHelper.canRot(item) || (!(name.contains("seed") && (name.contains("pumpkin") || name.contains("melon"))))))));
+        }
+        return result;
+    };
+
     @Deprecated
     public static PlayerEntity thePlayer;
     @Deprecated
@@ -206,9 +217,19 @@ public class EntityHelper {
         };
     }
 
-    public static float getReachRangeAddition(ItemStack mainHandStack) {
+    public static float getReachRangeAddition(LivingEntity entity) {
+        if (entity == null) return 0.0F;
+        ItemStack mainHandStack = entity.getMainHandStack(), offHandStack = entity.getOffHandStack();
+        if (mainHandStack == null || offHandStack == null) return 0.0F;
+        return getReachRangeAddition(mainHandStack, offHandStack);
+    }
+
+    public static float getReachRangeAddition(@NotNull ItemStack mainHandStack) {
+        return getReachRangeAddition(mainHandStack, null);
+    }
+
+    public static float getReachRangeAddition(@NotNull ItemStack mainHandStack, ItemStack offHandStack) {
         float dist = 0.0F;
-        if (mainHandStack == null) return dist;
         Item item = mainHandStack.getItem();
         String name = item.getTranslationKey();
         if (name.contains("knife") || name.contains("hatchet") || name.contains("_cone") || (item instanceof ShearsItem) || (item instanceof FlintAndSteelItem))
@@ -217,7 +238,7 @@ public class EntityHelper {
             dist += 1.0F;
         else if (item instanceof RangedWeaponItem || item == Items.WOODEN_SWORD)
             dist += 1.5F;
-        else if (((item instanceof BlockItem && (!RotHelper.canRot(item) || (!(name.contains("seed") && (name.contains("pumpkin") || name.contains("melon"))))))))
+        else if (HOLDING_BLOCK.test(new ItemStack[]{mainHandStack, offHandStack}))
             return HOLDING_BLOCK_REACHING_RANGE_ADDITION;
         else if (name.contains("spear") || (item instanceof TridentItem)) dist += 2.0F;
         else if ((item instanceof ShovelItem) || (item instanceof PickaxeItem) || (item instanceof AxeItem) || (item instanceof SwordItem) || (item instanceof HoeItem))

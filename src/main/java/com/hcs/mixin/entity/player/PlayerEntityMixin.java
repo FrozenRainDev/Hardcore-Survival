@@ -16,6 +16,7 @@ import net.minecraft.entity.attribute.EntityAttributeInstance;
 import net.minecraft.entity.attribute.EntityAttributes;
 import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.effect.StatusEffectInstance;
+import net.minecraft.entity.effect.StatusEffectUtil;
 import net.minecraft.entity.effect.StatusEffects;
 import net.minecraft.entity.mob.SpiderEntity;
 import net.minecraft.entity.player.HungerManager;
@@ -46,7 +47,6 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import java.util.Objects;
 
-import static com.hcs.util.DigRestrictHelper.canBreak;
 
 @Mixin(PlayerEntity.class)
 public abstract class PlayerEntityMixin extends LivingEntity implements StatAccessor {
@@ -211,23 +211,24 @@ public abstract class PlayerEntityMixin extends LivingEntity implements StatAcce
         this.statusManager.setRecentMiningTicks(200);
         this.staminaManager.add(-0.00035, this);
         this.staminaManager.pauseRestoring();
-        float speed = cir.getReturnValue() / 3.5F;
+        float speed = StatusEffectUtil.hasHaste(this) ? cir.getReturnValueF() : cir.getReturnValueF() / 3.5F;
         boolean shovelMineable = state.isIn(BlockTags.SHOVEL_MINEABLE);
-        ItemStack mainHandStack = this.getMainHandStack();
-        Item mainHand = mainHandStack.getItem();
+        Item mainHand = this.getMainHandStack().getItem();
         Block block = state.getBlock();
-        if (!canBreak(mainHand, state)) {
+        if (!DigRestrictHelper.canBreak(mainHand, state)) {
             if (shovelMineable)
                 speed /= 30.0F;
                 //if((Object)this instanceof PlayerEntity)((PlayerEntity)(Object)this).damage(DamageSource.CACTUS,0.0001F);
             else speed = -1.0F;
         }
-        if (shovelMineable && mainHand instanceof ShovelItem && mainHand != Reg.FLINT_CONE && mainHand != Reg.STONE_CONE)
+        if (shovelMineable && mainHand instanceof ShovelItem && mainHand != Reg.FLINT_CONE)
             speed /= 2.0F;
         else if ((mainHand != Reg.FLINT_HATCHET && (state.isIn(BlockTags.AXE_MINEABLE))) || mainHand instanceof SwordItem)
             speed /= 3.0F;
+        else if (mainHand instanceof HoeItem && (block instanceof CropBlock || block instanceof StemBlock || state.isIn(BlockTags.REPLACEABLE_PLANTS)))
+            speed *= 2.5F;
         speed /= ((this.hasStatusEffect(HcsEffects.DEHYDRATED) ? 2.0F : 1.0F) * (this.hasStatusEffect(HcsEffects.STARVING) ? 2.0F : 1.0F) * (this.hasStatusEffect(HcsEffects.EXHAUSTED) ? 2.0F : 1.0F));
-        if (DigRestrictHelper.isBreakableFunctionalBlock(block))
+        if (DigRestrictHelper.Predicates.IS_BREAKABLE_FUNCTIONAL.test(block))
             speed *= (block instanceof AbstractFurnaceBlock || block == Blocks.ENDER_CHEST) ? 16.0F : 4.0F;
         if (block == Blocks.SUGAR_CANE || block == Blocks.CLAY) speed /= 9.0F;
         else if (block instanceof LeavesBlock && !(mainHand instanceof SwordItem) && !(mainHand instanceof AxeItem))

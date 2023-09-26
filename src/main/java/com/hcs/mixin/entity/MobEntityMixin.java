@@ -28,7 +28,7 @@ public abstract class MobEntityMixin extends LivingEntity {
 
     @Inject(method = "squaredAttackRange", at = @At("RETURN"), cancellable = true)
     public void squaredAttackRange(LivingEntity target, @NotNull CallbackInfoReturnable<Double> cir) {
-        cir.setReturnValue(cir.getReturnValue() + EntityHelper.getReachRangeAddition(this.getMainHandStack()));
+        cir.setReturnValue(cir.getReturnValue() + EntityHelper.getReachRangeAddition(this));
     }
 
     @Inject(method = "getXpToDrop", at = @At("RETURN"), cancellable = true)
