@@ -41,6 +41,8 @@ import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.function.Predicate;
+
 //DO NOT implement ModInitializer to abstract classes as it will crash
 //See customized damage sources in DamageSourcesMixin
 public class Reg implements ModInitializer {
@@ -109,9 +111,8 @@ public class Reg implements ModInitializer {
     public static final Item ROT = new BoneMealItem(new Item.Settings().food(new FoodComponent.Builder().hunger(0).saturationModifier(0.0f).build())) {
         @Override
         public ActionResult useOnBlock(@NotNull ItemUsageContext context) {
-            if (context.getWorld().getBlockState(context.getBlockPos()).isOf(Blocks.GRASS_BLOCK)) {
+            if (context.getWorld().getBlockState(context.getBlockPos()).isOf(Blocks.GRASS_BLOCK))
                 return ActionResult.PASS;
-            }
             return super.useOnBlock(context);
         }
     };
@@ -143,6 +144,8 @@ public class Reg implements ModInitializer {
     public static final Item WOOLEN_BOOTS = new ArmorItem(HcsArmorMaterials.WOOL, ArmorItem.Type.BOOTS, new Item.Settings());
     //See cooking output modification at AbstractCookingRecipeMixin/getOutPut
     public static final Item COOKED_KELP = new Item(new Item.Settings().food(new FoodComponent.Builder().hunger(1).saturationModifier(1.0F).build()));
+    public static final Item BARK = new Item(new Item.Settings().food(new FoodComponent.Builder().hunger(0).saturationModifier(0.0F).build()));
+    public static final Item WILLOW_BARK = new Item(new Item.Settings().food(new FoodComponent.Builder().hunger(0).saturationModifier(0.0F).build()));
 
     public static final EntityType<RockProjectileEntity> ROCK_PROJECTILE_ENTITY = FabricEntityTypeBuilder.<RockProjectileEntity>create(SpawnGroup.MISC, RockProjectileEntity::new).dimensions(new EntityDimensions(0.25F, 0.25F, true)).build();
     public static final BlockEntityType<IceboxBlockEntity> ICEBOX_BLOCK_ENTITY = FabricBlockEntityTypeBuilder.create(IceboxBlockEntity::new, ICEBOX).build();
@@ -157,7 +160,7 @@ public class Reg implements ModInitializer {
     public static final RecipeSerializer<SaplingToStickRecipe> SAPLING_TO_STICK_RECIPE = new SpecialRecipeSerializer<>(SaplingToStickRecipe::new);
 
     public static final ItemGroup HCS_ITEM_GROUP = FabricItemGroup.builder(new Identifier("hcs", "main")).icon(() -> new ItemStack(FLINT_HATCHET)).build();
-
+    public static final Predicate<Item> IS_BARK = item -> item == BARK || item == WILLOW_BARK;
 
     @Override
     public void onInitialize() {
@@ -234,6 +237,8 @@ public class Reg implements ModInitializer {
             content.add(new ItemStack(SELAGINELLA));
             content.add(new ItemStack(SPIDER_GLAND));
             content.add(new ItemStack(BERRY_BUSH));
+            content.add(new ItemStack(BARK));
+            content.add(new ItemStack(WILLOW_BARK));
             content.add(new ItemStack(PURIFIED_WATER_BOTTLE));//.getDefaultStack()
             content.add(new ItemStack(SALTWATER_BOTTLE));
             content.add(new ItemStack(COLD_WATER_BOTTLE));
@@ -313,6 +318,8 @@ public class Reg implements ModInitializer {
         Registry.register(Registries.ITEM, new Identifier("hcs", "woolen_boots"), WOOLEN_BOOTS);
         Registry.register(Registries.ITEM, new Identifier("hcs", "hot_water_bottle"), HOT_WATER_BOTTLE);
         Registry.register(Registries.ITEM, new Identifier("hcs", "cooked_kelp"), COOKED_KELP);
+        Registry.register(Registries.ITEM, new Identifier("hcs", "bark"), BARK);
+        Registry.register(Registries.ITEM, new Identifier("hcs", "willow_bark"), WILLOW_BARK);
 
         Registry.register(Registries.BLOCK, new Identifier("hcs", "icebox"), ICEBOX);
         Registry.register(Registries.ITEM, new Identifier("hcs", "icebox"), ICEBOX_ITEM);
@@ -350,6 +357,9 @@ public class Reg implements ModInitializer {
         Registry.register(Registries.STATUS_EFFECT, new Identifier("hcs", "wet"), HcsEffects.WET);
         Registry.register(Registries.STATUS_EFFECT, new Identifier("hcs", "constant_temperature"), HcsEffects.CONSTANT_TEMPERATURE);
         Registry.register(Registries.STATUS_EFFECT, new Identifier("hcs", "soul_impaired"), HcsEffects.SOUL_IMPAIRED);
+        Registry.register(Registries.STATUS_EFFECT, new Identifier("hcs", "injury"), HcsEffects.INJURY);
+        Registry.register(Registries.STATUS_EFFECT, new Identifier("hcs", "pain"), HcsEffects.PAIN);
+
 
         RecipeSerializer.register("hcs_extract_water_from_bamboo", EXTRACT_WATER_FROM_BAMBOO_RECIPE);
         RecipeSerializer.register("hcs_extract_water_from_snow", EXTRACT_WATER_FROM_SNOW_RECIPE);
@@ -364,6 +374,8 @@ public class Reg implements ModInitializer {
         FuelRegistry.INSTANCE.add(FIREWOOD, 300);
         FuelRegistry.INSTANCE.add(TINDER, 30);
         FuelRegistry.INSTANCE.add(ROT, 100);
+        FuelRegistry.INSTANCE.add(BARK, 100);
+        FuelRegistry.INSTANCE.add(WILLOW_BARK, 100);
 
         ComposterBlock.ITEM_TO_LEVEL_INCREASE_CHANCE.put(BERRY_BUSH, 0.3F);
         ComposterBlock.ITEM_TO_LEVEL_INCREASE_CHANCE.put(ROASTED_SEEDS, 0.3F);

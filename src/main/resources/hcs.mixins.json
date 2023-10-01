@@ -41,6 +41,7 @@
     "entity.player.PlayerInventoryMixin",
     "entity.player.ServerPlayerEntityMixin",
     "item.ArmorMaterialsMixin",
+    "item.AxeItemMixin",
     "item.BlockItemMixin",
     "item.BoneMealItemMixin",
     "item.BowItemMixin",

@@ -1,14 +1,12 @@
 package com.hcs.event;
 
 import com.hcs.Reg;
-import com.hcs.status.manager.TemperatureManager;
 import com.hcs.status.HcsEffects;
 import com.hcs.status.accessor.StatAccessor;
+import com.hcs.status.manager.TemperatureManager;
+import com.hcs.util.EntityHelper;
 import net.fabricmc.fabric.api.event.player.UseBlockCallback;
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.Blocks;
-import net.minecraft.block.Material;
+import net.minecraft.block.*;
 import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -48,6 +46,10 @@ public class UseBlockEvent {
                     world.setBlockState(posUp, Blocks.POTATOES.getDefaultState());
                     if (!player.isCreative()) mainHandStack.decrement(1);
                 }
+                if (block instanceof BedBlock && player.hasStatusEffect(HcsEffects.PAIN)) {
+                    EntityHelper.msgById(player, "hcs.tip.too_pain_to_sleep", true);
+                    return ActionResult.FAIL;
+                }
                 debugger = hitResult;
             }
             return ActionResult.PASS;
@@ -60,7 +62,7 @@ public class UseBlockEvent {
             return;
         }
         if (player.isSneaking() && player.getMainHandStack().isEmpty() && player.getOffHandStack().isEmpty()) {
-            ((StatAccessor) player).getThirstManager().addDirectly(0.02);
+            ((StatAccessor) player).getThirstManager().addDirectly(0.05);
             TemperatureManager temperatureManager = ((StatAccessor) player).getTemperatureManager();
             if (temperatureManager.get() > 0.8) temperatureManager.add(-0.005);
             if (player.world.getBiome(pos).isIn(BiomeTags.IS_OCEAN) || player.world.getBiome(pos).isIn(BiomeTags.IS_DEEP_OCEAN) || player.world.getBiome(pos).isIn(BiomeTags.IS_BEACH)) {

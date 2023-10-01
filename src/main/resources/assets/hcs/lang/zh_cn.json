@@ -35,6 +35,26 @@
   "effect.hcs.constant_temperature": "恒温",
   "effect.hcs.soul_impaired": "灵魂受损",
   "effect.hcs.soul_impaired.description": "减少最大生命值，恢复需九死还魂草或金苹果",
+  "effect.hcs.injury": "受伤",
+  "effect.hcs.injury.description": "怎么回事？",
+  "effect.hcs.injury.1": "轻伤",
+  "effect.hcs.injury.1.description": "感觉不太好",
+  "effect.hcs.injury.2": "中伤",
+  "effect.hcs.injury.2.description": "力量和速度降低",
+  "effect.hcs.injury.3": "重伤",
+  "effect.hcs.injury.3.description": "力量和速度严重降低",
+  "effect.hcs.injury.4": "致命伤",
+  "effect.hcs.injury.4.description": "濒临死亡",
+  "effect.hcs.pain": "疼痛",
+  "effect.hcs.pain.description": "速度和攻击力降低",
+  "effect.hcs.pain.1": "轻度疼痛",
+  "effect.hcs.pain.1.description": "感觉有点疼",
+  "effect.hcs.pain.2": "中度疼痛",
+  "effect.hcs.pain.2.description": "速度和攻击力降低",
+  "effect.hcs.pain.3": "严重疼痛",
+  "effect.hcs.pain.3.description": "速度和攻击力严重降低",
+  "effect.hcs.pain.4": "极度疼痛",
+  "effect.hcs.pain.4.description": "痛不欲生",
 
   "hcs.food_info.fresh": "新鲜",
   "hcs.food_info.stale": "不新鲜",
@@ -51,6 +71,7 @@
   "hcs.tip.need_bait": "需要在副手放诱饵",
   "hcs.tip.welcome": "欢迎游玩硬核生存Mod！ `\\(≧▽≦*)o\n请访问官网以查阅教程，或提供反馈、赞助及翻译\n如果能帮忙宣传本模组，作者将不胜感激！\n",
   "hcs.tip.reach_range_addition": "攻击距离 + ",
+  "hcs.tip.too_pain_to_sleep": "你疼得睡不着",
 
   "item.minecraft.potion.effect.hcs_ironskin": "铁皮药水",
   "item.minecraft.potion.effect.hcs_long_ironskin": "铁皮药水",
@@ -90,6 +111,7 @@
   "item.minecraft.tipped_arrow.effect.hcs_long_constant_temperature": "恒温之箭",
 
   "item.minecraft.bone_meal.description": "如果滥用，你的作物会枯萎！",
+  "item.hcs.rot.description": "如果滥用，你的作物会枯萎！",
 
   "item.hcs.fiber_string": "纤维绳",
   "item.hcs.fiber_string.description":"用于制作工具",
@@ -180,5 +202,9 @@
   "item.hcs.hot_water_bottle.description.temp.3": "热",
   "item.hcs.hot_water_bottle.description.temp.4": "很热",
   "item.hcs.hot_water_bottle.description.temp.5": "滚烫",
-  "item.hcs.cooked_kelp": "熟海带"
+  "item.hcs.cooked_kelp": "熟海带",
+  "item.hcs.bark": "树皮",
+  "item.hcs.bark.description": "绝对难以下咽",
+  "item.hcs.willow_bark": "柳树树皮",
+  "item.hcs.willow_bark.description": "具有镇痛效果"
 }

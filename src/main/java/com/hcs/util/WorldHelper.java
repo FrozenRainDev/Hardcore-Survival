@@ -168,4 +168,12 @@ public class WorldHelper {
         RotHelper.setFresh(world, stack, 0.2F);
         EntityHelper.dropItem(world, pos, stack);
     }
+
+    public static boolean enhancedIsWaterNearby(World world, BlockPos pos) {
+        for (int i = 0; i < 5; ++i) {
+            if (FarmlandBlock.isWaterNearby(world, pos)) return true;
+            pos = pos.down();
+        }
+        return false;
+    }
 }

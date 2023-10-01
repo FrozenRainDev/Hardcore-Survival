@@ -135,5 +135,20 @@ public class ClientS2C {
                 }
             });
         });
+
+        ClientPlayNetworking.registerGlobalReceiver(PAIN_ID, (client, handler, buffer, responseSender) -> {
+            int[] bufArr = buffer.readIntArray();
+            client.execute(() -> {
+                if (client.player != null && client.player.world.getEntityById(bufArr[0]) != null) {
+                    PlayerEntity player = (PlayerEntity) client.player.world.getEntityById(bufArr[0]);
+                    if (player != null) {
+                        PainManager painManager = ((StatAccessor) player).getPainManager();
+                        painManager.set(intToDouble(bufArr[1]));
+                        painManager.setAlleviationCache(intToDouble(bufArr[2]));
+                        painManager.setPainkillerApplied(bufArr[3]);
+                    }
+                }
+            });
+        });
     }
 }

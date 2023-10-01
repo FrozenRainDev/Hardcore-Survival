@@ -9,6 +9,7 @@ import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -37,14 +38,7 @@ public class ServerC2S {
                 if (player != null && player.world != null && player.world.getEntityById(bufArr[0]) != null) {
                     Entity targetPlayer = player.world.getEntityById(bufArr[0]);
                     if (targetPlayer instanceof ServerPlayerEntity serverPlayerEntity) {
-                        List<StatusEffect> list = new ArrayList<>();
-                        for (StatusEffectInstance effect : serverPlayerEntity.getStatusEffects()) {
-                            StatusEffect type = effect.getEffectType();
-                            if (type.getTranslationKey().contains("effect.hcs.") && type.getCategory() == StatusEffectCategory.HARMFUL)
-                                list.add(type);
-                        }
-                        Iterator<StatusEffect> iterator = list.iterator();
-                        //noinspection WhileLoopReplaceableByForEach
+                        Iterator<StatusEffect> iterator = getStatusEffectIterator(serverPlayerEntity);
                         while (iterator.hasNext()) {
                             //Avoid java.util.ConcurrentModificationException: null
                             StatusEffect next = iterator.next();
@@ -54,5 +48,16 @@ public class ServerC2S {
                 }
             });
         });
+    }
+
+    @NotNull
+    private static Iterator<StatusEffect> getStatusEffectIterator(@NotNull ServerPlayerEntity serverPlayerEntity) {
+        List<StatusEffect> list = new ArrayList<>();
+        for (StatusEffectInstance effect : serverPlayerEntity.getStatusEffects()) {
+            StatusEffect type = effect.getEffectType();
+            if (type.getTranslationKey().contains("effect.hcs.") && type.getCategory() == StatusEffectCategory.HARMFUL)
+                list.add(type);
+        }
+        return list.iterator();
     }
 }

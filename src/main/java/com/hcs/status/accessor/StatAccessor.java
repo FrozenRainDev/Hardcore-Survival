@@ -16,4 +16,6 @@ public interface StatAccessor {
     NutritionManager getNutritionManager();
 
     WetnessManager getWetnessManager();
+
+    PainManager getPainManager();
 }

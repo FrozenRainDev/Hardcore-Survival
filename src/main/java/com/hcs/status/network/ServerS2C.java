@@ -17,6 +17,7 @@ public class ServerS2C {
     public static final Identifier SANITY_ID = new Identifier("hcs", "s2c_sanity");
     public static final Identifier NUTRITION_ID = new Identifier("hcs", "s2c_nutrition");
     public static final Identifier WETNESS_ID = new Identifier("hcs", "s2c_wetness");
+    public static final Identifier PAIN_ID = new Identifier("hcs", "s2c_pain");
     public static final float TRANS_MULTIPLIER = 10000000.0F;
 
     public static int floatToInt(float val) {
@@ -70,5 +71,10 @@ public class ServerS2C {
         WetnessManager wetnessManager = ((StatAccessor) player).getWetnessManager();
         buf7.writeIntArray(new int[]{player.getId(), doubleToInt(wetnessManager.get())});
         player.networkHandler.sendPacket(new CustomPayloadS2CPacket(WETNESS_ID, buf7));
+
+        PacketByteBuf buf8 = new PacketByteBuf(Unpooled.buffer());
+        PainManager painManager = ((StatAccessor) player).getPainManager();
+        buf8.writeIntArray(new int[]{player.getId(), doubleToInt(painManager.getWithoutPainkillerEffect()), doubleToInt(painManager.getPainkillerAlleviation()), painManager.getPainkillerApplied()});
+        player.networkHandler.sendPacket(new CustomPayloadS2CPacket(PAIN_ID, buf8));
     }
 }

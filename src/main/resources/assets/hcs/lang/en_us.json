@@ -5,7 +5,7 @@
   "block.hcs.drying_rack": "Drying Rack",
 
   "death.attack.hcs.dehydrate": "%1$s died of thirst",
-  "death.attack.hcs.heatstroke": "%1$s died from heatstroke",
+  "death.attack.hcs.heatstroke": "%1$s died of heatstroke",
   "death.attack.hcs.oxygenDeficiency": "%1$s died from oxygen deficiency",
 
   "effect.hcs.thirst": "Thirsty",
@@ -35,7 +35,26 @@
   "effect.hcs.constant_temperature": "Constant Temperature",
   "effect.hcs.soul_impaired": "Soul Impaired",
   "effect.hcs.soul_impaired.description": "Reduce max health, needs selaginella or golden apple to recover",
-
+  "effect.hcs.injury": "Injury",
+  "effect.hcs.injury.description": "What's up?",
+  "effect.hcs.injury.1": "Minor Injuries",
+  "effect.hcs.injury.1.description": "Something doesn't feel good",
+  "effect.hcs.injury.2": "Moderate Injuries",
+  "effect.hcs.injury.2.description": "Strength and speed reduced",
+  "effect.hcs.injury.3": "Severe Injuries",
+  "effect.hcs.injury.3.description": "Strength and speed sharply reduced",
+  "effect.hcs.injury.4": "Critical Injuries",
+  "effect.hcs.injury.4.description": "Death imminent",
+  "effect.hcs.pain": "Pain",
+  "effect.hcs.pain.description": "Speed and attack reduced",
+  "effect.hcs.pain.1": "Minor Pain",
+  "effect.hcs.pain.1.description": "Feeling slight pain",
+  "effect.hcs.pain.2": "Moderate Pain",
+  "effect.hcs.pain.2.description": "Speed and attack sharply reduced",
+  "effect.hcs.pain.3": "Severe Pain",
+  "effect.hcs.pain.3.description": "Too pain to bear.",
+  "effect.hcs.pain.4": "Extreme Pain",
+  "effect.hcs.pain.4.description": "Agony",
   "hcs.food_info.fresh": "Fresh",
   "hcs.food_info.stale": "Stale",
   "hcs.food_info.spoiled": "Spoiled",
@@ -47,10 +66,12 @@
   "hcs.tip.chip_succeed": "Succeeded to chip",
   "hcs.tip.need_unlock": "Need a pickaxe to pry open",
   "hcs.tip.unlocked": "Unlocked",
-  "hcs.tip.cant_break_chest": "The chest contains stuff can't be broken or blown up",
+
+  "hcs.tip.cant_break_chest": "The chest containing stuff can't be broken or blown up",
   "hcs.tip.need_bait": "Bait is needed on the off hand",
   "hcs.tip.welcome": "Welcome to play Hardcore Survival Mod! `\\(≧▽≦*)o\nPlease visit our website for tutorial, feedback, sponsoring, helping translating and so on.\nIt will be highly appreciated if you can help to publicize this mod!\n",
   "hcs.tip.reach_range_addition": "Reach Distance + ",
+  "hcs.tip.too_pain_to_sleep": "You are too pain to sleep",
 
   "item.minecraft.potion.effect.hcs_ironskin": "Potion of Ironskin",
   "item.minecraft.potion.effect.hcs_long_ironskin": "Potion of Ironskin",
@@ -100,13 +121,13 @@
   "item.minecraft.tipped_arrow.effect.hcs_long_constant_temperature": "Arrow of Constant Temperature",
 
   "item.minecraft.bone_meal.description": "Your crops will WITHER if you abuse it!",
-
+  "item.hcs.rot.description": "Your crops will WITHER if you abuse it!",
   "item.hcs.fiber_string": "Fiber String",
   "item.hcs.fiber_string.description": "Used for making tools",
   "item.hcs.grass_fiber": "Grass Fiber",
   "item.hcs.roasted_seeds": "Roasted Seeds",
   "item.hcs.rock": "Rock",
-  "item.hcs.rock.description": "Left click on hard block to chip,right click to throw",
+  "item.hcs.rock.description": "Left click on hard block to chip, right click to throw",
   "item.hcs.sharp_rock": "Sharp Rock",
   "item.hcs.sharp_flint": "Sharp Flint",
   "item.hcs.firewood": "Firewood",
@@ -190,5 +211,9 @@
   "item.hcs.hot_water_bottle.description.temp.3": "hot",
   "item.hcs.hot_water_bottle.description.temp.4": "very hot",
   "item.hcs.hot_water_bottle.description.temp.5": "boiling",
-  "item.hcs.cooked_kelp": "Cooked Kelp"
+  "item.hcs.cooked_kelp": "Cooked Kelp",
+  "item.hcs.bark": "Bark",
+  "item.hcs.bark.description": "Absolutely unpalatable",
+  "item.hcs.willow_bark": "Willow Bark",
+  "item.hcs.willow_bark.description": "Analgesic effect carried"
 }

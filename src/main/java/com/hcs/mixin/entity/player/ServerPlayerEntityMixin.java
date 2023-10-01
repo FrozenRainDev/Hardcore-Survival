@@ -3,6 +3,7 @@ package com.hcs.mixin.entity.player;
 import com.hcs.status.HcsEffects;
 import com.hcs.status.accessor.DamageSourcesAccessor;
 import com.hcs.status.accessor.StatAccessor;
+import com.hcs.status.manager.PainManager;
 import com.hcs.status.manager.StaminaManager;
 import com.hcs.status.manager.TemperatureManager;
 import com.hcs.status.manager.ThirstManager;
@@ -26,6 +27,7 @@ import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import static com.hcs.status.manager.TemperatureManager.CHANGE_SPAN;
 import static com.hcs.status.network.ServerS2C.doubleToInt;
@@ -94,7 +96,7 @@ public abstract class ServerPlayerEntityMixin extends PlayerEntity {
                 temperatureManager.set(envTemp);
             }
 
-            //Debuff for poor condition & heat for doing sport
+            //Debuff of poor condition & heat for doing sport
             double currentStaminaVal = staminaManager.get();
             if (doubleToInt(thirstManager.get()) <= 10 && this.world.getTime() % 400 == 0) {// ticks will cause different players Cannot be hurt at the same time
                 DamageSource damageSource = ((DamageSourcesAccessor) this.world.getDamageSources()).dehydrate();
@@ -109,20 +111,21 @@ public abstract class ServerPlayerEntityMixin extends PlayerEntity {
             else if (playerTemp <= 0.0) EntityHelper.addHcsDebuff(this, HcsEffects.HYPOTHERMIA, (int) tempSatuPercent);
             if (this.isUsingItem() && (this.getMainHandStack().getItem() instanceof ShieldItem || this.getOffHandStack().getItem() instanceof ShieldItem))
                 staminaManager.pauseRestoring();
-            //Debuff of strong_sun & chilly_wind
+
+            //Debuff of strong sun & chilly wind
             if ((biome.weather.downfall() <= 0.0F || TemperatureHelper.isSpecialSunshineArea(biomeName)) && sunshineIntensity > 0 && skyLightLevel >= 15)
                 EntityHelper.addHcsDebuff(this, HcsEffects.STRONG_SUN, Math.max(0, sunshineIntensity - 1));
             if (biome.isCold(this.getBlockPos()) && windchillLevel > 0)
                 EntityHelper.addHcsDebuff(this, HcsEffects.CHILLY_WIND, windchillLevel - 1);
 
-            //Debuff for insanity
+            //Debuff of insanity
             double san = ((StatAccessor) this).getSanityManager().get();
             if (san < 0.3)
                 EntityHelper.addHcsDebuff(this, HcsEffects.INSANITY, san < 0.15 ? (san < 0.1 ? (san < 0.05 ? 3 : 2) : 1) : 0);
-            //Debuff for malnutrition
+            //Debuff of malnutrition
             double vegetable = ((StatAccessor) this).getNutritionManager().getVegetable();
             if (vegetable < 0.00001) EntityHelper.addHcsDebuff(this, HcsEffects.MALNUTRITION);
-            //Debuff for wet
+            //Debuff of wet
             double wet = ((StatAccessor) this).getWetnessManager().get();
             if (wet >= 0.3) EntityHelper.addHcsDebuff(this, HcsEffects.WET, wet > 0.7 ? 1 : 0);
             //Debuff for soul impaired(death punishment)
@@ -131,6 +134,25 @@ public abstract class ServerPlayerEntityMixin extends PlayerEntity {
                 if (this.getHealth() > this.getMaxHealth()) this.setHealth(this.getMaxHealth());
                 EntityHelper.addHcsDebuff(this, HcsEffects.SOUL_IMPAIRED, soulImpairedStat - 1);
             }
+
+            //Debuff of injury
+            float hpPercent = this.getHealth() / this.getMaxHealth();
+            if (hpPercent < 0.1F) EntityHelper.addHcsDebuff(this, HcsEffects.INJURY, 3);
+            else if (hpPercent < 0.25F) EntityHelper.addHcsDebuff(this, HcsEffects.INJURY, 2);
+            else if (hpPercent < 0.5F) EntityHelper.addHcsDebuff(this, HcsEffects.INJURY, 1);
+            else if (hpPercent < 0.7F) EntityHelper.addHcsDebuff(this, HcsEffects.INJURY, 0);
+
+            //Debuff of pain
+            PainManager painManager = ((StatAccessor) this).getPainManager();
+            double pain = painManager.get();
+            if (pain > 0.0) EntityHelper.addHcsDebuff(this, HcsEffects.PAIN, (int) pain);
+            painManager.tick();
         }
+    }
+
+    @Inject(method = "damage", at = @At("HEAD"))
+    public void damage(DamageSource source, float amount, CallbackInfoReturnable<Boolean> cir) {
+        float hurtPercent = amount / this.getMaxHealth();
+        ((StatAccessor) this).getPainManager().add(hurtPercent * 5.0);
     }
 }

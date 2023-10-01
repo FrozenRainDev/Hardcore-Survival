@@ -1,5 +1,6 @@
 accessWidener	v1	named
 accessible	method	net/minecraft/block/CropBlock   getSeedsItem    ()Lnet/minecraft/item/ItemConvertible;
+accessible	method	net/minecraft/block/FarmlandBlock isWaterNearby (Lnet/minecraft/world/WorldView;Lnet/minecraft/util/math/BlockPos;)Z
 accessible	field	net/minecraft/block/StemBlock   pickBlockItem    Ljava/util/function/Supplier;
 accessible	method	net/minecraft/client/render/GameRenderer	loadPostProcessor	(Lnet/minecraft/util/Identifier;)V
 accessible	method	net/minecraft/entity/damage/DamageSources	create	(Lnet/minecraft/registry/RegistryKey;)Lnet/minecraft/entity/damage/DamageSource;

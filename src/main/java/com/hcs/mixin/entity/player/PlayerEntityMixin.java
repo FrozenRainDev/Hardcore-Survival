@@ -110,56 +110,65 @@ public abstract class PlayerEntityMixin extends LivingEntity implements StatAcce
 
     @SuppressWarnings("CanBeFinal")
     @Unique
-    ThirstManager thirstManager = new ThirstManager();
+    protected ThirstManager thirstManager = new ThirstManager();
     @SuppressWarnings("CanBeFinal")
     @Unique
-    StaminaManager staminaManager = new StaminaManager();
+    protected StaminaManager staminaManager = new StaminaManager();
     @SuppressWarnings("CanBeFinal")
     @Unique
-    TemperatureManager temperatureManager = new TemperatureManager();
+    protected TemperatureManager temperatureManager = new TemperatureManager();
     @SuppressWarnings("CanBeFinal")
     @Unique
-    StatusManager statusManager = new StatusManager();
+    protected StatusManager statusManager = new StatusManager();
     @SuppressWarnings("CanBeFinal")
     @Unique
-    SanityManager sanityManager = new SanityManager();
+    protected SanityManager sanityManager = new SanityManager();
     @SuppressWarnings("CanBeFinal")
     @Unique
-    NutritionManager nutritionManager = new NutritionManager();
+    protected NutritionManager nutritionManager = new NutritionManager();
     @SuppressWarnings("CanBeFinal")
     @Unique
-    WetnessManager wetnessManager = new WetnessManager();
+    protected WetnessManager wetnessManager = new WetnessManager();
+    @SuppressWarnings("CanBeFinal")
+    @Unique
+    protected PainManager painManager = new PainManager();
 
+    @Unique
     @SuppressWarnings("AddedMixinMembersNamePattern")
     @Override
     public ThirstManager getThirstManager() {
         return this.thirstManager;
     }
 
+    @Unique
     @SuppressWarnings("AddedMixinMembersNamePattern")
     @Override
     public StaminaManager getStaminaManager() {
         return this.staminaManager;
     }
 
+    @Unique
     @SuppressWarnings("AddedMixinMembersNamePattern")
     @Override
     public TemperatureManager getTemperatureManager() {
         return this.temperatureManager;
     }
 
+    @Unique
     @SuppressWarnings("AddedMixinMembersNamePattern")
     @Override
     public StatusManager getStatusManager() {
         return this.statusManager;
     }
 
+    @Unique
     @SuppressWarnings("AddedMixinMembersNamePattern")
     @Override
     public SanityManager getSanityManager() {
         return this.sanityManager;
     }
 
+    @Unique
     @SuppressWarnings("AddedMixinMembersNamePattern")
     @Override
     public NutritionManager getNutritionManager() {
@@ -167,10 +176,19 @@ public abstract class PlayerEntityMixin extends LivingEntity implements StatAcce
     }
 
 
+    @Unique
     @SuppressWarnings("AddedMixinMembersNamePattern")
     @Override
     public WetnessManager getWetnessManager() {
         return this.wetnessManager;
+    }
+
+
+    @Unique
+    @SuppressWarnings("AddedMixinMembersNamePattern")
+    @Override
+    public PainManager getPainManager() {
+        return this.painManager;
     }
 
 
@@ -187,6 +205,8 @@ public abstract class PlayerEntityMixin extends LivingEntity implements StatAcce
             this.nutritionManager.setVegetable(nbt.contains(NutritionManager.NUTRITION_VEGETABLE_NBT, NbtElement.DOUBLE_TYPE) ? nbt.getDouble(NutritionManager.NUTRITION_VEGETABLE_NBT) : 1.0);
             this.wetnessManager.set(nbt.contains(WetnessManager.WETNESS_NBT, NbtElement.DOUBLE_TYPE) ? nbt.getDouble(WetnessManager.WETNESS_NBT) : 0.0);
             this.statusManager.setSoulImpairedStat(nbt.contains(StatusManager.IS_SOUL_IMPAIRED_NBT) ? nbt.getInt(StatusManager.IS_SOUL_IMPAIRED_NBT) : 0);
+            this.painManager.set(nbt.contains(PainManager.PAIN_NBT) ? nbt.getDouble(PainManager.PAIN_NBT) : 0.0);
+            this.painManager.setPainkillerApplied(nbt.contains(PainManager.PAIN_NBT) ? nbt.getInt(PainManager.PAIN_NBT) : 0);
         }
     }
 
@@ -203,6 +223,8 @@ public abstract class PlayerEntityMixin extends LivingEntity implements StatAcce
             nbt.putDouble(NutritionManager.NUTRITION_VEGETABLE_NBT, this.nutritionManager.getVegetable());
             nbt.putDouble(WetnessManager.WETNESS_NBT, this.wetnessManager.get());
             nbt.putInt(StatusManager.IS_SOUL_IMPAIRED_NBT, this.statusManager.getSoulImpairedStat());
+            nbt.putDouble(PainManager.PAIN_NBT, this.painManager.get());
+            nbt.putInt(PainManager.PAINKILLER_APPLIED_NBT, this.painManager.getPainkillerApplied());
         }
     }
 
@@ -225,8 +247,8 @@ public abstract class PlayerEntityMixin extends LivingEntity implements StatAcce
             speed /= 2.0F;
         else if ((mainHand != Reg.FLINT_HATCHET && (state.isIn(BlockTags.AXE_MINEABLE))) || mainHand instanceof SwordItem)
             speed /= 3.0F;
-        else if (mainHand instanceof HoeItem && (block instanceof CropBlock || block instanceof StemBlock || state.isIn(BlockTags.REPLACEABLE_PLANTS)))
-            speed *= 2.5F;
+        if (mainHand instanceof HoeItem && (block instanceof CropBlock || block instanceof StemBlock || state.isIn(BlockTags.REPLACEABLE_PLANTS)))
+            speed *= 5.0F;
         speed /= ((this.hasStatusEffect(HcsEffects.DEHYDRATED) ? 2.0F : 1.0F) * (this.hasStatusEffect(HcsEffects.STARVING) ? 2.0F : 1.0F) * (this.hasStatusEffect(HcsEffects.EXHAUSTED) ? 2.0F : 1.0F));
         if (DigRestrictHelper.Predicates.IS_BREAKABLE_FUNCTIONAL.test(block))
             speed *= (block instanceof AbstractFurnaceBlock || block == Blocks.ENDER_CHEST) ? 16.0F : 4.0F;
@@ -273,8 +295,10 @@ public abstract class PlayerEntityMixin extends LivingEntity implements StatAcce
                 if (item == Items.GOLDEN_APPLE || item == Items.ENCHANTED_GOLDEN_APPLE) {
                     this.sanityManager.add(1.0);
                     this.statusManager.setSoulImpairedStat(0);
-                } else if (item == Items.KELP) this.sanityManager.add(-0.04);
-                else if (item == Items.POISONOUS_POTATO || item == Items.SPIDER_EYE || item == Items.CHORUS_FRUIT)
+                } else if (item == Items.KELP || Reg.IS_BARK.test(item)) {
+                    if (item == Reg.WILLOW_BARK) this.painManager.applyPainkiller();
+                    this.sanityManager.add(-0.02);
+                } else if (item == Items.POISONOUS_POTATO || item == Items.SPIDER_EYE || item == Items.CHORUS_FRUIT)
                     this.sanityManager.add(-0.07);
                 else if (item == Items.ROTTEN_FLESH) this.sanityManager.add(-0.1);
                 else if (item == Items.RED_MUSHROOM || item == Items.CRIMSON_FUNGUS || item == Items.WARPED_FUNGUS)
@@ -292,7 +316,7 @@ public abstract class PlayerEntityMixin extends LivingEntity implements StatAcce
                 }
                 if (item == Items.WHEAT || item == Items.SUGAR || item == Items.SUGAR_CANE || item == Reg.POTHERB || item == Reg.ROASTED_SEEDS)
                     this.hungerManager.setFoodLevel(Math.min(this.hungerManager.getFoodLevel() + 1, 20));
-                else if ((name.contains("seeds") && food.getHunger() == 0) || item == Reg.COOKED_SWEET_BERRIES || item == Reg.ROT || item == Items.KELP || item == Reg.PETALS_SALAD)
+                else if (((name.contains("seeds") || Reg.IS_BARK.test(item)) && food.getHunger() == 0) || item == Reg.COOKED_SWEET_BERRIES || item == Reg.ROT || item == Items.KELP || item == Reg.PETALS_SALAD)
                     EntityHelper.addDecimalFoodLevel(player, 0.4F, false);
                 if (!name.contains("dried") && !name.contains("jerky") && !name.contains("seeds") && item != Items.COOKIE && item != Items.BREAD && item != Items.SUGAR) {
                     if (name.contains("stew") || name.contains("soup"))
@@ -313,7 +337,7 @@ public abstract class PlayerEntityMixin extends LivingEntity implements StatAcce
     @Inject(method = "addExhaustion", at = @At("TAIL"))
     public void addExhaustion(float exhaustion, CallbackInfo ci) {
         if (!this.world.isClient) {
-            this.thirstManager.add(-exhaustion / 55.0); //70 originally
+            this.thirstManager.add(-exhaustion / 60.0); //70 originally
             if (this.hasStatusEffect(HcsEffects.MALNUTRITION)) this.hungerManager.addExhaustion(exhaustion * 0.5F);
         }
     }
@@ -343,6 +367,10 @@ public abstract class PlayerEntityMixin extends LivingEntity implements StatAcce
         if (this.hasStatusEffect(HcsEffects.EXHAUSTED)) {
             StatusEffectInstance exhaustedEffectInstance = this.getStatusEffect(HcsEffects.EXHAUSTED);
             if (exhaustedEffectInstance != null && exhaustedEffectInstance.getAmplifier() > 0) ci.cancel();
+        }
+        if (this.hasStatusEffect(HcsEffects.INJURY)) {
+            StatusEffectInstance exhaustedEffectInstance = this.getStatusEffect(HcsEffects.INJURY);
+            if (exhaustedEffectInstance != null && exhaustedEffectInstance.getAmplifier() > 2) ci.cancel();
         }
     }
 

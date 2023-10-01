@@ -12,7 +12,6 @@ import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.client.network.ClientPlayerInteractionManager;
 import net.minecraft.client.world.ClientWorld;
-import net.minecraft.item.ItemStack;
 import net.minecraft.registry.tag.FluidTags;
 import net.minecraft.util.Hand;
 import net.minecraft.util.hit.BlockHitResult;
@@ -69,7 +68,7 @@ public abstract class MinecraftClientMixin extends ReentrantThreadExecutor<Runna
                 block or interact with entity: 2
                 attack entity: 2 - 0.5 = 1.5
                 */
-                if (crosshairTarget.getPos().distanceTo(player.getEyePos()) + (EntityHelper.HOLDING_BLOCK.test(new ItemStack[]{player.getMainHandStack(), player.getOffHandStack()}) ? EntityHelper.HOLDING_BLOCK_REACHING_RANGE_ADDITION : 0.0F) + 0.5F > interactionManager.getReachDistance()) {
+                if (crosshairTarget.getPos().distanceTo(player.getEyePos()) + (EntityHelper.IS_HOLDING_BLOCK.test(player.getMainHandStack(), player.getOffHandStack()) ? EntityHelper.HOLDING_BLOCK_REACHING_RANGE_ADDITION : 0.0F) + 0.5F > interactionManager.getReachDistance()) {
                     player.swingHand(Hand.MAIN_HAND);
                     cir.cancel();
                 }

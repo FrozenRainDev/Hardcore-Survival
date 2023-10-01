@@ -132,13 +132,13 @@ public class StatusManager {
     }
 
     public int getSoulImpairedStat() {
-        if (soulImpairedStat > 4) soulImpairedStat = 4;
+        if (soulImpairedStat > 5) soulImpairedStat = 5;
         else if (soulImpairedStat < 0) soulImpairedStat = 0;
         return soulImpairedStat;
     }
 
     public void setSoulImpairedStat(int val) {
-        if (val > 4) val = 4;
+        if (val > 5) val = 5;
         else if (val < 0) val = 0;
         soulImpairedStat = val;
     }
