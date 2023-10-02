@@ -1,16 +1,21 @@
 package com.hcs.util;
 
 import com.hcs.Reg;
+import com.hcs.item.KnifeItem;
 import com.hcs.status.HcsEffects;
 import com.hcs.status.accessor.StatAccessor;
 import com.hcs.status.manager.StatusManager;
 import com.mojang.blaze3d.systems.RenderSystem;
+import net.minecraft.advancement.criterion.Criteria;
 import net.minecraft.block.*;
 import net.minecraft.client.render.*;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.ItemEntity;
 import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.damage.DamageEffects;
+import net.minecraft.entity.damage.DamageSource;
+import net.minecraft.entity.damage.DamageTypes;
 import net.minecraft.entity.effect.StatusEffect;
 import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.entity.mob.SkeletonEntity;
@@ -28,6 +33,7 @@ import net.minecraft.sound.SoundEvents;
 import net.minecraft.text.LiteralTextContent;
 import net.minecraft.text.MutableText;
 import net.minecraft.text.Text;
+import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.math.BlockPos;
@@ -36,6 +42,7 @@ import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.RaycastContext;
 import net.minecraft.world.World;
+import net.minecraft.world.event.GameEvent;
 import org.jetbrains.annotations.NotNull;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
@@ -43,6 +50,7 @@ import java.text.DecimalFormat;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.function.BiPredicate;
+import java.util.function.Predicate;
 
 public class EntityHelper {
     public static final double[][] FIND_NEAREST = {{0, -1, 0}, {0, 1, 0}, {0, 2, 0}, {-1, 0, 0}, {-1, 1, 0}, {1, 0, 0}, {1, 1, 0}, {0, 0, 1}, {0, 1, 1}, {0, 0, -1}, {0, 1, -1}};
@@ -57,6 +65,9 @@ public class EntityHelper {
         }
         return result;
     };
+
+    public static final Predicate<DamageSource> IS_PHYSICAL_DAMAGE = damageSource -> !damageSource.isOf(DamageTypes.DROWN) && !damageSource.isOf(DamageTypes.STARVE) && !damageSource.isOf(DamageTypes.OUT_OF_WORLD) && !damageSource.isOf(DamageTypes.MAGIC) && !damageSource.isOf(DamageTypes.INDIRECT_MAGIC) && !damageSource.isOf(DamageTypes.WITHER);
+    public static final Predicate<DamageSource> IS_BURNING_DAMAGE = damageSource -> damageSource.getType().effects().equals(DamageEffects.BURNING);
 
     @Deprecated
     public static PlayerEntity thePlayer;
@@ -304,9 +315,10 @@ public class EntityHelper {
         if ((isDrink && (hunger >= 20 || thirst > 0.99)) || (!isDrink && hunger >= 20)) {
             StatusManager statusManager = ((StatAccessor) player).getStatusManager();
             statusManager.setHasDecimalFoodLevel(false);
-            if (statusManager.getRecentLittleOvereatenTicks() > 0)
+            if (statusManager.getRecentLittleOvereatenTicks() > 0) {
+                if (player.hasStatusEffect(HcsEffects.OVEREATEN)) ((StatAccessor) player).getPainManager().addRaw(0.5);
                 player.addStatusEffect(new StatusEffectInstance(HcsEffects.OVEREATEN, 600, 0, false, false, true));
-            else statusManager.setRecentLittleOvereatenTicks(1200);
+            } else statusManager.setRecentLittleOvereatenTicks(1200);
         }
     }
 
@@ -322,5 +334,41 @@ public class EntityHelper {
         return originalEntity;
     }
 
+    public static ActionResult dropBark(ItemUsageContext context) {
+        if (context == null) return ActionResult.PASS;
+        World world = context.getWorld();
+        BlockPos pos = context.getBlockPos();
+        PlayerEntity player = context.getPlayer();
+        ItemStack stack = context.getStack();
+        BlockPos userPos = context.getPlayer() == null ? pos : context.getPlayer().getBlockPos();
+        Optional<BlockState> strippedState;
+        if (Items.IRON_AXE instanceof AxeItem axeItem) {
+            if ((strippedState = axeItem.getStrippedState(world.getBlockState(pos))).isPresent() && context.getPlayer() != null && !context.getPlayer().isCreative() && !context.getPlayer().isSpectator()) {
+                if (WorldHelper.enhancedIsWaterNearby(world, pos.down()) && Math.random() < 0.5)
+                    EntityHelper.dropItem(world, userPos, new ItemStack(Reg.WILLOW_BARK));
+                else EntityHelper.dropItem(world, userPos, new ItemStack(Reg.BARK));
+                if (stack.getItem() instanceof KnifeItem) {
+                    if (player instanceof ServerPlayerEntity serverPlayerEntity)
+                        Criteria.ITEM_USED_ON_BLOCK.trigger(serverPlayerEntity, pos, stack);
+                    world.setBlockState(pos, strippedState.get(), Block.NOTIFY_ALL | Block.REDRAW_ON_MAIN_THREAD);
+                    world.emitGameEvent(GameEvent.BLOCK_CHANGE, pos, GameEvent.Emitter.of(player, strippedState.get()));
+                    if (player != null) {
+                        stack.damage(1, player, p -> p.sendToolBreakStatus(context.getHand()));
+                    }
+                    return ActionResult.success(world.isClient);
+                }
+            }
+        } else
+            Reg.LOGGER.error("EntityHelper/dropBark: Cannot call getStrippedState(), as IRON_AXE is not an instance of AxeItem!");
+        return ActionResult.PASS;
+    }
+
+    public static int getEffectAmplifier(LivingEntity entity, StatusEffect effect) {
+        // -1 indicates no such effect
+        if (entity == null || effect == null) return -1;
+        if (entity.hasStatusEffect(effect) && entity.getStatusEffect(effect) != null)
+            return Objects.requireNonNull(entity.getStatusEffect(effect)).getAmplifier();
+        return -1;
+    }
 
 }

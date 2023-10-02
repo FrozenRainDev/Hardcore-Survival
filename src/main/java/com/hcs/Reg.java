@@ -70,10 +70,10 @@ public class Reg implements ModInitializer {
     public static final Item WORM = new EffectiveFoodItem(new Item.Settings().food(new FoodComponent.Builder().hunger(2).saturationModifier(1.0f).statusEffect(new StatusEffectInstance(StatusEffects.NAUSEA, 200), 1).build()), 0.0F, -0.08);
     public static final Item PUMPKIN_SLICE = new Item(new Item.Settings().food(new FoodComponent.Builder().hunger(2).saturationModifier(1f).build()));
     public static final Item POTHERB = new Item(new Item.Settings().food(new FoodComponent.Builder().hunger(0).saturationModifier(1f).build()));
-    public static final Item STONE_KNIFE = new SwordItem(HcsToolMaterials.STONE_WEAPON, 1, 1.6F - 4.0F, new Item.Settings().maxCount(1));
+    public static final Item STONE_KNIFE = new KnifeItem(HcsToolMaterials.STONE_WEAPON, 1, 1.6F - 4.0F, new Item.Settings().maxCount(1));
     public static final Item STONE_SPEAR = new SwordItem(HcsToolMaterials.STONE_WEAPON, 2, 1.6F - 4.0F, new Item.Settings().maxCount(1));
     public static final Item STONE_CONE = new ShovelItem(HcsToolMaterials.STONE_CONE, 1.0F, 1.6F - 4.0F, new Item.Settings().maxCount(1));
-    public static final Item FLINT_KNIFE = new SwordItem(HcsToolMaterials.FLINT_WEAPON, 2, 1.6F - 4.0F, new Item.Settings().maxCount(1));
+    public static final Item FLINT_KNIFE = new KnifeItem(HcsToolMaterials.FLINT_WEAPON, 2, 1.6F - 4.0F, new Item.Settings().maxCount(1));
     public static final Item FLINT_SPEAR = new SwordItem(HcsToolMaterials.FLINT_WEAPON, 3, 1.6F - 4.0F, new Item.Settings().maxCount(1));
     public static final Item FLINT_CONE = new ShovelItem(HcsToolMaterials.FLINT_CONE, 1.5F, 1.6F - 4.0F, new Item.Settings().maxCount(1));
     public static final Item FLINT_HATCHET = new AxeItem(HcsToolMaterials.FLINT_HATCHET, 4.0F, 0.8F - 4.0F, new Item.Settings().maxCount(1));

@@ -363,7 +363,7 @@ public abstract class InGameHudMixin extends DrawableHelper {
         //TEMPERATURE
         displacement.put("tem", true);
         xx += 20;
-        //The time before get damaged for too hot or too cold
+        //The time before getReal damaged for too hot or too cold
         float temSaturationPercentage = temperatureManager.getSaturationPercentage();
         int temShake = 0;
         if (this.ticks % 3 == 0) temShake = Math.round((float) Math.random() * 2) - 1;

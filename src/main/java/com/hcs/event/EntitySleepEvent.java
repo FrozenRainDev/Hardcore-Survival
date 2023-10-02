@@ -24,6 +24,7 @@ public class EntitySleepEvent {
                     TemperatureManager temperatureManager = ((StatAccessor) player).getTemperatureManager();
                     //Warm oneself by sleeping
                     if (temperatureManager.get() < 0.5) temperatureManager.set(0.5);
+                    ((StatAccessor) player).getPainManager().addRaw(-1);
                 }
             }
             return true;

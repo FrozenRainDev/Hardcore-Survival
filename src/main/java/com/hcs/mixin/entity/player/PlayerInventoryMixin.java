@@ -31,7 +31,7 @@ public abstract class PlayerInventoryMixin {
         TemperatureManager temperatureManager = ((StatAccessor) player).getTemperatureManager();
         /*
         float envTemp = temperatureManager.getEnvTempCache();
-        float playerTemp = temperatureManager.get();
+        float playerTemp = temperatureManager.getReal();
         boolean shouldSlowDown = (envTemp > 0.5 && playerTemp > 0.5) || (envTemp < 0.5 && playerTemp < 0.5);
          */
         HotWaterBottleItem.update(this.player.world, this.player.getInventory(), temperatureManager.getTrendType());

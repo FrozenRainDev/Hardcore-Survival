@@ -20,6 +20,7 @@ import net.minecraft.util.math.BlockPos;
 import java.util.Objects;
 
 public class UseBlockEvent {
+    // For more use block events, view mixin/item
     private static HitResult debugger;
 
     public static void init() {
@@ -46,7 +47,7 @@ public class UseBlockEvent {
                     world.setBlockState(posUp, Blocks.POTATOES.getDefaultState());
                     if (!player.isCreative()) mainHandStack.decrement(1);
                 }
-                if (block instanceof BedBlock && player.hasStatusEffect(HcsEffects.PAIN)) {
+                if (block instanceof BedBlock && (EntityHelper.getEffectAmplifier(player, HcsEffects.PAIN) > 0)) {
                     EntityHelper.msgById(player, "hcs.tip.too_pain_to_sleep", true);
                     return ActionResult.FAIL;
                 }

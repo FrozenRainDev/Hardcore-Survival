@@ -164,7 +164,7 @@ public class HcsEffects {
     };
 
     public static final StatusEffect OVEREATEN = new StatusEffect(StatusEffectCategory.HARMFUL, 0x90514f) {
-    }.addAttributeModifier(EntityAttributes.GENERIC_MOVEMENT_SPEED, "28AFE91C-13C7-4E2F-BC29-7F747282B53C", -0.15f, EntityAttributeModifier.Operation.MULTIPLY_TOTAL);
+    }.addAttributeModifier(EntityAttributes.GENERIC_MOVEMENT_SPEED, "28AFE91C-13C7-4E2F-BC29-7F747282B53C", -0.5F, EntityAttributeModifier.Operation.MULTIPLY_TOTAL);
 
     //Cause hallucinations
     public static final StatusEffect INSANITY = new StatusEffect(StatusEffectCategory.HARMFUL, 0xff6113) {
@@ -214,34 +214,33 @@ public class HcsEffects {
             };
         }
 
-
         @Override
         public void onApplied(LivingEntity entity, AttributeContainer attributes, int amplifier) {
             this.lastAmplifier = amplifier;
             if (entity == null) return;
             switch (amplifier) {
-                default -> { //Minor Injuries: speed -10%, attack speed -10%, knockback -20%
+                default -> { //Minor Injuries: speed -5%, attack speed -5%, knockback -10%
+                    this.customAttributeModifiers.put(EntityAttributes.GENERIC_MOVEMENT_SPEED, new EntityAttributeModifier(UUID.fromString("5A0F06F9-3ECF-4CF4-8367-CF3F541B43E6"), this::getTranslationKey, -0.05F, EntityAttributeModifier.Operation.MULTIPLY_TOTAL));
+                    this.customAttributeModifiers.put(EntityAttributes.GENERIC_ATTACK_SPEED, new EntityAttributeModifier(UUID.fromString("8F91E8F3-FB69-4105-A427-F1663C7A5B82"), this::getTranslationKey, -0.05F, EntityAttributeModifier.Operation.MULTIPLY_TOTAL));
+                    this.customAttributeModifiers.put(EntityAttributes.GENERIC_ATTACK_KNOCKBACK, new EntityAttributeModifier(UUID.fromString("62BA69E1-BCE8-4E88-A939-AE5C1AF0814A"), this::getTranslationKey, -0.1F, EntityAttributeModifier.Operation.MULTIPLY_TOTAL));
+                }
+                case 1 -> { //Moderate Injuries: speed -10%, attack damage -10%, attack speed -15%, knockback -20%
                     this.customAttributeModifiers.put(EntityAttributes.GENERIC_MOVEMENT_SPEED, new EntityAttributeModifier(UUID.fromString("5A0F06F9-3ECF-4CF4-8367-CF3F541B43E6"), this::getTranslationKey, -0.1F, EntityAttributeModifier.Operation.MULTIPLY_TOTAL));
-                    this.customAttributeModifiers.put(EntityAttributes.GENERIC_ATTACK_SPEED, new EntityAttributeModifier(UUID.fromString("8F91E8F3-FB69-4105-A427-F1663C7A5B82"), this::getTranslationKey, -0.1F, EntityAttributeModifier.Operation.MULTIPLY_TOTAL));
+                    this.customAttributeModifiers.put(EntityAttributes.GENERIC_ATTACK_SPEED, new EntityAttributeModifier(UUID.fromString("8F91E8F3-FB69-4105-A427-F1663C7A5B82"), this::getTranslationKey, -0.15F, EntityAttributeModifier.Operation.MULTIPLY_TOTAL));
                     this.customAttributeModifiers.put(EntityAttributes.GENERIC_ATTACK_KNOCKBACK, new EntityAttributeModifier(UUID.fromString("62BA69E1-BCE8-4E88-A939-AE5C1AF0814A"), this::getTranslationKey, -0.2F, EntityAttributeModifier.Operation.MULTIPLY_TOTAL));
+                    this.customAttributeModifiers.put(EntityAttributes.GENERIC_ATTACK_DAMAGE, new EntityAttributeModifier(UUID.fromString("B53DBD42-F249-4BFD-8A41-A9A8A2FB1C1C"), this::getTranslationKey, -0.1F, EntityAttributeModifier.Operation.MULTIPLY_TOTAL));
                 }
-                case 1 -> { //Moderate Injuries: speed -20%, attack damage -20%, attack speed -30%, knockback -40%
-                    this.customAttributeModifiers.put(EntityAttributes.GENERIC_MOVEMENT_SPEED, new EntityAttributeModifier(UUID.fromString("5A0F06F9-3ECF-4CF4-8367-CF3F541B43E6"), this::getTranslationKey, -0.2F, EntityAttributeModifier.Operation.MULTIPLY_TOTAL));
-                    this.customAttributeModifiers.put(EntityAttributes.GENERIC_ATTACK_SPEED, new EntityAttributeModifier(UUID.fromString("8F91E8F3-FB69-4105-A427-F1663C7A5B82"), this::getTranslationKey, -0.3, EntityAttributeModifier.Operation.MULTIPLY_TOTAL));
-                    this.customAttributeModifiers.put(EntityAttributes.GENERIC_ATTACK_KNOCKBACK, new EntityAttributeModifier(UUID.fromString("62BA69E1-BCE8-4E88-A939-AE5C1AF0814A"), this::getTranslationKey, -0.4F, EntityAttributeModifier.Operation.MULTIPLY_TOTAL));
-                    this.customAttributeModifiers.put(EntityAttributes.GENERIC_ATTACK_DAMAGE, new EntityAttributeModifier(UUID.fromString("B53DBD42-F249-4BFD-8A41-A9A8A2FB1C1C"), this::getTranslationKey, -0.2, EntityAttributeModifier.Operation.MULTIPLY_TOTAL));
+                case 2 -> { //Severe Injuries: speed -30%, attack damage -25%, attack speed -25%, knockback -30%
+                    this.customAttributeModifiers.put(EntityAttributes.GENERIC_MOVEMENT_SPEED, new EntityAttributeModifier(UUID.fromString("5A0F06F9-3ECF-4CF4-8367-CF3F541B43E6"), this::getTranslationKey, -0.3F, EntityAttributeModifier.Operation.MULTIPLY_TOTAL));
+                    this.customAttributeModifiers.put(EntityAttributes.GENERIC_ATTACK_SPEED, new EntityAttributeModifier(UUID.fromString("8F91E8F3-FB69-4105-A427-F1663C7A5B82"), this::getTranslationKey, -0.25F, EntityAttributeModifier.Operation.MULTIPLY_TOTAL));
+                    this.customAttributeModifiers.put(EntityAttributes.GENERIC_ATTACK_KNOCKBACK, new EntityAttributeModifier(UUID.fromString("62BA69E1-BCE8-4E88-A939-AE5C1AF0814A"), this::getTranslationKey, -0.3F, EntityAttributeModifier.Operation.MULTIPLY_TOTAL));
+                    this.customAttributeModifiers.put(EntityAttributes.GENERIC_ATTACK_DAMAGE, new EntityAttributeModifier(UUID.fromString("B53DBD42-F249-4BFD-8A41-A9A8A2FB1C1C"), this::getTranslationKey, -0.25F, EntityAttributeModifier.Operation.MULTIPLY_TOTAL));
                 }
-                case 2 -> { //Severe Injuries: speed -40%, attack damage -50%, attack speed -50%, knockback -60%
+                case 3 -> { //Critical Injuries: speed -40%, attack damage -40%, attack speed -40%, knockback -40%, blindness, cannot jump
                     this.customAttributeModifiers.put(EntityAttributes.GENERIC_MOVEMENT_SPEED, new EntityAttributeModifier(UUID.fromString("5A0F06F9-3ECF-4CF4-8367-CF3F541B43E6"), this::getTranslationKey, -0.4F, EntityAttributeModifier.Operation.MULTIPLY_TOTAL));
-                    this.customAttributeModifiers.put(EntityAttributes.GENERIC_ATTACK_SPEED, new EntityAttributeModifier(UUID.fromString("8F91E8F3-FB69-4105-A427-F1663C7A5B82"), this::getTranslationKey, -0.6F, EntityAttributeModifier.Operation.MULTIPLY_TOTAL));
-                    this.customAttributeModifiers.put(EntityAttributes.GENERIC_ATTACK_KNOCKBACK, new EntityAttributeModifier(UUID.fromString("62BA69E1-BCE8-4E88-A939-AE5C1AF0814A"), this::getTranslationKey, -0.6F, EntityAttributeModifier.Operation.MULTIPLY_TOTAL));
-                    this.customAttributeModifiers.put(EntityAttributes.GENERIC_ATTACK_DAMAGE, new EntityAttributeModifier(UUID.fromString("B53DBD42-F249-4BFD-8A41-A9A8A2FB1C1C"), this::getTranslationKey, -0.5F, EntityAttributeModifier.Operation.MULTIPLY_TOTAL));
-                }
-                case 3 -> { //Critical Injuries: speed -80%, attack damage -80%, attack speed -80%, knockback -80%
-                    this.customAttributeModifiers.put(EntityAttributes.GENERIC_MOVEMENT_SPEED, new EntityAttributeModifier(UUID.fromString("5A0F06F9-3ECF-4CF4-8367-CF3F541B43E6"), this::getTranslationKey, -0.8F, EntityAttributeModifier.Operation.MULTIPLY_TOTAL));
-                    this.customAttributeModifiers.put(EntityAttributes.GENERIC_ATTACK_SPEED, new EntityAttributeModifier(UUID.fromString("8F91E8F3-FB69-4105-A427-F1663C7A5B82"), this::getTranslationKey, -0.8, EntityAttributeModifier.Operation.MULTIPLY_TOTAL));
-                    this.customAttributeModifiers.put(EntityAttributes.GENERIC_ATTACK_KNOCKBACK, new EntityAttributeModifier(UUID.fromString("62BA69E1-BCE8-4E88-A939-AE5C1AF0814A"), this::getTranslationKey, -0.8F, EntityAttributeModifier.Operation.MULTIPLY_TOTAL));
-                    this.customAttributeModifiers.put(EntityAttributes.GENERIC_ATTACK_DAMAGE, new EntityAttributeModifier(UUID.fromString("B53DBD42-F249-4BFD-8A41-A9A8A2FB1C1C"), this::getTranslationKey, -0.8F, EntityAttributeModifier.Operation.MULTIPLY_TOTAL));
+                    this.customAttributeModifiers.put(EntityAttributes.GENERIC_ATTACK_SPEED, new EntityAttributeModifier(UUID.fromString("8F91E8F3-FB69-4105-A427-F1663C7A5B82"), this::getTranslationKey, -0.4F, EntityAttributeModifier.Operation.MULTIPLY_TOTAL));
+                    this.customAttributeModifiers.put(EntityAttributes.GENERIC_ATTACK_KNOCKBACK, new EntityAttributeModifier(UUID.fromString("62BA69E1-BCE8-4E88-A939-AE5C1AF0814A"), this::getTranslationKey, -0.4F, EntityAttributeModifier.Operation.MULTIPLY_TOTAL));
+                    this.customAttributeModifiers.put(EntityAttributes.GENERIC_ATTACK_DAMAGE, new EntityAttributeModifier(UUID.fromString("B53DBD42-F249-4BFD-8A41-A9A8A2FB1C1C"), this::getTranslationKey, -0.4F, EntityAttributeModifier.Operation.MULTIPLY_TOTAL));
                     entity.addStatusEffect(new StatusEffectInstance(StatusEffects.BLINDNESS, 50, 0, false, false, false));
                 }
             }
@@ -256,12 +255,9 @@ public class HcsEffects {
             removeTempAttributes(attributes, this.customAttributeModifiers);
             super.onRemoved(entity, attributes, amplifier);
         }
-
-
     };
 
     public static final StatusEffect PAIN = new StatusEffect(StatusEffectCategory.HARMFUL, 0x421d0a) {
-        @Deprecated
         final Multimap<EntityAttribute, EntityAttributeModifier> customAttributeModifiers = Multimaps.synchronizedMultimap(ArrayListMultimap.create());
         int lastAmplifier = 0;
 
@@ -276,6 +272,42 @@ public class HcsEffects {
         @Override
         public void onApplied(LivingEntity entity, AttributeContainer attributes, int amplifier) {
             this.lastAmplifier = amplifier;
+            if (entity == null) return;
+            switch (amplifier) {
+                default -> { //Minor Pain: speed -5%, attack speed -5%, knockback -10%
+                    this.customAttributeModifiers.put(EntityAttributes.GENERIC_MOVEMENT_SPEED, new EntityAttributeModifier(UUID.fromString("873BA6F8-398D-432C-B8EE-2601D0363F8E"), this::getTranslationKey, -0.05F, EntityAttributeModifier.Operation.MULTIPLY_TOTAL));
+                    this.customAttributeModifiers.put(EntityAttributes.GENERIC_ATTACK_SPEED, new EntityAttributeModifier(UUID.fromString("FD1185A0-A575-4096-8E17-97A03E2EB922"), this::getTranslationKey, -0.05F, EntityAttributeModifier.Operation.MULTIPLY_TOTAL));
+                    this.customAttributeModifiers.put(EntityAttributes.GENERIC_ATTACK_KNOCKBACK, new EntityAttributeModifier(UUID.fromString("792D1884-1418-4A06-A03E-756A7B609CD0"), this::getTranslationKey, -0.1F, EntityAttributeModifier.Operation.MULTIPLY_TOTAL));
+                }
+                case 1 -> { //Moderate Pain: speed -10%, attack damage -10%, attack speed -15%, knockback -20%
+                    this.customAttributeModifiers.put(EntityAttributes.GENERIC_MOVEMENT_SPEED, new EntityAttributeModifier(UUID.fromString("881B4777-7AC6-43F0-9785-FA6C467C0133"), this::getTranslationKey, -0.1F, EntityAttributeModifier.Operation.MULTIPLY_TOTAL));
+                    this.customAttributeModifiers.put(EntityAttributes.GENERIC_ATTACK_SPEED, new EntityAttributeModifier(UUID.fromString("B1B204EE-92C8-4934-A008-F82077D6CD1B"), this::getTranslationKey, -0.15F, EntityAttributeModifier.Operation.MULTIPLY_TOTAL));
+                    this.customAttributeModifiers.put(EntityAttributes.GENERIC_ATTACK_KNOCKBACK, new EntityAttributeModifier(UUID.fromString("A72773FC-98E9-4206-B26D-FC6FAEAEB2E4"), this::getTranslationKey, -0.2F, EntityAttributeModifier.Operation.MULTIPLY_TOTAL));
+                    this.customAttributeModifiers.put(EntityAttributes.GENERIC_ATTACK_DAMAGE, new EntityAttributeModifier(UUID.fromString("283A6E73-E2E2-4D42-A262-6CCF459704A2"), this::getTranslationKey, -0.1F, EntityAttributeModifier.Operation.MULTIPLY_TOTAL));
+                }
+                case 2 -> { //Severe Pain: speed -25%, attack damage -25%, attack speed -25%, knockback -30%
+                    this.customAttributeModifiers.put(EntityAttributes.GENERIC_MOVEMENT_SPEED, new EntityAttributeModifier(UUID.fromString("292CBB4C-9599-4538-97CF-DC6F924E1BB2"), this::getTranslationKey, -0.25F, EntityAttributeModifier.Operation.MULTIPLY_TOTAL));
+                    this.customAttributeModifiers.put(EntityAttributes.GENERIC_ATTACK_SPEED, new EntityAttributeModifier(UUID.fromString("32F29F5C-CD1E-47E2-B42C-D34F3B9FDDC3"), this::getTranslationKey, -0.25F, EntityAttributeModifier.Operation.MULTIPLY_TOTAL));
+                    this.customAttributeModifiers.put(EntityAttributes.GENERIC_ATTACK_KNOCKBACK, new EntityAttributeModifier(UUID.fromString("DF28B6B7-7175-4D42-856D-D52EF647A056"), this::getTranslationKey, -0.3F, EntityAttributeModifier.Operation.MULTIPLY_TOTAL));
+                    this.customAttributeModifiers.put(EntityAttributes.GENERIC_ATTACK_DAMAGE, new EntityAttributeModifier(UUID.fromString("BC402FEC-1445-4C12-8D10-62D7182B8781"), this::getTranslationKey, -0.25F, EntityAttributeModifier.Operation.MULTIPLY_TOTAL));
+                }
+                case 3 -> { //Critical Pain: speed -40%, attack damage -40%, attack speed -40%, knockback -40%
+                    this.customAttributeModifiers.put(EntityAttributes.GENERIC_MOVEMENT_SPEED, new EntityAttributeModifier(UUID.fromString("8FB78320-AB19-4528-9D46-E7C1DBA7430D"), this::getTranslationKey, -0.4F, EntityAttributeModifier.Operation.MULTIPLY_TOTAL));
+                    this.customAttributeModifiers.put(EntityAttributes.GENERIC_ATTACK_SPEED, new EntityAttributeModifier(UUID.fromString("5070DD4F-BBA9-4400-B2DF-E0260BA77A98"), this::getTranslationKey, -0.4F, EntityAttributeModifier.Operation.MULTIPLY_TOTAL));
+                    this.customAttributeModifiers.put(EntityAttributes.GENERIC_ATTACK_KNOCKBACK, new EntityAttributeModifier(UUID.fromString("A5448EE0-84AB-4BE4-A745-49B8EE8CC6FE"), this::getTranslationKey, -0.4F, EntityAttributeModifier.Operation.MULTIPLY_TOTAL));
+                    this.customAttributeModifiers.put(EntityAttributes.GENERIC_ATTACK_DAMAGE, new EntityAttributeModifier(UUID.fromString("4DD760AE-07D8-412A-852E-6990AD106D94"), this::getTranslationKey, -0.4F, EntityAttributeModifier.Operation.MULTIPLY_TOTAL));
+                }
+            }
+            attributes.addTemporaryModifiers(this.customAttributeModifiers);
+            super.onApplied(entity, attributes, amplifier);
+        }
+
+        @Override
+        public void onRemoved(LivingEntity entity, AttributeContainer attributes, int amplifier) {
+            this.lastAmplifier = amplifier;
+            if (entity == null) return;
+            removeTempAttributes(attributes, this.customAttributeModifiers);
+            super.onRemoved(entity, attributes, amplifier);
         }
 
     };
@@ -289,6 +321,7 @@ public class HcsEffects {
             EntityAttributeModifier entityAttributeModifier = entry.getValue();
             entityAttributeInstance.removeModifier(entityAttributeModifier);
         }
+        customAttributeModifiers.clear(); // Easy to forget
     }
 
 }

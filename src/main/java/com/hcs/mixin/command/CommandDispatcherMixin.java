@@ -37,7 +37,7 @@ public class CommandDispatcherMixin {
 
 
     private static int setThirst(float val) {
-        if (thePlayer != null) ((StatAccessor) thePlayer).getThirstManager().set(val);
+        if (thePlayer != null) ((StatAccessor) thePlayer).getThirstManager().setReal(val);
         return Command.SINGLE_SUCCESS;
     }
 

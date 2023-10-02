@@ -56,7 +56,7 @@ public abstract class DebugHudMixin {
         list.add("Temperature: biome=" + biome.getTemperature() + ", env=[real: " + String.format("%.5f", TemperatureHelper.getTemp(player)) + " ,feel:" + String.format("%.5f", TemperatureHelper.getFeelingTemp(player, TemperatureHelper.getTemp(player), biomeName, player.world.getLightLevel(LightType.SKY, player.getBlockPos()))) + "]" + ", value=" + String.format("%.5f", temperatureManager.get()) + ", satu=" + String.format("%.5f", temperatureManager.getSaturation()) + ", trend=" + temperatureManager.getTrendType());
         list.add("Nutrition: vegetable=" + nutritionManager.getVegetable());
         list.add("Oxygen: lack=" + statusManager.getOxygenLackLevel() + ", gen=" + statusManager.getOxygenGenLevel());
-        list.add("Pain: real=" + painManager.get() + ", raw=" + painManager.getWithoutPainkillerEffect() + ", alle=" + painManager.getPainkillerAlleviation());
+        list.add("Pain: real=" + String.format("%.4f", painManager.getReal()) + ", raw=" + String.format("%.4f", painManager.getRaw()) + ", alle=" + String.format("%.4f", painManager.getPainkillerAlleviation()));
         list.add("Wetness: " + ((StatAccessor) player).getWetnessManager().get());
     }
 

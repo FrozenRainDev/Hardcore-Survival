@@ -22,30 +22,38 @@ public class PainManager {
         */
         int x = Math.max(0, 4200 - painkillerApplied); // ticks since applied (painkillerApplied=effect countdown)
         if (x <= 600) alleviationCache = -2.5 * Math.pow((x - 600) / 600.0, 2) + 2.5;
-        else alleviationCache = -2.72 / (1 + Math.pow((2000 - x) / 600.0, Math.E));
+        else alleviationCache = -2.72 / (1 + Math.pow(Math.E, (2000 - x) / 600.0)) + 2.74;
+        if (alleviationCache < 0.1) alleviationCache = 0;
+//        System.out.println(alleviationCache + " " + painkillerApplied + " " + x);
         painkillerUpdateInterval = 60;
         return alleviationCache;
     }
 
-    public double getWithoutPainkillerEffect() {
+    public double getRaw() {
+        //"raw" means without painkiller effect
         if (pain > 4.0) pain = 4.0;
         else if (pain < 0.0) pain = 0.0;
         return pain;
     }
 
-    public double get() {
-        return Math.max(0, getWithoutPainkillerEffect() - getPainkillerAlleviation());
+    public double getReal() {
+        return Math.max(0, getRaw() - getPainkillerAlleviation());
     }
 
-    public void set(double val) {
+    public void setRaw(double val) {
         if (Double.isNaN(val)) {
             Reg.LOGGER.error(this.getClass().getSimpleName() + ": Val is NaN");
             return;
         }
-        val += alleviationCache;
         if (val > 4.0) val = 4.0;
         else if (val < 0.0) val = 0.0;
         pain = val;
+    }
+
+    @SuppressWarnings("unused")
+    public void setReal(double val) {
+        val += alleviationCache;
+        setRaw(val);
     }
 
     public void setAlleviationCache(double val) {
@@ -59,9 +67,8 @@ public class PainManager {
         painkillerUpdateInterval = 60;
     }
 
-    public void add(double val) {
-        pain += val;
-//        set(pain + val);
+    public void addRaw(double val) {
+        setRaw(pain + val);
     }
 
     public void applyPainkiller() {
@@ -80,7 +87,7 @@ public class PainManager {
     }
 
     public void tick() {
-        add(pain < 1.0 ? -0.0004 : -0.001);
+        addRaw(pain < 1.0 ? -0.0003 : (pain > 3.0 ? -0.0012 : -0.0008));
         if (painkillerApplied > 0) --painkillerApplied;
     }
 

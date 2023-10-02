@@ -81,7 +81,7 @@ public class HotWaterBottleItem extends Item {
     }
 
     public static float getUnsignedPercentByInitTimeAdvanced(World world, @NotNull ItemStack stack) {
-        //hot water bottle will get inverse percent for debug
+        //hot water bottle will getReal inverse percent for debug
         NbtCompound nbt = stack.getOrCreateNbt();
         return nbt.contains(HHS) && nbt.getInt(HHS) > 0 ? 1.0F - getUnsignedPercentByInitTime(world, nbt.getLong(HHCI)) : getUnsignedPercentByInitTime(WorldHelper.theWorld, nbt.getLong(HHCI));
     }
@@ -198,7 +198,7 @@ public class HotWaterBottleItem extends Item {
     public void appendTooltip(@NotNull ItemStack stack, @Nullable World world, List<Text> tooltip, TooltipContext context) {
         super.appendTooltip(stack, world, tooltip, context);
         NbtCompound nbt = stack.getOrCreateNbt();
-//        tooltip.add(Text.of(nbt.toString()));
+//        tooltip.addRaw(Text.of(nbt.toString()));
         int tempId = 0;
         if ((nbt.contains(HHS) && nbt.getInt(HHS) != 0) || nbt.contains(HHEP)) {
             float percent;

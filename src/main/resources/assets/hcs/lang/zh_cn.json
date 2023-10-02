@@ -47,12 +47,12 @@
   "effect.hcs.injury.4.description": "濒临死亡",
   "effect.hcs.pain": "疼痛",
   "effect.hcs.pain.description": "速度和攻击力降低",
-  "effect.hcs.pain.1": "轻度疼痛",
+  "effect.hcs.pain.1": "轻微疼痛",
   "effect.hcs.pain.1.description": "感觉有点疼",
   "effect.hcs.pain.2": "中度疼痛",
-  "effect.hcs.pain.2.description": "速度和攻击力降低",
+  "effect.hcs.pain.2.description": "力量和速度降低",
   "effect.hcs.pain.3": "严重疼痛",
-  "effect.hcs.pain.3.description": "速度和攻击力严重降低",
+  "effect.hcs.pain.3.description": "力量和速度严重降低",
   "effect.hcs.pain.4": "极度疼痛",
   "effect.hcs.pain.4.description": "痛不欲生",
 
@@ -205,6 +205,6 @@
   "item.hcs.cooked_kelp": "熟海带",
   "item.hcs.bark": "树皮",
   "item.hcs.bark.description": "绝对难以下咽",
-  "item.hcs.willow_bark": "柳树树皮",
+  "item.hcs.willow_bark": "柳树皮",
   "item.hcs.willow_bark.description": "具有镇痛效果"
 }

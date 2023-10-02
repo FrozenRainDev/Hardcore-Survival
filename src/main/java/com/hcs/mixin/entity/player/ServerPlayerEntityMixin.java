@@ -19,6 +19,7 @@ import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.LightType;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.Biome;
@@ -27,7 +28,6 @@ import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import static com.hcs.status.manager.TemperatureManager.CHANGE_SPAN;
 import static com.hcs.status.network.ServerS2C.doubleToInt;
@@ -139,20 +139,14 @@ public abstract class ServerPlayerEntityMixin extends PlayerEntity {
             float hpPercent = this.getHealth() / this.getMaxHealth();
             if (hpPercent < 0.1F) EntityHelper.addHcsDebuff(this, HcsEffects.INJURY, 3);
             else if (hpPercent < 0.25F) EntityHelper.addHcsDebuff(this, HcsEffects.INJURY, 2);
-            else if (hpPercent < 0.5F) EntityHelper.addHcsDebuff(this, HcsEffects.INJURY, 1);
+            else if (hpPercent < 0.45F) EntityHelper.addHcsDebuff(this, HcsEffects.INJURY, 1);
             else if (hpPercent < 0.7F) EntityHelper.addHcsDebuff(this, HcsEffects.INJURY, 0);
 
-            //Debuff of pain
+            //Debuff of pain (view add pain in PlayerEntityMixin/applyDamage)
             PainManager painManager = ((StatAccessor) this).getPainManager();
-            double pain = painManager.get();
-            if (pain > 0.0) EntityHelper.addHcsDebuff(this, HcsEffects.PAIN, (int) pain);
+            double pain = painManager.getReal();
+            if (pain > 0.0) EntityHelper.addHcsDebuff(this, HcsEffects.PAIN, (int) MathHelper.clamp(pain, 0.0, 3.99));
             painManager.tick();
         }
-    }
-
-    @Inject(method = "damage", at = @At("HEAD"))
-    public void damage(DamageSource source, float amount, CallbackInfoReturnable<Boolean> cir) {
-        float hurtPercent = amount / this.getMaxHealth();
-        ((StatAccessor) this).getPainManager().add(hurtPercent * 5.0);
     }
 }

@@ -9,6 +9,7 @@ import com.hcs.util.DigRestrictHelper;
 import com.hcs.util.EntityHelper;
 import com.hcs.util.RotHelper;
 import net.minecraft.block.*;
+import net.minecraft.entity.DamageUtil;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
@@ -26,8 +27,10 @@ import net.minecraft.item.*;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtElement;
 import net.minecraft.registry.tag.BlockTags;
+import net.minecraft.registry.tag.DamageTypeTags;
 import net.minecraft.registry.tag.ItemTags;
 import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.sound.SoundEvents;
 import net.minecraft.stat.Stats;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
@@ -205,7 +208,7 @@ public abstract class PlayerEntityMixin extends LivingEntity implements StatAcce
             this.nutritionManager.setVegetable(nbt.contains(NutritionManager.NUTRITION_VEGETABLE_NBT, NbtElement.DOUBLE_TYPE) ? nbt.getDouble(NutritionManager.NUTRITION_VEGETABLE_NBT) : 1.0);
             this.wetnessManager.set(nbt.contains(WetnessManager.WETNESS_NBT, NbtElement.DOUBLE_TYPE) ? nbt.getDouble(WetnessManager.WETNESS_NBT) : 0.0);
             this.statusManager.setSoulImpairedStat(nbt.contains(StatusManager.IS_SOUL_IMPAIRED_NBT) ? nbt.getInt(StatusManager.IS_SOUL_IMPAIRED_NBT) : 0);
-            this.painManager.set(nbt.contains(PainManager.PAIN_NBT) ? nbt.getDouble(PainManager.PAIN_NBT) : 0.0);
+            this.painManager.setRaw(nbt.contains(PainManager.PAIN_NBT) ? nbt.getDouble(PainManager.PAIN_NBT) : 0.0);
             this.painManager.setPainkillerApplied(nbt.contains(PainManager.PAIN_NBT) ? nbt.getInt(PainManager.PAIN_NBT) : 0);
         }
     }
@@ -223,7 +226,7 @@ public abstract class PlayerEntityMixin extends LivingEntity implements StatAcce
             nbt.putDouble(NutritionManager.NUTRITION_VEGETABLE_NBT, this.nutritionManager.getVegetable());
             nbt.putDouble(WetnessManager.WETNESS_NBT, this.wetnessManager.get());
             nbt.putInt(StatusManager.IS_SOUL_IMPAIRED_NBT, this.statusManager.getSoulImpairedStat());
-            nbt.putDouble(PainManager.PAIN_NBT, this.painManager.get());
+            nbt.putDouble(PainManager.PAIN_NBT, this.painManager.getRaw());
             nbt.putInt(PainManager.PAINKILLER_APPLIED_NBT, this.painManager.getPainkillerApplied());
         }
     }
@@ -250,6 +253,7 @@ public abstract class PlayerEntityMixin extends LivingEntity implements StatAcce
         if (mainHand instanceof HoeItem && (block instanceof CropBlock || block instanceof StemBlock || state.isIn(BlockTags.REPLACEABLE_PLANTS)))
             speed *= 5.0F;
         speed /= ((this.hasStatusEffect(HcsEffects.DEHYDRATED) ? 2.0F : 1.0F) * (this.hasStatusEffect(HcsEffects.STARVING) ? 2.0F : 1.0F) * (this.hasStatusEffect(HcsEffects.EXHAUSTED) ? 2.0F : 1.0F));
+        speed /= (float) Math.max(1.0, Math.pow(1.15, (EntityHelper.getEffectAmplifier(this, HcsEffects.PAIN) + 1) + (EntityHelper.getEffectAmplifier(this, HcsEffects.INJURY) + 1)));
         if (DigRestrictHelper.Predicates.IS_BREAKABLE_FUNCTIONAL.test(block))
             speed *= (block instanceof AbstractFurnaceBlock || block == Blocks.ENDER_CHEST) ? 16.0F : 4.0F;
         if (block == Blocks.SUGAR_CANE || block == Blocks.CLAY) speed /= 9.0F;
@@ -393,6 +397,10 @@ public abstract class PlayerEntityMixin extends LivingEntity implements StatAcce
 
     @Inject(method = "tick", at = @At("HEAD"))
     public void tick(CallbackInfo ci) {
+        // Painful sound effect
+        double pain = ((StatAccessor) this).getPainManager().getReal();
+        if (pain > 2.0 && this.world.getTime() % Math.max(1, 10 * (6 - pain)) == 0)
+            this.playSound(SoundEvents.ENTITY_PLAYER_BREATH, this.getSoundVolume(), this.getSoundPitch());
         if (this.world.isClient) return;
         int oxyLackLvl = 0;
         double y = this.getY();
@@ -415,7 +423,7 @@ public abstract class PlayerEntityMixin extends LivingEntity implements StatAcce
         int maxLvlReached = this.statusManager.getMaxExpLevelReached();
         EntityAttributeInstance instance = this.getAttributeInstance(EntityAttributes.GENERIC_MAX_HEALTH);
         if (instance != null) {
-            int limitedMaxHealth = Math.min(20, (int) Math.floor(maxLvlReached / 3.0) + 8);//Cut down max health when in low exp lvl
+            int limitedMaxHealth = Math.min(20, (int) Math.floor(maxLvlReached / 5.0) + 10);//Cut down max health when in low exp lvl
             double currentMaxHealth = instance.getBaseValue();
             if (limitedMaxHealth > currentMaxHealth || (limitedMaxHealth < currentMaxHealth && maxLvlReached < 36)) {
                 instance.setBaseValue(limitedMaxHealth);
@@ -430,7 +438,7 @@ public abstract class PlayerEntityMixin extends LivingEntity implements StatAcce
                     if (this.onGround) {
                         if (this.isSprinting()) this.staminaManager.add(-0.001, this);
                         else if (this.isInSneakingPose()) this.staminaManager.add(-0.0001, this);
-                        else if (this.staminaManager.get() < 0.7) {//walking while stamina < 0.7 will get a recovery
+                        else if (this.staminaManager.get() < 0.7) {//walking while stamina < 0.7 will getReal a recovery
                             shouldPauseRestoring = false;
                             this.staminaManager.add(this.staminaManager.get() < 0.3 ? 0.0001 : 0.001, this);
                         }
@@ -455,7 +463,7 @@ public abstract class PlayerEntityMixin extends LivingEntity implements StatAcce
             if (this.hasStatusEffect(StatusEffects.WITHER)) this.sanityManager.add(-0.00008);
             else if (this.hasStatusEffect(StatusEffects.POISON)) this.sanityManager.add(-0.00003);
             boolean isInCavelike = skyBrightness < 1 && this.world.getDimension().hasSkyLight();
-            boolean isInUnpleasantDimension = !this.world.getDimension().bedWorks() || this.world.getRegistryKey() == World.NETHER;//Avoid mods conflict since sleeping in the nether is set to permissive
+            boolean isInUnpleasantDimension = !this.world.getDimension().bedWorks() || this.world.getRegistryKey() == World.NETHER;//Avoid mods conflict since sleeping in the nether is setReal to permissive
             if (((this.world.isNight() || isInCavelike) && !this.hasStatusEffect(StatusEffects.NIGHT_VISION)) || isInUnpleasantDimension) {
                 double sanDecrement = 0.00001;
                 int blockBrightness = this.world.getLightLevel(LightType.BLOCK, headPos);
@@ -517,4 +525,16 @@ public abstract class PlayerEntityMixin extends LivingEntity implements StatAcce
         return 0; //See at BlockMixin/onLandedUpon()
     }
 
+    @Inject(method = "applyDamage", at = @At("TAIL"))
+    public void applyDamage(DamageSource source, float amount, CallbackInfo ci) {
+        //Do not add pain in ServerPlayerEntity as it adds with redundant repeat
+        if (EntityHelper.IS_PHYSICAL_DAMAGE.test(source)) {
+            float feelingAmount = amount;
+            if (!source.isIn(DamageTypeTags.BYPASSES_ARMOR))
+                feelingAmount = DamageUtil.getDamageLeft(amount, Math.min(14, this.getArmor()) * 0.65F, 0.0F);
+            if (EntityHelper.IS_BURNING_DAMAGE.test(source)) feelingAmount *= 2;
+            float hurtPercent = feelingAmount / Math.max(12.0F, this.getMaxHealth());
+            ((StatAccessor) this).getPainManager().addRaw(hurtPercent * 4.5);
+        }
+    }
 }

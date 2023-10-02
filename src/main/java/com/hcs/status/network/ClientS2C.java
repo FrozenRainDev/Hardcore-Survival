@@ -143,7 +143,7 @@ public class ClientS2C {
                     PlayerEntity player = (PlayerEntity) client.player.world.getEntityById(bufArr[0]);
                     if (player != null) {
                         PainManager painManager = ((StatAccessor) player).getPainManager();
-                        painManager.set(intToDouble(bufArr[1]));
+                        painManager.setRaw(intToDouble(bufArr[1]));
                         painManager.setAlleviationCache(intToDouble(bufArr[2]));
                         painManager.setPainkillerApplied(bufArr[3]);
                     }
