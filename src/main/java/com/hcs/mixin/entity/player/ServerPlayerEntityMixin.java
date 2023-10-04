@@ -127,7 +127,9 @@ public abstract class ServerPlayerEntityMixin extends PlayerEntity {
             if (vegetable < 0.00001) EntityHelper.addHcsDebuff(this, HcsEffects.MALNUTRITION);
             //Debuff of wet
             double wet = ((StatAccessor) this).getWetnessManager().get();
-            if (wet >= 0.3) EntityHelper.addHcsDebuff(this, HcsEffects.WET, wet > 0.7 ? 1 : 0);
+            if (wet > 0.7) EntityHelper.addHcsDebuff(this, HcsEffects.WET, 2);
+            if (wet > 0.4) EntityHelper.addHcsDebuff(this, HcsEffects.WET, 1);
+            if (wet > 0.1) EntityHelper.addHcsDebuff(this, HcsEffects.WET, 0);
             //Debuff for soul impaired(death punishment)
             int soulImpairedStat = ((StatAccessor) this).getStatusManager().getSoulImpairedStat();
             if (soulImpairedStat > 0) {
@@ -141,7 +143,6 @@ public abstract class ServerPlayerEntityMixin extends PlayerEntity {
             else if (hpPercent < 0.25F) EntityHelper.addHcsDebuff(this, HcsEffects.INJURY, 2);
             else if (hpPercent < 0.45F) EntityHelper.addHcsDebuff(this, HcsEffects.INJURY, 1);
             else if (hpPercent < 0.7F) EntityHelper.addHcsDebuff(this, HcsEffects.INJURY, 0);
-
             //Debuff of pain (view add pain in PlayerEntityMixin/applyDamage)
             PainManager painManager = ((StatAccessor) this).getPainManager();
             double pain = painManager.getReal();

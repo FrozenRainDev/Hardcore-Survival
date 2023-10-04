@@ -8,4 +8,6 @@ public interface DamageSourcesAccessor {
     DamageSource heatstroke();
 
     DamageSource oxygenDeficiency();
+
+    DamageSource darkness();
 }

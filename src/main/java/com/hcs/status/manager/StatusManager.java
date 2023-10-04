@@ -1,6 +1,9 @@
 package com.hcs.status.manager;
 
 public class StatusManager {
+    public static final String MAX_LVL_NBT = "hcs_max_lvl_reached";
+    public static final String IS_SOUL_IMPAIRED_NBT = "hcs_is_soul_impaired";
+    public static final String IN_DARKNESS_TICKS = "hcs_in_darkness";
     private float exhaustion = 0.0F; //A field in HungerManager that needs to used in InGameHudMixin
     private int recentAttackTicks = 0; //Increase when player attacks an entity; Decrease over time
     private int recentMiningTicks = 0;
@@ -9,24 +12,32 @@ public class StatusManager {
     private int maxExpLevelReached = 0;
     private int recentLittleOvereatenTicks = 0;
     private boolean hasDecimalFoodLevel = false;
-    public static final String MAX_LVL_NBT = "hcs_max_lvl_reached";
     private int oxygenLackLevel = 0;
     private int oxygenGenLevelAccumulation = 0;
     private int oxygenGenLevel = 0;
     private boolean shouldLockDestroying = false; //Client only
     private int soulImpairedStat = 0; //Server only
-    public static final String IS_SOUL_IMPAIRED_NBT = "hcs_is_soul_impaired";
     private int recentSleepTicks = 0;
     private int recentWetTicks = 0;
+    private int inDarknessTicks = 0, lastInDarknessTicks = 0;
 
     public void reset(int lvlReached, int soulImpaired) {
+        setSoulImpairedStat(soulImpaired);
         exhaustion = 0.0F;
         recentAttackTicks = 0;
         recentMiningTicks = 0;
         recentHasColdWaterBagTicks = 0;
         recentHasHotWaterBagTicks = 0;
         maxExpLevelReached = lvlReached;
-        setSoulImpairedStat(soulImpaired);
+        recentLittleOvereatenTicks = 0;
+        hasDecimalFoodLevel = false;
+        oxygenLackLevel = 0;
+        oxygenGenLevelAccumulation = 0;
+        oxygenGenLevel = 0;
+        shouldLockDestroying = false;
+        recentSleepTicks = 0;
+        recentWetTicks = 0;
+        lastInDarknessTicks = inDarknessTicks = 0;
     }
 
     public float getExhaustion() {
@@ -155,7 +166,21 @@ public class StatusManager {
         return recentWetTicks;
     }
 
-    public void setRecentWetTicks(int recentWetTicks) {
-        this.recentWetTicks = recentWetTicks;
+    public void setRecentWetTicks(int val) {
+        recentWetTicks = val;
+    }
+
+    public int getInDarknessTicks() {
+        if (inDarknessTicks < 0) inDarknessTicks = 0;
+        return inDarknessTicks;
+    }
+
+    public int getLastInDarknessTicks() {
+        return lastInDarknessTicks;
+    }
+
+    public void setInDarknessTicks(int val) {
+        lastInDarknessTicks = inDarknessTicks;
+        inDarknessTicks = Math.min(114514, val);
     }
 }

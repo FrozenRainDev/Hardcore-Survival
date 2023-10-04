@@ -359,6 +359,14 @@ public class Reg implements ModInitializer {
         Registry.register(Registries.STATUS_EFFECT, new Identifier("hcs", "soul_impaired"), HcsEffects.SOUL_IMPAIRED);
         Registry.register(Registries.STATUS_EFFECT, new Identifier("hcs", "injury"), HcsEffects.INJURY);
         Registry.register(Registries.STATUS_EFFECT, new Identifier("hcs", "pain"), HcsEffects.PAIN);
+        Registry.register(Registries.STATUS_EFFECT, new Identifier("hcs", "panic"), HcsEffects.PANIC);
+        Registry.register(Registries.STATUS_EFFECT, new Identifier("hcs", "bleeding"), HcsEffects.BLEEDING);
+        Registry.register(Registries.STATUS_EFFECT, new Identifier("hcs", "darkness_enveloped"), HcsEffects.DARKNESS_ENVELOPED);
+        Registry.register(Registries.STATUS_EFFECT, new Identifier("hcs", "fracture"), HcsEffects.FRACTURE);
+        Registry.register(Registries.STATUS_EFFECT, new Identifier("hcs", "parasite_infection"), HcsEffects.PARASITE_INFECTION);
+        Registry.register(Registries.STATUS_EFFECT, new Identifier("hcs", "unhappy"), HcsEffects.UNHAPPY);
+        Registry.register(Registries.STATUS_EFFECT, new Identifier("hcs", "cold"), HcsEffects.COLD);
+        Registry.register(Registries.STATUS_EFFECT, new Identifier("hcs", "heavy_load"), HcsEffects.HEAVY_LOAD);
 
 
         RecipeSerializer.register("hcs_extract_water_from_bamboo", EXTRACT_WATER_FROM_BAMBOO_RECIPE);

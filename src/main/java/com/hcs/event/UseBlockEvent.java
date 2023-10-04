@@ -48,7 +48,7 @@ public class UseBlockEvent {
                     if (!player.isCreative()) mainHandStack.decrement(1);
                 }
                 if (block instanceof BedBlock && (EntityHelper.getEffectAmplifier(player, HcsEffects.PAIN) > 0)) {
-                    EntityHelper.msgById(player, "hcs.tip.too_pain_to_sleep", true);
+                    EntityHelper.msgById(player, "hcs.tip.too_pain_to_sleep");
                     return ActionResult.FAIL;
                 }
                 debugger = hitResult;

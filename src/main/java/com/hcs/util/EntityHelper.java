@@ -44,6 +44,7 @@ import net.minecraft.world.RaycastContext;
 import net.minecraft.world.World;
 import net.minecraft.world.event.GameEvent;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import java.text.DecimalFormat;
@@ -104,6 +105,10 @@ public class EntityHelper {
     @Deprecated
     public static void msg(@NotNull PlayerEntity player, String text, Boolean isTipMessage) {
         player.sendMessage(MutableText.of(new LiteralTextContent(text)), isTipMessage);
+    }
+
+    public static void msgById(@Nullable Entity entity, String id) {
+        if (entity instanceof PlayerEntity player) msgById(player, id, true);
     }
 
     public static void msgById(@NotNull PlayerEntity player, String id, Boolean isTipMessage) {

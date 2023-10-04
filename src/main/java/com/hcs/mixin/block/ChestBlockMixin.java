@@ -1,7 +1,8 @@
 package com.hcs.mixin.block;
 
-import com.hcs.item.HotWaterBottleItem;
 import com.hcs.Reg;
+import com.hcs.item.HotWaterBottleItem;
+import com.hcs.util.EntityHelper;
 import com.hcs.util.RotHelper;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
@@ -31,8 +32,6 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
-import static com.hcs.util.EntityHelper.msgById;
-
 @Mixin(ChestBlock.class)
 public class ChestBlockMixin {
     @Unique
@@ -59,9 +58,9 @@ public class ChestBlockMixin {
             if (state.get(NATURALLY_GENERATED)) {
                 cir.setReturnValue(ActionResult.SUCCESS);
                 if (mainHand instanceof PickaxeItem) {
-                    msgById(player, "hcs.tip.unlocked", true);
+                    EntityHelper.msgById(player, "hcs.tip.unlocked");
                     world.setBlockState(pos, state.with(NATURALLY_GENERATED, false));
-                } else msgById(player, "hcs.tip.need_unlock", true);
+                } else EntityHelper.msgById(player, "hcs.tip.need_unlock");
             }
         }
     }

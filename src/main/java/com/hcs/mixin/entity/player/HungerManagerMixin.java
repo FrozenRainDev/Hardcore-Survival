@@ -64,7 +64,7 @@ public class HungerManagerMixin {
             }
         }
         boolean bl = player.world.getGameRules().getBoolean(GameRules.NATURAL_REGENERATION);
-        if (bl && this.saturationLevel >= 0.0F && player.canFoodHeal() && this.foodLevel >= 19 && thirst >= 0.8) {
+        if (bl && this.saturationLevel >= 0.0F && player.canFoodHeal() && this.foodLevel >= 19 && thirst >= 0.8 && !player.hasStatusEffect(HcsEffects.BLEEDING)) {
             if (!malnutrition || Math.random() < 0.5) ++this.foodTickTimer;
             if (this.foodTickTimer >= 10) {
                 float f = Math.min(1.0F + this.saturationLevel / 6.0F, 2.0F) / 100.0F;

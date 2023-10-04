@@ -407,7 +407,8 @@ public abstract class InGameHudMixin extends DrawableHelper {
             this.drawTextWithThickShadow(matrices, String.format("%.1f", mou > 0 ? Math.max(mou, 0.1F) : Math.max(mou, 0.0F)), xx, yyy + 11, getColorByPercentage(mouPercentage), 0.75F);
             this.drawTextWithThickShadow(matrices, "/" + String.format("%.1f", mouMax), xx, yyy + 17, getColorByPercentage(mouPercentage), 0.5F);
         } else displacement.put("mo", false);
-        //WETNESS
+        //WETNESS - the icon was hidden
+        /*
         double wet = ((StatAccessor) player).getWetnessManager().get();
         if (wet >= 0.01F) {
             xx += 20;
@@ -418,6 +419,7 @@ public abstract class InGameHudMixin extends DrawableHelper {
             this.drawHCSTexture(matrices, xx, yy + (16 - wetHeight) + wetShake, 16, 144 - wetHeight, 16, wetHeight);
             this.drawTextWithThickShadow(matrices, customNumberFormatter(wet < 0.1 ? " #%" : "##%", wet), xx + 2, yyy + 11, getColorByPercentage(1.0 - wet), 0.75F);
         } else displacement.put("wet", false);
+        */
         //this.client.getProfiler().pop();
         heaLast = hea;
         shouldRenderMountHealth = shouldRenderMountJumpBar = false;

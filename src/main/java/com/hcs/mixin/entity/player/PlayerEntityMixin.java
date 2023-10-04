@@ -26,6 +26,7 @@ import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.*;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtElement;
+import net.minecraft.network.packet.s2c.play.GameStateChangeS2CPacket;
 import net.minecraft.registry.tag.BlockTags;
 import net.minecraft.registry.tag.DamageTypeTags;
 import net.minecraft.registry.tag.ItemTags;
@@ -210,6 +211,7 @@ public abstract class PlayerEntityMixin extends LivingEntity implements StatAcce
             this.statusManager.setSoulImpairedStat(nbt.contains(StatusManager.IS_SOUL_IMPAIRED_NBT) ? nbt.getInt(StatusManager.IS_SOUL_IMPAIRED_NBT) : 0);
             this.painManager.setRaw(nbt.contains(PainManager.PAIN_NBT) ? nbt.getDouble(PainManager.PAIN_NBT) : 0.0);
             this.painManager.setPainkillerApplied(nbt.contains(PainManager.PAIN_NBT) ? nbt.getInt(PainManager.PAIN_NBT) : 0);
+            this.statusManager.setInDarknessTicks(nbt.contains(StatusManager.IN_DARKNESS_TICKS) ? nbt.getInt(StatusManager.IN_DARKNESS_TICKS) : 0);
         }
     }
 
@@ -228,6 +230,7 @@ public abstract class PlayerEntityMixin extends LivingEntity implements StatAcce
             nbt.putInt(StatusManager.IS_SOUL_IMPAIRED_NBT, this.statusManager.getSoulImpairedStat());
             nbt.putDouble(PainManager.PAIN_NBT, this.painManager.getRaw());
             nbt.putInt(PainManager.PAINKILLER_APPLIED_NBT, this.painManager.getPainkillerApplied());
+            nbt.putInt(StatusManager.IN_DARKNESS_TICKS, this.statusManager.getInDarknessTicks());
         }
     }
 
@@ -299,6 +302,7 @@ public abstract class PlayerEntityMixin extends LivingEntity implements StatAcce
                 if (item == Items.GOLDEN_APPLE || item == Items.ENCHANTED_GOLDEN_APPLE) {
                     this.sanityManager.add(1.0);
                     this.statusManager.setSoulImpairedStat(0);
+                    this.painManager.applyPainkiller();
                 } else if (item == Items.KELP || Reg.IS_BARK.test(item)) {
                     if (item == Reg.WILLOW_BARK) this.painManager.applyPainkiller();
                     this.sanityManager.add(-0.02);
@@ -399,6 +403,7 @@ public abstract class PlayerEntityMixin extends LivingEntity implements StatAcce
     public void tick(CallbackInfo ci) {
         // Painful sound effect
         double pain = ((StatAccessor) this).getPainManager().getReal();
+        boolean outOfDarkness = true;
         if (pain > 2.0 && this.world.getTime() % Math.max(1, 10 * (6 - pain)) == 0)
             this.playSound(SoundEvents.ENTITY_PLAYER_BREATH, this.getSoundVolume(), this.getSoundPitch());
         if (this.world.isClient) return;
@@ -413,6 +418,7 @@ public abstract class PlayerEntityMixin extends LivingEntity implements StatAcce
         this.statusManager.setRecentSleepTicks(Math.max(0, this.statusManager.getRecentSleepTicks() - 1));
         if (this.sanityManager.getMonsterWitnessingTicks() > 0) {
             this.sanityManager.add(-0.00004);
+            EntityHelper.addHcsDebuff(this, HcsEffects.PANIC);
             this.sanityManager.setMonsterWitnessingTicks(this.sanityManager.getMonsterWitnessingTicks() - 1);
         }
         if (this.isWet()) this.statusManager.setRecentWetTicks(20);
@@ -423,7 +429,7 @@ public abstract class PlayerEntityMixin extends LivingEntity implements StatAcce
         int maxLvlReached = this.statusManager.getMaxExpLevelReached();
         EntityAttributeInstance instance = this.getAttributeInstance(EntityAttributes.GENERIC_MAX_HEALTH);
         if (instance != null) {
-            int limitedMaxHealth = Math.min(20, (int) Math.floor(maxLvlReached / 5.0) + 10);//Cut down max health when in low exp lvl
+            int limitedMaxHealth = Math.min(20, (int) Math.floor(maxLvlReached / 5.0) + 12);//Cut down max health when in low exp lvl
             double currentMaxHealth = instance.getBaseValue();
             if (limitedMaxHealth > currentMaxHealth || (limitedMaxHealth < currentMaxHealth && maxLvlReached < 36)) {
                 instance.setBaseValue(limitedMaxHealth);
@@ -468,7 +474,23 @@ public abstract class PlayerEntityMixin extends LivingEntity implements StatAcce
                 double sanDecrement = 0.00001;
                 int blockBrightness = this.world.getLightLevel(LightType.BLOCK, headPos);
                 if (!isInUnpleasantDimension) {
-                    if (blockBrightness < 2 && isInCavelike) sanDecrement = 0.00004;
+                    if (blockBrightness < 1 && isInCavelike) {
+                        sanDecrement = 0.003;
+                        EntityHelper.addHcsDebuff(this, HcsEffects.DARKNESS_ENVELOPED);
+                        final int currentDarkTicks = this.statusManager.getInDarknessTicks();
+                        if (currentDarkTicks == 60) EntityHelper.msgById(this, "hcs.tip.dark.warn");
+                        else if (currentDarkTicks > 60) {
+                            EntityHelper.addHcsDebuff(this, HcsEffects.PANIC, 1);
+                            if (currentDarkTicks == 300) EntityHelper.msgById(this, "hcs.tip.dark.closer");
+                            else //noinspection ConstantValue
+                                if (currentDarkTicks == 360 && ((Object) this) instanceof ServerPlayerEntity serverPlayerEntity)
+                                    serverPlayerEntity.networkHandler.sendPacket(new GameStateChangeS2CPacket(GameStateChangeS2CPacket.ELDER_GUARDIAN_EFFECT, this.isSilent() ? GameStateChangeS2CPacket.DEMO_OPEN_SCREEN : (int) 1.0f));
+                                else if (currentDarkTicks > 400 && Math.random() < 0.1)
+                                    this.damage(((DamageSourcesAccessor) this.world.getDamageSources()).darkness(), 2.0F);
+                        }
+                        this.statusManager.setInDarknessTicks(currentDarkTicks + 1);
+                        outOfDarkness = false;
+                    } else if (blockBrightness < 3 && isInCavelike) sanDecrement = 0.00004;
                     else if (blockBrightness < 8) sanDecrement = 0.000015;
                 }
                 this.sanityManager.add(-sanDecrement);
@@ -479,6 +501,10 @@ public abstract class PlayerEntityMixin extends LivingEntity implements StatAcce
                 else if (y < 49) oxyLackLvl = 2;
                 else if (y < 56) oxyLackLvl = 1;
             }
+        }
+        if (outOfDarkness) {
+            this.statusManager.setInDarknessTicks(0);
+            if (this.statusManager.getLastInDarknessTicks() >= 60) EntityHelper.msgById(this, "hcs.tip.dark.fade");
         }
         if (this.hasStatusEffect(StatusEffects.STRENGTH)) this.staminaManager.reset();
         this.staminaManager.setLastVecPos(this.getPos());

@@ -50,7 +50,7 @@ public class PainManager {
         pain = val;
     }
 
-    @SuppressWarnings("unused")
+    @Deprecated
     public void setReal(double val) {
         val += alleviationCache;
         setRaw(val);

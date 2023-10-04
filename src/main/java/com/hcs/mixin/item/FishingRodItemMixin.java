@@ -40,7 +40,7 @@ public abstract class FishingRodItemMixin extends Item {
             ) {
                 offStack.decrement(1);
             } else {
-                EntityHelper.msgById(user, "hcs.tip.need_bait", true);
+                EntityHelper.msgById(user, "hcs.tip.need_bait");
                 cir.setReturnValue(TypedActionResult.fail(itemStack));
             }
         }

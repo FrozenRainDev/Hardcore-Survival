@@ -5,6 +5,7 @@ import com.google.common.collect.Multimap;
 import com.google.common.collect.Multimaps;
 import com.hcs.status.accessor.DamageSourcesAccessor;
 import com.hcs.status.accessor.StatAccessor;
+import com.hcs.status.manager.PainManager;
 import com.hcs.util.EntityHelper;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.attribute.*;
@@ -29,9 +30,8 @@ public class HcsEffects {
 
         @Override
         public void onApplied(LivingEntity entity, AttributeContainer attributes, int amplifier) {
-            if (entity instanceof ServerPlayerEntity player && !entity.isSpectator()) {
+            if (entity instanceof ServerPlayerEntity player && !entity.isSpectator())
                 EntityHelper.teleportPlayerToSpawn(player.getWorld(), player, true);
-            }
         }
     };
 
@@ -250,7 +250,6 @@ public class HcsEffects {
 
         @Override
         public void onRemoved(LivingEntity entity, AttributeContainer attributes, int amplifier) {
-            this.lastAmplifier = amplifier;
             if (entity == null) return;
             removeTempAttributes(attributes, this.customAttributeModifiers);
             super.onRemoved(entity, attributes, amplifier);
@@ -304,7 +303,6 @@ public class HcsEffects {
 
         @Override
         public void onRemoved(LivingEntity entity, AttributeContainer attributes, int amplifier) {
-            this.lastAmplifier = amplifier;
             if (entity == null) return;
             removeTempAttributes(attributes, this.customAttributeModifiers);
             super.onRemoved(entity, attributes, amplifier);
@@ -312,7 +310,54 @@ public class HcsEffects {
 
     };
 
-    public static final Predicate<StatusEffect> IS_NAME_VARIABLE = effect -> effect == PAIN || effect == INJURY; // A predicate determines whether an effect should be appended by Roman numerals to express level
+    public static final StatusEffect PANIC = new StatusEffect(StatusEffectCategory.HARMFUL, 0xffffff) {
+        int lastAmplifier = 0;
+
+        @Override
+        protected String loadTranslationKey() {
+            return switch (this.lastAmplifier) {
+                case 0, 1, 2, 3 -> "effect.hcs.panic." + (lastAmplifier + 1);
+                default -> "effect.hcs.panic";
+            };
+        }
+
+        @Override
+        public void onApplied(LivingEntity entity, AttributeContainer attributes, int amplifier) {
+            this.lastAmplifier = amplifier;
+        }
+
+    };
+
+    public static final StatusEffect BLEEDING = new StatusEffect(StatusEffectCategory.HARMFUL, 0xcf0303) {
+    };
+
+    public static final StatusEffect DARKNESS_ENVELOPED = new StatusEffect(StatusEffectCategory.HARMFUL, 0x000000) {
+    }.addAttributeModifier(EntityAttributes.GENERIC_MOVEMENT_SPEED, "75AD9D60-968B-4788-8B9F-3A545D3534E7", -0.4F, EntityAttributeModifier.Operation.MULTIPLY_TOTAL);
+
+    public static final StatusEffect FRACTURE = new StatusEffect(StatusEffectCategory.HARMFUL, 0xe8e5d2) {
+        @Override
+        public void onApplied(LivingEntity entity, AttributeContainer attributes, int amplifier) {
+            if (entity instanceof ServerPlayerEntity player && !entity.isSpectator()) {
+                PainManager painManager = ((StatAccessor) player).getPainManager();
+                if (painManager.getRaw() < 2.5) painManager.setRaw(2.5);
+            }
+        }
+    };
+
+    public static final StatusEffect PARASITE_INFECTION = new StatusEffect(StatusEffectCategory.HARMFUL, 0xe2bc8a) {
+    };
+
+    public static final StatusEffect UNHAPPY = new StatusEffect(StatusEffectCategory.HARMFUL, 0x71c5db) {
+    };
+
+    public static final StatusEffect COLD = new StatusEffect(StatusEffectCategory.HARMFUL, 0xf0c1ba) {
+    };
+
+    public static final StatusEffect HEAVY_LOAD = new StatusEffect(StatusEffectCategory.HARMFUL, 0xfed93f) {
+    };
+
+
+    public static final Predicate<StatusEffect> IS_NAME_VARIABLE = effect -> effect == PAIN || effect == INJURY || effect == PANIC; // A predicate determines whether an effect should be appended by Roman numerals to express level
 
     public static void removeTempAttributes(AttributeContainer attributes, @NotNull Multimap<EntityAttribute, EntityAttributeModifier> customAttributeModifiers) {
         for (Map.Entry<EntityAttribute, EntityAttributeModifier> entry : customAttributeModifiers.entries()) {
@@ -321,7 +366,7 @@ public class HcsEffects {
             EntityAttributeModifier entityAttributeModifier = entry.getValue();
             entityAttributeInstance.removeModifier(entityAttributeModifier);
         }
-        customAttributeModifiers.clear(); // Easy to forget
+        customAttributeModifiers.clear(); // Tend to forget
     }
 
 }
