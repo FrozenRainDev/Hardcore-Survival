@@ -96,6 +96,7 @@
   "hcs.tip.dark.warn": "黑暗中似乎有什么东西要吃掉你...",
   "hcs.tip.dark.closer": "那个声音越来越近了...",
   "hcs.tip.dark.fade": "那个声音消失了，暂时...",
+  "hcs.tip.attack_failed": "你在惊慌之中没能击中",
 
   "item.minecraft.potion.effect.hcs_ironskin": "铁皮药水",
   "item.minecraft.potion.effect.hcs_long_ironskin": "铁皮药水",

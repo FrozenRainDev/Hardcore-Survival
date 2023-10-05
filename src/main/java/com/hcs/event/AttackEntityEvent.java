@@ -1,6 +1,7 @@
 package com.hcs.event;
 
 import com.hcs.Reg;
+import com.hcs.status.HcsEffects;
 import com.hcs.util.EntityHelper;
 import net.fabricmc.fabric.api.event.player.AttackEntityCallback;
 import net.minecraft.entity.LivingEntity;
@@ -25,6 +26,11 @@ public class AttackEntityEvent {
                     player.sendToolBreakStatus(Hand.MAIN_HAND);
                     EntityHelper.dropItem(player, Reg.SHARP_BROKEN_BONE, 1);
                 }
+            }
+            int panic = EntityHelper.getEffectAmplifier(player, HcsEffects.PANIC);
+            if (panic > 0 && Math.random() < Math.max(0.4, 1.0 - panic / 20.0)) {
+                EntityHelper.msgById(player,"hcs.tip.attack_failed");
+                return ActionResult.FAIL;
             }
             return ActionResult.PASS;
         });

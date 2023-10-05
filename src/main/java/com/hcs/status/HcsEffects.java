@@ -77,8 +77,7 @@ public class HcsEffects {
             }
         }
         //UUID.randomUUID() was used to generate different uuids
-    }.addAttributeModifier(EntityAttributes.GENERIC_ATTACK_DAMAGE, "AB33D21F-6A8B-42DF-AD5C-830503EB71DB", 0.0, EntityAttributeModifier.Operation.ADDITION)
-            .addAttributeModifier(EntityAttributes.GENERIC_MOVEMENT_SPEED, "DFAE009E-7F40-4EC2-BF1F-D6F0B5CA77B5", -0.15f, EntityAttributeModifier.Operation.MULTIPLY_TOTAL)
+    }.addAttributeModifier(EntityAttributes.GENERIC_MOVEMENT_SPEED, "DFAE009E-7F40-4EC2-BF1F-D6F0B5CA77B5", -0.15f, EntityAttributeModifier.Operation.MULTIPLY_TOTAL)
             .addAttributeModifier(EntityAttributes.GENERIC_ATTACK_SPEED, "726C2159-5D61-4656-8B1E-A594BC7C3E84", -0.1f, EntityAttributeModifier.Operation.MULTIPLY_TOTAL)
             .addAttributeModifier(EntityAttributes.GENERIC_ATTACK_KNOCKBACK, "F03F53E5-DC9E-4716-8248-7B13FCAFE753", -0.1f, EntityAttributeModifier.Operation.MULTIPLY_TOTAL);
 
@@ -326,7 +325,7 @@ public class HcsEffects {
             this.lastAmplifier = amplifier;
         }
 
-    };
+    }.addAttributeModifier(EntityAttributes.GENERIC_ATTACK_DAMAGE, "DA0DB247-8DC6-4985-9EAF-56B45067E747", -0.1F, EntityAttributeModifier.Operation.MULTIPLY_TOTAL);
 
     public static final StatusEffect BLEEDING = new StatusEffect(StatusEffectCategory.HARMFUL, 0xcf0303) {
     };

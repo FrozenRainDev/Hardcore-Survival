@@ -84,6 +84,10 @@ public abstract class InGameHudMixin extends DrawableHelper {
     private static final Identifier HEATSTROKE_BLUR = new Identifier("hcs", "textures/misc/heatstroke_blur.png");
     @Unique
     private static final Identifier INSANITY_OUTLINE = new Identifier("hcs", "textures/misc/insanity_outline.png");
+    @Unique
+    private static final Identifier DARKNESS = new Identifier("hcs", "textures/misc/darkness.png");
+    @Unique
+    private static final Identifier DARKNESS_JUMP_SCARE = new Identifier("hcs", "textures/misc/darkness_jump_scare.png");
 
     @Unique
     public void drawHCSTexture(MatrixStack matrices, int x, int y, int u, int v, int width, int height) {
@@ -175,6 +179,10 @@ public abstract class InGameHudMixin extends DrawableHelper {
                 this.renderOverlay(matrices, HEATSTROKE_BLUR, opacity);
             else if (temp <= 0.0F && this.client.player.getFrozenTicks() <= 0 && this.client.player.hasStatusEffect(HcsEffects.HYPOTHERMIA))
                 this.renderOverlay(matrices, POWDER_SNOW_OUTLINE, opacity);
+            int inDarkTicks = ((StatAccessor) this.client.player).getStatusManager().getInDarknessTicks();
+            if (inDarkTicks > 360 && inDarkTicks < 380) this.renderOverlay(matrices, DARKNESS_JUMP_SCARE, 0.9F);
+            else if (inDarkTicks > 60)
+                this.renderOverlay(matrices, DARKNESS, MathHelper.clamp((inDarkTicks - 60) / 400.0F, 0.0F, 1.0F));
         }
     }
 

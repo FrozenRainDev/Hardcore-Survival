@@ -1,11 +1,14 @@
 {
   "itemGroup.hcs.main": "Hardcore Survival",
+
   "block.hcs.icebox": "Icebox",
   "block.hcs.drying_rack": "Drying Rack",
+
   "death.attack.hcs.dehydrate": "%1$s died of thirst",
   "death.attack.hcs.heatstroke": "%1$s died of heatstroke",
   "death.attack.hcs.oxygenDeficiency": "%1$s died from oxygen deficiency",
   "death.attack.hcs.darkness": "%1$s was consumed by darkness",
+
   "effect.hcs.thirst": "Thirsty",
   "effect.hcs.diarrhea": "Diarrhea",
   "effect.hcs.dehydrated": "Dehydrated",
@@ -73,6 +76,7 @@
   "effect.hcs.cold.description": "Sneezing and coughing. Healing reduced.",
   "effect.hcs.heavy_load": "Heavy Load",
   "effect.hcs.heavy_load.description": "Carrying too much!",
+
   "hcs.food_info.fresh": "Fresh",
   "hcs.food_info.stale": "Stale",
   "hcs.food_info.spoiled": "Spoiled",
@@ -91,6 +95,8 @@
   "hcs.tip.dark.warn": "It seems like something in the darkness will eat you...",
   "hcs.tip.dark.closer": "That sound is getting closer and closer...",
   "hcs.tip.dark.fade": "That sound faded away, temporarily...",
+  "hcs.tip.attack_failed": "You missed in the panic",
+
   "item.minecraft.potion.effect.hcs_ironskin": "Potion of Ironskin",
   "item.minecraft.potion.effect.hcs_long_ironskin": "Potion of Ironskin",
   "item.minecraft.potion.effect.hcs_strong_ironskin": "Potion of Ironskin",
@@ -127,6 +133,7 @@
   "item.minecraft.tipped_arrow.effect.hcs_strong_mining": "Arrow of Mining",
   "item.minecraft.tipped_arrow.effect.hcs_constant_temperature": "Arrow of Constant Temperature",
   "item.minecraft.tipped_arrow.effect.hcs_long_constant_temperature": "Arrow of Constant Temperature",
+
   "item.minecraft.bone_meal.description": "Your crops will WITHER if you abuse it!",
   "item.hcs.rot.description": "Your crops will WITHER if you abuse it!",
   "item.hcs.fiber_string": "Fiber String",

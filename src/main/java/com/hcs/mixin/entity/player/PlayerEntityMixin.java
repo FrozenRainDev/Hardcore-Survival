@@ -26,7 +26,6 @@ import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.*;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtElement;
-import net.minecraft.network.packet.s2c.play.GameStateChangeS2CPacket;
 import net.minecraft.registry.tag.BlockTags;
 import net.minecraft.registry.tag.DamageTypeTags;
 import net.minecraft.registry.tag.ItemTags;
@@ -475,18 +474,18 @@ public abstract class PlayerEntityMixin extends LivingEntity implements StatAcce
                 int blockBrightness = this.world.getLightLevel(LightType.BLOCK, headPos);
                 if (!isInUnpleasantDimension) {
                     if (blockBrightness < 1 && isInCavelike) {
-                        sanDecrement = 0.003;
+                        sanDecrement = 0.001;
                         EntityHelper.addHcsDebuff(this, HcsEffects.DARKNESS_ENVELOPED);
                         final int currentDarkTicks = this.statusManager.getInDarknessTicks();
                         if (currentDarkTicks == 60) EntityHelper.msgById(this, "hcs.tip.dark.warn");
                         else if (currentDarkTicks > 60) {
                             EntityHelper.addHcsDebuff(this, HcsEffects.PANIC, 1);
                             if (currentDarkTicks == 300) EntityHelper.msgById(this, "hcs.tip.dark.closer");
-                            else //noinspection ConstantValue
-                                if (currentDarkTicks == 360 && ((Object) this) instanceof ServerPlayerEntity serverPlayerEntity)
-                                    serverPlayerEntity.networkHandler.sendPacket(new GameStateChangeS2CPacket(GameStateChangeS2CPacket.ELDER_GUARDIAN_EFFECT, this.isSilent() ? GameStateChangeS2CPacket.DEMO_OPEN_SCREEN : (int) 1.0f));
-                                else if (currentDarkTicks > 400 && Math.random() < 0.1)
-                                    this.damage(((DamageSourcesAccessor) this.world.getDamageSources()).darkness(), 2.0F);
+                            else if (currentDarkTicks < 400) sanDecrement = 0.003;
+                            else if (Math.random() < 0.1) {
+                                sanDecrement = 0.01;
+                                this.damage(((DamageSourcesAccessor) this.world.getDamageSources()).darkness(), 2.0F);
+                            }
                         }
                         this.statusManager.setInDarknessTicks(currentDarkTicks + 1);
                         outOfDarkness = false;

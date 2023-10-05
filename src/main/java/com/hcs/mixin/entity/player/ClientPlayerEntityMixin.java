@@ -77,8 +77,13 @@ public abstract class ClientPlayerEntityMixin extends AbstractClientPlayerEntity
         if (!this.isCreative() && !this.isSpectator()) {
             if (darknessEnveloped) {
                 final int darkTicks = ((StatAccessor) this).getStatusManager().getInDarknessTicks();
-                if (darkTicks == 60 || darkTicks == 300) playHallAmbient(this);
-                else if (darkTicks > 120 && Math.random() < 0.01) {
+                if (darkTicks == 60) playHallAmbient(this);
+                else if (darkTicks == 300) {
+                    this.world.playSound(this.getX(), this.getY(), this.getZ(), ENTITY_ENDERMAN_SCREAM, SoundCategory.AMBIENT, 26, -13, false);
+                    this.world.playSound(this.getX(), this.getY(), this.getZ(), ENTITY_ENDERMAN_STARE, SoundCategory.AMBIENT, 26, -13, false);
+                } else if (darkTicks == 360) {
+                    this.world.playSound(this.getX(), this.getY(), this.getZ(), ENTITY_ELDER_GUARDIAN_CURSE, SoundCategory.AMBIENT, 26, -13, false);
+                } else if (darkTicks > 120 && Math.random() < 0.01) {
                     if (Math.random() < 0.5) playHall(this);
                     else playHallAmbient(this);
                 }
