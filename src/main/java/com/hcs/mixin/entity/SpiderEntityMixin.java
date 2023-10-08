@@ -20,6 +20,6 @@ public abstract class SpiderEntityMixin extends HostileEntity {
 
     @Inject(method = "getDeathSound", at = @At("HEAD"))
     protected void getDeathSound(CallbackInfoReturnable<SoundEvent> cir) {
-        if (Math.random() < 0.4) EntityHelper.dropItem(this, Reg.SPIDER_GLAND.getDefaultStack());
+        if (Math.random() < 0.4) EntityHelper.dropItem(this, Reg.SPIDER_GLAND);
     }
 }

@@ -52,7 +52,8 @@ public abstract class WorldRendererMixin {
                 hallucinationEntity.lastRenderY = hallucinationEntity.getY();
                 hallucinationEntity.lastRenderZ = hallucinationEntity.getZ();
             }
-            this.renderEntity(hallucinationEntity, camera.getPos().getX(), camera.getPos().getY(), camera.getPos().getZ(), tickDelta, matrices, this.bufferBuilders.getOutlineVertexConsumers());
+            if (this.client.player.isAlive())
+                this.renderEntity(hallucinationEntity, camera.getPos().getX(), camera.getPos().getY(), camera.getPos().getZ(), tickDelta, matrices, this.bufferBuilders.getOutlineVertexConsumers());
         }
     }
 }

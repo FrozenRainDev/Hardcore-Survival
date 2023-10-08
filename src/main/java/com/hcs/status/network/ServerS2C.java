@@ -18,17 +18,21 @@ public class ServerS2C {
     public static final Identifier NUTRITION_ID = new Identifier("hcs", "s2c_nutrition");
     public static final Identifier WETNESS_ID = new Identifier("hcs", "s2c_wetness");
     public static final Identifier PAIN_ID = new Identifier("hcs", "s2c_pain");
+    public static final Identifier MOOD_ID = new Identifier("hcs", "s2c_mood");
     public static final float TRANS_MULTIPLIER = 10000000.0F;
 
-    public static int floatToInt(float val) {
+    public static int ftoi(float val) {
+        //float to int
         return (int) (val * TRANS_MULTIPLIER);
     }
 
-    public static int doubleToInt(double val) {
+    public static int dtoi(double val) {
+        //double to int
         return (int) (val * TRANS_MULTIPLIER);
     }
 
-    public static int booleanToInt(boolean val) {
+    public static int btoi(boolean val) {
+        //boolean to int
         return val ? 1 : 0;
     }
 
@@ -39,42 +43,47 @@ public class ServerS2C {
     private static void writeS2CPacket(@NotNull ServerPlayerEntity player) {
         PacketByteBuf buf1 = new PacketByteBuf(Unpooled.buffer());
         ThirstManager thirstManager = ((StatAccessor) player).getThirstManager();
-        buf1.writeIntArray(new int[]{player.getId(), doubleToInt(thirstManager.get()), floatToInt(thirstManager.getSaturation()), floatToInt(thirstManager.getThirstRateAffectedByTemp())});
+        buf1.writeIntArray(new int[]{player.getId(), dtoi(thirstManager.get()), ftoi(thirstManager.getSaturation()), ftoi(thirstManager.getThirstRateAffectedByTemp())});
         player.networkHandler.sendPacket(new CustomPayloadS2CPacket(THIRST_ID, buf1));
 
         PacketByteBuf buf2 = new PacketByteBuf(Unpooled.buffer());
-        buf2.writeIntArray(new int[]{player.getId(), doubleToInt(((StatAccessor) player).getStaminaManager().get())});
+        buf2.writeIntArray(new int[]{player.getId(), dtoi(((StatAccessor) player).getStaminaManager().get())});
         player.networkHandler.sendPacket(new CustomPayloadS2CPacket(STAMINA_ID, buf2));
 
         PacketByteBuf buf3 = new PacketByteBuf(Unpooled.buffer());
         TemperatureManager temperatureManager = ((StatAccessor) player).getTemperatureManager();
-        buf3.writeIntArray(new int[]{player.getId(), doubleToInt(temperatureManager.get()), floatToInt(temperatureManager.getEnvTempCache()), floatToInt(temperatureManager.getSaturation()), floatToInt(temperatureManager.getFeelTempCache()), temperatureManager.getTrendType()});
+        buf3.writeIntArray(new int[]{player.getId(), dtoi(temperatureManager.get()), ftoi(temperatureManager.getEnvTempCache()), ftoi(temperatureManager.getSaturation()), ftoi(temperatureManager.getFeelTempCache()), temperatureManager.getTrendType()});
         player.networkHandler.sendPacket(new CustomPayloadS2CPacket(TEMPERATURE_ID, buf3));
 
         PacketByteBuf buf4 = new PacketByteBuf(Unpooled.buffer());
         StatusManager statusManager = ((StatAccessor) player).getStatusManager();
         statusManager.setExhaustion(player.getHungerManager().getExhaustion());
-        buf4.writeIntArray(new int[]{player.getId(), floatToInt(statusManager.getExhaustion()), statusManager.getRecentAttackTicks(), statusManager.getRecentMiningTicks(), statusManager.getRecentHasColdWaterBagTicks(), statusManager.getRecentHasHotWaterBagTicks(), statusManager.getMaxExpLevelReached(), statusManager.getRecentLittleOvereatenTicks(), booleanToInt(statusManager.hasDecimalFoodLevel()), statusManager.getOxygenLackLevel(), statusManager.getOxygenGenLevel(), statusManager.getRecentSleepTicks(), statusManager.getRecentWetTicks(), statusManager.getInDarknessTicks()});
+        buf4.writeIntArray(new int[]{player.getId(), ftoi(statusManager.getExhaustion()), statusManager.getRecentAttackTicks(), statusManager.getRecentMiningTicks(), statusManager.getRecentHasColdWaterBagTicks(), statusManager.getRecentHasHotWaterBagTicks(), statusManager.getMaxExpLevelReached(), statusManager.getRecentLittleOvereatenTicks(), btoi(statusManager.hasDecimalFoodLevel()), statusManager.getOxygenLackLevel(), statusManager.getOxygenGenLevel(), statusManager.getRecentSleepTicks(), statusManager.getRecentWetTicks(), statusManager.getInDarknessTicks()});
         player.networkHandler.sendPacket(new CustomPayloadS2CPacket(STATUS_ID, buf4));
 
         PacketByteBuf buf5 = new PacketByteBuf(Unpooled.buffer());
         SanityManager sanityManager = ((StatAccessor) player).getSanityManager();
-        buf5.writeIntArray(new int[]{player.getId(), doubleToInt(sanityManager.get()), doubleToInt(sanityManager.getDifference()), sanityManager.getMonsterWitnessingTicks()});
+        buf5.writeIntArray(new int[]{player.getId(), dtoi(sanityManager.get()), dtoi(sanityManager.getDifference())});
         player.networkHandler.sendPacket(new CustomPayloadS2CPacket(SANITY_ID, buf5));
 
         PacketByteBuf buf6 = new PacketByteBuf(Unpooled.buffer());
         NutritionManager nutritionManager = ((StatAccessor) player).getNutritionManager();
-        buf6.writeIntArray(new int[]{player.getId(), doubleToInt(nutritionManager.getVegetable())});
+        buf6.writeIntArray(new int[]{player.getId(), dtoi(nutritionManager.getVegetable())});
         player.networkHandler.sendPacket(new CustomPayloadS2CPacket(NUTRITION_ID, buf6));
 
         PacketByteBuf buf7 = new PacketByteBuf(Unpooled.buffer());
         WetnessManager wetnessManager = ((StatAccessor) player).getWetnessManager();
-        buf7.writeIntArray(new int[]{player.getId(), doubleToInt(wetnessManager.get())});
+        buf7.writeIntArray(new int[]{player.getId(), dtoi(wetnessManager.get())});
         player.networkHandler.sendPacket(new CustomPayloadS2CPacket(WETNESS_ID, buf7));
 
         PacketByteBuf buf8 = new PacketByteBuf(Unpooled.buffer());
         PainManager painManager = ((StatAccessor) player).getPainManager();
-        buf8.writeIntArray(new int[]{player.getId(), doubleToInt(painManager.getRaw()), doubleToInt(painManager.getPainkillerAlleviation()), painManager.getPainkillerApplied()});
+        buf8.writeIntArray(new int[]{player.getId(), dtoi(painManager.getRaw()), dtoi(painManager.getPainkillerAlle()), painManager.getPainkillerApplied()});
         player.networkHandler.sendPacket(new CustomPayloadS2CPacket(PAIN_ID, buf8));
+
+        PacketByteBuf buf9 = new PacketByteBuf(Unpooled.buffer());
+        MoodManager moodManager = ((StatAccessor) player).getMoodManager();
+        buf9.writeIntArray(new int[]{player.getId(), dtoi(moodManager.getRawPanic()), dtoi(moodManager.getPanicAlleCache())});
+        player.networkHandler.sendPacket(new CustomPayloadS2CPacket(MOOD_ID, buf9));
     }
 }

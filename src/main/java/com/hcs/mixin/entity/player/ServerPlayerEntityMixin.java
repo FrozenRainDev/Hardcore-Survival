@@ -3,10 +3,7 @@ package com.hcs.mixin.entity.player;
 import com.hcs.status.HcsEffects;
 import com.hcs.status.accessor.DamageSourcesAccessor;
 import com.hcs.status.accessor.StatAccessor;
-import com.hcs.status.manager.PainManager;
-import com.hcs.status.manager.StaminaManager;
-import com.hcs.status.manager.TemperatureManager;
-import com.hcs.status.manager.ThirstManager;
+import com.hcs.status.manager.*;
 import com.hcs.status.network.ServerS2C;
 import com.hcs.util.EntityHelper;
 import com.hcs.util.TemperatureHelper;
@@ -30,7 +27,7 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import static com.hcs.status.manager.TemperatureManager.CHANGE_SPAN;
-import static com.hcs.status.network.ServerS2C.doubleToInt;
+import static com.hcs.status.network.ServerS2C.dtoi;
 
 @Mixin(ServerPlayerEntity.class)
 public abstract class ServerPlayerEntityMixin extends PlayerEntity {
@@ -97,16 +94,16 @@ public abstract class ServerPlayerEntityMixin extends PlayerEntity {
             }
 
             //Debuff of poor condition & heat for doing sport
-            double currentStaminaVal = staminaManager.get();
-            if (doubleToInt(thirstManager.get()) <= 10 && this.world.getTime() % 400 == 0) {// ticks will cause different players Cannot be hurt at the same time
+            final double currStamina = staminaManager.get();
+            if (dtoi(thirstManager.get()) <= 10 && this.world.getTime() % 400 == 0) {// ticks will cause different players Cannot be hurt at the same time
                 DamageSource damageSource = ((DamageSourcesAccessor) this.world.getDamageSources()).dehydrate();
                 if (damageSource != null) this.damage(damageSource, 1.0F);
             }
             thirstManager.updateThirstRateAffectedByTemp(envTemp, (float) playerTemp);
             if (thirstManager.get() <= 0.3) EntityHelper.addHcsDebuff(this, HcsEffects.DEHYDRATED);
             if (this.getHungerManager().getFoodLevel() <= 6) EntityHelper.addHcsDebuff(this, HcsEffects.STARVING);
-            if (currentStaminaVal <= 0.3)
-                EntityHelper.addHcsDebuff(this, HcsEffects.EXHAUSTED, currentStaminaVal <= 0.15 ? 1 : 0);
+            if (currStamina <= 0.3)
+                EntityHelper.addHcsDebuff(this, HcsEffects.EXHAUSTED, currStamina <= 0.15 ? 1 : 0);
             if (playerTemp >= 1.0) EntityHelper.addHcsDebuff(this, HcsEffects.HEATSTROKE, (int) tempSatuPercent);
             else if (playerTemp <= 0.0) EntityHelper.addHcsDebuff(this, HcsEffects.HYPOTHERMIA, (int) tempSatuPercent);
             if (this.isUsingItem() && (this.getMainHandStack().getItem() instanceof ShieldItem || this.getOffHandStack().getItem() instanceof ShieldItem))
@@ -119,7 +116,8 @@ public abstract class ServerPlayerEntityMixin extends PlayerEntity {
                 EntityHelper.addHcsDebuff(this, HcsEffects.CHILLY_WIND, windchillLevel - 1);
 
             //Debuff of insanity
-            double san = ((StatAccessor) this).getSanityManager().get();
+            SanityManager sanityManager = ((StatAccessor) this).getSanityManager();
+            double san = sanityManager.get();
             if (san < 0.3)
                 EntityHelper.addHcsDebuff(this, HcsEffects.INSANITY, san < 0.15 ? (san < 0.1 ? (san < 0.05 ? 3 : 2) : 1) : 0);
             //Debuff of malnutrition
@@ -131,7 +129,8 @@ public abstract class ServerPlayerEntityMixin extends PlayerEntity {
             if (wet > 0.4) EntityHelper.addHcsDebuff(this, HcsEffects.WET, 1);
             if (wet > 0.1) EntityHelper.addHcsDebuff(this, HcsEffects.WET, 0);
             //Debuff for soul impaired(death punishment)
-            int soulImpairedStat = ((StatAccessor) this).getStatusManager().getSoulImpairedStat();
+            StatusManager statusManager = ((StatAccessor) this).getStatusManager();
+            int soulImpairedStat = statusManager.getSoulImpairedStat();
             if (soulImpairedStat > 0) {
                 if (this.getHealth() > this.getMaxHealth()) this.setHealth(this.getMaxHealth());
                 EntityHelper.addHcsDebuff(this, HcsEffects.SOUL_IMPAIRED, soulImpairedStat - 1);
@@ -145,9 +144,26 @@ public abstract class ServerPlayerEntityMixin extends PlayerEntity {
             else if (hpPercent < 0.7F) EntityHelper.addHcsDebuff(this, HcsEffects.INJURY, 0);
             //Debuff of pain (view add pain in PlayerEntityMixin/applyDamage)
             PainManager painManager = ((StatAccessor) this).getPainManager();
-            double pain = painManager.getReal();
-            if (pain > 0.0) EntityHelper.addHcsDebuff(this, HcsEffects.PAIN, (int) MathHelper.clamp(pain, 0.0, 3.99));
+            final double pain = painManager.getReal();
+            if (pain > 0.0) EntityHelper.addHcsDebuff(this, HcsEffects.PAIN, MathHelper.clamp((int) pain, 0, 3));
             painManager.tick();
+            sanityManager.tickEnemies(this);
+
+            //Panic; also view PlayerEntityMixin/tick()
+            MoodManager moodManager = ((StatAccessor) this).getMoodManager();
+            final boolean isDarkEnv = this.hasStatusEffect(HcsEffects.DARKNESS_ENVELOPED);
+            final double currRawPanic = moodManager.getRawPanic(), currRealPanic = moodManager.getRealPanic(), expectedRawPanic = isDarkEnv ? 4 : MathHelper.clamp(sanityManager.countEnemies() * 0.5, 0.0, 4), panicDiff = Math.abs(currRawPanic - expectedRawPanic);
+            if (panicDiff < 0.01) moodManager.setPanic(expectedRawPanic);
+            else if (currRawPanic > expectedRawPanic) moodManager.addPanic(-0.01);
+            else moodManager.addPanic(Math.max(0.1, expectedRawPanic / 60));
+            if (currRealPanic > 0.0) {
+                double finalPanic = currRealPanic;
+                if (!isDarkEnv) {
+                    finalPanic -= 0.06 * statusManager.getMaxExpLevelReached(); //Reduce panic when player reaches higher exp level
+                    if (finalPanic > 0.0) sanityManager.add(-MathHelper.clamp(0.00003 * finalPanic, 0.00001, 0.0001));
+                }
+                EntityHelper.addHcsDebuff(this, HcsEffects.PANIC, MathHelper.clamp((int) finalPanic, 0, 3));
+            }
         }
     }
 }

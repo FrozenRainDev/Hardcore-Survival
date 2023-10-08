@@ -8,8 +8,15 @@ import net.minecraft.item.*;
 import net.minecraft.recipe.RecipeManager;
 import net.minecraft.recipe.RecipeType;
 import net.minecraft.registry.tag.ItemTags;
+import org.jetbrains.annotations.NotNull;
+
+import java.util.function.Predicate;
+
+import static com.hcs.util.CommUtils.optElse;
 
 public class CustomDryingRackRecipe {
+    public static Predicate<String> IS_COOKED = name -> name.contains("cooked_") || name.contains("baked_") || name.contains("roasted_") || name.contains("steamed_") || name.contains("fried_");
+
     public static Item getOutput(Item input) {
         if (input == null) return Items.AIR;
         //Give priority to special recipes
@@ -24,10 +31,10 @@ public class CustomDryingRackRecipe {
         if (!input.isFood() || component == null) return Items.AIR;
         if (!component.isMeat() && !stack.isIn(ItemTags.FISHES)) return Items.AIR;
         //Return corresponding jerky
-        boolean isCooked = (name.contains("cooked_") || name.contains("baked_") || name.contains("roasted_") || name.contains("steamed_") || name.contains("fried_"));
-        Item cookedItem = checkNull(isCooked ? input : checkNull(getCooked(input)));
+        boolean isCooked = IS_COOKED.test(name);
+        Item cookedItem = isCooked ? input : getCooked(input);
         FoodComponent cookedComponent = cookedItem.getFoodComponent();
-        boolean isSmall = (checkNull(cookedComponent).getHunger() < 6 || cookedItem == Items.COOKED_SALMON);
+        boolean isSmall = optElse(cookedComponent, FoodComponents.COOKED_CHICKEN).getHunger() < 6 || cookedItem == Items.COOKED_SALMON;
         if (isCooked) {
             if (isSmall) return Reg.SMALL_JERKY;
             return Reg.JERKY;
@@ -37,22 +44,14 @@ public class CustomDryingRackRecipe {
         }
     }
 
-    public static Item getCooked(Item rawMaterial) {
+    public static @NotNull Item getCooked(Item rawMaterial) {
         if (WorldHelper.theWorld == null) {
             Reg.LOGGER.error("CustomDryingRackRecipe/getCooked;RotHelper.theWorld==null");
             return rawMaterial;
         }
         ItemStack stack = new ItemStack(rawMaterial);
         Inventory inventory = new SimpleInventory(stack);
-        return (RecipeManager.createCachedMatchGetter(RecipeType.CAMPFIRE_COOKING).getFirstMatch(inventory, WorldHelper.theWorld).map((recipe) -> recipe.craft(inventory, WorldHelper.theWorld.getRegistryManager())).orElse(stack)).getItem();
-    }
-
-    private static Item checkNull(Item item) {
-        return item == null ? Items.AIR : item;
-    }
-
-    private static FoodComponent checkNull(FoodComponent component) {
-        return component == null ? FoodComponents.COOKED_CHICKEN : component;
+        return optElse(RecipeManager.createCachedMatchGetter(RecipeType.CAMPFIRE_COOKING).getFirstMatch(inventory, WorldHelper.theWorld).map((recipe) -> recipe.craft(inventory, WorldHelper.theWorld.getRegistryManager())).orElse(stack).getItem(), Items.AIR);
     }
 
 }

@@ -58,10 +58,14 @@
   "effect.hcs.pain.4.description": "痛不欲生",
   "effect.hcs.panic": "恐慌",
   "effect.hcs.panic.description": "尽可能保持冷静",
-  "effect.hcs.panic.1": "有点恐慌",
+  "effect.hcs.panic.1": "有点害怕",
   "effect.hcs.panic.1.description": "尽可能保持冷静",
-  "effect.hcs.panic.2": "魂飞魄散",
-  "effect.hcs.panic.2.description": "强烈的恐慌感",
+  "effect.hcs.panic.2": "恐慌",
+  "effect.hcs.panic.2.description": "打击精准度降低",
+  "effect.hcs.panic.3": "非常恐慌",
+  "effect.hcs.panic.3.description": "打击精准度严重降低",
+  "effect.hcs.panic.4": "极度惊恐",
+  "effect.hcs.panic.4.description": "你难以控制自己",
   "effect.hcs.bleeding": "流血",
   "effect.hcs.bleeding.description": "需要包扎",
   "effect.hcs.darkness_enveloped": "被漆黑笼罩",
@@ -231,5 +235,7 @@
   "item.hcs.bark": "树皮",
   "item.hcs.bark.description": "绝对难以下咽",
   "item.hcs.willow_bark": "柳树皮",
-  "item.hcs.willow_bark.description": "具有镇痛效果"
+  "item.hcs.willow_bark.description": "具有镇痛功效",
+  "item.hcs.fearlessness_herb": "无畏草",
+  "item.hcs.fearlessness_herb.description": "缓解恐慌感"
 }

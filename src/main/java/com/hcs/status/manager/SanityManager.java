@@ -1,14 +1,28 @@
 package com.hcs.status.manager;
 
 import com.hcs.Reg;
+import com.hcs.util.EntityHelper;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.mob.MobEntity;
+import net.minecraft.entity.player.PlayerEntity;
+
+import java.util.HashSet;
+import java.util.Objects;
+import java.util.function.BiPredicate;
+
+import static com.hcs.util.CommUtils.applyNullable;
 
 public class SanityManager {
+    public static final String SANITY_NBT = "hcs_sanity";
+    public static BiPredicate<LivingEntity, LivingEntity> CAN_CLOSELY_SEE = (a, b) -> EntityHelper.isExistent(a, b) && !applyNullable(a.world, world -> world.isClient, true) && a.distanceTo(b) < 16 && a.canSee(b);
+    public static BiPredicate<MobEntity, LivingEntity> IS_TARGET = (targeting, targeted) -> targeting != null && targeted != null && Objects.equals(targeted.getUuidAsString(), applyNullable(targeting.getTarget(), Entity::getUuidAsString, "~NonexistentEntity"));
+
     private double sanity = 1.0;
     private double lastSanity = 1.0;
     //Don't calculate difference between sanity and lastSanity when in InGameHud as it refreshes much faster than ticks() in PlayerEntity and cause twinkle of arrow which indicates trend of rising and falling
     private double sanDifference = 0.0;
-    private int monsterWitnessingTicks = 0;
-    public static final String SANITY_NBT = "hcs_sanity";
+    private final HashSet<MobEntity> enemies = new HashSet<>();
 
     public double get() {
         if (sanity > 1.0) sanity = 1.0;
@@ -49,11 +63,17 @@ public class SanityManager {
         lastSanity = sanity;
     }
 
-    public int getMonsterWitnessingTicks() {
-        return monsterWitnessingTicks;
+    public void addEnemy(LivingEntity entity) {
+        if (entity instanceof MobEntity mob) enemies.add(mob);
+        else
+            Reg.LOGGER.warn(this.getClass().getSimpleName() + ": " + entity + " is not MobEntity");
     }
 
-    public void setMonsterWitnessingTicks(int val) {
-        monsterWitnessingTicks = val;
+    public void tickEnemies(PlayerEntity player) {
+        enemies.removeIf(enemy -> !IS_TARGET.and(CAN_CLOSELY_SEE).test(enemy, player));
+    }
+
+    public int countEnemies() {
+        return enemies.size();
     }
 }

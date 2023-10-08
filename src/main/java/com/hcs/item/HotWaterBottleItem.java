@@ -122,7 +122,7 @@ public class HotWaterBottleItem extends Item {
 
     public static void update(World world, Inventory inv, int trendType) {
         if (world == null || inv == null) {
-            Reg.LOGGER.error("HotWaterBottleItem/update();world==null||inv==null");
+            Reg.LOGGER.error("HotWaterBottleItem/tick();world==null||inv==null");
             return;
         }
         for (int i = 0; i < inv.size(); ++i) {

@@ -4,7 +4,6 @@ import com.hcs.Reg;
 import com.hcs.util.EntityHelper;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.LeavesBlock;
-import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.state.property.Properties;
@@ -32,9 +31,9 @@ public abstract class LeavesBlockMixin {
         if (dropItem > 0) {
             BlockPos pos1 = dropItem == 2 ? pos.down() : pos;
             if (Math.random() < 0.008 && temp >= 0.8)
-                EntityHelper.dropItem(world, pos1, new ItemStack(Reg.ORANGE));
-            else if (Math.random() < 0.003) EntityHelper.dropItem(world, pos1, new ItemStack(Items.APPLE));
-            else if (Math.random() < 0.005) EntityHelper.dropItem(world, pos1, new ItemStack(Items.STICK));
+                EntityHelper.dropItem(world, pos1, Reg.ORANGE);
+            else if (Math.random() < 0.003) EntityHelper.dropItem(world, pos1, Items.APPLE);
+            else if (Math.random() < 0.005) EntityHelper.dropItem(world, pos1, Items.STICK);
         }
     }
 

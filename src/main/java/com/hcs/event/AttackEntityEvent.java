@@ -13,6 +13,7 @@ import net.minecraft.util.Hand;
 
 public class AttackEntityEvent {
     public static void init() {
+        // Also view PlayerEntityMixin/attack()
         AttackEntityCallback.EVENT.register((player, world, hand, entity, hitResult) -> {
             if (entity instanceof LivingEntity /*victim*/) {
                 double rand = Math.random();
@@ -26,11 +27,11 @@ public class AttackEntityEvent {
                     player.sendToolBreakStatus(Hand.MAIN_HAND);
                     EntityHelper.dropItem(player, Reg.SHARP_BROKEN_BONE, 1);
                 }
-            }
-            int panic = EntityHelper.getEffectAmplifier(player, HcsEffects.PANIC);
-            if (panic > 0 && Math.random() < Math.max(0.4, 1.0 - panic / 20.0)) {
-                EntityHelper.msgById(player,"hcs.tip.attack_failed");
-                return ActionResult.FAIL;
+                int panic = EntityHelper.getEffectAmplifier(player, HcsEffects.PANIC);
+                if (panic > -1 && rand < Math.min(0.6, (panic + 1) / 8.0)) {
+                    EntityHelper.msgById(player, "hcs.tip.attack_failed");
+                    return ActionResult.FAIL;
+                }
             }
             return ActionResult.PASS;
         });

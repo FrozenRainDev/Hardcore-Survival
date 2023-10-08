@@ -69,7 +69,7 @@ public class AttackBlockEvent {
                     if (RotHelper.getFresh(world, mainHandStack) <= 0.0001F && RotHelper.getPackageType(name) == 1) {
                         if (name.contains("stew") || name.contains("salad") || name.contains("soup")) {
                             player.setStackInHand(Hand.MAIN_HAND, new ItemStack(Items.BOWL, mainHandStack.getCount()));
-                            EntityHelper.dropItem(player, new ItemStack(Reg.ROT));
+                            EntityHelper.dropItem(player, Reg.ROT);
                         }
                         if (name.contains("bucket"))
                             player.setStackInHand(Hand.MAIN_HAND, new ItemStack(Items.BUCKET, mainHandStack.getCount()));

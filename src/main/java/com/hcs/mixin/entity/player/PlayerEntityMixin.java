@@ -50,6 +50,8 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import java.util.Objects;
 
+import static com.hcs.recipe.CustomDryingRackRecipe.IS_COOKED;
+
 
 @Mixin(PlayerEntity.class)
 public abstract class PlayerEntityMixin extends LivingEntity implements StatAccessor {
@@ -135,6 +137,9 @@ public abstract class PlayerEntityMixin extends LivingEntity implements StatAcce
     @SuppressWarnings("CanBeFinal")
     @Unique
     protected PainManager painManager = new PainManager();
+    @SuppressWarnings("CanBeFinal")
+    @Unique
+    protected MoodManager moodManager = new MoodManager();
 
     @Unique
     @SuppressWarnings("AddedMixinMembersNamePattern")
@@ -194,43 +199,49 @@ public abstract class PlayerEntityMixin extends LivingEntity implements StatAcce
         return this.painManager;
     }
 
+    @Unique
+    @SuppressWarnings("AddedMixinMembersNamePattern")
+    @Override
+    public MoodManager getMoodManager() {
+        return this.moodManager;
+    }
 
     @Inject(method = "readCustomDataFromNbt", at = @At("TAIL"))
     public void readCustomDataFromNbt(NbtCompound nbt, CallbackInfo info) {
-        if (!this.world.isClient()) {
-            this.thirstManager.set(nbt.contains(ThirstManager.THIRST_NBT, NbtElement.DOUBLE_TYPE) ? nbt.getDouble(ThirstManager.THIRST_NBT) : 1.0);
-            this.thirstManager.setSaturation(nbt.contains(ThirstManager.THIRST_SATURATION_NBT, NbtElement.FLOAT_TYPE) ? nbt.getFloat(ThirstManager.THIRST_SATURATION_NBT) : 0.2F);
-            this.staminaManager.set(nbt.contains(StaminaManager.STAMINA_NBT, NbtElement.DOUBLE_TYPE) ? nbt.getDouble(StaminaManager.STAMINA_NBT) : 1.0);
-            this.temperatureManager.set(nbt.contains(TemperatureManager.TEMPERATURE_NBT, NbtElement.DOUBLE_TYPE) ? nbt.getDouble(TemperatureManager.TEMPERATURE_NBT) : 0.5);
-            this.temperatureManager.setSaturation(nbt.contains(TemperatureManager.TEMPERATURE_SATURATION_NBT, NbtElement.FLOAT_TYPE) ? nbt.getFloat(TemperatureManager.TEMPERATURE_SATURATION_NBT) : 0.0F);
-            this.statusManager.setMaxExpLevelReached(nbt.contains(StatusManager.MAX_LVL_NBT, NbtElement.INT_TYPE) ? nbt.getInt(StatusManager.MAX_LVL_NBT) : 0);
-            this.sanityManager.set(nbt.contains(SanityManager.SANITY_NBT, NbtElement.DOUBLE_TYPE) ? nbt.getDouble(SanityManager.SANITY_NBT) : 1.0);
-            this.nutritionManager.setVegetable(nbt.contains(NutritionManager.NUTRITION_VEGETABLE_NBT, NbtElement.DOUBLE_TYPE) ? nbt.getDouble(NutritionManager.NUTRITION_VEGETABLE_NBT) : 1.0);
-            this.wetnessManager.set(nbt.contains(WetnessManager.WETNESS_NBT, NbtElement.DOUBLE_TYPE) ? nbt.getDouble(WetnessManager.WETNESS_NBT) : 0.0);
-            this.statusManager.setSoulImpairedStat(nbt.contains(StatusManager.IS_SOUL_IMPAIRED_NBT) ? nbt.getInt(StatusManager.IS_SOUL_IMPAIRED_NBT) : 0);
-            this.painManager.setRaw(nbt.contains(PainManager.PAIN_NBT) ? nbt.getDouble(PainManager.PAIN_NBT) : 0.0);
-            this.painManager.setPainkillerApplied(nbt.contains(PainManager.PAIN_NBT) ? nbt.getInt(PainManager.PAIN_NBT) : 0);
-            this.statusManager.setInDarknessTicks(nbt.contains(StatusManager.IN_DARKNESS_TICKS) ? nbt.getInt(StatusManager.IN_DARKNESS_TICKS) : 0);
-        }
+        if (this.world.isClient) return;
+        this.thirstManager.set(nbt.contains(ThirstManager.THIRST_NBT, NbtElement.DOUBLE_TYPE) ? nbt.getDouble(ThirstManager.THIRST_NBT) : 1.0);
+        this.thirstManager.setSaturation(nbt.contains(ThirstManager.THIRST_SATURATION_NBT, NbtElement.FLOAT_TYPE) ? nbt.getFloat(ThirstManager.THIRST_SATURATION_NBT) : 0.2F);
+        this.staminaManager.set(nbt.contains(StaminaManager.STAMINA_NBT, NbtElement.DOUBLE_TYPE) ? nbt.getDouble(StaminaManager.STAMINA_NBT) : 1.0);
+        this.temperatureManager.set(nbt.contains(TemperatureManager.TEMPERATURE_NBT, NbtElement.DOUBLE_TYPE) ? nbt.getDouble(TemperatureManager.TEMPERATURE_NBT) : 0.5);
+        this.temperatureManager.setSaturation(nbt.contains(TemperatureManager.TEMPERATURE_SATURATION_NBT, NbtElement.FLOAT_TYPE) ? nbt.getFloat(TemperatureManager.TEMPERATURE_SATURATION_NBT) : 0.0F);
+        this.statusManager.setMaxExpLevelReached(nbt.contains(StatusManager.MAX_LVL_NBT, NbtElement.INT_TYPE) ? nbt.getInt(StatusManager.MAX_LVL_NBT) : 0);
+        this.sanityManager.set(nbt.contains(SanityManager.SANITY_NBT, NbtElement.DOUBLE_TYPE) ? nbt.getDouble(SanityManager.SANITY_NBT) : 1.0);
+        this.nutritionManager.setVegetable(nbt.contains(NutritionManager.NUTRITION_VEGETABLE_NBT, NbtElement.DOUBLE_TYPE) ? nbt.getDouble(NutritionManager.NUTRITION_VEGETABLE_NBT) : 1.0);
+        this.wetnessManager.set(nbt.contains(WetnessManager.WETNESS_NBT, NbtElement.DOUBLE_TYPE) ? nbt.getDouble(WetnessManager.WETNESS_NBT) : 0.0);
+        this.statusManager.setSoulImpairedStat(nbt.contains(StatusManager.IS_SOUL_IMPAIRED_NBT) ? nbt.getInt(StatusManager.IS_SOUL_IMPAIRED_NBT) : 0);
+        this.painManager.setRaw(nbt.contains(PainManager.PAIN_NBT) ? nbt.getDouble(PainManager.PAIN_NBT) : 0.0);
+        this.painManager.setPainkillerApplied(nbt.contains(PainManager.PAIN_NBT) ? nbt.getInt(PainManager.PAIN_NBT) : 0);
+        this.statusManager.setInDarknessTicks(nbt.contains(StatusManager.IN_DARKNESS_TICKS) ? nbt.getInt(StatusManager.IN_DARKNESS_TICKS) : 0);
+        this.moodManager.setPanic(nbt.contains(MoodManager.PANIC_NBT) ? nbt.getDouble(MoodManager.PANIC_NBT) : 0.0);
     }
 
     @Inject(method = "writeCustomDataToNbt", at = @At("TAIL"))
     public void writeCustomDataToNbt(NbtCompound nbt, CallbackInfo info) {
-        if (!this.world.isClient()) {
-            nbt.putDouble(ThirstManager.THIRST_NBT, this.thirstManager.get());
-            nbt.putFloat(ThirstManager.THIRST_SATURATION_NBT, this.thirstManager.getSaturation());
-            nbt.putDouble(StaminaManager.STAMINA_NBT, this.staminaManager.get());
-            nbt.putDouble(TemperatureManager.TEMPERATURE_NBT, this.temperatureManager.get());
-            nbt.putFloat(TemperatureManager.TEMPERATURE_SATURATION_NBT, this.temperatureManager.getSaturation());
-            nbt.putInt(StatusManager.MAX_LVL_NBT, this.statusManager.getMaxExpLevelReached());
-            nbt.putDouble(SanityManager.SANITY_NBT, this.sanityManager.get());
-            nbt.putDouble(NutritionManager.NUTRITION_VEGETABLE_NBT, this.nutritionManager.getVegetable());
-            nbt.putDouble(WetnessManager.WETNESS_NBT, this.wetnessManager.get());
-            nbt.putInt(StatusManager.IS_SOUL_IMPAIRED_NBT, this.statusManager.getSoulImpairedStat());
-            nbt.putDouble(PainManager.PAIN_NBT, this.painManager.getRaw());
-            nbt.putInt(PainManager.PAINKILLER_APPLIED_NBT, this.painManager.getPainkillerApplied());
-            nbt.putInt(StatusManager.IN_DARKNESS_TICKS, this.statusManager.getInDarknessTicks());
-        }
+        if (this.world.isClient) return;
+        nbt.putDouble(ThirstManager.THIRST_NBT, this.thirstManager.get());
+        nbt.putFloat(ThirstManager.THIRST_SATURATION_NBT, this.thirstManager.getSaturation());
+        nbt.putDouble(StaminaManager.STAMINA_NBT, this.staminaManager.get());
+        nbt.putDouble(TemperatureManager.TEMPERATURE_NBT, this.temperatureManager.get());
+        nbt.putFloat(TemperatureManager.TEMPERATURE_SATURATION_NBT, this.temperatureManager.getSaturation());
+        nbt.putInt(StatusManager.MAX_LVL_NBT, this.statusManager.getMaxExpLevelReached());
+        nbt.putDouble(SanityManager.SANITY_NBT, this.sanityManager.get());
+        nbt.putDouble(NutritionManager.NUTRITION_VEGETABLE_NBT, this.nutritionManager.getVegetable());
+        nbt.putDouble(WetnessManager.WETNESS_NBT, this.wetnessManager.get());
+        nbt.putInt(StatusManager.IS_SOUL_IMPAIRED_NBT, this.statusManager.getSoulImpairedStat());
+        nbt.putDouble(PainManager.PAIN_NBT, this.painManager.getRaw());
+        nbt.putInt(PainManager.PAINKILLER_APPLIED_NBT, this.painManager.getPainkillerApplied());
+        nbt.putInt(StatusManager.IN_DARKNESS_TICKS, this.statusManager.getInDarknessTicks());
+        nbt.putDouble(MoodManager.PANIC_NBT, this.moodManager.getRawPanic());
     }
 
     @Inject(method = "getBlockBreakingSpeed", at = @At("RETURN"), cancellable = true)
@@ -305,7 +316,8 @@ public abstract class PlayerEntityMixin extends LivingEntity implements StatAcce
                 } else if (item == Items.KELP || Reg.IS_BARK.test(item)) {
                     if (item == Reg.WILLOW_BARK) this.painManager.applyPainkiller();
                     this.sanityManager.add(-0.02);
-                } else if (item == Items.POISONOUS_POTATO || item == Items.SPIDER_EYE || item == Items.CHORUS_FRUIT)
+                } else if (item == Reg.FEARLESSNESS_HERB) this.moodManager.applyPanicKiller();
+                else if (item == Items.POISONOUS_POTATO || item == Items.SPIDER_EYE || item == Items.CHORUS_FRUIT)
                     this.sanityManager.add(-0.07);
                 else if (item == Items.ROTTEN_FLESH) this.sanityManager.add(-0.1);
                 else if (item == Items.RED_MUSHROOM || item == Items.CRIMSON_FUNGUS || item == Items.WARPED_FUNGUS)
@@ -318,7 +330,7 @@ public abstract class PlayerEntityMixin extends LivingEntity implements StatAcce
                     else if (item == Items.DRIED_KELP) this.sanityManager.add(0.05);
                     else if (item == Items.COOKIE || item == Items.APPLE || item == Reg.ORANGE)
                         this.sanityManager.add(0.03);
-                    else if (name.contains("cooked_") || name.contains("roasted_") || name.contains("baked_") || item == Items.BREAD || item == Items.SUGAR)
+                    else if (IS_COOKED.test(name) || item == Items.BREAD || item == Items.SUGAR)
                         this.sanityManager.add(0.02);
                 }
                 if (item == Items.WHEAT || item == Items.SUGAR || item == Items.SUGAR_CANE || item == Reg.POTHERB || item == Reg.ROASTED_SEEDS)
@@ -391,7 +403,7 @@ public abstract class PlayerEntityMixin extends LivingEntity implements StatAcce
         ci.cancel();
     }
 
-    @Inject(method = "attack", at = @At("TAIL"))
+    @Inject(method = "attack", at = @At("HEAD"))
     public void attack(Entity target, CallbackInfo ci) {
         this.staminaManager.pauseRestoring(50);
         this.staminaManager.add(-0.025, this);
@@ -401,9 +413,9 @@ public abstract class PlayerEntityMixin extends LivingEntity implements StatAcce
     @Inject(method = "tick", at = @At("HEAD"))
     public void tick(CallbackInfo ci) {
         // Painful sound effect
-        double pain = ((StatAccessor) this).getPainManager().getReal();
+        final double currPain = ((StatAccessor) this).getPainManager().getReal();
         boolean outOfDarkness = true;
-        if (pain > 2.0 && this.world.getTime() % Math.max(1, 10 * (6 - pain)) == 0)
+        if (currPain > 2.0 && this.world.getTime() % Math.max(1, 10 * (6 - currPain)) == 0)
             this.playSound(SoundEvents.ENTITY_PLAYER_BREATH, this.getSoundVolume(), this.getSoundPitch());
         if (this.world.isClient) return;
         int oxyLackLvl = 0;
@@ -415,11 +427,6 @@ public abstract class PlayerEntityMixin extends LivingEntity implements StatAcce
         this.statusManager.setRecentHasHotWaterBagTicks(Math.max(0, this.statusManager.getRecentHasHotWaterBagTicks() - 1));
         this.statusManager.setRecentLittleOvereatenTicks(this.hungerManager.getFoodLevel() < 20 ? 0 : Math.max(0, this.statusManager.getRecentLittleOvereatenTicks() - 1));
         this.statusManager.setRecentSleepTicks(Math.max(0, this.statusManager.getRecentSleepTicks() - 1));
-        if (this.sanityManager.getMonsterWitnessingTicks() > 0) {
-            this.sanityManager.add(-0.00004);
-            EntityHelper.addHcsDebuff(this, HcsEffects.PANIC);
-            this.sanityManager.setMonsterWitnessingTicks(this.sanityManager.getMonsterWitnessingTicks() - 1);
-        }
         if (this.isWet()) this.statusManager.setRecentWetTicks(20);
         else this.statusManager.setRecentWetTicks(Math.max(0, this.statusManager.getRecentWetTicks() - 1));
         //Set max health according to max exp level reached
@@ -429,11 +436,11 @@ public abstract class PlayerEntityMixin extends LivingEntity implements StatAcce
         EntityAttributeInstance instance = this.getAttributeInstance(EntityAttributes.GENERIC_MAX_HEALTH);
         if (instance != null) {
             int limitedMaxHealth = Math.min(20, (int) Math.floor(maxLvlReached / 5.0) + 12);//Cut down max health when in low exp lvl
-            double currentMaxHealth = instance.getBaseValue();
-            if (limitedMaxHealth > currentMaxHealth || (limitedMaxHealth < currentMaxHealth && maxLvlReached < 36)) {
+            final double currMaxHealth = instance.getBaseValue();
+            if (limitedMaxHealth > currMaxHealth || (limitedMaxHealth < currMaxHealth && maxLvlReached < 36)) {
                 instance.setBaseValue(limitedMaxHealth);
                 if (limitedMaxHealth < this.getHealth()) this.setHealth((float) limitedMaxHealth);
-            } else if (maxLvlReached >= 36 && currentMaxHealth < 20) instance.setBaseValue(20);
+            } else if (maxLvlReached >= 36 && currMaxHealth < 20) instance.setBaseValue(20);
         }
         if (!this.isCreative() && !this.isSpectator()) {
             if (this.getPos().distanceTo(this.staminaManager.getLastVecPos()) > 0.0001) {
@@ -474,20 +481,21 @@ public abstract class PlayerEntityMixin extends LivingEntity implements StatAcce
                 int blockBrightness = this.world.getLightLevel(LightType.BLOCK, headPos);
                 if (!isInUnpleasantDimension) {
                     if (blockBrightness < 1 && isInCavelike) {
-                        sanDecrement = 0.001;
+                        sanDecrement = 0.0001;
                         EntityHelper.addHcsDebuff(this, HcsEffects.DARKNESS_ENVELOPED);
-                        final int currentDarkTicks = this.statusManager.getInDarknessTicks();
-                        if (currentDarkTicks == 60) EntityHelper.msgById(this, "hcs.tip.dark.warn");
-                        else if (currentDarkTicks > 60) {
-                            EntityHelper.addHcsDebuff(this, HcsEffects.PANIC, 1);
-                            if (currentDarkTicks == 300) EntityHelper.msgById(this, "hcs.tip.dark.closer");
-                            else if (currentDarkTicks < 400) sanDecrement = 0.003;
-                            else if (Math.random() < 0.1) {
-                                sanDecrement = 0.01;
-                                this.damage(((DamageSourcesAccessor) this.world.getDamageSources()).darkness(), 2.0F);
+                        final int currDarkTicks = this.statusManager.getInDarknessTicks();
+                        if (currDarkTicks == 60) EntityHelper.msgById(this, "hcs.tip.dark.warn");
+                        else if (currDarkTicks > 60) {
+                            sanDecrement = 0.0002;
+                            this.moodManager.setPanic(4.0);
+                            if (currDarkTicks == 340) EntityHelper.msgById(this, "hcs.tip.dark.closer");
+                            else if (currDarkTicks > 360) {
+                                sanDecrement = 0.1;
+                                if (currDarkTicks > 400 && currDarkTicks % 10 == 0)
+                                    this.damage(((DamageSourcesAccessor) this.world.getDamageSources()).darkness(), 2.0F);
                             }
                         }
-                        this.statusManager.setInDarknessTicks(currentDarkTicks + 1);
+                        this.statusManager.setInDarknessTicks(currDarkTicks + 1);
                         outOfDarkness = false;
                     } else if (blockBrightness < 3 && isInCavelike) sanDecrement = 0.00004;
                     else if (blockBrightness < 8) sanDecrement = 0.000015;

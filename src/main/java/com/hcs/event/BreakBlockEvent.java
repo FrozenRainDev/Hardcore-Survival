@@ -42,16 +42,16 @@ public class BreakBlockEvent {
                         else if (rand < 0.35) EntityHelper.dropItem(player, x, y, z, Reg.ROCK, 1);
                         else if (rand < 0.55) EntityHelper.dropItem(player, x, y, z, Reg.GRASS_FIBER, 1);
                         else if (rand < 0.6) EntityHelper.dropItem(player, x, y, z, Items.STICK, 1);
+                        else if (rand < 0.6007) EntityHelper.dropItem(player, x, y, z, Reg.FEARLESSNESS_HERB, 1);
                     } else if (block == Blocks.TALL_GRASS) {
                         if (rand < 0.004) EntityHelper.dropItem(player, x, y, z, Reg.SELAGINELLA, 2);
                         else if (rand < 0.01) EntityHelper.dropItem(player, x, y, z, Reg.WORM, 2);
                         else if (rand < 0.02) EntityHelper.dropItem(player, x, y, z, Reg.POTHERB, 2);
                         else if (rand < 0.35) EntityHelper.dropItem(player, x, y, z, Reg.ROCK, 2);
                         else if (rand < 0.55) EntityHelper.dropItem(player, x, y, z, Reg.GRASS_FIBER, 2);
-                        else if (rand < 0.62) EntityHelper.dropItem(player, x, y, z, Items.STICK, 2);
-                    } else if (block == Blocks.VINE) {
-                        EntityHelper.dropItem(player, x, y, z, Reg.FIBER_STRING, 1);
-                    }
+                        else if (rand < 0.6) EntityHelper.dropItem(player, x, y, z, Items.STICK, 2);
+                        else if (rand < 0.6007) EntityHelper.dropItem(player, x, y, z, Reg.FEARLESSNESS_HERB, 2);
+                    } else if (block == Blocks.VINE) EntityHelper.dropItem(player, x, y, z, Reg.FIBER_STRING, 1);
                 }
                 //!mainHand.isEnchantable(new ItemStack(mainHand))
                 if (!(mainHand instanceof ShovelItem)) {

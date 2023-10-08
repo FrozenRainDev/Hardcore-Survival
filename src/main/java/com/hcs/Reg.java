@@ -146,6 +146,7 @@ public class Reg implements ModInitializer {
     public static final Item COOKED_KELP = new Item(new Item.Settings().food(new FoodComponent.Builder().hunger(1).saturationModifier(1.0F).build()));
     public static final Item BARK = new Item(new Item.Settings().food(new FoodComponent.Builder().hunger(0).saturationModifier(0.0F).build()));
     public static final Item WILLOW_BARK = new Item(new Item.Settings().food(new FoodComponent.Builder().hunger(0).saturationModifier(0.0F).build()));
+    public static final Item FEARLESSNESS_HERB = new Item(new Item.Settings().food(new FoodComponent.Builder().hunger(0).saturationModifier(0.0F).build()));
 
     public static final EntityType<RockProjectileEntity> ROCK_PROJECTILE_ENTITY = FabricEntityTypeBuilder.<RockProjectileEntity>create(SpawnGroup.MISC, RockProjectileEntity::new).dimensions(new EntityDimensions(0.25F, 0.25F, true)).build();
     public static final BlockEntityType<IceboxBlockEntity> ICEBOX_BLOCK_ENTITY = FabricBlockEntityTypeBuilder.create(IceboxBlockEntity::new, ICEBOX).build();
@@ -239,6 +240,7 @@ public class Reg implements ModInitializer {
             content.add(new ItemStack(BERRY_BUSH));
             content.add(new ItemStack(BARK));
             content.add(new ItemStack(WILLOW_BARK));
+            content.add(new ItemStack(FEARLESSNESS_HERB));
             content.add(new ItemStack(PURIFIED_WATER_BOTTLE));//.getDefaultStack()
             content.add(new ItemStack(SALTWATER_BOTTLE));
             content.add(new ItemStack(COLD_WATER_BOTTLE));
@@ -320,6 +322,7 @@ public class Reg implements ModInitializer {
         Registry.register(Registries.ITEM, new Identifier("hcs", "cooked_kelp"), COOKED_KELP);
         Registry.register(Registries.ITEM, new Identifier("hcs", "bark"), BARK);
         Registry.register(Registries.ITEM, new Identifier("hcs", "willow_bark"), WILLOW_BARK);
+        Registry.register(Registries.ITEM, new Identifier("hcs", "fearlessness_herb"), FEARLESSNESS_HERB);
 
         Registry.register(Registries.BLOCK, new Identifier("hcs", "icebox"), ICEBOX);
         Registry.register(Registries.ITEM, new Identifier("hcs", "icebox"), ICEBOX_ITEM);
@@ -400,5 +403,8 @@ public class Reg implements ModInitializer {
         ComposterBlock.ITEM_TO_LEVEL_INCREASE_CHANCE.put(COOKED_SWEET_BERRIES, 0.5F);
         ComposterBlock.ITEM_TO_LEVEL_INCREASE_CHANCE.put(ORANGE, 0.65F);
         ComposterBlock.ITEM_TO_LEVEL_INCREASE_CHANCE.put(ROT, 1.0F);
+        ComposterBlock.ITEM_TO_LEVEL_INCREASE_CHANCE.put(BARK, 0.5F);
+        ComposterBlock.ITEM_TO_LEVEL_INCREASE_CHANCE.put(WILLOW_BARK, 0.5F);
+        ComposterBlock.ITEM_TO_LEVEL_INCREASE_CHANCE.put(FEARLESSNESS_HERB, 0.5F);
     }
 }

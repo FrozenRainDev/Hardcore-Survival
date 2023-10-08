@@ -17,7 +17,7 @@ public class TemperatureManager {
     private boolean hasHeatSource = false;
     //The excess part of temperature out of [0,1], calculated by ticks
     private float saturation = 0.0F;
-    private int trendType = 0;//An indicator only works when determine use nbt either HHE or HHES for HotWaterBottleItem
+    private int trendType = 0; //An indicator only works when determine use nbt either HHE or HHES for HotWaterBottleItem
     // -1: player's body temp will decrease, 0: stabilize, 1: increase
 
     public double get() {

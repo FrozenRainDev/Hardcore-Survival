@@ -43,7 +43,7 @@ public class WorldHelper {
                 if (IS_GRAVITY_AFFECTED.test(state)) {
                     if (FallingBlock.canFallThrough(world.getBlockState(bp.down())) || bp.getY() < world.getBottomY()) {
                         if (IS_GRAVITY_AFFECTED.test(state)) FallingBlockEntity.spawnFromBlock(world, bp, state);
-                        //Recurse for further neighbor update
+                        //Recurse for further neighbor tick
                         for (BlockPos bpn : new BlockPos[]{bp.up(), bp.down(), bp.east(), bp.west(), bp.south(), bp.north()})
                             checkBlockGravity(world, bpn);
                     }

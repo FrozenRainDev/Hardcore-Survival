@@ -179,7 +179,7 @@ public class RotHelper {
 
     public static void update(World world, Inventory inv, boolean isInIcebox) {
         if (world == null || inv == null) {
-            Reg.LOGGER.error("RotHelper/update();world==null||inv==null");
+            Reg.LOGGER.error("RotHelper/tick();world==null||inv==null");
             return;
         }
         WorldHelper.theWorld = world;

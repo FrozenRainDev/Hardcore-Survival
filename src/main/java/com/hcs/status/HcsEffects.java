@@ -199,7 +199,7 @@ public class HcsEffects {
     };
 
     public static final StatusEffect SOUL_IMPAIRED = new StatusEffect(StatusEffectCategory.HARMFUL, 0xd7e4eb) {
-    }.addAttributeModifier(EntityAttributes.GENERIC_MAX_HEALTH, "90BF8511-9818-41DC-BE0C-C7262EE79960", -0.2F, EntityAttributeModifier.Operation.MULTIPLY_TOTAL);
+    }.addAttributeModifier(EntityAttributes.GENERIC_MAX_HEALTH, "90BF8511-9818-41DC-BE0C-C7262EE79960", -0.1F, EntityAttributeModifier.Operation.MULTIPLY_TOTAL);
 
     public static final StatusEffect INJURY = new StatusEffect(StatusEffectCategory.HARMFUL, 0x8c1000) {
         final Multimap<EntityAttribute, EntityAttributeModifier> customAttributeModifiers = Multimaps.synchronizedMultimap(ArrayListMultimap.create());
@@ -325,7 +325,7 @@ public class HcsEffects {
             this.lastAmplifier = amplifier;
         }
 
-    }.addAttributeModifier(EntityAttributes.GENERIC_ATTACK_DAMAGE, "DA0DB247-8DC6-4985-9EAF-56B45067E747", -0.1F, EntityAttributeModifier.Operation.MULTIPLY_TOTAL);
+    };
 
     public static final StatusEffect BLEEDING = new StatusEffect(StatusEffectCategory.HARMFUL, 0xcf0303) {
     };

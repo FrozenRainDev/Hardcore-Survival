@@ -18,4 +18,6 @@ public interface StatAccessor {
     WetnessManager getWetnessManager();
 
     PainManager getPainManager();
+
+    MoodManager getMoodManager();
 }

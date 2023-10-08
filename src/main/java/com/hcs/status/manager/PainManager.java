@@ -2,29 +2,22 @@ package com.hcs.status.manager;
 
 import com.hcs.Reg;
 
+import static com.hcs.util.EntityHelper.PLASMA_CONCENTRATION;
+
 public class PainManager {
     public static final String PAIN_NBT = "hcs_pain";
     public static final String PAINKILLER_APPLIED_NBT = "hcs_painkiller";
     private double pain = 0.0, alleviationCache = 0.0; // [0, 4]
     private int painkillerApplied = 0, painkillerUpdateInterval = 0;
 
-    public double getPainkillerAlleviation() {
+    public double getPainkillerAlle() {
         if (painkillerUpdateInterval > 0) {
             // Refresh alleviation every 60 ticks to avoid too much calculation
             --painkillerUpdateInterval;
             return alleviationCache;
         }
-        /* Calculate alleviation effect according to a LaTeX formula:
-        \begin{cases}
-        y=-2.5\left(\frac{x-600}{600}\right)^{2}+2.5\left\{0\le x\le600\right\}
-         \\y=\frac{-2.72}{1+e^{-\frac{x-2000}{600}}}+2.74\left\{600\le x\le4200\right\}
-        \end{cases}
-        */
-        int x = Math.max(0, 4200 - painkillerApplied); // ticks since applied (painkillerApplied=effect countdown)
-        if (x <= 600) alleviationCache = -2.5 * Math.pow((x - 600) / 600.0, 2) + 2.5;
-        else alleviationCache = -2.72 / (1 + Math.pow(Math.E, (2000 - x) / 600.0)) + 2.74;
+        alleviationCache = PLASMA_CONCENTRATION.apply(Math.max(0, 4200 - painkillerApplied)/*ticks since applied (painkillerApplied=effect countdown)*/);
         if (alleviationCache < 0.1) alleviationCache = 0;
-//        System.out.println(alleviationCache + " " + painkillerApplied + " " + x);
         painkillerUpdateInterval = 60;
         return alleviationCache;
     }
@@ -37,7 +30,7 @@ public class PainManager {
     }
 
     public double getReal() {
-        return Math.max(0, getRaw() - getPainkillerAlleviation());
+        return Math.max(0, getRaw() - getPainkillerAlle());
     }
 
     public void setRaw(double val) {

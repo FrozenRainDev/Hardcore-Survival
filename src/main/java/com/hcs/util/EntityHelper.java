@@ -5,10 +5,8 @@ import com.hcs.item.KnifeItem;
 import com.hcs.status.HcsEffects;
 import com.hcs.status.accessor.StatAccessor;
 import com.hcs.status.manager.StatusManager;
-import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.advancement.criterion.Criteria;
 import net.minecraft.block.*;
-import net.minecraft.client.render.*;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.ItemEntity;
@@ -47,10 +45,10 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
-import java.text.DecimalFormat;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.function.BiPredicate;
+import java.util.function.Function;
 import java.util.function.Predicate;
 
 public class EntityHelper {
@@ -70,6 +68,14 @@ public class EntityHelper {
     public static final Predicate<DamageSource> IS_PHYSICAL_DAMAGE = damageSource -> !damageSource.isOf(DamageTypes.DROWN) && !damageSource.isOf(DamageTypes.STARVE) && !damageSource.isOf(DamageTypes.OUT_OF_WORLD) && !damageSource.isOf(DamageTypes.MAGIC) && !damageSource.isOf(DamageTypes.INDIRECT_MAGIC) && !damageSource.isOf(DamageTypes.WITHER);
     public static final Predicate<DamageSource> IS_BURNING_DAMAGE = damageSource -> damageSource.getType().effects().equals(DamageEffects.BURNING);
 
+    /* Calculate time - drug effect according to a formula written in LaTeX:
+        \begin{cases}
+        y=-2.5\left(\frac{x-600}{600}\right)^{2}+2.5\left\{0\le x\le600\right\}
+         \\y=\frac{-2.72}{1+e^{-\frac{x-2000}{600}}}+2.74\left\{600\le x\le4200\right\}
+        \end{cases}
+        */
+    public static final Function<Integer, Double> PLASMA_CONCENTRATION = x -> x <= 600 ? (-2.5 * Math.pow((x - 600) / 600.0, 2) + 2.5) : (-2.72 / (1 + Math.pow(Math.E, (2000 - x) / 600.0)) + 2.74);
+
     @Deprecated
     public static PlayerEntity thePlayer;
     @Deprecated
@@ -79,20 +85,30 @@ public class EntityHelper {
 
 
     public static void dropItem(@NotNull Entity entity, double x, double y, double z, Item item, int count) {
-        ItemStack stack = new ItemStack(item, count);
-        ItemEntity itemEntity = new ItemEntity(entity.getWorld(), x, y, z, stack);
-        entity.world.spawnEntity(itemEntity);
+        if (entity.world instanceof ServerWorld) {
+            ItemStack stack = new ItemStack(item, count);
+            ItemEntity itemEntity = new ItemEntity(entity.getWorld(), x, y, z, stack);
+            entity.world.spawnEntity(itemEntity);
+        }
     }
 
     public static void dropItem(@NotNull Entity entity, Item item, int count) {
-        ItemStack stack = new ItemStack(item, count);
-        ItemEntity itemEntity = new ItemEntity(entity.getWorld(), entity.getX(), entity.getY(), entity.getZ(), stack);
-        entity.world.spawnEntity(itemEntity);
+        if (entity.world instanceof ServerWorld) {
+            ItemStack stack = new ItemStack(item, count);
+            ItemEntity itemEntity = new ItemEntity(entity.getWorld(), entity.getX(), entity.getY(), entity.getZ(), stack);
+            entity.world.spawnEntity(itemEntity);
+        }
     }
 
     public static void dropItem(@NotNull Entity entity, ItemStack stack) {
-        ItemEntity itemEntity = new ItemEntity(entity.getWorld(), entity.getX(), entity.getY(), entity.getZ(), stack);
-        entity.world.spawnEntity(itemEntity);
+        if (entity.world instanceof ServerWorld) {
+            ItemEntity itemEntity = new ItemEntity(entity.getWorld(), entity.getX(), entity.getY(), entity.getZ(), stack);
+            entity.world.spawnEntity(itemEntity);
+        }
+    }
+
+    public static void dropItem(@NotNull Entity entity, @NotNull Item item) {
+        dropItem(entity, new ItemStack(item));
     }
 
     public static void dropItem(World world, BlockPos pos, ItemStack stack) {
@@ -100,6 +116,10 @@ public class EntityHelper {
             ItemEntity itemEntity = new ItemEntity(world, pos.getX(), pos.getY(), pos.getZ(), stack);
             world.spawnEntity(itemEntity);
         }
+    }
+
+    public static void dropItem(World world, BlockPos pos, Item item) {
+        dropItem(world, pos, new ItemStack(item));
     }
 
     @Deprecated
@@ -114,16 +134,6 @@ public class EntityHelper {
     public static void msgById(@NotNull PlayerEntity player, String id, Boolean isTipMessage) {
         player.sendMessage(Text.translatable(id), isTipMessage);
     }
-
-    public static String customNumberFormatter(String pattern, double value) {
-        DecimalFormat decimalFormat = new DecimalFormat(pattern);
-        return decimalFormat.format(value);
-    }
-
-    public static String customNumberFormatter(String pattern, float value) {
-        return customNumberFormatter(pattern, (double) value);
-    }
-
 
     public static BlockHitResult rayCast(@NotNull World world, @NotNull Entity entity, RaycastContext.FluidHandling fluidHandling, double maxDistance) {
         float f = entity.getPitch();
@@ -168,7 +178,7 @@ public class EntityHelper {
         if (targetWorld != null) {
             BlockPos spawnPoint = ((ServerPlayerEntity) player).getSpawnPointPosition();
             if (spawnPoint != null) {
-                boolean force = false;//player.isSpawnForced(dim);
+                boolean force = false; //player.isSpawnForced(dim);
                 Optional<Vec3d> optional =
                         PlayerEntity.findRespawnPosition((ServerWorld) targetWorld, spawnPoint,
                                 ((ServerPlayerEntity) player).getSpawnAngle(), force, true);
@@ -205,18 +215,6 @@ public class EntityHelper {
         }
         target.playSound(null, x, y, z,
                 SoundEvents.ENTITY_ENDERMAN_TELEPORT, SoundCategory.PLAYERS, 1f, 1f);
-    }
-
-    @Deprecated
-    public static void renderGuiQuad(@NotNull BufferBuilder buffer, int x, int y, int width, int height, int red, int green, int blue, int alpha, boolean needShader) {
-        RenderSystem.setShader(GameRenderer::getPositionColorProgram);
-        buffer.begin(VertexFormat.DrawMode.QUADS, VertexFormats.POSITION_COLOR);
-        buffer.vertex(x, y, 0.0).color(red, green, blue, alpha).next();
-        buffer.vertex(x, y + height, 0.0).color(red, green, blue, alpha).next();
-        buffer.vertex(x + width, y + height, 0.0).color(red, green, blue, alpha).next();
-        buffer.vertex(x + width, y, 0.0).color(red, green, blue, alpha).next();
-        if (needShader) BufferRenderer.drawWithGlobalProgram(buffer.end());
-        else BufferRenderer.drawWithGlobalProgram(buffer.end());//never use it !!
     }
 
     public static BlockPos getPosBackward(Entity entity) {
@@ -350,8 +348,8 @@ public class EntityHelper {
         if (Items.IRON_AXE instanceof AxeItem axeItem) {
             if ((strippedState = axeItem.getStrippedState(world.getBlockState(pos))).isPresent() && context.getPlayer() != null && !context.getPlayer().isCreative() && !context.getPlayer().isSpectator()) {
                 if (WorldHelper.enhancedIsWaterNearby(world, pos.down()) && Math.random() < 0.5)
-                    EntityHelper.dropItem(world, userPos, new ItemStack(Reg.WILLOW_BARK));
-                else EntityHelper.dropItem(world, userPos, new ItemStack(Reg.BARK));
+                    EntityHelper.dropItem(world, userPos, Reg.WILLOW_BARK);
+                else EntityHelper.dropItem(world, userPos, Reg.BARK);
                 if (stack.getItem() instanceof KnifeItem) {
                     if (player instanceof ServerPlayerEntity serverPlayerEntity)
                         Criteria.ITEM_USED_ON_BLOCK.trigger(serverPlayerEntity, pos, stack);
@@ -374,6 +372,16 @@ public class EntityHelper {
         if (entity.hasStatusEffect(effect) && entity.getStatusEffect(effect) != null)
             return Objects.requireNonNull(entity.getStatusEffect(effect)).getAmplifier();
         return -1;
+    }
+
+    public static boolean isExistent(@Nullable LivingEntity... entities) {
+        if (entities.length == 0) return false;
+        boolean result = true;
+        for (LivingEntity entity : entities) {
+            if (entity == null) return false;
+            result = result && entity.isAlive();
+        }
+        return result;
     }
 
 }

@@ -17,6 +17,8 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
+import static com.hcs.status.manager.SanityManager.CAN_CLOSELY_SEE;
+
 @Mixin(MobEntity.class)
 public abstract class MobEntityMixin extends LivingEntity {
     @Shadow
@@ -39,7 +41,7 @@ public abstract class MobEntityMixin extends LivingEntity {
     @Inject(method = "tick", at = @At("HEAD"))
     public void tick(CallbackInfo ci) {
         //noinspection RedundantCast
-        if (!this.world.isClient && (Object) this instanceof Monster && this.getTarget() instanceof PlayerEntity player && this.distanceTo(player) < 7 && player.canSee(this))
-            ((StatAccessor) player).getSanityManager().setMonsterWitnessingTicks(10);
+        if ((Object) this instanceof Monster && this.getTarget() instanceof PlayerEntity player && CAN_CLOSELY_SEE.test(player, this))
+            ((StatAccessor) player).getSanityManager().addEnemy(this);
     }
 }

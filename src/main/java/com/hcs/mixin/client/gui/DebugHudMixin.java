@@ -22,6 +22,8 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import java.util.List;
 
+import static com.hcs.util.CommUtils.retain5;
+
 @Mixin(DebugHud.class)
 public abstract class DebugHudMixin {
     @Final
@@ -41,6 +43,7 @@ public abstract class DebugHudMixin {
         NutritionManager nutritionManager = ((StatAccessor) player).getNutritionManager();
         StatusManager statusManager = ((StatAccessor) player).getStatusManager();
         PainManager painManager = ((StatAccessor) player).getPainManager();
+        MoodManager moodManager = ((StatAccessor) player).getMoodManager();
         World world = player.world;
         BlockPos pos = player.getBlockPos();
         RegistryEntry<Biome> biomeEntry = world.getBiome(pos);
@@ -52,12 +55,13 @@ public abstract class DebugHudMixin {
         list.add("Thirst: value=" + thirstManager.get() + ", saturation=" + thirstManager.getSaturation() + ", rate=" + thirstManager.getThirstRateAffectedByTemp());
         list.add("Hunger: level=" + hungerManager.getFoodLevel() + ", saturation=" + hungerManager.getSaturationLevel() + ", exhaustion=" + ((StatAccessor) player).getStatusManager().getExhaustion());
         list.add("Stamina: " + staminaManager.get());
-        list.add("Sanity: " + sanityManager.get() + ", difference=" + sanityManager.getDifference());
-        list.add("Temperature: biome=" + biome.getTemperature() + ", env=[real: " + String.format("%.5f", TemperatureHelper.getTemp(player)) + " ,feel:" + String.format("%.5f", TemperatureHelper.getFeelingTemp(player, TemperatureHelper.getTemp(player), biomeName, player.world.getLightLevel(LightType.SKY, player.getBlockPos()))) + "]" + ", value=" + String.format("%.5f", temperatureManager.get()) + ", satu=" + String.format("%.5f", temperatureManager.getSaturation()) + ", trend=" + temperatureManager.getTrendType());
+        list.add("Sanity: " + sanityManager.get() + ", diff=" + sanityManager.getDifference());
+        list.add("Temperature: biome=" + biome.getTemperature() + ", env=[real: " + retain5(TemperatureHelper.getTemp(player)) + " ,feel:" + retain5(TemperatureHelper.getFeelingTemp(player, TemperatureHelper.getTemp(player), biomeName, player.world.getLightLevel(LightType.SKY, player.getBlockPos()))) + "]" + ", value=" + retain5(temperatureManager.get()) + ", satu=" + retain5(temperatureManager.getSaturation()) + ", trend=" + temperatureManager.getTrendType());
         list.add("Nutrition: vegetable=" + nutritionManager.getVegetable());
         list.add("Oxygen: lack=" + statusManager.getOxygenLackLevel() + ", gen=" + statusManager.getOxygenGenLevel());
-        list.add("Pain: real=" + String.format("%.4f", painManager.getReal()) + ", raw=" + String.format("%.4f", painManager.getRaw()) + ", alle=" + String.format("%.4f", painManager.getPainkillerAlleviation()));
+        list.add("Pain: real=" + retain5(painManager.getReal()) + ", raw=" + retain5(painManager.getRaw()) + ", alle=" + retain5(painManager.getPainkillerAlle()));
         list.add("Wetness: " + ((StatAccessor) player).getWetnessManager().get());
+        list.add("Mood: panic=[raw=" + retain5(moodManager.getRawPanic()) + ", real=" + retain5(moodManager.getRealPanic()) + ", alle=" + retain5(moodManager.getPanicAlleCache()) + "]");
     }
 
 }

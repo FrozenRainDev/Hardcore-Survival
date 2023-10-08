@@ -10,8 +10,6 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.AbstractClientPlayerEntity;
 import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.client.world.ClientWorld;
-import net.minecraft.entity.EntityType;
-import net.minecraft.entity.mob.BlazeEntity;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvent;
 import net.minecraft.util.Identifier;
@@ -78,12 +76,12 @@ public abstract class ClientPlayerEntityMixin extends AbstractClientPlayerEntity
             if (darknessEnveloped) {
                 final int darkTicks = ((StatAccessor) this).getStatusManager().getInDarknessTicks();
                 if (darkTicks == 60) playHallAmbient(this);
-                else if (darkTicks == 300) {
-                    this.world.playSound(this.getX(), this.getY(), this.getZ(), ENTITY_ENDERMAN_SCREAM, SoundCategory.AMBIENT, 26, -13, false);
-                    this.world.playSound(this.getX(), this.getY(), this.getZ(), ENTITY_ENDERMAN_STARE, SoundCategory.AMBIENT, 26, -13, false);
-                } else if (darkTicks == 360) {
-                    this.world.playSound(this.getX(), this.getY(), this.getZ(), ENTITY_ELDER_GUARDIAN_CURSE, SoundCategory.AMBIENT, 26, -13, false);
-                } else if (darkTicks > 120 && Math.random() < 0.01) {
+                else if (darkTicks == 290) {
+                    this.world.playSound(this.getX(), this.getY(), this.getZ(), ENTITY_ENDERMAN_SCREAM, SoundCategory.AMBIENT, 26, -13, true);
+                    this.world.playSound(this.getX(), this.getY(), this.getZ(), ENTITY_ENDERMAN_STARE, SoundCategory.AMBIENT, 26, -13, true);
+                } else if (darkTicks == 360) // Also view SoundSystemMixin/getAdjustedVolume()
+                    this.world.playSound(this.getX(), this.getY(), this.getZ(), ENTITY_ELDER_GUARDIAN_CURSE, SoundCategory.AMBIENT, 1145.0F, -13, false);
+                else if (darkTicks > 120 && Math.random() < 0.01) {
                     if (Math.random() < 0.5) playHall(this);
                     else playHallAmbient(this);
                 }
@@ -99,7 +97,7 @@ public abstract class ClientPlayerEntityMixin extends AbstractClientPlayerEntity
                     if (sanityManager.get() < 0.15) {
                         for (SoundCategory cate : new SoundCategory[]{SoundCategory.BLOCKS, SoundCategory.HOSTILE, SoundCategory.MUSIC, SoundCategory.NEUTRAL, SoundCategory.RECORDS, SoundCategory.VOICE, SoundCategory.WEATHER, SoundCategory.PLAYERS})
                             this.client.getSoundManager().stopSounds(null, cate);
-                        this.world.spawnEntity(new BlazeEntity(EntityType.BLAZE, this.world));
+//                        this.world.spawnEntity(new BlazeEntity(EntityType.BLAZE, this.world));
                     }
                     if (this.world.getTime() % (sanityManager.get() < 0.15F ? 30 : 600) == 0)
                         playHallAmbient(this);
