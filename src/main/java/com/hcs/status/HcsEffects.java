@@ -5,7 +5,7 @@ import com.google.common.collect.Multimap;
 import com.google.common.collect.Multimaps;
 import com.hcs.status.accessor.DamageSourcesAccessor;
 import com.hcs.status.accessor.StatAccessor;
-import com.hcs.status.manager.PainManager;
+import com.hcs.status.manager.InjuryManager;
 import com.hcs.util.EntityHelper;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.attribute.*;
@@ -19,10 +19,12 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Map;
 import java.util.UUID;
+import java.util.function.BiFunction;
 import java.util.function.Predicate;
 
 public class HcsEffects {
-    public static final StatusEffect RETURN = new StatusEffect(StatusEffectCategory.NEUTRAL, 0x96f9ff) {
+
+    public static final StatusEffect RETURN = new StatusEffect(StatusEffectCategory.NEUTRAL, 0x65d1e4) {
         @Override
         public boolean canApplyUpdateEffect(int duration, int amplifier) {
             return true;
@@ -138,7 +140,7 @@ public class HcsEffects {
 
         @Override
         public void applyUpdateEffect(LivingEntity entity, int amplifier) {
-            if (entity instanceof ServerPlayerEntity player && !entity.isSpectator() && !entity.isInvulnerable()) {
+            if (entity instanceof ServerPlayerEntity player && !entity.isInvulnerable()) {
                 //Accelerate water losing and decrease sanity
                 ((StatAccessor) player).getThirstManager().add(-0.0001 * (amplifier + 1));
                 ((StatAccessor) player).getSanityManager().add(-0.00003 * (amplifier + 1));
@@ -163,7 +165,7 @@ public class HcsEffects {
     };
 
     public static final StatusEffect OVEREATEN = new StatusEffect(StatusEffectCategory.HARMFUL, 0x90514f) {
-    }.addAttributeModifier(EntityAttributes.GENERIC_MOVEMENT_SPEED, "28AFE91C-13C7-4E2F-BC29-7F747282B53C", -0.5F, EntityAttributeModifier.Operation.MULTIPLY_TOTAL);
+    }.addAttributeModifier(EntityAttributes.GENERIC_MOVEMENT_SPEED, "28AFE91C-13C7-4E2F-BC29-7F747282B53C", -0.07F, EntityAttributeModifier.Operation.MULTIPLY_TOTAL);
 
     //Cause hallucinations
     public static final StatusEffect INSANITY = new StatusEffect(StatusEffectCategory.HARMFUL, 0xff6113) {
@@ -207,10 +209,7 @@ public class HcsEffects {
 
         @Override
         protected String loadTranslationKey() {
-            return switch (this.lastAmplifier) {
-                case 0, 1, 2, 3 -> "effect.hcs.injury." + (lastAmplifier + 1);
-                default -> "effect.hcs.injury";
-            };
+            return GET_AMP4_KEY.apply("injury", this.lastAmplifier);
         }
 
         @Override
@@ -261,10 +260,7 @@ public class HcsEffects {
 
         @Override
         protected String loadTranslationKey() {
-            return switch (this.lastAmplifier) {
-                case 0, 1, 2, 3 -> "effect.hcs.pain." + (lastAmplifier + 1);
-                default -> "effect.hcs.pain";
-            };
+            return GET_AMP4_KEY.apply("pain", this.lastAmplifier);
         }
 
         @Override
@@ -314,10 +310,7 @@ public class HcsEffects {
 
         @Override
         protected String loadTranslationKey() {
-            return switch (this.lastAmplifier) {
-                case 0, 1, 2, 3 -> "effect.hcs.panic." + (lastAmplifier + 1);
-                default -> "effect.hcs.panic";
-            };
+            return GET_AMP4_KEY.apply("panic", this.lastAmplifier);
         }
 
         @Override
@@ -328,17 +321,57 @@ public class HcsEffects {
     };
 
     public static final StatusEffect BLEEDING = new StatusEffect(StatusEffectCategory.HARMFUL, 0xcf0303) {
+        int lastAmplifier = 0;
+
+        @Override
+        protected String loadTranslationKey() {
+            return GET_AMP4_KEY.apply("bleeding", this.lastAmplifier);
+        }
+
+        @Override
+        public void onApplied(LivingEntity entity, AttributeContainer attributes, int amplifier) {
+            this.lastAmplifier = amplifier;
+        }
+
+        @Override
+        public boolean canApplyUpdateEffect(int duration, int amplifier) {
+            return true;
+        }
+
+        @Override
+        public void applyUpdateEffect(LivingEntity entity, int amplifier) {
+            if (entity != null && entity.world != null && !entity.isInvulnerable() && amplifier > 0)
+                if (entity.world.getTime() % (900 / (amplifier == 1 ? 1.5 : (amplifier * 6.0))) == 0)
+                    entity.damage(((DamageSourcesAccessor) entity.world.getDamageSources()).bleeding(), 1.0F);
+        }
     };
 
     public static final StatusEffect DARKNESS_ENVELOPED = new StatusEffect(StatusEffectCategory.HARMFUL, 0x000000) {
     }.addAttributeModifier(EntityAttributes.GENERIC_MOVEMENT_SPEED, "75AD9D60-968B-4788-8B9F-3A545D3534E7", -0.4F, EntityAttributeModifier.Operation.MULTIPLY_TOTAL);
 
     public static final StatusEffect FRACTURE = new StatusEffect(StatusEffectCategory.HARMFUL, 0xe8e5d2) {
+        int lastAmplifier = 0;
+
+        @Override
+        protected String loadTranslationKey() {
+            return GET_AMP3_KEY.apply("fracture", this.lastAmplifier);
+        }
+
         @Override
         public void onApplied(LivingEntity entity, AttributeContainer attributes, int amplifier) {
-            if (entity instanceof ServerPlayerEntity player && !entity.isSpectator()) {
-                PainManager painManager = ((StatAccessor) player).getPainManager();
-                if (painManager.getRaw() < 2.5) painManager.setRaw(2.5);
+            this.lastAmplifier = amplifier;
+        }
+
+        @Override
+        public boolean canApplyUpdateEffect(int duration, int amplifier) {
+            return true;
+        }
+
+        @Override
+        public void applyUpdateEffect(LivingEntity entity, int amplifier) {
+            if (entity instanceof ServerPlayerEntity player && !player.isInvulnerable() && amplifier > 0) {
+                InjuryManager injuryManager = ((StatAccessor) player).getInjuryManager();
+                if (injuryManager.getRawPain() < 2.5) injuryManager.setRawPain(2.5);
             }
         }
     };
@@ -355,8 +388,14 @@ public class HcsEffects {
     public static final StatusEffect HEAVY_LOAD = new StatusEffect(StatusEffectCategory.HARMFUL, 0xfed93f) {
     };
 
+    public static final BiFunction<String, Integer, String> GET_AMP4_KEY = (name, amplifier) -> switch (amplifier) {
+        case 0, 1, 2, 3 -> "effect.hcs." + name + "." + (amplifier + 1);
+        default -> "effect.hcs." + name;
+    };
 
-    public static final Predicate<StatusEffect> IS_NAME_VARIABLE = effect -> effect == PAIN || effect == INJURY || effect == PANIC; // A predicate determines whether an effect should be appended by Roman numerals to express level
+    public static final BiFunction<String, Integer, String> GET_AMP3_KEY = (name, amplifier) -> GET_AMP4_KEY.apply(name, amplifier == 3 ? 2 : amplifier);
+
+    public static final Predicate<StatusEffect> IS_EFFECT_NAME_VARIABLE = effect -> effect == PAIN || effect == INJURY || effect == PANIC || effect == BLEEDING; // A predicate determines whether an effect should be appended by Roman numerals to express level
 
     public static void removeTempAttributes(AttributeContainer attributes, @NotNull Multimap<EntityAttribute, EntityAttributeModifier> customAttributeModifiers) {
         for (Map.Entry<EntityAttribute, EntityAttributeModifier> entry : customAttributeModifiers.entries()) {
@@ -365,7 +404,7 @@ public class HcsEffects {
             EntityAttributeModifier entityAttributeModifier = entry.getValue();
             entityAttributeInstance.removeModifier(entityAttributeModifier);
         }
-        customAttributeModifiers.clear(); // Tend to forget
+        customAttributeModifiers.clear();
     }
 
 }

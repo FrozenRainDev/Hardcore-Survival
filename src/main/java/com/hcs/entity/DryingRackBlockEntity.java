@@ -1,9 +1,9 @@
 package com.hcs.entity;
 
 import com.hcs.Reg;
+import com.hcs.recipe.CustomDryingRackRecipe;
 import com.hcs.util.EntityHelper;
 import com.hcs.util.RotHelper;
-import com.hcs.recipe.CustomDryingRackRecipe;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockEntityProvider;
 import net.minecraft.block.BlockState;
@@ -18,6 +18,8 @@ import net.minecraft.network.packet.s2c.play.BlockEntityUpdateS2CPacket;
 import net.minecraft.util.collection.DefaultedList;
 import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.Nullable;
+
+import static com.hcs.util.EntityHelper.IS_SURVIVAL_LIKE;
 
 
 public class DryingRackBlockEntity extends BlockEntity implements BlockEntityProvider {
@@ -53,7 +55,7 @@ public class DryingRackBlockEntity extends BlockEntity implements BlockEntityPro
         if (getInventoryStack().isEmpty()) {
             if (CustomDryingRackRecipe.getOutput(stack.getItem()) == Items.AIR) return false;
             this.setInventoryStack(stack);
-            if (!player.isCreative()) stack.decrement(1);
+            if (IS_SURVIVAL_LIKE.test(player)) stack.decrement(1);
             RotHelper.update(this.getWorld(), new SimpleInventory(this.getInventoryStack()), true);
             this.setDryingDeadline(DRYING_LENGTH + this.getWorld().getTime());
         } else {

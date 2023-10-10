@@ -10,6 +10,8 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
+import net.minecraft.registry.entry.RegistryEntry;
+import net.minecraft.registry.tag.BiomeTags;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.state.property.BooleanProperty;
@@ -19,6 +21,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.Heightmap;
 import net.minecraft.world.LightType;
 import net.minecraft.world.World;
+import net.minecraft.world.biome.Biome;
 import net.minecraft.world.biome.source.MultiNoiseBiomeSource;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
@@ -33,6 +36,7 @@ public class WorldHelper {
     public static World theWorld = null;
     public static final BooleanProperty FERTILIZER_FREE = BooleanProperty.of("hcs_fertilizer_free");
     public static final Predicate<BlockState> IS_GRAVITY_AFFECTED = state -> state != null && (state.isOf(Blocks.DIRT) || state.isOf(Blocks.DIRT_PATH) || state.isOf(Blocks.CLAY) || state.isOf(Blocks.COARSE_DIRT));
+    public static final Predicate<RegistryEntry<Biome>> IS_SALTY_WATER_BIOME = entry -> entry.isIn(BiomeTags.IS_OCEAN) || entry.isIn(BiomeTags.IS_DEEP_OCEAN) || entry.isIn(BiomeTags.IS_BEACH) || TemperatureHelper.getBiomeName(entry).contains("stony_shore");
 
     public static void checkBlockGravity(World world, BlockPos pos) {
         try {

@@ -28,6 +28,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import static com.hcs.status.manager.TemperatureManager.CHANGE_SPAN;
 import static com.hcs.status.network.ServerS2C.dtoi;
+import static com.hcs.util.EntityHelper.IS_SURVIVAL_LIKE;
 
 @Mixin(ServerPlayerEntity.class)
 public abstract class ServerPlayerEntityMixin extends PlayerEntity {
@@ -58,7 +59,7 @@ public abstract class ServerPlayerEntityMixin extends PlayerEntity {
         TemperatureHelper.updateAmbientBlocks(this);
         TemperatureHelper.getTemp(this); //Update temp cache
         ServerS2C.writeS2CPacket(this);
-        if (!(this.isCreative() || this.isSpectator())) {
+        if (IS_SURVIVAL_LIKE.test(this)) {
             //Init variables
             if (this.hasStatusEffect(HcsEffects.OVEREATEN) && this.hungerManager.getFoodLevel() < 20)
                 this.removeStatusEffect(HcsEffects.OVEREATEN);
@@ -142,27 +143,33 @@ public abstract class ServerPlayerEntityMixin extends PlayerEntity {
             else if (hpPercent < 0.25F) EntityHelper.addHcsDebuff(this, HcsEffects.INJURY, 2);
             else if (hpPercent < 0.45F) EntityHelper.addHcsDebuff(this, HcsEffects.INJURY, 1);
             else if (hpPercent < 0.7F) EntityHelper.addHcsDebuff(this, HcsEffects.INJURY, 0);
+
             //Debuff of pain (view add pain in PlayerEntityMixin/applyDamage)
-            PainManager painManager = ((StatAccessor) this).getPainManager();
-            final double pain = painManager.getReal();
+            InjuryManager injuryManager = ((StatAccessor) this).getInjuryManager();
+            final double pain = injuryManager.getRealPain();
             if (pain > 0.0) EntityHelper.addHcsDebuff(this, HcsEffects.PAIN, MathHelper.clamp((int) pain, 0, 3));
-            painManager.tick();
+            injuryManager.tick();
             sanityManager.tickEnemies(this);
+
+            //Debuff of bleeding
+            final double bleeding = injuryManager.getBleeding() - 1.0;
+            if (bleeding > 0.0)
+                EntityHelper.addHcsDebuff(this, HcsEffects.BLEEDING, MathHelper.clamp((int) bleeding, 0, 3));
 
             //Panic; also view PlayerEntityMixin/tick()
             MoodManager moodManager = ((StatAccessor) this).getMoodManager();
             final boolean isDarkEnv = this.hasStatusEffect(HcsEffects.DARKNESS_ENVELOPED);
             final double currRawPanic = moodManager.getRawPanic(), currRealPanic = moodManager.getRealPanic(), expectedRawPanic = isDarkEnv ? 4 : MathHelper.clamp(sanityManager.countEnemies() * 0.5, 0.0, 4), panicDiff = Math.abs(currRawPanic - expectedRawPanic);
-            if (panicDiff < 0.01) moodManager.setPanic(expectedRawPanic);
-            else if (currRawPanic > expectedRawPanic) moodManager.addPanic(-0.01);
-            else moodManager.addPanic(Math.max(0.1, expectedRawPanic / 60));
+            moodManager.tickPanic(currRawPanic, expectedRawPanic, panicDiff);
             if (currRealPanic > 0.0) {
                 double finalPanic = currRealPanic;
                 if (!isDarkEnv) {
-                    finalPanic -= 0.06 * statusManager.getMaxExpLevelReached(); //Reduce panic when player reaches higher exp level
-                    if (finalPanic > 0.0) sanityManager.add(-MathHelper.clamp(0.00003 * finalPanic, 0.00001, 0.0001));
+                    finalPanic -= 0.06 * MathHelper.clamp(statusManager.getMaxExpLevelReached(), 0, 30); //Reduce panic when player reaches higher exp level
+                    if (expectedRawPanic > 0.0)
+                        sanityManager.add(-MathHelper.clamp(0.00003 * finalPanic, 0.000008, 0.0001));
                 }
-                EntityHelper.addHcsDebuff(this, HcsEffects.PANIC, MathHelper.clamp((int) finalPanic, 0, 3));
+                if (finalPanic > 0.0)
+                    EntityHelper.addHcsDebuff(this, HcsEffects.PANIC, MathHelper.clamp((int) finalPanic, 0, 3));
             }
         }
     }

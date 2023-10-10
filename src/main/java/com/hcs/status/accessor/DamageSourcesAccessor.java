@@ -10,4 +10,6 @@ public interface DamageSourcesAccessor {
     DamageSource oxygenDeficiency();
 
     DamageSource darkness();
+
+    DamageSource bleeding();
 }

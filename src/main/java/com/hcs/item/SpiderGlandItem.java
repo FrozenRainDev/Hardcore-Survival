@@ -27,7 +27,7 @@ public class SpiderGlandItem extends Item {
         user.addStatusEffect(new StatusEffectInstance(StatusEffects.REGENERATION, durationSeconds * 20, 0));
         if (stack.isOf(Reg.SELAGINELLA)) {
             ((StatAccessor) user).getStatusManager().setSoulImpairedStat(0);
-            ((StatAccessor) user).getPainManager().applyPainkiller();
+            ((StatAccessor) user).getInjuryManager().applyPainkiller();
         }
         if (!user.getAbilities().creativeMode) stack.decrement(1);
         return TypedActionResult.success(stack, world.isClient());

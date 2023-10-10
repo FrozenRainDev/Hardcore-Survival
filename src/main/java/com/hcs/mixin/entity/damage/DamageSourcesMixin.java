@@ -31,6 +31,8 @@ public abstract class DamageSourcesMixin implements DamageSourcesAccessor {
     private DamageSource oxygenDeficiency;
     @Unique
     private DamageSource darkness;
+    @Unique
+    private DamageSource bleeding;
 
     @SuppressWarnings("AddedMixinMembersNamePattern")
     @Override
@@ -56,6 +58,11 @@ public abstract class DamageSourcesMixin implements DamageSourcesAccessor {
         return this.darkness;
     }
 
+    @SuppressWarnings("AddedMixinMembersNamePattern")
+    @Override
+    public DamageSource bleeding() {
+        return this.bleeding;
+    }
 
     @Inject(method = "create(Lnet/minecraft/registry/RegistryKey;)Lnet/minecraft/entity/damage/DamageSource;", at = @At("HEAD"))
     private void create(RegistryKey<DamageType> key, CallbackInfoReturnable<DamageSource> cir) {
@@ -80,6 +87,12 @@ public abstract class DamageSourcesMixin implements DamageSourcesAccessor {
                 @Override
                 public Text getDeathMessage(LivingEntity killed) {
                     return Text.translatable("death.attack.hcs.oxygenDeficiency", killed.getDisplayName());
+                }
+            };
+            this.bleeding = new DamageSource(this.registry.entryOf(key)) {
+                @Override
+                public Text getDeathMessage(LivingEntity killed) {
+                    return Text.translatable("death.attack.hcs.bleeding", killed.getDisplayName());
                 }
             };
         } else if (key == DamageTypes.CACTUS) {

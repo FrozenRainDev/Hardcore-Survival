@@ -8,6 +8,7 @@
   "death.attack.hcs.heatstroke": "%1$s 中暑而死",
   "death.attack.hcs.oxygenDeficiency": "%1$s 缺氧而死",
   "death.attack.hcs.darkness": "%1$s 被黑暗吞没",
+  "death.attack.hcs.bleeding": "%1$s 失血过多而死",
 
   "effect.hcs.thirst": "干渴",
   "effect.hcs.diarrhea": "腹泻",
@@ -67,7 +68,15 @@
   "effect.hcs.panic.4": "极度惊恐",
   "effect.hcs.panic.4.description": "你难以控制自己",
   "effect.hcs.bleeding": "流血",
-  "effect.hcs.bleeding.description": "需要包扎",
+  "effect.hcs.bleeding.description": "需要绷带或金苹果",
+  "effect.hcs.bleeding.1": "轻微流血",
+  "effect.hcs.bleeding.1.description": "停止回血",
+  "effect.hcs.bleeding.2": "流血",
+  "effect.hcs.bleeding.2.description": "需要绷带或金苹果",
+  "effect.hcs.bleeding.3": "严重出血",
+  "effect.hcs.bleeding.3.description": "较快地掉血",
+  "effect.hcs.bleeding.4": "大出血",
+  "effect.hcs.bleeding.4.description": "急速掉血",
   "effect.hcs.darkness_enveloped": "被漆黑笼罩",
   "effect.hcs.darkness_enveloped.description": "似乎有什么东西要吃掉你",
   "effect.hcs.fracture": "骨折",
@@ -237,5 +246,7 @@
   "item.hcs.willow_bark": "柳树皮",
   "item.hcs.willow_bark.description": "具有镇痛功效",
   "item.hcs.fearlessness_herb": "无畏草",
-  "item.hcs.fearlessness_herb.description": "缓解恐慌感"
+  "item.hcs.fearlessness_herb.description": "缓解恐慌感",
+  "item.hcs.bandage": "绷带",
+  "item.hcs.improvised_bandage": "简易绷带"
 }

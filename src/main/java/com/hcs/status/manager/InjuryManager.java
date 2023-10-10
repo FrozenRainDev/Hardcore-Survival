@@ -4,11 +4,13 @@ import com.hcs.Reg;
 
 import static com.hcs.util.EntityHelper.PLASMA_CONCENTRATION;
 
-public class PainManager {
+public class InjuryManager {
     public static final String PAIN_NBT = "hcs_pain";
     public static final String PAINKILLER_APPLIED_NBT = "hcs_painkiller";
-    private double pain = 0.0, alleviationCache = 0.0; // [0, 4]
+    public static final String BLEEDING_NBT = "hcs_bleeding";
+    private double pain = 0.0, alleviationCache = 0.0; //range: [0, 4]
     private int painkillerApplied = 0, painkillerUpdateInterval = 0;
+    private double bleeding = 0.0; //range: [0, 5]; note that [0, 1] won't result in bleeding debuff
 
     public double getPainkillerAlle() {
         if (painkillerUpdateInterval > 0) {
@@ -16,24 +18,24 @@ public class PainManager {
             --painkillerUpdateInterval;
             return alleviationCache;
         }
-        alleviationCache = PLASMA_CONCENTRATION.apply(Math.max(0, 4200 - painkillerApplied)/*ticks since applied (painkillerApplied=effect countdown)*/);
+        alleviationCache = PLASMA_CONCENTRATION.apply(Math.max(0, 4200 - painkillerApplied)); //4200 - painkillerApplied: ticks since applied (painkillerApplied=effect countdown)
         if (alleviationCache < 0.1) alleviationCache = 0;
         painkillerUpdateInterval = 60;
         return alleviationCache;
     }
 
-    public double getRaw() {
+    public double getRawPain() {
         //"raw" means without painkiller effect
         if (pain > 4.0) pain = 4.0;
         else if (pain < 0.0) pain = 0.0;
         return pain;
     }
 
-    public double getReal() {
-        return Math.max(0, getRaw() - getPainkillerAlle());
+    public double getRealPain() {
+        return Math.max(0, getRawPain() - getPainkillerAlle());
     }
 
-    public void setRaw(double val) {
+    public void setRawPain(double val) {
         if (Double.isNaN(val)) {
             Reg.LOGGER.error(this.getClass().getSimpleName() + ": Val is NaN");
             return;
@@ -44,9 +46,9 @@ public class PainManager {
     }
 
     @Deprecated
-    public void setReal(double val) {
+    public void setRealPain(double val) {
         val += alleviationCache;
-        setRaw(val);
+        setRawPain(val);
     }
 
     public void setAlleviationCache(double val) {
@@ -60,8 +62,8 @@ public class PainManager {
         painkillerUpdateInterval = 60;
     }
 
-    public void addRaw(double val) {
-        setRaw(pain + val);
+    public void addRawPain(double val) {
+        setRawPain(pain + val);
     }
 
     public void applyPainkiller() {
@@ -79,14 +81,36 @@ public class PainManager {
         painkillerApplied = val;
     }
 
+    public double getBleeding() {
+        if (bleeding > 5.0) bleeding = 5.0;
+        else if (bleeding < 0.0) bleeding = 0.0;
+        return bleeding;
+    }
+
+    public void setBleeding(double val) {
+        if (Double.isNaN(val)) {
+            Reg.LOGGER.error(this.getClass().getSimpleName() + ": Val is NaN");
+            return;
+        }
+        if (val > 5.0) val = 5.0;
+        else if (val < 0.0) val = 0.0;
+        bleeding = val;
+    }
+
+    public void addBleeding(double val) {
+        setBleeding(getBleeding() + val);
+    }
+
     public void tick() {
-        addRaw(pain < 1.0 ? -0.0003 : (pain > 3.0 ? -0.0012 : -0.0008));
+        addRawPain(pain < 1.0 ? -0.0003 : (pain > 3.0 ? -0.0012 : -0.0008)); //panic self-recovery
+        if (bleeding < 3.0) addBleeding(bleeding < 1.0 ? -0.005 : -0.001); //bleeding self-stopping
         if (painkillerApplied > 0) --painkillerApplied;
     }
 
     public void reset() {
         pain = alleviationCache = 0.0;
         painkillerApplied = painkillerUpdateInterval = 0;
+        bleeding = 0.0;
     }
 
 }

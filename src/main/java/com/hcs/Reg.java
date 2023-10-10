@@ -147,7 +147,8 @@ public class Reg implements ModInitializer {
     public static final Item BARK = new Item(new Item.Settings().food(new FoodComponent.Builder().hunger(0).saturationModifier(0.0F).build()));
     public static final Item WILLOW_BARK = new Item(new Item.Settings().food(new FoodComponent.Builder().hunger(0).saturationModifier(0.0F).build()));
     public static final Item FEARLESSNESS_HERB = new Item(new Item.Settings().food(new FoodComponent.Builder().hunger(0).saturationModifier(0.0F).build()));
-
+    public static final Item BANDAGE = new BandageItem(2.0);
+    public static final Item IMPROVISED_BANDAGE = new BandageItem(0.8, 100);
     public static final EntityType<RockProjectileEntity> ROCK_PROJECTILE_ENTITY = FabricEntityTypeBuilder.<RockProjectileEntity>create(SpawnGroup.MISC, RockProjectileEntity::new).dimensions(new EntityDimensions(0.25F, 0.25F, true)).build();
     public static final BlockEntityType<IceboxBlockEntity> ICEBOX_BLOCK_ENTITY = FabricBlockEntityTypeBuilder.create(IceboxBlockEntity::new, ICEBOX).build();
     public static final BlockEntityType<DryingRackBlockEntity> DRYING_RACK_BLOCK_ENTITY = FabricBlockEntityTypeBuilder.create(DryingRackBlockEntity::new, DRYING_RACK).build();
@@ -241,6 +242,8 @@ public class Reg implements ModInitializer {
             content.add(new ItemStack(BARK));
             content.add(new ItemStack(WILLOW_BARK));
             content.add(new ItemStack(FEARLESSNESS_HERB));
+            content.add(new ItemStack(BANDAGE));
+            content.add(new ItemStack(IMPROVISED_BANDAGE));
             content.add(new ItemStack(PURIFIED_WATER_BOTTLE));//.getDefaultStack()
             content.add(new ItemStack(SALTWATER_BOTTLE));
             content.add(new ItemStack(COLD_WATER_BOTTLE));
@@ -323,6 +326,8 @@ public class Reg implements ModInitializer {
         Registry.register(Registries.ITEM, new Identifier("hcs", "bark"), BARK);
         Registry.register(Registries.ITEM, new Identifier("hcs", "willow_bark"), WILLOW_BARK);
         Registry.register(Registries.ITEM, new Identifier("hcs", "fearlessness_herb"), FEARLESSNESS_HERB);
+        Registry.register(Registries.ITEM, new Identifier("hcs", "bandage"), BANDAGE);
+        Registry.register(Registries.ITEM, new Identifier("hcs", "improvised_bandage"), IMPROVISED_BANDAGE);
 
         Registry.register(Registries.BLOCK, new Identifier("hcs", "icebox"), ICEBOX);
         Registry.register(Registries.ITEM, new Identifier("hcs", "icebox"), ICEBOX_ITEM);

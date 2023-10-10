@@ -32,6 +32,8 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
+import static com.hcs.util.EntityHelper.IS_SURVIVAL_LIKE;
+
 @Mixin(ChestBlock.class)
 public class ChestBlockMixin {
     @Unique
@@ -54,7 +56,7 @@ public class ChestBlockMixin {
         BlockEntity blockEntity = world.getBlockEntity(pos);
         ItemStack mainHandStack = player.getMainHandStack();
         Item mainHand = mainHandStack.getItem();
-        if (blockEntity instanceof ChestBlockEntity && state.get(NATURALLY_GENERATED) != null && !player.isCreative() && !player.isSpectator()) {
+        if (blockEntity instanceof ChestBlockEntity && state.get(NATURALLY_GENERATED) != null && IS_SURVIVAL_LIKE.test(player)) {
             if (state.get(NATURALLY_GENERATED)) {
                 cir.setReturnValue(ActionResult.SUCCESS);
                 if (mainHand instanceof PickaxeItem) {

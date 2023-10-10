@@ -1,7 +1,7 @@
 package com.hcs.event;
 
 import com.hcs.status.accessor.StatAccessor;
-import com.hcs.status.manager.PainManager;
+import com.hcs.status.manager.InjuryManager;
 import com.hcs.status.manager.StatusManager;
 import com.hcs.status.manager.TemperatureManager;
 import net.fabricmc.fabric.api.entity.event.v1.EntitySleepEvents;
@@ -25,9 +25,9 @@ public class EntitySleepEvent {
                     TemperatureManager temperatureManager = ((StatAccessor) player).getTemperatureManager();
                     //Warm oneself by sleeping
                     if (temperatureManager.get() < 0.5) temperatureManager.set(0.5);
-                    PainManager painManager = ((StatAccessor) player).getPainManager();
-                    painManager.addRaw(-1);
-                    painManager.setPainkillerApplied(0);
+                    InjuryManager injuryManager = ((StatAccessor) player).getInjuryManager();
+                    injuryManager.addRawPain(-1);
+                    injuryManager.setPainkillerApplied(0);
                 }
             }
             return true;

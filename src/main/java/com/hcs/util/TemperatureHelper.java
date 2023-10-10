@@ -82,7 +82,7 @@ public abstract class TemperatureHelper implements WorldView {
             temp = transferToApparentTemp(biomeTemp);
             if (world.getRegistryKey() == World.OVERWORLD) {
                 float dailyTempAmplitude = getBasicDailyTempAmplitude(biomeName, biome.weather.downfall());
-                //If biome is normal beach or river, getReal basic temperature nearby
+                //If biome is normal beach or river, getRealPain basic temperature nearby
                 if ((biomeName.contains("river") || biomeName.contains("beach")) && allowRecursion) {
                     List<Float> list = new ArrayList<>();
                     for (int[] bp : POS_IN_NEARBY_CHUNKS) {
@@ -219,7 +219,7 @@ public abstract class TemperatureHelper implements WorldView {
                 BlockPos checkPos = playerPos.add(bpp[0], bpp[1], bpp[2]);
                 BlockState state = player.world.getBlockState(checkPos);
                 Block block = state.getBlock();
-//                if (player.getMainHandStack().isOf(Items.DEBUG_STICK)) player.world.setBlockState(player.getBlockPos().addRaw(bpp[0], bpp[1], bpp[2]), Blocks.COBBLESTONE.getDefaultState());
+//                if (player.getMainHandStack().isOf(Items.DEBUG_STICK)) player.world.setBlockState(player.getBlockPos().addRawPain(bpp[0], bpp[1], bpp[2]), Blocks.COBBLESTONE.getDefaultState());
                 RegistryEntry<Biome> biomeEntry = player.world.getBiome(playerPos);
                 Biome biome = biomeEntry.value();
                 if (biome != null) {

@@ -12,6 +12,7 @@ import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.client.world.ClientWorld;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvent;
+import net.minecraft.sound.SoundEvents;
 import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.NotNull;
 import org.spongepowered.asm.mixin.Final;
@@ -22,6 +23,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
+import static com.hcs.util.EntityHelper.IS_SURVIVAL_AND_SERVER;
 import static net.minecraft.sound.SoundEvents.*;
 
 @Environment(value = EnvType.CLIENT)
@@ -38,12 +40,12 @@ public abstract class ClientPlayerEntityMixin extends AbstractClientPlayerEntity
 
     @Unique
     private static void playHall(@NotNull AbstractClientPlayerEntity player) {
-        player.world.playSound(player.getX(), player.getY(), player.getZ(), HALLUCINATION_SOUNDS[(int) (HALLUCINATION_SOUNDS.length * Math.random())], SoundCategory.AMBIENT, 13, -26, false);
+        player.world.playSound(null, player.getX(), player.getY(), player.getZ(), HALLUCINATION_SOUNDS[(int) (HALLUCINATION_SOUNDS.length * Math.random())], SoundCategory.AMBIENT, 13, -26);
     }
 
     @Unique
     private static void playHallAmbient(@NotNull AbstractClientPlayerEntity player) {
-        player.world.playSound(player.getX(), player.getY(), player.getZ(), HALLUCINATION_AMBIENT_SOUNDS[(int) (HALLUCINATION_AMBIENT_SOUNDS.length * Math.random())], SoundCategory.AMBIENT, 26, -13, false);
+        player.world.playSound(null, player.getX(), player.getY(), player.getZ(), HALLUCINATION_AMBIENT_SOUNDS[(int) (HALLUCINATION_AMBIENT_SOUNDS.length * Math.random())], SoundCategory.AMBIENT, 26, -13);
     }
 
     @Unique
@@ -72,18 +74,19 @@ public abstract class ClientPlayerEntityMixin extends AbstractClientPlayerEntity
             this.client.getSoundManager().stopSounds(null, SoundCategory.AMBIENT);
             this.horriblyPlayedTicks = 0;
         }
-        if (!this.isCreative() && !this.isSpectator()) {
+        if (IS_SURVIVAL_AND_SERVER.test(this)) {
             if (darknessEnveloped) {
                 final int darkTicks = ((StatAccessor) this).getStatusManager().getInDarknessTicks();
                 if (darkTicks == 60) playHallAmbient(this);
                 else if (darkTicks == 290) {
-                    this.world.playSound(this.getX(), this.getY(), this.getZ(), ENTITY_ENDERMAN_SCREAM, SoundCategory.AMBIENT, 26, -13, true);
-                    this.world.playSound(this.getX(), this.getY(), this.getZ(), ENTITY_ENDERMAN_STARE, SoundCategory.AMBIENT, 26, -13, true);
+                    this.world.playSound(null, this.getX(), this.getY(), this.getZ(), ENTITY_ENDERMAN_SCREAM, SoundCategory.AMBIENT, 26, -13);
+                    this.world.playSound(null, this.getX(), this.getY(), this.getZ(), ENTITY_ENDERMAN_STARE, SoundCategory.AMBIENT, 26, -13);
                 } else if (darkTicks == 360) // Also view SoundSystemMixin/getAdjustedVolume()
-                    this.world.playSound(this.getX(), this.getY(), this.getZ(), ENTITY_ELDER_GUARDIAN_CURSE, SoundCategory.AMBIENT, 1145.0F, -13, false);
+                    this.world.playSound(null, this.getX(), this.getY(), this.getZ(), ENTITY_ELDER_GUARDIAN_CURSE, SoundCategory.AMBIENT, 1145.0F, -13);
                 else if (darkTicks > 120 && Math.random() < 0.01) {
                     if (Math.random() < 0.5) playHall(this);
                     else playHallAmbient(this);
+                    this.world.playSound(null, this.getX(), this.getY(), this.getZ(), SoundEvents.ENTITY_PLAYER_BREATH, SoundCategory.AMBIENT, 0.5f, world.random.nextFloat() * 0.1f + 0.9f);
                 }
             }
             if (sanityManager.get() < 0.65) {
@@ -104,7 +107,7 @@ public abstract class ClientPlayerEntityMixin extends AbstractClientPlayerEntity
                     if (this.world.getTime() % (sanityManager.get() < 0.15F ? 60 : 1200) == 0)
                         playHall(this);
                 /*
-                if (sanityManager.getReal() < 0.05F && this.world.getTime() % 80 == 0) {
+                if (sanityManager.getRealPain() < 0.05F && this.world.getTime() % 80 == 0) {
                     this.horriblyPlayedTicks = 2400;
                     this.world.playSound(this.getX(), this.getY(), this.getZ(), HALLUCINATION_SOUNDS_VERY_HORRIBLE[(int) (HALLUCINATION_SOUNDS_VERY_HORRIBLE.length * Math.random())], SoundCategory.AMBIENT, 13, -26, false);
                 }

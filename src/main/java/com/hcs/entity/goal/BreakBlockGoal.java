@@ -35,7 +35,7 @@ public class BreakBlockGoal extends Goal {
         //Choose a block to break
         LivingEntity target = this.mob.getTarget();
         if (target == null || !this.mob.world.getGameRules().getBoolean(GameRules.DO_MOB_GRIEFING)) return false;
-        for (double[] findPos : EntityHelper.FIND_NEAREST) {
+        for (double[] findPos : EntityHelper.FIND_NEAREST_BLOCKS) {
             //Should not dig upward when not above target
             if (findPos[1] == -1 && this.mob.getY() <= target.getY()) continue;
             //Should not dig downward when not under target

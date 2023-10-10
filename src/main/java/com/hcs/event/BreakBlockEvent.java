@@ -7,11 +7,13 @@ import net.minecraft.block.*;
 import net.minecraft.item.*;
 import net.minecraft.util.math.BlockPos;
 
+import static com.hcs.util.EntityHelper.IS_SURVIVAL_AND_SERVER;
+
 
 public class BreakBlockEvent {
     public static void init() {
         PlayerBlockBreakEvents.BEFORE.register(((world, player, pos, state, blockEntity) -> {
-            if (!player.isCreative() && !world.isClient()) {
+            if (IS_SURVIVAL_AND_SERVER.test(player)) {
                 Block block = state.getBlock();
                 int x = pos.getX();
                 int y = pos.getY();
@@ -27,7 +29,7 @@ public class BreakBlockEvent {
 
 
         PlayerBlockBreakEvents.AFTER.register(((world, player, pos, state, blockEntity) -> {
-            if (!player.isCreative() && !world.isClient()) {
+            if (IS_SURVIVAL_AND_SERVER.test(player)) {
                 double rand = Math.random();
                 Block block = state.getBlock();//.getHardness();
                 Item mainHand = player.getMainHandStack().getItem();
@@ -36,21 +38,21 @@ public class BreakBlockEvent {
                 int z = pos.getZ();
                 if (mainHand != Items.SHEARS) {//This type can't use switch(){}
                     if (block == Blocks.GRASS) {
-                        if (rand < 0.004) EntityHelper.dropItem(player, x, y, z, Reg.SELAGINELLA, 1);
-                        else if (rand < 0.01) EntityHelper.dropItem(player, x, y, z, Reg.WORM, 1);
+                        if (rand < 0.007) EntityHelper.dropItem(player, x, y, z, Reg.FEARLESSNESS_HERB, 1);
+                        else if (rand < 0.012) EntityHelper.dropItem(player, x, y, z, Reg.WORM, 1);
                         else if (rand < 0.02) EntityHelper.dropItem(player, x, y, z, Reg.POTHERB, 1);
                         else if (rand < 0.35) EntityHelper.dropItem(player, x, y, z, Reg.ROCK, 1);
                         else if (rand < 0.55) EntityHelper.dropItem(player, x, y, z, Reg.GRASS_FIBER, 1);
                         else if (rand < 0.6) EntityHelper.dropItem(player, x, y, z, Items.STICK, 1);
-                        else if (rand < 0.6007) EntityHelper.dropItem(player, x, y, z, Reg.FEARLESSNESS_HERB, 1);
+                        else if (rand < 0.6003) EntityHelper.dropItem(player, x, y, z, Reg.SELAGINELLA, 1);
                     } else if (block == Blocks.TALL_GRASS) {
-                        if (rand < 0.004) EntityHelper.dropItem(player, x, y, z, Reg.SELAGINELLA, 2);
-                        else if (rand < 0.01) EntityHelper.dropItem(player, x, y, z, Reg.WORM, 2);
+                        if (rand < 0.007) EntityHelper.dropItem(player, x, y, z, Reg.FEARLESSNESS_HERB, 2);
+                        else if (rand < 0.012) EntityHelper.dropItem(player, x, y, z, Reg.WORM, 2);
                         else if (rand < 0.02) EntityHelper.dropItem(player, x, y, z, Reg.POTHERB, 2);
                         else if (rand < 0.35) EntityHelper.dropItem(player, x, y, z, Reg.ROCK, 2);
                         else if (rand < 0.55) EntityHelper.dropItem(player, x, y, z, Reg.GRASS_FIBER, 2);
                         else if (rand < 0.6) EntityHelper.dropItem(player, x, y, z, Items.STICK, 2);
-                        else if (rand < 0.6007) EntityHelper.dropItem(player, x, y, z, Reg.FEARLESSNESS_HERB, 2);
+                        else if (rand < 0.6003) EntityHelper.dropItem(player, x, y, z, Reg.SELAGINELLA, 2);
                     } else if (block == Blocks.VINE) EntityHelper.dropItem(player, x, y, z, Reg.FIBER_STRING, 1);
                 }
                 //!mainHand.isEnchantable(new ItemStack(mainHand))

@@ -52,23 +52,28 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 
 public class EntityHelper {
-    public static final double[][] FIND_NEAREST = {{0, -1, 0}, {0, 1, 0}, {0, 2, 0}, {-1, 0, 0}, {-1, 1, 0}, {1, 0, 0}, {1, 1, 0}, {0, 0, 1}, {0, 1, 1}, {0, 0, -1}, {0, 1, -1}};
+    public static final double[][] FIND_NEAREST_BLOCKS = {{0, -1, 0}, {0, 1, 0}, {0, 2, 0}, {-1, 0, 0}, {-1, 1, 0}, {1, 0, 0}, {1, 1, 0}, {0, 0, 1}, {0, 1, 1}, {0, 0, -1}, {0, 1, -1}};
     public static final double ZOMBIE_SENSING_RANGE = 48.0;
     public static final float HOLDING_BLOCK_REACHING_RANGE_ADDITION = 1.0F;
+
+    public static final Predicate<DamageSource> IS_PHYSICAL_DAMAGE = damageSource -> !damageSource.isOf(DamageTypes.DROWN) && !damageSource.isOf(DamageTypes.STARVE) && !damageSource.isOf(DamageTypes.OUT_OF_WORLD) && !damageSource.isOf(DamageTypes.MAGIC) && !damageSource.isOf(DamageTypes.INDIRECT_MAGIC) && !damageSource.isOf(DamageTypes.WITHER);
+    public static final Predicate<DamageSource> IS_BURNING_DAMAGE = damageSource -> damageSource.getType().effects().equals(DamageEffects.BURNING);
+    public static final Predicate<DamageSource> IS_BLEEDING_CAUSING_DAMAGE = IS_PHYSICAL_DAMAGE.and(damageSource -> !damageSource.isOf(DamageTypes.FALL)).and(IS_BURNING_DAMAGE.negate());
+    public static final Predicate<PlayerEntity> IS_SURVIVAL_LIKE = player -> player != null && !player.isCreative() && !player.isSpectator();
+    public static final Predicate<PlayerEntity> IS_SURVIVAL_AND_SERVER = IS_SURVIVAL_LIKE.and(player -> !player.world.isClient);
+
     public static final BiPredicate<ItemStack, ItemStack> IS_HOLDING_BLOCK = (stack1, stack2) -> {
         if (stack1 == null || stack2 == null) return false;
         boolean result = false;
         for (Item item : new Item[]{stack1.getItem(), stack2.getItem()}) {
             String name = item.getTranslationKey();
-            result = (result || ((item instanceof BlockItem && (!RotHelper.canRot(item) || (!(name.contains("seed") && (name.contains("pumpkin") || name.contains("melon"))))))));
+            result = result || (item instanceof BlockItem && (!RotHelper.canRot(item) || !(name.contains("seed") && (name.contains("pumpkin") || name.contains("melon")))));
         }
         return result;
     };
 
-    public static final Predicate<DamageSource> IS_PHYSICAL_DAMAGE = damageSource -> !damageSource.isOf(DamageTypes.DROWN) && !damageSource.isOf(DamageTypes.STARVE) && !damageSource.isOf(DamageTypes.OUT_OF_WORLD) && !damageSource.isOf(DamageTypes.MAGIC) && !damageSource.isOf(DamageTypes.INDIRECT_MAGIC) && !damageSource.isOf(DamageTypes.WITHER);
-    public static final Predicate<DamageSource> IS_BURNING_DAMAGE = damageSource -> damageSource.getType().effects().equals(DamageEffects.BURNING);
 
-    /* Calculate time - drug effect according to a formula written in LaTeX:
+    /* Calculate plasma concentration according to the formula in LaTeX:
         \begin{cases}
         y=-2.5\left(\frac{x-600}{600}\right)^{2}+2.5\left\{0\le x\le600\right\}
          \\y=\frac{-2.72}{1+e^{-\frac{x-2000}{600}}}+2.74\left\{600\le x\le4200\right\}
@@ -319,7 +324,8 @@ public class EntityHelper {
             StatusManager statusManager = ((StatAccessor) player).getStatusManager();
             statusManager.setHasDecimalFoodLevel(false);
             if (statusManager.getRecentLittleOvereatenTicks() > 0) {
-                if (player.hasStatusEffect(HcsEffects.OVEREATEN)) ((StatAccessor) player).getPainManager().addRaw(0.5);
+                if (player.hasStatusEffect(HcsEffects.OVEREATEN))
+                    ((StatAccessor) player).getInjuryManager().addRawPain(0.5);
                 player.addStatusEffect(new StatusEffectInstance(HcsEffects.OVEREATEN, 600, 0, false, false, true));
             } else statusManager.setRecentLittleOvereatenTicks(1200);
         }
@@ -346,7 +352,7 @@ public class EntityHelper {
         BlockPos userPos = context.getPlayer() == null ? pos : context.getPlayer().getBlockPos();
         Optional<BlockState> strippedState;
         if (Items.IRON_AXE instanceof AxeItem axeItem) {
-            if ((strippedState = axeItem.getStrippedState(world.getBlockState(pos))).isPresent() && context.getPlayer() != null && !context.getPlayer().isCreative() && !context.getPlayer().isSpectator()) {
+            if ((strippedState = axeItem.getStrippedState(world.getBlockState(pos))).isPresent() && IS_SURVIVAL_LIKE.test(player)) {
                 if (WorldHelper.enhancedIsWaterNearby(world, pos.down()) && Math.random() < 0.5)
                     EntityHelper.dropItem(world, userPos, Reg.WILLOW_BARK);
                 else EntityHelper.dropItem(world, userPos, Reg.BARK);
@@ -355,9 +361,7 @@ public class EntityHelper {
                         Criteria.ITEM_USED_ON_BLOCK.trigger(serverPlayerEntity, pos, stack);
                     world.setBlockState(pos, strippedState.get(), Block.NOTIFY_ALL | Block.REDRAW_ON_MAIN_THREAD);
                     world.emitGameEvent(GameEvent.BLOCK_CHANGE, pos, GameEvent.Emitter.of(player, strippedState.get()));
-                    if (player != null) {
-                        stack.damage(1, player, p -> p.sendToolBreakStatus(context.getHand()));
-                    }
+                    if (player != null) stack.damage(1, player, p -> p.sendToolBreakStatus(context.getHand()));
                     return ActionResult.success(world.isClient);
                 }
             }
@@ -366,7 +370,7 @@ public class EntityHelper {
         return ActionResult.PASS;
     }
 
-    public static int getEffectAmplifier(LivingEntity entity, StatusEffect effect) {
+    public static int getEffectAmplifier(@Nullable LivingEntity entity, @Nullable StatusEffect effect) {
         // -1 indicates no such effect
         if (entity == null || effect == null) return -1;
         if (entity.hasStatusEffect(effect) && entity.getStatusEffect(effect) != null)

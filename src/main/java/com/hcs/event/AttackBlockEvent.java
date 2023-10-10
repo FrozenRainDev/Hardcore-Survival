@@ -19,6 +19,8 @@ import net.minecraft.world.WorldEvents;
 
 import java.util.Objects;
 
+import static com.hcs.util.EntityHelper.IS_SURVIVAL_AND_SERVER;
+
 
 public class AttackBlockEvent {
     public static void init() {
@@ -31,7 +33,7 @@ public class AttackBlockEvent {
             int z = pos.getZ();
             ItemStack mainHandStack = player.getMainHandStack();
             Item mainHand = mainHandStack.getItem();
-            if (!player.isCreative() && !world.isClient()) {
+            if (IS_SURVIVAL_AND_SERVER.test(player)) {
                 if (blockEntity instanceof ChestBlockEntity) {
                     ChestBlock chestBlock = (ChestBlock) state.getBlock();
                     if (!Objects.requireNonNull(ChestBlock.getInventory(chestBlock, state, world, pos, true)).isEmpty()) {//break without empty

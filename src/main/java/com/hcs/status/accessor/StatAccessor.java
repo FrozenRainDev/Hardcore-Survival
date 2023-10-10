@@ -17,7 +17,7 @@ public interface StatAccessor {
 
     WetnessManager getWetnessManager();
 
-    PainManager getPainManager();
+    InjuryManager getInjuryManager();
 
     MoodManager getMoodManager();
 }

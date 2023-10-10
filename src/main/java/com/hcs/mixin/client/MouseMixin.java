@@ -13,6 +13,8 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
+import static com.hcs.util.EntityHelper.IS_SURVIVAL_LIKE;
+
 @Environment(value = EnvType.CLIENT)
 @Mixin(Mouse.class)
 public class MouseMixin {
@@ -24,7 +26,7 @@ public class MouseMixin {
     private void onMouseButton(long window, int button, int action, int mods, CallbackInfo ci) {
         if (this.client.player == null) return;
         StatusManager statusManager = ((StatAccessor) this.client.player).getStatusManager();
-        if (button == 1 && this.client.mouse.wasLeftButtonClicked() && this.client.currentScreen == null/*In game*/ && !(this.client.player.isCreative() || this.client.player.isSpectator())) {
+        if (button == 1 && this.client.mouse.wasLeftButtonClicked() && this.client.currentScreen == null/*In game*/ && IS_SURVIVAL_LIKE.test(this.client.player)) {
             statusManager.setLockDestroying(true);
         } else if ((button == 0 || button == 1) && action == 1 && statusManager.lockDestroying()) {
             statusManager.setLockDestroying(false);

@@ -28,7 +28,7 @@ public class AttackEntityEvent {
                     EntityHelper.dropItem(player, Reg.SHARP_BROKEN_BONE, 1);
                 }
                 int panic = EntityHelper.getEffectAmplifier(player, HcsEffects.PANIC);
-                if (panic > -1 && rand < Math.min(0.6, (panic + 1) / 8.0)) {
+                if (panic > -1 && rand < Math.min(0.6, (panic + 1) / 9.0)) {
                     EntityHelper.msgById(player, "hcs.tip.attack_failed");
                     return ActionResult.FAIL;
                 }

@@ -16,6 +16,8 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
+import static com.hcs.util.EntityHelper.IS_SURVIVAL_LIKE;
+
 @Mixin(FishingRodItem.class)
 public abstract class FishingRodItemMixin extends Item {
     public FishingRodItemMixin(Settings settings) {
@@ -27,7 +29,7 @@ public abstract class FishingRodItemMixin extends Item {
         ItemStack itemStack = user.getStackInHand(hand);
         ItemStack offStack = user.getOffHandStack();
         Item offItem = offStack.getItem();
-        if (user.fishHook == null && !user.isCreative()) {
+        if (user.fishHook == null && IS_SURVIVAL_LIKE.test(user)) {
             if (offItem == Reg.WORM || offItem == Reg.ROASTED_WORM
                     || offItem == Reg.ANIMAL_VISCERA || offItem == Reg.COOKED_ANIMAL_VISCERA
                     || offItem == Items.WHEAT || offItem == Reg.ROASTED_SEEDS

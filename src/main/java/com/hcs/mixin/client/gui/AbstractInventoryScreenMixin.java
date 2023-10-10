@@ -38,7 +38,7 @@ public abstract class AbstractInventoryScreenMixin {
 
     @Inject(method = "getStatusEffectDescription", at = @At("HEAD"), cancellable = true)
     private void getStatusEffectDescription(@NotNull StatusEffectInstance statusEffect, CallbackInfoReturnable<Text> cir) {
-        if (HcsEffects.IS_NAME_VARIABLE.test(statusEffect.getEffectType()))
+        if (HcsEffects.IS_EFFECT_NAME_VARIABLE.test(statusEffect.getEffectType()))
             cir.setReturnValue(statusEffect.getEffectType().getName().copy());
     }
 

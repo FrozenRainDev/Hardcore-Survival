@@ -28,7 +28,7 @@ public class TemperatureManager {
 
     public void set(double val) {
         if (Double.isNaN(val)) {
-            Reg.LOGGER.error(this.getClass().getSimpleName() + "/setReal(): Val is NaN");
+            Reg.LOGGER.error(this.getClass().getSimpleName() + "/setRealPain(): Val is NaN");
             return;
         }
         if (val > 1.0F) val = 1.0F;
@@ -38,7 +38,7 @@ public class TemperatureManager {
 
     public void add(double val) {
         if (Double.isNaN(val)) {
-            Reg.LOGGER.error(this.getClass().getSimpleName() + "/addRaw(): Val is NaN");
+            Reg.LOGGER.error(this.getClass().getSimpleName() + "/addRawPain(): Val is NaN");
             return;
         }
         double expected = temperature + val;

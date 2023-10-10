@@ -1,10 +1,10 @@
 package com.hcs.item;
 
-import com.hcs.util.EntityHelper;
-import com.hcs.util.RotHelper;
-import com.hcs.status.manager.TemperatureManager;
 import com.hcs.status.HcsEffects;
 import com.hcs.status.accessor.StatAccessor;
+import com.hcs.status.manager.TemperatureManager;
+import com.hcs.util.EntityHelper;
+import com.hcs.util.RotHelper;
 import net.minecraft.advancement.criterion.Criteria;
 import net.minecraft.client.item.TooltipContext;
 import net.minecraft.entity.LivingEntity;
@@ -22,6 +22,8 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 import java.util.Objects;
+
+import static com.hcs.util.EntityHelper.IS_SURVIVAL_LIKE;
 
 public class BottleItem extends PotionItem {
     private @Nullable StatusEffectInstance effectInstance = null;
@@ -44,7 +46,7 @@ public class BottleItem extends PotionItem {
                 TemperatureManager temperatureManager = ((StatAccessor) player).getTemperatureManager();
                 EntityHelper.checkOvereaten(serverPlayer, true);
                 if (temperatureManager.get() > 0.8) temperatureManager.add(-0.08);
-                if (!serverPlayer.isCreative()) {
+                if (IS_SURVIVAL_LIKE.test(player)) {
                     ((StatAccessor) serverPlayer).getThirstManager().add(0.3);
                     if (this.effectInstance != null) {
                         if (this.effectInstance.getEffectType() == HcsEffects.THIRST) {

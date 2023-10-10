@@ -30,6 +30,7 @@ import net.minecraft.registry.tag.BlockTags;
 import net.minecraft.registry.tag.DamageTypeTags;
 import net.minecraft.registry.tag.ItemTags;
 import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.stat.Stats;
 import net.minecraft.text.Text;
@@ -51,6 +52,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import java.util.Objects;
 
 import static com.hcs.recipe.CustomDryingRackRecipe.IS_COOKED;
+import static com.hcs.util.EntityHelper.IS_SURVIVAL_LIKE;
 
 
 @Mixin(PlayerEntity.class)
@@ -105,9 +107,6 @@ public abstract class PlayerEntityMixin extends LivingEntity implements StatAcce
     protected HungerManager hungerManager;
 
     @Shadow
-    public abstract boolean isCreative();
-
-    @Shadow
     protected boolean isSubmergedInWater;
 
     @Shadow
@@ -136,7 +135,7 @@ public abstract class PlayerEntityMixin extends LivingEntity implements StatAcce
     protected WetnessManager wetnessManager = new WetnessManager();
     @SuppressWarnings("CanBeFinal")
     @Unique
-    protected PainManager painManager = new PainManager();
+    protected InjuryManager injuryManager = new InjuryManager();
     @SuppressWarnings("CanBeFinal")
     @Unique
     protected MoodManager moodManager = new MoodManager();
@@ -195,8 +194,8 @@ public abstract class PlayerEntityMixin extends LivingEntity implements StatAcce
     @Unique
     @SuppressWarnings("AddedMixinMembersNamePattern")
     @Override
-    public PainManager getPainManager() {
-        return this.painManager;
+    public InjuryManager getInjuryManager() {
+        return this.injuryManager;
     }
 
     @Unique
@@ -219,10 +218,12 @@ public abstract class PlayerEntityMixin extends LivingEntity implements StatAcce
         this.nutritionManager.setVegetable(nbt.contains(NutritionManager.NUTRITION_VEGETABLE_NBT, NbtElement.DOUBLE_TYPE) ? nbt.getDouble(NutritionManager.NUTRITION_VEGETABLE_NBT) : 1.0);
         this.wetnessManager.set(nbt.contains(WetnessManager.WETNESS_NBT, NbtElement.DOUBLE_TYPE) ? nbt.getDouble(WetnessManager.WETNESS_NBT) : 0.0);
         this.statusManager.setSoulImpairedStat(nbt.contains(StatusManager.IS_SOUL_IMPAIRED_NBT) ? nbt.getInt(StatusManager.IS_SOUL_IMPAIRED_NBT) : 0);
-        this.painManager.setRaw(nbt.contains(PainManager.PAIN_NBT) ? nbt.getDouble(PainManager.PAIN_NBT) : 0.0);
-        this.painManager.setPainkillerApplied(nbt.contains(PainManager.PAIN_NBT) ? nbt.getInt(PainManager.PAIN_NBT) : 0);
+        this.injuryManager.setRawPain(nbt.contains(InjuryManager.PAIN_NBT) ? nbt.getDouble(InjuryManager.PAIN_NBT) : 0.0);
+        this.injuryManager.setPainkillerApplied(nbt.contains(InjuryManager.PAIN_NBT) ? nbt.getInt(InjuryManager.PAIN_NBT) : 0);
+        this.injuryManager.setBleeding(nbt.contains(InjuryManager.BLEEDING_NBT) ? nbt.getDouble(InjuryManager.BLEEDING_NBT) : 0.0);
         this.statusManager.setInDarknessTicks(nbt.contains(StatusManager.IN_DARKNESS_TICKS) ? nbt.getInt(StatusManager.IN_DARKNESS_TICKS) : 0);
         this.moodManager.setPanic(nbt.contains(MoodManager.PANIC_NBT) ? nbt.getDouble(MoodManager.PANIC_NBT) : 0.0);
+        this.moodManager.setPanicKillerApplied(nbt.contains(MoodManager.PANIC_KILLER_APPLIED_NBT) ? nbt.getInt(MoodManager.PANIC_KILLER_APPLIED_NBT) : 0);
     }
 
     @Inject(method = "writeCustomDataToNbt", at = @At("TAIL"))
@@ -238,10 +239,12 @@ public abstract class PlayerEntityMixin extends LivingEntity implements StatAcce
         nbt.putDouble(NutritionManager.NUTRITION_VEGETABLE_NBT, this.nutritionManager.getVegetable());
         nbt.putDouble(WetnessManager.WETNESS_NBT, this.wetnessManager.get());
         nbt.putInt(StatusManager.IS_SOUL_IMPAIRED_NBT, this.statusManager.getSoulImpairedStat());
-        nbt.putDouble(PainManager.PAIN_NBT, this.painManager.getRaw());
-        nbt.putInt(PainManager.PAINKILLER_APPLIED_NBT, this.painManager.getPainkillerApplied());
+        nbt.putDouble(InjuryManager.PAIN_NBT, this.injuryManager.getRawPain());
+        nbt.putInt(InjuryManager.PAINKILLER_APPLIED_NBT, this.injuryManager.getPainkillerApplied());
+        nbt.putDouble(InjuryManager.BLEEDING_NBT, this.injuryManager.getBleeding());
         nbt.putInt(StatusManager.IN_DARKNESS_TICKS, this.statusManager.getInDarknessTicks());
         nbt.putDouble(MoodManager.PANIC_NBT, this.moodManager.getRawPanic());
+        nbt.putInt(MoodManager.PANIC_KILLER_APPLIED_NBT, this.moodManager.getPanicKillerApplied());
     }
 
     @Inject(method = "getBlockBreakingSpeed", at = @At("RETURN"), cancellable = true)
@@ -312,9 +315,10 @@ public abstract class PlayerEntityMixin extends LivingEntity implements StatAcce
                 if (item == Items.GOLDEN_APPLE || item == Items.ENCHANTED_GOLDEN_APPLE) {
                     this.sanityManager.add(1.0);
                     this.statusManager.setSoulImpairedStat(0);
-                    this.painManager.applyPainkiller();
+                    this.injuryManager.applyPainkiller();
+                    this.injuryManager.setBleeding(0.0);
                 } else if (item == Items.KELP || Reg.IS_BARK.test(item)) {
-                    if (item == Reg.WILLOW_BARK) this.painManager.applyPainkiller();
+                    if (item == Reg.WILLOW_BARK) this.injuryManager.applyPainkiller();
                     this.sanityManager.add(-0.02);
                 } else if (item == Reg.FEARLESSNESS_HERB) this.moodManager.applyPanicKiller();
                 else if (item == Items.POISONOUS_POTATO || item == Items.SPIDER_EYE || item == Items.CHORUS_FRUIT)
@@ -395,7 +399,8 @@ public abstract class PlayerEntityMixin extends LivingEntity implements StatAcce
 
     @Inject(method = "jump", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/player/PlayerEntity;incrementStat(Lnet/minecraft/util/Identifier;)V", shift = At.Shift.AFTER), cancellable = true)
     public void jump2(@NotNull CallbackInfo ci) {
-        float rate = this.isSprinting() ? 3.0F : 1.0F;
+        double currRealPain = this.injuryManager.getRealPain();
+        float rate = (this.isSprinting() ? 3.0F : 1.0F) * (currRealPain > 2.0 ? (float) (currRealPain * 1.5) : 1.0F);
         this.staminaManager.pauseRestoring();
         this.addExhaustion(0.025F * rate);
         this.staminaManager.pauseRestoring(40);
@@ -413,10 +418,10 @@ public abstract class PlayerEntityMixin extends LivingEntity implements StatAcce
     @Inject(method = "tick", at = @At("HEAD"))
     public void tick(CallbackInfo ci) {
         // Painful sound effect
-        final double currPain = ((StatAccessor) this).getPainManager().getReal();
+        final double currPain = ((StatAccessor) this).getInjuryManager().getRealPain();
         boolean outOfDarkness = true;
-        if (currPain > 2.0 && this.world.getTime() % Math.max(1, 10 * (6 - currPain)) == 0)
-            this.playSound(SoundEvents.ENTITY_PLAYER_BREATH, this.getSoundVolume(), this.getSoundPitch());
+        if (currPain > 2.0 && this.hasStatusEffect(HcsEffects.PAIN) && this.world.getTime() % Math.max(1, 30 * (6 - (int) currPain)) == 0)
+            this.world.playSound(this.getX(), this.getY(), this.getZ(), SoundEvents.ENTITY_PLAYER_BREATH, SoundCategory.PLAYERS, (float) (currPain / 14), world.random.nextFloat() * 0.1f + 0.9f, false); // using expect ver seems avoids subtitles
         if (this.world.isClient) return;
         int oxyLackLvl = 0;
         double y = this.getY();
@@ -442,7 +447,7 @@ public abstract class PlayerEntityMixin extends LivingEntity implements StatAcce
                 if (limitedMaxHealth < this.getHealth()) this.setHealth((float) limitedMaxHealth);
             } else if (maxLvlReached >= 36 && currMaxHealth < 20) instance.setBaseValue(20);
         }
-        if (!this.isCreative() && !this.isSpectator()) {
+        if (IS_SURVIVAL_LIKE.test((PlayerEntity) ((Object) this))) {
             if (this.getPos().distanceTo(this.staminaManager.getLastVecPos()) > 0.0001) {
                 //Player is moving this.getVelocity() and this.speed are useless
                 if (!this.hasVehicle()) {
@@ -450,7 +455,7 @@ public abstract class PlayerEntityMixin extends LivingEntity implements StatAcce
                     if (this.onGround) {
                         if (this.isSprinting()) this.staminaManager.add(-0.001, this);
                         else if (this.isInSneakingPose()) this.staminaManager.add(-0.0001, this);
-                        else if (this.staminaManager.get() < 0.7) {//walking while stamina < 0.7 will getReal a recovery
+                        else if (this.staminaManager.get() < 0.7) {//walking while stamina < 0.7 will getRealPain a recovery
                             shouldPauseRestoring = false;
                             this.staminaManager.add(this.staminaManager.get() < 0.3 ? 0.0001 : 0.001, this);
                         }
@@ -475,7 +480,7 @@ public abstract class PlayerEntityMixin extends LivingEntity implements StatAcce
             if (this.hasStatusEffect(StatusEffects.WITHER)) this.sanityManager.add(-0.00008);
             else if (this.hasStatusEffect(StatusEffects.POISON)) this.sanityManager.add(-0.00003);
             boolean isInCavelike = skyBrightness < 1 && this.world.getDimension().hasSkyLight();
-            boolean isInUnpleasantDimension = !this.world.getDimension().bedWorks() || this.world.getRegistryKey() == World.NETHER;//Avoid mods conflict since sleeping in the nether is setReal to permissive
+            boolean isInUnpleasantDimension = !this.world.getDimension().bedWorks() || this.world.getRegistryKey() == World.NETHER;//Avoid mods conflict since sleeping in the nether is setRealPain to permissive
             if (((this.world.isNight() || isInCavelike) && !this.hasStatusEffect(StatusEffects.NIGHT_VISION)) || isInUnpleasantDimension) {
                 double sanDecrement = 0.00001;
                 int blockBrightness = this.world.getLightLevel(LightType.BLOCK, headPos);
@@ -563,11 +568,19 @@ public abstract class PlayerEntityMixin extends LivingEntity implements StatAcce
         //Do not add pain in ServerPlayerEntity as it adds with redundant repeat
         if (EntityHelper.IS_PHYSICAL_DAMAGE.test(source)) {
             float feelingAmount = amount;
+            boolean isBurningDamage = EntityHelper.IS_BURNING_DAMAGE.test(source);
             if (!source.isIn(DamageTypeTags.BYPASSES_ARMOR))
                 feelingAmount = DamageUtil.getDamageLeft(amount, Math.min(14, this.getArmor()) * 0.65F, 0.0F);
-            if (EntityHelper.IS_BURNING_DAMAGE.test(source)) feelingAmount *= 2;
+            if (isBurningDamage) feelingAmount *= 2;
             float hurtPercent = feelingAmount / Math.max(12.0F, this.getMaxHealth());
-            ((StatAccessor) this).getPainManager().addRaw(hurtPercent * 4.5);
+            this.injuryManager.addRawPain(hurtPercent * 4.5);
+            if (!isBurningDamage && EntityHelper.IS_BLEEDING_CAUSING_DAMAGE.test(source))
+                this.injuryManager.addBleeding(hurtPercent * 8);
         }
+    }
+
+    @Inject(method = "canFoodHeal", at = @At("RETURN"), cancellable = true)
+    public void canFoodHeal(@NotNull CallbackInfoReturnable<Boolean> cir) {
+        cir.setReturnValue(cir.getReturnValueZ() && !this.hasStatusEffect(HcsEffects.BLEEDING));
     }
 }

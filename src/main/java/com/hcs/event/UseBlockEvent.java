@@ -25,7 +25,7 @@ public class UseBlockEvent {
 
     public static void init() {
         UseBlockCallback.EVENT.register((player, world, hand, hitResult) -> {
-            if (!player.isSpectator() && !world.isClient) {
+            if (player != null && !player.isSpectator() && player instanceof ServerPlayerEntity serverPlayer) {
                 BlockPos pos = hitResult.getBlockPos();
                 BlockState state = world.getBlockState(pos);
                 Block block = state.getBlock();
@@ -49,6 +49,8 @@ public class UseBlockEvent {
                 }
                 if (block instanceof BedBlock && (EntityHelper.getEffectAmplifier(player, HcsEffects.PAIN) > 0)) {
                     EntityHelper.msgById(player, "hcs.tip.too_pain_to_sleep");
+                    serverPlayer.setSpawnPoint(world.getRegistryKey(), pos, 0.0f, false, true);
+                    EntityHelper.msgById(player, "block.minecraft.set_spawn", false);
                     return ActionResult.FAIL;
                 }
                 debugger = hitResult;

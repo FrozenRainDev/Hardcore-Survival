@@ -6,7 +6,6 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.GlassBottleItem;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.ItemUsage;
-import net.minecraft.registry.tag.BiomeTags;
 import net.minecraft.registry.tag.FluidTags;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvents;
@@ -26,21 +25,21 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
+import static com.hcs.util.WorldHelper.IS_SALTY_WATER_BIOME;
+
 @Mixin(GlassBottleItem.class)
 public class GlassBottleItemMixin {
     @Inject(at = @At("HEAD"), method = "use", cancellable = true)
     public void use(World world, PlayerEntity user, Hand hand, CallbackInfoReturnable<TypedActionResult<ItemStack>> cir) {
-        BlockHitResult hitResult = EntityHelper.rayCast(world, user, RaycastContext.FluidHandling.SOURCE_ONLY,2.5);
+        BlockHitResult hitResult = EntityHelper.rayCast(world, user, RaycastContext.FluidHandling.SOURCE_ONLY, 2.5);
         ItemStack itemStack = user.getStackInHand(hand);
         if (((HitResult) hitResult).getType() == HitResult.Type.BLOCK) {
             BlockPos blockPos = hitResult.getBlockPos();
-            if (world.getBiome(blockPos).isIn(BiomeTags.IS_OCEAN) || world.getBiome(blockPos).isIn(BiomeTags.IS_DEEP_OCEAN) || world.getBiome(blockPos).isIn(BiomeTags.IS_BEACH)) {
-                if (world.getFluidState(blockPos).isIn(FluidTags.WATER)) {
-                    world.playSound(user, user.getX(), user.getY(), user.getZ(), SoundEvents.ITEM_BOTTLE_FILL, SoundCategory.NEUTRAL, 1.0f, 1.0f);
-                    world.emitGameEvent(user, GameEvent.FLUID_PICKUP, blockPos);
-                    cir.setReturnValue(TypedActionResult.success(this.fill(itemStack, user, Reg.SALTWATER_BOTTLE.getDefaultStack()), world.isClient()));
-                    cir.cancel();
-                }
+            if (IS_SALTY_WATER_BIOME.test(world.getBiome(blockPos)) && world.getFluidState(blockPos).isIn(FluidTags.WATER)) {
+                world.playSound(user, user.getX(), user.getY(), user.getZ(), SoundEvents.ITEM_BOTTLE_FILL, SoundCategory.NEUTRAL, 1.0f, 1.0f);
+                world.emitGameEvent(user, GameEvent.FLUID_PICKUP, blockPos);
+                cir.setReturnValue(TypedActionResult.success(this.fill(itemStack, user, Reg.SALTWATER_BOTTLE.getDefaultStack()), world.isClient()));
+                cir.cancel();
             }
         }
     }

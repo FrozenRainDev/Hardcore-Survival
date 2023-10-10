@@ -22,7 +22,7 @@ public class ServerPlayerEvent {
             SanityManager newSanityManager = ((StatAccessor) newPlayer).getSanityManager();
             NutritionManager newNutritionManager = ((StatAccessor) newPlayer).getNutritionManager();
             WetnessManager newWetnessManager = ((StatAccessor) newPlayer).getWetnessManager();
-            PainManager newPainManager = ((StatAccessor) newPlayer).getPainManager();
+            InjuryManager newInjuryManager = ((StatAccessor) newPlayer).getInjuryManager();
             MoodManager newMoodManager = ((StatAccessor) newPlayer).getMoodManager();
             if (!alive) {
                 newHungerManager.setSaturationLevel(1.0F);
@@ -32,7 +32,7 @@ public class ServerPlayerEvent {
                 newSanityManager.reset();
                 newNutritionManager.reset();
                 newWetnessManager.reset();
-                newPainManager.reset();
+                newInjuryManager.reset();
                 newMoodManager.reset();
             } else {
                 newHungerManager.setFoodLevel(oldHungerManager.getFoodLevel());

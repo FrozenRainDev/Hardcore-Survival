@@ -1,0 +1,20 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "W": {
+      "tag": "minecraft:wool"
+    },
+    "S": {
+      "item": "minecraft:string"
+    }
+  },
+  "pattern": [
+    "SWS"
+  ],
+  "result": {
+    "item": "hcs:bandage",
+    "count": 16
+  },
+  "show_notification": true
+}

@@ -145,10 +145,11 @@ public class ClientS2C {
                 if (client.player != null && client.player.world.getEntityById(bufArr[0]) != null) {
                     PlayerEntity player = (PlayerEntity) client.player.world.getEntityById(bufArr[0]);
                     if (player != null) {
-                        PainManager painManager = ((StatAccessor) player).getPainManager();
-                        painManager.setRaw(itod(bufArr[1]));
-                        painManager.setAlleviationCache(itod(bufArr[2]));
-                        painManager.setPainkillerApplied(bufArr[3]);
+                        InjuryManager injuryManager = ((StatAccessor) player).getInjuryManager();
+                        injuryManager.setRawPain(itod(bufArr[1]));
+                        injuryManager.setAlleviationCache(itod(bufArr[2]));
+                        injuryManager.setPainkillerApplied(bufArr[3]);
+                        injuryManager.setBleeding(itod(bufArr[4]));
                     }
                 }
             });
@@ -162,7 +163,7 @@ public class ClientS2C {
                     if (player != null) {
                         MoodManager moodManager = ((StatAccessor) player).getMoodManager();
                         moodManager.setPanic(itod(bufArr[1]));
-                        moodManager.setPanicAlle(bufArr[2]);
+                        moodManager.setPanicAlle(itod(bufArr[2]));
                     }
                 }
             });
