@@ -1,5 +1,7 @@
 package com.hcs.mixin.block;
 
+import com.hcs.status.accessor.StatAccessor;
+import com.hcs.status.manager.InjuryManager;
 import com.hcs.util.WorldHelper;
 import net.minecraft.block.*;
 import net.minecraft.block.entity.BlockEntity;
@@ -11,6 +13,7 @@ import net.minecraft.item.Items;
 import net.minecraft.particle.BlockStateParticleEffect;
 import net.minecraft.particle.ParticleTypes;
 import net.minecraft.registry.tag.BlockTags;
+import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.stat.Stats;
 import net.minecraft.util.math.BlockPos;
@@ -75,8 +78,14 @@ public class BlockMixin {
         if (!(fallDistance <= 4.5 && multiplier < 1)) {
             if (entity instanceof PlayerEntity player && fallDistance >= 2.0F) //Moved from PlayerEntity/handleFallDamage()
                 player.increaseStat(Stats.FALL_ONE_CM, (int) Math.round((double) fallDistance * 100.0));
-            if (fallDistance > 3.0F)
+            if (fallDistance > 3.0F) {
                 entity.handleFallDamage(multiplier < 1 ? exaggeratedFallDistance - 2 : exaggeratedFallDistance, multiplier, entity.getDamageSources().fall());
+                if (fallDistance > 11.0F && entity instanceof ServerPlayerEntity player) {
+                    InjuryManager injuryManager = ((StatAccessor) player).getInjuryManager();
+                    injuryManager.addFracture(1.0);
+                    injuryManager.addBleeding(1.6);
+                }
+            }
         }
         ci.cancel();
     }

@@ -87,8 +87,8 @@ public class Reg implements ModInitializer {
     public static final Item COPPER_CHESTPLATE = new ArmorItem(HcsArmorMaterials.COPPER, ArmorItem.Type.CHESTPLATE, new Item.Settings());
     public static final Item COPPER_LEGGINGS = new ArmorItem(HcsArmorMaterials.COPPER, ArmorItem.Type.LEGGINGS, new Item.Settings());
     public static final Item COPPER_BOOTS = new ArmorItem(HcsArmorMaterials.COPPER, ArmorItem.Type.BOOTS, new Item.Settings());
-    public static final Item SPIDER_GLAND = new SpiderGlandItem(new Item.Settings(), 8);
-    public static final Item SELAGINELLA = new SpiderGlandItem(new Item.Settings(), 20);
+    public static final Item SPIDER_GLAND = new SpiderGlandItem(8, 0.5);
+    public static final Item SELAGINELLA = new SpiderGlandItem(20, 1.5);
     public static final Item RAW_MEAT = new Item(new Item.Settings().food(new FoodComponent.Builder().hunger(2).saturationModifier(1f).meat().build()));
     public static final Item COOKED_MEAT = new Item(new Item.Settings().food(new FoodComponent.Builder().hunger(5).saturationModifier(3f).meat().build()));
     public static final Item CACTUS_FLESH = new Item(new Item.Settings().food(new FoodComponent.Builder().hunger(1).saturationModifier(1f).statusEffect(new StatusEffectInstance(StatusEffects.POISON, 160), 1).statusEffect(new StatusEffectInstance(HcsEffects.DIARRHEA, 300), 1).build()));
@@ -149,6 +149,14 @@ public class Reg implements ModInitializer {
     public static final Item FEARLESSNESS_HERB = new Item(new Item.Settings().food(new FoodComponent.Builder().hunger(0).saturationModifier(0.0F).build()));
     public static final Item BANDAGE = new BandageItem(2.0);
     public static final Item IMPROVISED_BANDAGE = new BandageItem(0.8, 100);
+    public static final Item SPLINT = new BandageItem(0.5, 160) {
+        @Override
+        public ItemStack finishUsing(ItemStack stack, World world, LivingEntity user) {
+            if (user instanceof ServerPlayerEntity player) ((StatAccessor) player).getInjuryManager().setFracture(0.0);
+            return super.finishUsing(stack, world, user);
+        }
+    };
+
     public static final EntityType<RockProjectileEntity> ROCK_PROJECTILE_ENTITY = FabricEntityTypeBuilder.<RockProjectileEntity>create(SpawnGroup.MISC, RockProjectileEntity::new).dimensions(new EntityDimensions(0.25F, 0.25F, true)).build();
     public static final BlockEntityType<IceboxBlockEntity> ICEBOX_BLOCK_ENTITY = FabricBlockEntityTypeBuilder.create(IceboxBlockEntity::new, ICEBOX).build();
     public static final BlockEntityType<DryingRackBlockEntity> DRYING_RACK_BLOCK_ENTITY = FabricBlockEntityTypeBuilder.create(DryingRackBlockEntity::new, DRYING_RACK).build();
@@ -244,6 +252,7 @@ public class Reg implements ModInitializer {
             content.add(new ItemStack(FEARLESSNESS_HERB));
             content.add(new ItemStack(BANDAGE));
             content.add(new ItemStack(IMPROVISED_BANDAGE));
+            content.add(new ItemStack(SPLINT));
             content.add(new ItemStack(PURIFIED_WATER_BOTTLE));//.getDefaultStack()
             content.add(new ItemStack(SALTWATER_BOTTLE));
             content.add(new ItemStack(COLD_WATER_BOTTLE));
@@ -328,6 +337,7 @@ public class Reg implements ModInitializer {
         Registry.register(Registries.ITEM, new Identifier("hcs", "fearlessness_herb"), FEARLESSNESS_HERB);
         Registry.register(Registries.ITEM, new Identifier("hcs", "bandage"), BANDAGE);
         Registry.register(Registries.ITEM, new Identifier("hcs", "improvised_bandage"), IMPROVISED_BANDAGE);
+        Registry.register(Registries.ITEM, new Identifier("hcs", "splint"), SPLINT);
 
         Registry.register(Registries.BLOCK, new Identifier("hcs", "icebox"), ICEBOX);
         Registry.register(Registries.ITEM, new Identifier("hcs", "icebox"), ICEBOX_ITEM);
@@ -392,6 +402,9 @@ public class Reg implements ModInitializer {
         FuelRegistry.INSTANCE.add(ROT, 100);
         FuelRegistry.INSTANCE.add(BARK, 100);
         FuelRegistry.INSTANCE.add(WILLOW_BARK, 100);
+        FuelRegistry.INSTANCE.add(BANDAGE, 80);
+        FuelRegistry.INSTANCE.add(IMPROVISED_BANDAGE, 60);
+        FuelRegistry.INSTANCE.add(SPLINT, 100);
 
         ComposterBlock.ITEM_TO_LEVEL_INCREASE_CHANCE.put(BERRY_BUSH, 0.3F);
         ComposterBlock.ITEM_TO_LEVEL_INCREASE_CHANCE.put(ROASTED_SEEDS, 0.3F);

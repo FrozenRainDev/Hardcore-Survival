@@ -67,7 +67,7 @@
   "effect.hcs.bleeding": "Bleeding",
   "effect.hcs.bleeding.description": "Bandaging required",
   "effect.hcs.bleeding.1": "Minor Bleeding",
-  "effect.hcs.bleeding.1.description": "Healing stopped",
+  "effect.hcs.bleeding.1.description": "Healing paused",
   "effect.hcs.bleeding.2": "Bleeding",
   "effect.hcs.bleeding.2.description": "Bandage or golden apple required",
   "effect.hcs.bleeding.3": "Severe Bleeding",
@@ -94,7 +94,7 @@
   "hcs.food_info.pour": " (Left click to pour out)",
   "hcs.tip.chip_failed": "Failed to chip",
   "hcs.tip.chip_succeed": "Succeeded to chip",
-  "hcs.tip.need_unlock": "Need a pickaxe to pry open",
+  "hcs.tip.need_unlock": "Needs a pickaxe to pry open",
   "hcs.tip.unlocked": "Unlocked",
   "hcs.tip.cant_break_chest": "The chest containing stuff can't be broken or blown up",
   "hcs.tip.need_bait": "Bait is needed on the off hand",
@@ -240,5 +240,6 @@
   "item.hcs.fearlessness_herb": "Fearlessness Herb",
   "item.hcs.fearlessness_herb.description": "Alleviates panic",
   "item.hcs.bandage": "Bandage",
-  "item.hcs.improvised_bandage": "Improvised Bandage"
+  "item.hcs.improvised_bandage": "Improvised Bandage",
+  "item.hcs.splint": "Splint"
 }

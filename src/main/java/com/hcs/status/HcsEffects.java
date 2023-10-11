@@ -22,6 +22,8 @@ import java.util.UUID;
 import java.util.function.BiFunction;
 import java.util.function.Predicate;
 
+import static com.hcs.util.EntityHelper.IS_SURVIVAL_LIKE;
+
 public class HcsEffects {
 
     public static final StatusEffect RETURN = new StatusEffect(StatusEffectCategory.NEUTRAL, 0x65d1e4) {
@@ -353,11 +355,6 @@ public class HcsEffects {
         int lastAmplifier = 0;
 
         @Override
-        protected String loadTranslationKey() {
-            return GET_AMP3_KEY.apply("fracture", this.lastAmplifier);
-        }
-
-        @Override
         public void onApplied(LivingEntity entity, AttributeContainer attributes, int amplifier) {
             this.lastAmplifier = amplifier;
         }
@@ -369,12 +366,13 @@ public class HcsEffects {
 
         @Override
         public void applyUpdateEffect(LivingEntity entity, int amplifier) {
-            if (entity instanceof ServerPlayerEntity player && !player.isInvulnerable() && amplifier > 0) {
+            if (entity instanceof ServerPlayerEntity player && IS_SURVIVAL_LIKE.test(player) && amplifier > 0) {
+                entity.setSprinting(false);
                 InjuryManager injuryManager = ((StatAccessor) player).getInjuryManager();
-                if (injuryManager.getRawPain() < 2.5) injuryManager.setRawPain(2.5);
+                if (injuryManager.getRawPain() < 3) injuryManager.setRawPain(3);
             }
         }
-    };
+    }.addAttributeModifier(EntityAttributes.GENERIC_MOVEMENT_SPEED, "FFEFDCF8-49B1-4CC7-B6D7-4E07D7F936CA", -0.9F, EntityAttributeModifier.Operation.MULTIPLY_TOTAL);
 
     public static final StatusEffect PARASITE_INFECTION = new StatusEffect(StatusEffectCategory.HARMFUL, 0xe2bc8a) {
     };
@@ -393,6 +391,7 @@ public class HcsEffects {
         default -> "effect.hcs." + name;
     };
 
+    @Deprecated
     public static final BiFunction<String, Integer, String> GET_AMP3_KEY = (name, amplifier) -> GET_AMP4_KEY.apply(name, amplifier == 3 ? 2 : amplifier);
 
     public static final Predicate<StatusEffect> IS_EFFECT_NAME_VARIABLE = effect -> effect == PAIN || effect == INJURY || effect == PANIC || effect == BLEEDING; // A predicate determines whether an effect should be appended by Roman numerals to express level

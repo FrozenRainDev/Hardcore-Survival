@@ -8,9 +8,11 @@ public class InjuryManager {
     public static final String PAIN_NBT = "hcs_pain";
     public static final String PAINKILLER_APPLIED_NBT = "hcs_painkiller";
     public static final String BLEEDING_NBT = "hcs_bleeding";
+    public static final String FRACTURE_NBT = "hcs_fracture";
     private double pain = 0.0, alleviationCache = 0.0; //range: [0, 4]
     private int painkillerApplied = 0, painkillerUpdateInterval = 0;
     private double bleeding = 0.0; //range: [0, 5]; note that [0, 1] won't result in bleeding debuff
+    private double fracture = 0.0;
 
     public double getPainkillerAlle() {
         if (painkillerUpdateInterval > 0) {
@@ -37,7 +39,7 @@ public class InjuryManager {
 
     public void setRawPain(double val) {
         if (Double.isNaN(val)) {
-            Reg.LOGGER.error(this.getClass().getSimpleName() + ": Val is NaN");
+            Reg.LOGGER.error(this.getClass().getSimpleName() + "/setRawPain(): Val is NaN");
             return;
         }
         if (val > 4.0) val = 4.0;
@@ -53,7 +55,7 @@ public class InjuryManager {
 
     public void setAlleviationCache(double val) {
         if (Double.isNaN(val)) {
-            Reg.LOGGER.error(this.getClass().getSimpleName() + ": Val is NaN");
+            Reg.LOGGER.error(this.getClass().getSimpleName() + "/setAlleviationCache(): Val is NaN");
             return;
         }
         if (val > 4.0) val = 4.0;
@@ -89,7 +91,7 @@ public class InjuryManager {
 
     public void setBleeding(double val) {
         if (Double.isNaN(val)) {
-            Reg.LOGGER.error(this.getClass().getSimpleName() + ": Val is NaN");
+            Reg.LOGGER.error(this.getClass().getSimpleName() + "/setBleeding(): Val is NaN");
             return;
         }
         if (val > 5.0) val = 5.0;
@@ -101,16 +103,38 @@ public class InjuryManager {
         setBleeding(getBleeding() + val);
     }
 
+    public double getFracture() {
+        if (fracture > 1.0) fracture = 1.0;
+        else if (fracture < 0.0) fracture = 0.0;
+        return fracture;
+    }
+
+    public void setFracture(double val) {
+        if (Double.isNaN(val)) {
+            Reg.LOGGER.error(this.getClass().getSimpleName() + "/setFracture(): Val is NaN");
+            return;
+        }
+        if (val > 1.0) val = 1.0;
+        else if (val < 0.0) val = 0.0;
+        fracture = val;
+    }
+
+    public void addFracture(double val) {
+        setFracture(getFracture() + val);
+    }
+
     public void tick() {
         addRawPain(pain < 1.0 ? -0.0003 : (pain > 3.0 ? -0.0012 : -0.0008)); //panic self-recovery
         if (bleeding < 3.0) addBleeding(bleeding < 1.0 ? -0.005 : -0.001); //bleeding self-stopping
         if (painkillerApplied > 0) --painkillerApplied;
+        addFracture(-0.000007);
     }
 
     public void reset() {
         pain = alleviationCache = 0.0;
         painkillerApplied = painkillerUpdateInterval = 0;
         bleeding = 0.0;
+        fracture = 0.0;
     }
 
 }

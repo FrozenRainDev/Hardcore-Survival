@@ -22,8 +22,9 @@ public class ServerEntityEvent {
                 if (player.getLastDeathPos().isEmpty() && player.getHungerManager().getFoodLevel() == 20 && player.getHungerManager().getExhaustion() == 0.0F && ((StatAccessor) player).getThirstManager().get() == 1.0 && player.getScore() == 0 && player.totalExperience == 0 && player.getInventory().isEmpty()) {
                     //Novice gift
                     player.getHungerManager().setExhaustion(2.0F);
-                    EntityHelper.dropItem(player, Reg.STONE_CONE, 1);
+                    EntityHelper.dropItem(player, Reg.STONE_CONE);
                     EntityHelper.dropItem(player, Reg.PURIFIED_WATER_BOTTLE, 3);
+                    EntityHelper.dropItem(player, Reg.BANDAGE);
                     EntityHelper.dropItem(player, PotionUtil.setPotion(new ItemStack(Items.POTION), Reg.LONG_CONSTANT_TEMPERATURE_POTION));
                 }
             }

@@ -60,7 +60,7 @@ public class EntityHelper {
     public static final Predicate<DamageSource> IS_BURNING_DAMAGE = damageSource -> damageSource.getType().effects().equals(DamageEffects.BURNING);
     public static final Predicate<DamageSource> IS_BLEEDING_CAUSING_DAMAGE = IS_PHYSICAL_DAMAGE.and(damageSource -> !damageSource.isOf(DamageTypes.FALL)).and(IS_BURNING_DAMAGE.negate());
     public static final Predicate<PlayerEntity> IS_SURVIVAL_LIKE = player -> player != null && !player.isCreative() && !player.isSpectator();
-    public static final Predicate<PlayerEntity> IS_SURVIVAL_AND_SERVER = IS_SURVIVAL_LIKE.and(player -> !player.world.isClient);
+    public static final Predicate<PlayerEntity> IS_SURVIVAL_AND_SERVER = IS_SURVIVAL_LIKE.and(player -> player.world != null && !player.world.isClient);
 
     public static final BiPredicate<ItemStack, ItemStack> IS_HOLDING_BLOCK = (stack1, stack2) -> {
         if (stack1 == null || stack2 == null) return false;

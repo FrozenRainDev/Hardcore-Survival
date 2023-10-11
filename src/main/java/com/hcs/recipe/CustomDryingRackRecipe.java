@@ -12,10 +12,10 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.function.Predicate;
 
-import static com.hcs.util.CommUtils.optElse;
+import static com.hcs.util.CommUtil.optElse;
 
 public class CustomDryingRackRecipe {
-    public static Predicate<String> IS_COOKED = name -> name.contains("cooked_") || name.contains("baked_") || name.contains("roasted_") || name.contains("steamed_") || name.contains("fried_");
+    public static Predicate<String> HAS_COOKED = name -> name.contains("cooked_") || name.contains("baked_") || name.contains("roasted_") || name.contains("steamed_") || name.contains("fried_");
 
     public static Item getOutput(Item input) {
         if (input == null) return Items.AIR;
@@ -31,7 +31,7 @@ public class CustomDryingRackRecipe {
         if (!input.isFood() || component == null) return Items.AIR;
         if (!component.isMeat() && !stack.isIn(ItemTags.FISHES)) return Items.AIR;
         //Return corresponding jerky
-        boolean isCooked = IS_COOKED.test(name);
+        boolean isCooked = HAS_COOKED.test(name);
         Item cookedItem = isCooked ? input : getCooked(input);
         FoodComponent cookedComponent = cookedItem.getFoodComponent();
         boolean isSmall = optElse(cookedComponent, FoodComponents.COOKED_CHICKEN).getHunger() < 6 || cookedItem == Items.COOKED_SALMON;

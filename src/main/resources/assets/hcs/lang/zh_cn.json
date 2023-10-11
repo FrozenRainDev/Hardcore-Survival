@@ -70,7 +70,7 @@
   "effect.hcs.bleeding": "流血",
   "effect.hcs.bleeding.description": "需要绷带或金苹果",
   "effect.hcs.bleeding.1": "轻微流血",
-  "effect.hcs.bleeding.1.description": "停止回血",
+  "effect.hcs.bleeding.1.description": "暂停回血",
   "effect.hcs.bleeding.2": "流血",
   "effect.hcs.bleeding.2.description": "需要绷带或金苹果",
   "effect.hcs.bleeding.3": "严重出血",
@@ -248,5 +248,6 @@
   "item.hcs.fearlessness_herb": "无畏草",
   "item.hcs.fearlessness_herb.description": "缓解恐慌感",
   "item.hcs.bandage": "绷带",
-  "item.hcs.improvised_bandage": "简易绷带"
+  "item.hcs.improvised_bandage": "简易绷带",
+  "item.hcs.splint": "夹板"
 }

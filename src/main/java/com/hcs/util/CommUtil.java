@@ -11,7 +11,7 @@ import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
-public class CommUtils {
+public class CommUtil {
     public static String customNumFormat(String pattern, double value) {
         DecimalFormat decimalFormat = new DecimalFormat(pattern);
         return decimalFormat.format(value);
@@ -44,7 +44,6 @@ public class CommUtils {
     }
 
     //Optional class cannot directly do these:
-    @Deprecated
     @Contract(pure = true)
     public static <T> void applyNullable(@Nullable T instance, @NotNull Consumer<T> consumer) {
         if (instance != null) consumer.accept(instance);

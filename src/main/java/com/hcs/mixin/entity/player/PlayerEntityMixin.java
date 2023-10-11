@@ -51,7 +51,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import java.util.Objects;
 
-import static com.hcs.recipe.CustomDryingRackRecipe.IS_COOKED;
+import static com.hcs.recipe.CustomDryingRackRecipe.HAS_COOKED;
 import static com.hcs.util.EntityHelper.IS_SURVIVAL_LIKE;
 
 
@@ -221,6 +221,7 @@ public abstract class PlayerEntityMixin extends LivingEntity implements StatAcce
         this.injuryManager.setRawPain(nbt.contains(InjuryManager.PAIN_NBT) ? nbt.getDouble(InjuryManager.PAIN_NBT) : 0.0);
         this.injuryManager.setPainkillerApplied(nbt.contains(InjuryManager.PAIN_NBT) ? nbt.getInt(InjuryManager.PAIN_NBT) : 0);
         this.injuryManager.setBleeding(nbt.contains(InjuryManager.BLEEDING_NBT) ? nbt.getDouble(InjuryManager.BLEEDING_NBT) : 0.0);
+        this.injuryManager.setFracture(nbt.contains(InjuryManager.FRACTURE_NBT) ? nbt.getDouble(InjuryManager.FRACTURE_NBT) : 0.0);
         this.statusManager.setInDarknessTicks(nbt.contains(StatusManager.IN_DARKNESS_TICKS) ? nbt.getInt(StatusManager.IN_DARKNESS_TICKS) : 0);
         this.moodManager.setPanic(nbt.contains(MoodManager.PANIC_NBT) ? nbt.getDouble(MoodManager.PANIC_NBT) : 0.0);
         this.moodManager.setPanicKillerApplied(nbt.contains(MoodManager.PANIC_KILLER_APPLIED_NBT) ? nbt.getInt(MoodManager.PANIC_KILLER_APPLIED_NBT) : 0);
@@ -245,6 +246,7 @@ public abstract class PlayerEntityMixin extends LivingEntity implements StatAcce
         nbt.putInt(StatusManager.IN_DARKNESS_TICKS, this.statusManager.getInDarknessTicks());
         nbt.putDouble(MoodManager.PANIC_NBT, this.moodManager.getRawPanic());
         nbt.putInt(MoodManager.PANIC_KILLER_APPLIED_NBT, this.moodManager.getPanicKillerApplied());
+        nbt.putDouble(InjuryManager.FRACTURE_NBT, this.injuryManager.getFracture());
     }
 
     @Inject(method = "getBlockBreakingSpeed", at = @At("RETURN"), cancellable = true)
@@ -317,6 +319,7 @@ public abstract class PlayerEntityMixin extends LivingEntity implements StatAcce
                     this.statusManager.setSoulImpairedStat(0);
                     this.injuryManager.applyPainkiller();
                     this.injuryManager.setBleeding(0.0);
+                    this.injuryManager.setFracture(0.0);
                 } else if (item == Items.KELP || Reg.IS_BARK.test(item)) {
                     if (item == Reg.WILLOW_BARK) this.injuryManager.applyPainkiller();
                     this.sanityManager.add(-0.02);
@@ -334,7 +337,7 @@ public abstract class PlayerEntityMixin extends LivingEntity implements StatAcce
                     else if (item == Items.DRIED_KELP) this.sanityManager.add(0.05);
                     else if (item == Items.COOKIE || item == Items.APPLE || item == Reg.ORANGE)
                         this.sanityManager.add(0.03);
-                    else if (IS_COOKED.test(name) || item == Items.BREAD || item == Items.SUGAR)
+                    else if (HAS_COOKED.test(name) || item == Items.BREAD || item == Items.SUGAR)
                         this.sanityManager.add(0.02);
                 }
                 if (item == Items.WHEAT || item == Items.SUGAR || item == Items.SUGAR_CANE || item == Reg.POTHERB || item == Reg.ROASTED_SEEDS)
@@ -400,7 +403,7 @@ public abstract class PlayerEntityMixin extends LivingEntity implements StatAcce
     @Inject(method = "jump", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/player/PlayerEntity;incrementStat(Lnet/minecraft/util/Identifier;)V", shift = At.Shift.AFTER), cancellable = true)
     public void jump2(@NotNull CallbackInfo ci) {
         double currRealPain = this.injuryManager.getRealPain();
-        float rate = (this.isSprinting() ? 3.0F : 1.0F) * (currRealPain > 2.0 ? (float) (currRealPain * 1.5) : 1.0F);
+        float rate = (this.isSprinting() ? 3.0F : 1.0F) * (currRealPain > 2.0 ? (float) (currRealPain * 1.5) : 1.0F) * (this.hasStatusEffect(HcsEffects.FRACTURE) ? 10.0F : 1.0F);
         this.staminaManager.pauseRestoring();
         this.addExhaustion(0.025F * rate);
         this.staminaManager.pauseRestoring(40);

@@ -11,13 +11,14 @@ import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
-import net.minecraft.registry.tag.BiomeTags;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.hit.HitResult;
 import net.minecraft.util.math.BlockPos;
 
 import java.util.Objects;
+
+import static com.hcs.util.WorldHelper.IS_SALTY_WATER_BIOME;
 
 public class UseBlockEvent {
     // For more use block events, view mixin/item
@@ -68,7 +69,7 @@ public class UseBlockEvent {
             ((StatAccessor) player).getThirstManager().addDirectly(0.05);
             TemperatureManager temperatureManager = ((StatAccessor) player).getTemperatureManager();
             if (temperatureManager.get() > 0.8) temperatureManager.add(-0.005);
-            if (player.world.getBiome(pos).isIn(BiomeTags.IS_OCEAN) || player.world.getBiome(pos).isIn(BiomeTags.IS_DEEP_OCEAN) || player.world.getBiome(pos).isIn(BiomeTags.IS_BEACH)) {
+            if (IS_SALTY_WATER_BIOME.test(player.world.getBiome(pos))) {
                 if (player.hasStatusEffect(HcsEffects.THIRST))
                     player.addStatusEffect(new StatusEffectInstance(HcsEffects.THIRST, Math.min(Objects.requireNonNull(player.getStatusEffect(HcsEffects.THIRST)).getDuration() + 200, 9600), 0, false, false, true));
                 else

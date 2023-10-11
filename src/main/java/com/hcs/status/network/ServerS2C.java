@@ -78,7 +78,7 @@ public class ServerS2C {
 
         PacketByteBuf buf8 = new PacketByteBuf(Unpooled.buffer());
         InjuryManager injuryManager = ((StatAccessor) player).getInjuryManager();
-        buf8.writeIntArray(new int[]{player.getId(), dtoi(injuryManager.getRawPain()), dtoi(injuryManager.getPainkillerAlle()), injuryManager.getPainkillerApplied(), dtoi(injuryManager.getBleeding())});
+        buf8.writeIntArray(new int[]{player.getId(), dtoi(injuryManager.getRawPain()), dtoi(injuryManager.getPainkillerAlle()), injuryManager.getPainkillerApplied(), dtoi(injuryManager.getBleeding()), dtoi(injuryManager.getFracture())});
         player.networkHandler.sendPacket(new CustomPayloadS2CPacket(PAIN_ID, buf8));
 
         PacketByteBuf buf9 = new PacketByteBuf(Unpooled.buffer());

@@ -150,6 +150,7 @@ public class ClientS2C {
                         injuryManager.setAlleviationCache(itod(bufArr[2]));
                         injuryManager.setPainkillerApplied(bufArr[3]);
                         injuryManager.setBleeding(itod(bufArr[4]));
+                        injuryManager.setFracture(itod(bufArr[5]));
                     }
                 }
             });

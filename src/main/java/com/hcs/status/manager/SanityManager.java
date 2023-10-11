@@ -11,7 +11,7 @@ import java.util.HashSet;
 import java.util.Objects;
 import java.util.function.BiPredicate;
 
-import static com.hcs.util.CommUtils.applyNullable;
+import static com.hcs.util.CommUtil.applyNullable;
 
 public class SanityManager {
     public static final String SANITY_NBT = "hcs_sanity";
