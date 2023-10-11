@@ -9,6 +9,7 @@
   "death.attack.hcs.oxygenDeficiency": "%1$s 缺氧而死",
   "death.attack.hcs.darkness": "%1$s 被黑暗吞没",
   "death.attack.hcs.bleeding": "%1$s 失血过多而死",
+  "death.attack.hcs.parasiteInfection": "%1$s 的脑子成为了寄生虫的美餐",
 
   "effect.hcs.thirst": "干渴",
   "effect.hcs.diarrhea": "腹泻",
@@ -110,6 +111,7 @@
   "hcs.tip.dark.closer": "那个声音越来越近了...",
   "hcs.tip.dark.fade": "那个声音消失了，暂时...",
   "hcs.tip.attack_failed": "你在惊慌之中没能击中",
+  "hcs.tip.bandage_heal": "长按右键治疗",
 
   "item.minecraft.potion.effect.hcs_ironskin": "铁皮药水",
   "item.minecraft.potion.effect.hcs_long_ironskin": "铁皮药水",
@@ -186,7 +188,6 @@
   "item.hcs.copper_leggings": "铜护腿",
   "item.hcs.copper_boots": "铜靴子",
   "item.hcs.spider_gland": "蜘蛛腺",
-  "item.hcs.spider_gland.description": "右键治疗",
   "item.hcs.selaginella": "九死还魂草",
   "item.hcs.stone_spear": "石矛",
   "item.hcs.flint_spear": "燧石矛",

@@ -80,7 +80,7 @@ public class BlockMixin {
                 player.increaseStat(Stats.FALL_ONE_CM, (int) Math.round((double) fallDistance * 100.0));
             if (fallDistance > 3.0F) {
                 entity.handleFallDamage(multiplier < 1 ? exaggeratedFallDistance - 2 : exaggeratedFallDistance, multiplier, entity.getDamageSources().fall());
-                if (fallDistance > 11.0F && entity instanceof ServerPlayerEntity player) {
+                if (fallDistance > 9.0F && entity instanceof ServerPlayerEntity player && (player.computeFallDamage(exaggeratedFallDistance, multiplier) / player.getMaxHealth()) > 0.4F) {
                     InjuryManager injuryManager = ((StatAccessor) player).getInjuryManager();
                     injuryManager.addFracture(1.0);
                     injuryManager.addBleeding(1.6);

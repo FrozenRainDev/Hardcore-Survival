@@ -14,6 +14,7 @@ import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvent;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.math.MathHelper;
 import org.jetbrains.annotations.NotNull;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
@@ -23,7 +24,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-import static com.hcs.util.EntityHelper.IS_SURVIVAL_AND_SERVER;
+import static com.hcs.util.EntityHelper.IS_SURVIVAL_LIKE;
 import static net.minecraft.sound.SoundEvents.*;
 
 @Environment(value = EnvType.CLIENT)
@@ -74,7 +75,7 @@ public abstract class ClientPlayerEntityMixin extends AbstractClientPlayerEntity
             this.client.getSoundManager().stopSounds(null, SoundCategory.AMBIENT);
             this.horriblyPlayedTicks = 0;
         }
-        if (IS_SURVIVAL_AND_SERVER.test(this)) {
+        if (IS_SURVIVAL_LIKE.test(this)) {
             if (darknessEnveloped) {
                 final int darkTicks = ((StatAccessor) this).getStatusManager().getInDarknessTicks();
                 if (darkTicks == 60) playHallAmbient(this);
@@ -90,7 +91,7 @@ public abstract class ClientPlayerEntityMixin extends AbstractClientPlayerEntity
                 }
             }
             if (sanityManager.get() < 0.65) {
-                int insanityEffectId = Math.min(12, Math.max(0, (int) (sanityManager.get() * 20.0)));
+                int insanityEffectId = MathHelper.clamp((int) (sanityManager.get() * 20.0), 0, 12);
                 if (prevInsanityEffectId != insanityEffectId || isThirdPerson != prevIsThirdPerson || this.ticks % 20 == 0) {
                     this.client.gameRenderer.loadPostProcessor(new Identifier("hcs", "shaders/post/insanity_" + insanityEffectId + ".json"));
                     this.prevInsanityEffectId = insanityEffectId;

@@ -5,6 +5,7 @@ accessible	field	net/minecraft/block/StemBlock   pickBlockItem    Ljava/util/fun
 accessible	method	net/minecraft/client/render/GameRenderer	loadPostProcessor	(Lnet/minecraft/util/Identifier;)V
 accessible	method	net/minecraft/entity/damage/DamageSources	create	(Lnet/minecraft/registry/RegistryKey;)Lnet/minecraft/entity/damage/DamageSource;
 accessible	method	net/minecraft/entity/Entity	isBeingRainedOn	()Z
+accessible  method  net/minecraft/entity/LivingEntity   computeFallDamage   (FF)I
 accessible	field	net/minecraft/item/ArmorMaterials   BASE_DURABILITY Ljava/util/EnumMap;
 accessible	method	net/minecraft/item/AxeItem   getStrippedState (Lnet/minecraft/block/BlockState;)Ljava/util/Optional;
 accessible	method	net/minecraft/world/biome/Biome	computeTemperature	(Lnet/minecraft/util/math/BlockPos;)F

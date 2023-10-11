@@ -1,8 +1,8 @@
 package com.hcs.mixin.item;
 
-import com.hcs.status.manager.TemperatureManager;
 import com.hcs.status.HcsEffects;
 import com.hcs.status.accessor.StatAccessor;
+import com.hcs.status.manager.TemperatureManager;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.item.ItemStack;
@@ -25,6 +25,7 @@ public class PotionItemMixin {
             if (!world.isClient && potion.getEffects().isEmpty()) {
                 ((StatAccessor) player).getThirstManager().addDirectly(0.3);
                 player.addStatusEffect(new StatusEffectInstance(HcsEffects.DIARRHEA, 600, 0, false, false, true));
+                if (Math.random() < 0.003) ((StatAccessor) player).getDiseaseManager().addParasite(0.12);
                 TemperatureManager temperatureManager = ((StatAccessor) player).getTemperatureManager();
                 if (temperatureManager.get() > 0.7) temperatureManager.add(-0.1);
             }

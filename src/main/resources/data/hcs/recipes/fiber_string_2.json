@@ -3,16 +3,7 @@
   "category": "misc",
   "ingredients": [
     {
-      "item": "hcs:grass_fiber"
-    },
-    {
-      "item": "hcs:grass_fiber"
-    },
-    {
-      "item": "hcs:grass_fiber"
-    },
-    {
-      "item": "hcs:grass_fiber"
+      "item": "minecraft:string"
     }
   ],
   "result": {

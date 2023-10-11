@@ -19,6 +19,7 @@ public class ServerS2C {
     public static final Identifier WETNESS_ID = new Identifier("hcs", "s2c_wetness");
     public static final Identifier PAIN_ID = new Identifier("hcs", "s2c_pain");
     public static final Identifier MOOD_ID = new Identifier("hcs", "s2c_mood");
+    public static final Identifier DISEASE_ID = new Identifier("hcs", "s2c_disease");
     public static final float TRANS_MULTIPLIER = 10000000.0F;
 
     public static int ftoi(float val) {
@@ -81,9 +82,9 @@ public class ServerS2C {
         buf8.writeIntArray(new int[]{player.getId(), dtoi(injuryManager.getRawPain()), dtoi(injuryManager.getPainkillerAlle()), injuryManager.getPainkillerApplied(), dtoi(injuryManager.getBleeding()), dtoi(injuryManager.getFracture())});
         player.networkHandler.sendPacket(new CustomPayloadS2CPacket(PAIN_ID, buf8));
 
-        PacketByteBuf buf9 = new PacketByteBuf(Unpooled.buffer());
-        MoodManager moodManager = ((StatAccessor) player).getMoodManager();
-        buf9.writeIntArray(new int[]{player.getId(), dtoi(moodManager.getRawPanic()), dtoi(moodManager.getPanicAlleCache())});
-        player.networkHandler.sendPacket(new CustomPayloadS2CPacket(MOOD_ID, buf9));
+        PacketByteBuf buf10 = new PacketByteBuf(Unpooled.buffer());
+        DiseaseManager DiseaseManager = ((StatAccessor) player).getDiseaseManager();
+        buf10.writeIntArray(new int[]{player.getId(), dtoi(DiseaseManager.getParasite())});
+        player.networkHandler.sendPacket(new CustomPayloadS2CPacket(DISEASE_ID, buf10));
     }
 }

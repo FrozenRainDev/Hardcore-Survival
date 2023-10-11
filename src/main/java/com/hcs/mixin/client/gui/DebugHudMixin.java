@@ -44,6 +44,7 @@ public abstract class DebugHudMixin {
         StatusManager statusManager = ((StatAccessor) player).getStatusManager();
         InjuryManager injuryManager = ((StatAccessor) player).getInjuryManager();
         MoodManager moodManager = ((StatAccessor) player).getMoodManager();
+        DiseaseManager diseaseManager = ((StatAccessor) player).getDiseaseManager();
         World world = player.world;
         BlockPos pos = player.getBlockPos();
         RegistryEntry<Biome> biomeEntry = world.getBiome(pos);
@@ -62,6 +63,7 @@ public abstract class DebugHudMixin {
         list.add("Injury: pain[real=" + retain5(injuryManager.getRealPain()) + ", raw=" + retain5(injuryManager.getRawPain()) + ", alle=" + retain5(injuryManager.getPainkillerAlle()) + "], bleeding=" + retain5(injuryManager.getBleeding()) + ", fracture=" + retain5(injuryManager.getFracture()));
         list.add("Wetness: " + ((StatAccessor) player).getWetnessManager().get());
         list.add("Mood: panic=[raw=" + retain5(moodManager.getRawPanic()) + ", real=" + retain5(moodManager.getRealPanic()) + ", alle=" + retain5(moodManager.getPanicAlleCache()) + "]");
+        list.add("Disease: parasite=" + retain5(diseaseManager.getParasite()));
     }
 
 }

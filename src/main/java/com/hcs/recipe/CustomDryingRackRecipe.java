@@ -16,6 +16,8 @@ import static com.hcs.util.CommUtil.optElse;
 
 public class CustomDryingRackRecipe {
     public static Predicate<String> HAS_COOKED = name -> name.contains("cooked_") || name.contains("baked_") || name.contains("roasted_") || name.contains("steamed_") || name.contains("fried_");
+    public static Predicate<Item> IS_RAW = item -> item != null && getCooked(item) != item;
+    public static Predicate<Item> IS_RAW_MEAT = IS_RAW.and(item -> item.getFoodComponent() != null && item.getFoodComponent().isMeat());
 
     public static Item getOutput(Item input) {
         if (input == null) return Items.AIR;
@@ -51,7 +53,7 @@ public class CustomDryingRackRecipe {
         }
         ItemStack stack = new ItemStack(rawMaterial);
         Inventory inventory = new SimpleInventory(stack);
-        return optElse(RecipeManager.createCachedMatchGetter(RecipeType.CAMPFIRE_COOKING).getFirstMatch(inventory, WorldHelper.theWorld).map((recipe) -> recipe.craft(inventory, WorldHelper.theWorld.getRegistryManager())).orElse(stack).getItem(), Items.AIR);
+        return optElse(RecipeManager.createCachedMatchGetter(RecipeType.CAMPFIRE_COOKING).getFirstMatch(inventory, WorldHelper.theWorld).map((recipe) -> recipe.craft(inventory, WorldHelper.theWorld.getRegistryManager())).orElse(stack).getItem(), rawMaterial);
     }
 
 }

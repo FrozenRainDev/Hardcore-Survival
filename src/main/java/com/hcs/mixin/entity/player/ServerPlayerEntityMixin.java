@@ -165,7 +165,7 @@ public abstract class ServerPlayerEntityMixin extends PlayerEntity {
             double finalPanic = currRealPanic;
             if (!isDarkEnv) {
                 finalPanic -= 0.06 * MathHelper.clamp(statusManager.getMaxExpLevelReached(), 0, 30); //Reduce panic when player reaches higher exp level
-                if (currRawPanic > 0.0)
+                if (expectedRawPanic > 0.0)
                     sanityManager.add(-MathHelper.clamp(0.00003 * finalPanic, 0.000008, 0.0001));
             }
             if (finalPanic > 0.0)
@@ -174,5 +174,11 @@ public abstract class ServerPlayerEntityMixin extends PlayerEntity {
 
         //Debuff of Fracture
         if (injuryManager.getFracture() > 0.0) EntityHelper.addHcsDebuff(this, HcsEffects.FRACTURE);
+
+        //Debuff of Parasite
+        DiseaseManager diseaseManager = ((StatAccessor) this).getDiseaseManager();
+        final double currParasite = diseaseManager.getParasite();
+        if (currParasite > 0.1)
+            EntityHelper.addHcsDebuff(this, HcsEffects.PARASITE_INFECTION, MathHelper.clamp((int) currParasite, 0, 2));
     }
 }

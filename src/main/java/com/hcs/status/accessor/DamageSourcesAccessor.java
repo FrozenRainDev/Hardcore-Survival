@@ -12,4 +12,6 @@ public interface DamageSourcesAccessor {
     DamageSource darkness();
 
     DamageSource bleeding();
+
+    DamageSource parasiteInfection();
 }

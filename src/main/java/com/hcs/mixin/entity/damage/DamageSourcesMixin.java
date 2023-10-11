@@ -24,15 +24,7 @@ public abstract class DamageSourcesMixin implements DamageSourcesAccessor {
     public Registry<DamageType> registry;
 
     @Unique
-    private DamageSource dehydrate;
-    @Unique
-    private DamageSource heatstroke;
-    @Unique
-    private DamageSource oxygenDeficiency;
-    @Unique
-    private DamageSource darkness;
-    @Unique
-    private DamageSource bleeding;
+    private DamageSource dehydrate, heatstroke, oxygenDeficiency, darkness, bleeding, parasiteInfection;
 
     @SuppressWarnings("AddedMixinMembersNamePattern")
     @Override
@@ -64,6 +56,12 @@ public abstract class DamageSourcesMixin implements DamageSourcesAccessor {
         return this.bleeding;
     }
 
+    @SuppressWarnings("AddedMixinMembersNamePattern")
+    @Override
+    public DamageSource parasiteInfection() {
+        return this.parasiteInfection;
+    }
+
     @Inject(method = "create(Lnet/minecraft/registry/RegistryKey;)Lnet/minecraft/entity/damage/DamageSource;", at = @At("HEAD"))
     private void create(RegistryKey<DamageType> key, CallbackInfoReturnable<DamageSource> cir) {
         if (this.registry == null) return;
@@ -93,6 +91,12 @@ public abstract class DamageSourcesMixin implements DamageSourcesAccessor {
                 @Override
                 public Text getDeathMessage(LivingEntity killed) {
                     return Text.translatable("death.attack.hcs.bleeding", killed.getDisplayName());
+                }
+            };
+            this.parasiteInfection = new DamageSource(this.registry.entryOf(key)) {
+                @Override
+                public Text getDeathMessage(LivingEntity killed) {
+                    return Text.translatable("death.attack.hcs.parasiteInfection", killed.getDisplayName());
                 }
             };
         } else if (key == DamageTypes.CACTUS) {

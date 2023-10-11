@@ -39,7 +39,7 @@ public class InjuryManager {
 
     public void setRawPain(double val) {
         if (Double.isNaN(val)) {
-            Reg.LOGGER.error(this.getClass().getSimpleName() + "/setRawPain(): Val is NaN");
+            Reg.LOGGER.error(this.getClass().getSimpleName() + "/setParasite(): Val is NaN");
             return;
         }
         if (val > 4.0) val = 4.0;

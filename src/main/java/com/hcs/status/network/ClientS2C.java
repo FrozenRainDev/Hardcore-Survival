@@ -169,5 +169,18 @@ public class ClientS2C {
                 }
             });
         });
+
+        ClientPlayNetworking.registerGlobalReceiver(DISEASE_ID, (client, handler, buffer, responseSender) -> {
+            int[] bufArr = buffer.readIntArray();
+            client.execute(() -> {
+                if (client.player != null && client.player.world.getEntityById(bufArr[0]) != null) {
+                    PlayerEntity player = (PlayerEntity) client.player.world.getEntityById(bufArr[0]);
+                    if (player != null) {
+                        DiseaseManager diseaseManager = ((StatAccessor) player).getDiseaseManager();
+                        diseaseManager.setParasite(itod(bufArr[1]));
+                    }
+                }
+            });
+        });
     }
 }

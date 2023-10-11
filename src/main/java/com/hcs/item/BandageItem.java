@@ -2,6 +2,7 @@ package com.hcs.item;
 
 import com.hcs.status.accessor.StatAccessor;
 import com.hcs.status.manager.InjuryManager;
+import net.minecraft.client.item.TooltipContext;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
@@ -9,11 +10,16 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvents;
+import net.minecraft.text.Text;
+import net.minecraft.util.Formatting;
 import net.minecraft.util.Hand;
 import net.minecraft.util.TypedActionResult;
 import net.minecraft.util.UseAction;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import java.util.List;
 
 import static com.hcs.util.CommUtil.applyNullable;
 
@@ -44,6 +50,7 @@ public class BandageItem extends Item {
     @Override
     public TypedActionResult<ItemStack> use(@NotNull World world, @NotNull PlayerEntity user, Hand hand) {
         user.setCurrentHand(hand); //Indispensable! It will update this.activeItemStack in Entity which will check before calling usageTick()
+        user.playSound(SoundEvents.BLOCK_SAND_PLACE, SoundCategory.PLAYERS, 0.5F, 0.5F);
         return super.use(world, user, hand);
     }
 
@@ -61,5 +68,11 @@ public class BandageItem extends Item {
             player.playSound(SoundEvents.BLOCK_WOOL_PLACE, SoundCategory.PLAYERS, 1.0F, 0.5F);
         }
         return super.finishUsing(stack, world, user);
+    }
+
+    @Override
+    public void appendTooltip(ItemStack stack, @Nullable World world, List<Text> tooltip, TooltipContext context) {
+        super.appendTooltip(stack, world, tooltip, context);
+        tooltip.add(Text.translatable("hcs.tip.bandage_heal").formatted(Formatting.GRAY));
     }
 }

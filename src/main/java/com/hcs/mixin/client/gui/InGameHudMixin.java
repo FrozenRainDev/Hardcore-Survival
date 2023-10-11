@@ -307,7 +307,7 @@ public abstract class InGameHudMixin extends DrawableHelper {
         //Note that int % 0 will throw java.lang.ArithmeticException: / by zero
         if (this.ticks % (Math.round(thi * 20) * 3 + 1) == 0 && thi < 0.3F)
             thiShake = Math.round((float) Math.random() * 2) - 1;
-        if (player.hasStatusEffect(HcsEffects.THIRST) || player.hasStatusEffect(HcsEffects.DIARRHEA))
+        if (player.hasStatusEffect(HcsEffects.THIRST) || player.hasStatusEffect(HcsEffects.DIARRHEA) || player.hasStatusEffect(HcsEffects.PARASITE_INFECTION))
             thiDeviation = 16;
         this.drawHCSTexture(matrices, xx, yy + thiShake, 0, 48, 16, 16);
         this.drawHCSTexture(matrices, xx, yy + (16 - thiHeight) + thiShake, 16 + thiDeviation, 64 - thiHeight, 16, thiHeight);
@@ -327,7 +327,7 @@ public abstract class InGameHudMixin extends DrawableHelper {
         int hunDeviation = 0, hunShake = 0;
         if (hunSaturation <= 0.0F && this.ticks % (hun * 3 + 1) == 0)
             hunShake = Math.round((float) Math.random() * 2) - 1;
-        if (player.hasStatusEffect(StatusEffects.HUNGER) || player.hasStatusEffect(HcsEffects.DIARRHEA))
+        if (player.hasStatusEffect(StatusEffects.HUNGER) || player.hasStatusEffect(HcsEffects.DIARRHEA) || player.hasStatusEffect(HcsEffects.PARASITE_INFECTION))
             hunDeviation = 16;
         this.drawHCSTexture(matrices, xx, yy + hunShake, 0, 16, 16, 16);
         this.drawHCSTexture(matrices, xx, yy + (16 - hunHeight) + hunShake, 16 + hunDeviation, 32 - hunHeight, 16, hunHeight);

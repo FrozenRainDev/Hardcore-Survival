@@ -20,4 +20,6 @@ public interface StatAccessor {
     InjuryManager getInjuryManager();
 
     MoodManager getMoodManager();
+
+    DiseaseManager getDiseaseManager();
 }

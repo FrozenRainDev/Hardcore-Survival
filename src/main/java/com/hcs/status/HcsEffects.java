@@ -26,7 +26,7 @@ import static com.hcs.util.EntityHelper.IS_SURVIVAL_LIKE;
 
 public class HcsEffects {
 
-    public static final StatusEffect RETURN = new StatusEffect(StatusEffectCategory.NEUTRAL, 0x65d1e4) {
+    public static final StatusEffect RETURN = new StatusEffect(StatusEffectCategory.NEUTRAL, 0x22d3f6) {
         @Override
         public boolean canApplyUpdateEffect(int duration, int amplifier) {
             return true;
@@ -61,7 +61,7 @@ public class HcsEffects {
         @Override
         public void applyUpdateEffect(LivingEntity entity, int amplifier) {
             if (entity instanceof ServerPlayerEntity player && !entity.isSpectator()) {
-                ((ServerPlayerEntity) entity).getHungerManager().addExhaustion(0.01F * (amplifier + 1));
+                player.getHungerManager().addExhaustion(0.01F * (amplifier + 1));
                 ((StatAccessor) player).getThirstManager().add(-0.00015 * (amplifier + 1));
             }
         }
@@ -352,13 +352,6 @@ public class HcsEffects {
     }.addAttributeModifier(EntityAttributes.GENERIC_MOVEMENT_SPEED, "75AD9D60-968B-4788-8B9F-3A545D3534E7", -0.4F, EntityAttributeModifier.Operation.MULTIPLY_TOTAL);
 
     public static final StatusEffect FRACTURE = new StatusEffect(StatusEffectCategory.HARMFUL, 0xe8e5d2) {
-        int lastAmplifier = 0;
-
-        @Override
-        public void onApplied(LivingEntity entity, AttributeContainer attributes, int amplifier) {
-            this.lastAmplifier = amplifier;
-        }
-
         @Override
         public boolean canApplyUpdateEffect(int duration, int amplifier) {
             return true;
@@ -372,9 +365,32 @@ public class HcsEffects {
                 if (injuryManager.getRawPain() < 3) injuryManager.setRawPain(3);
             }
         }
-    }.addAttributeModifier(EntityAttributes.GENERIC_MOVEMENT_SPEED, "FFEFDCF8-49B1-4CC7-B6D7-4E07D7F936CA", -0.9F, EntityAttributeModifier.Operation.MULTIPLY_TOTAL);
+    }.addAttributeModifier(EntityAttributes.GENERIC_MOVEMENT_SPEED, "FFEFDCF8-49B1-4CC7-B6D7-4E07D7F936CA", -0.7F, EntityAttributeModifier.Operation.MULTIPLY_TOTAL);
 
     public static final StatusEffect PARASITE_INFECTION = new StatusEffect(StatusEffectCategory.HARMFUL, 0xe2bc8a) {
+        @Override
+        public boolean canApplyUpdateEffect(int duration, int amplifier) {
+            return true;
+        }
+
+        @Override
+        public void applyUpdateEffect(LivingEntity entity, int amplifier) {
+            if (entity instanceof ServerPlayerEntity player && IS_SURVIVAL_LIKE.test(player)) {
+                ((StatAccessor) player).getThirstManager().add(-0.0001 * (amplifier + 1));
+                player.getHungerManager().addExhaustion(0.007F * (amplifier + 1));
+                if (amplifier > 0) {
+                    InjuryManager injuryManager = ((StatAccessor) player).getInjuryManager();
+                    if (injuryManager.getRawPain() < amplifier) injuryManager.setRawPain(amplifier);
+                    if (amplifier > 1) {
+                        ((StatAccessor) player).getSanityManager().add(-0.00005);
+                        if (player.world.getTime() % 100 == 0) {
+                            player.damage(((DamageSourcesAccessor) player.world.getDamageSources()).parasiteInfection(), 1.0F);
+                            player.addStatusEffect(new StatusEffectInstance(StatusEffects.BLINDNESS, 50, 0, false, false, false));
+                        }
+                    }
+                }
+            }
+        }
     };
 
     public static final StatusEffect UNHAPPY = new StatusEffect(StatusEffectCategory.HARMFUL, 0x71c5db) {

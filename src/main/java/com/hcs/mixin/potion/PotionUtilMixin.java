@@ -1,5 +1,6 @@
 package com.hcs.mixin.potion;
 
+import com.hcs.status.HcsEffects;
 import net.minecraft.entity.effect.StatusEffect;
 import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.entity.effect.StatusEffects;
@@ -20,6 +21,7 @@ public class PotionUtilMixin {
         if (effects.size() == 1) {
             StatusEffect effect = effects.iterator().next().getEffectType();
             if (effect == StatusEffects.RESISTANCE) cir.setReturnValue(0xe6de0a);
+            else if (effect == HcsEffects.RETURN) cir.setReturnValue(0x22d3f6); //DO NOT delete, otherwise the potion color will become black
             else if (effect == StatusEffects.HASTE) cir.setReturnValue(0x968f00);
         }
     }
