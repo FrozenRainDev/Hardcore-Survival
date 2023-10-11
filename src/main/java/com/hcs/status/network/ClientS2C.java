@@ -178,6 +178,7 @@ public class ClientS2C {
                     if (player != null) {
                         DiseaseManager diseaseManager = ((StatAccessor) player).getDiseaseManager();
                         diseaseManager.setParasite(itod(bufArr[1]));
+                        diseaseManager.setCold(itod(bufArr[2]));
                     }
                 }
             });

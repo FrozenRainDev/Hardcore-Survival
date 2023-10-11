@@ -1,10 +1,13 @@
 package com.hcs.status.manager;
 
 import com.hcs.Reg;
+import com.hcs.status.HcsEffects;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.effect.StatusEffects;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.math.Vec3d;
+
+import static com.hcs.util.EntityHelper.IS_SURVIVAL_LIKE;
 
 public class StaminaManager {
     private double stamina = 1.0;
@@ -33,11 +36,12 @@ public class StaminaManager {
     }
 
     public void add(double val, PlayerEntity player) {
-        if (player == null || player.getAbilities().invulnerable) return;
+        if (!IS_SURVIVAL_LIKE.test(player)) return;
         if (val >= 0.0) {
-            if (restoringCoolDown <= 0) addDirectly(val);
+            if (restoringCoolDown <= 0) addDirectly(player.hasStatusEffect(HcsEffects.COLD) ? val * 0.65 : val);
             else --restoringCoolDown;
-        } else if (!player.hasStatusEffect(StatusEffects.STRENGTH)) addDirectly(val);
+        } else if (!player.hasStatusEffect(StatusEffects.STRENGTH))
+            addDirectly(player.hasStatusEffect(HcsEffects.HEAVY_LOAD) ? val * 1.25 : val);
     }
 
     public void addDirectly(double val) {

@@ -31,7 +31,13 @@
   "effect.hcs.malnutrition": "Malnutrition",
   "effect.hcs.malnutrition.description": "Slower regeneration and faster hungering",
   "effect.hcs.wet": "Wet",
-  "effect.hcs.wet.description": "Becoming colder and decreasing sanity",
+  "effect.hcs.wet.description": "Feeling colder and more prone to catching a cold",
+  "effect.hcs.wet.1": "Damp",
+  "effect.hcs.wet.1.description": "Feeling a bit colder",
+  "effect.hcs.wet.2": "Wet",
+  "effect.hcs.wet.2.description": "Feeling colder and cold-prone",
+  "effect.hcs.wet.3": "Drenched",
+  "effect.hcs.wet.3.description": "Becoming colder and fairly cold-prone",
   "effect.hcs.constant_temperature": "Constant Temperature",
   "effect.hcs.soul_impaired": "Soul Impaired",
   "effect.hcs.soul_impaired.description": "Reduce max health, needs selaginella or golden apple to recover",
@@ -242,5 +248,6 @@
   "item.hcs.fearlessness_herb.description": "Alleviates panic",
   "item.hcs.bandage": "Bandage",
   "item.hcs.improvised_bandage": "Improvised Bandage",
-  "item.hcs.splint": "Splint"
+  "item.hcs.splint": "Splint",
+  "item.hcs.ginger": "Ginger"
 }

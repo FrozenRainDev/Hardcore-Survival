@@ -15,6 +15,7 @@ import net.minecraft.entity.effect.StatusEffectCategory;
 import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.entity.effect.StatusEffects;
 import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.util.math.MathHelper;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Map;
@@ -177,6 +178,18 @@ public class HcsEffects {
     };
 
     public static final StatusEffect WET = new StatusEffect(StatusEffectCategory.HARMFUL, 0x99a9d7) {
+        int lastAmplifier = 0;
+
+        @Override
+        protected String loadTranslationKey() {
+            return GET_AMP3_KEY.apply("wet", this.lastAmplifier);
+        }
+
+        @Override
+        public void onApplied(LivingEntity entity, AttributeContainer attributes, int amplifier) {
+            this.lastAmplifier = amplifier;
+        }
+
         @Override
         public boolean canApplyUpdateEffect(int duration, int amplifier) {
             return true;
@@ -184,8 +197,8 @@ public class HcsEffects {
 
         @Override
         public void applyUpdateEffect(LivingEntity entity, int amplifier) {
-            if (entity instanceof ServerPlayerEntity player && (!(player.isWet() || ((StatAccessor) player).getStatusManager().getRecentWetTicks() > 0) || player.isBeingRainedOn()))
-                ((StatAccessor) player).getSanityManager().add(-0.00001 * (amplifier + 1));
+            if (entity instanceof ServerPlayerEntity player && (!(player.isWet() || ((StatAccessor) player).getStatusManager().getRecentWetTicks() > 0)) && amplifier > 0)
+                ((StatAccessor) player).getDiseaseManager().addCold(0.000015 * (amplifier + 1) * MathHelper.clamp(2 * (1 - ((StatAccessor) player).getTemperatureManager().getEnvTempCache()), 0.01, 2.0));
         }
     };
 
@@ -407,10 +420,9 @@ public class HcsEffects {
         default -> "effect.hcs." + name;
     };
 
-    @Deprecated
     public static final BiFunction<String, Integer, String> GET_AMP3_KEY = (name, amplifier) -> GET_AMP4_KEY.apply(name, amplifier == 3 ? 2 : amplifier);
 
-    public static final Predicate<StatusEffect> IS_EFFECT_NAME_VARIABLE = effect -> effect == PAIN || effect == INJURY || effect == PANIC || effect == BLEEDING; // A predicate determines whether an effect should be appended by Roman numerals to express level
+    public static final Predicate<StatusEffect> IS_EFFECT_NAME_VARIABLE = effect -> effect == PAIN || effect == INJURY || effect == PANIC || effect == BLEEDING || effect == WET; // A predicate determines whether an effect should be appended by Roman numerals to express level
 
     public static void removeTempAttributes(AttributeContainer attributes, @NotNull Multimap<EntityAttribute, EntityAttributeModifier> customAttributeModifiers) {
         for (Map.Entry<EntityAttribute, EntityAttributeModifier> entry : customAttributeModifiers.entries()) {

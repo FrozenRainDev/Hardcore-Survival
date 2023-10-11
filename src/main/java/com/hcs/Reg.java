@@ -156,6 +156,7 @@ public class Reg implements ModInitializer {
             return super.finishUsing(stack, world, user);
         }
     };
+    public static final Item GINGER = new Item(new Item.Settings().food(new FoodComponent.Builder().hunger(1).saturationModifier(1.0F).build()));
 
     public static final EntityType<RockProjectileEntity> ROCK_PROJECTILE_ENTITY = FabricEntityTypeBuilder.<RockProjectileEntity>create(SpawnGroup.MISC, RockProjectileEntity::new).dimensions(new EntityDimensions(0.25F, 0.25F, true)).build();
     public static final BlockEntityType<IceboxBlockEntity> ICEBOX_BLOCK_ENTITY = FabricBlockEntityTypeBuilder.create(IceboxBlockEntity::new, ICEBOX).build();
@@ -238,6 +239,7 @@ public class Reg implements ModInitializer {
             content.add(new ItemStack(COOKED_KELP));
             content.add(new ItemStack(POTHERB));
             content.add(new ItemStack(ORANGE));
+            content.add(new ItemStack(GINGER));
             content.add(new ItemStack(PETALS_SALAD));
             content.add(new ItemStack(JERKY));
             content.add(new ItemStack(SMALL_JERKY));
@@ -264,7 +266,6 @@ public class Reg implements ModInitializer {
             content.add(new ItemStack(ICEBOX_ITEM));
             content.add(new ItemStack(DRYING_RACK_ITEM));
         });
-
 
         Registry.register(Registries.ITEM, new Identifier("hcs", "grass_fiber"), GRASS_FIBER);
         Registry.register(Registries.ITEM, new Identifier("hcs", "fiber_string"), FIBER_STRING);
@@ -338,6 +339,7 @@ public class Reg implements ModInitializer {
         Registry.register(Registries.ITEM, new Identifier("hcs", "bandage"), BANDAGE);
         Registry.register(Registries.ITEM, new Identifier("hcs", "improvised_bandage"), IMPROVISED_BANDAGE);
         Registry.register(Registries.ITEM, new Identifier("hcs", "splint"), SPLINT);
+        Registry.register(Registries.ITEM, new Identifier("hcs", "ginger"), GINGER);
 
         Registry.register(Registries.BLOCK, new Identifier("hcs", "icebox"), ICEBOX);
         Registry.register(Registries.ITEM, new Identifier("hcs", "icebox"), ICEBOX_ITEM);

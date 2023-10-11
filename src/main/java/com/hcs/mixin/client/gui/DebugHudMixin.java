@@ -63,7 +63,7 @@ public abstract class DebugHudMixin {
         list.add("Injury: pain[real=" + retain5(injuryManager.getRealPain()) + ", raw=" + retain5(injuryManager.getRawPain()) + ", alle=" + retain5(injuryManager.getPainkillerAlle()) + "], bleeding=" + retain5(injuryManager.getBleeding()) + ", fracture=" + retain5(injuryManager.getFracture()));
         list.add("Wetness: " + ((StatAccessor) player).getWetnessManager().get());
         list.add("Mood: panic=[raw=" + retain5(moodManager.getRawPanic()) + ", real=" + retain5(moodManager.getRealPanic()) + ", alle=" + retain5(moodManager.getPanicAlleCache()) + "]");
-        list.add("Disease: parasite=" + retain5(diseaseManager.getParasite()));
+        list.add("Disease: parasite=" + retain5(diseaseManager.getParasite()) + ", cold=" + retain5(diseaseManager.getCold()));
     }
 
 }

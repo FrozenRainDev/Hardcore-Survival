@@ -34,7 +34,13 @@
   "effect.hcs.malnutrition": "营养不良",
   "effect.hcs.malnutrition.description": "回血减慢，更容易饿",
   "effect.hcs.wet": "浸湿",
-  "effect.hcs.wet.description": "感觉更冷，掉San",
+  "effect.hcs.wet.description": "感觉更冷、更容易感冒",
+  "effect.hcs.wet.1": "有点潮湿",
+  "effect.hcs.wet.1.description": "感觉更冷一些",
+  "effect.hcs.wet.2": "潮湿",
+  "effect.hcs.wet.2.description": "感觉更冷、更容易感冒",
+  "effect.hcs.wet.3": "湿透",
+  "effect.hcs.wet.3.description": "感到寒冷，相当容易感冒",
   "effect.hcs.constant_temperature": "恒温",
   "effect.hcs.soul_impaired": "灵魂受损",
   "effect.hcs.soul_impaired.description": "减少最大生命值，恢复需九死还魂草或金苹果",
@@ -250,5 +256,6 @@
   "item.hcs.fearlessness_herb.description": "缓解恐慌感",
   "item.hcs.bandage": "绷带",
   "item.hcs.improvised_bandage": "简易绷带",
-  "item.hcs.splint": "夹板"
+  "item.hcs.splint": "夹板",
+  "item.hcs.ginger": "生姜"
 }

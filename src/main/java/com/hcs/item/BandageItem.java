@@ -22,6 +22,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.List;
 
 import static com.hcs.util.CommUtil.applyNullable;
+import static com.hcs.util.EntityHelper.IS_SURVIVAL_LIKE;
 
 public class BandageItem extends Item {
     private final double bleedingReduction;
@@ -61,10 +62,10 @@ public class BandageItem extends Item {
 
     @Override
     public ItemStack finishUsing(ItemStack stack, World world, LivingEntity user) {
-        if (user instanceof ServerPlayerEntity player) {
+        if (user instanceof ServerPlayerEntity player && player.isAlive()) {
             InjuryManager injuryManager = ((StatAccessor) player).getInjuryManager();
             injuryManager.addBleeding(-bleedingReduction);
-            stack.decrement(1);
+            if (IS_SURVIVAL_LIKE.test(player)) stack.decrement(1);
             player.playSound(SoundEvents.BLOCK_WOOL_PLACE, SoundCategory.PLAYERS, 1.0F, 0.5F);
         }
         return super.finishUsing(stack, world, user);

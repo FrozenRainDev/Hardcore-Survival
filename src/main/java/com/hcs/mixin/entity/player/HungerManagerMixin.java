@@ -68,6 +68,7 @@ public class HungerManagerMixin {
             if (!malnutrition || Math.random() < 0.5) ++this.foodTickTimer;
             if (this.foodTickTimer >= 10) {
                 float f = Math.min(1.0F + this.saturationLevel / 6.0F, 2.0F) / 100.0F;
+                if (player.hasStatusEffect(HcsEffects.COLD)) f *= 0.65F;
                 player.heal(f);
                 this.addExhaustion(f * 6.0F);
                 this.foodTickTimer = 0;
@@ -75,7 +76,7 @@ public class HungerManagerMixin {
         } else if (bl && this.foodLevel >= 10 && player.canFoodHeal() && thirst >= 0.5) {
             ++this.foodTickTimer;
             if (this.foodTickTimer >= (100 * (this.foodLevel >= 14 ? 1 : 2) * (thirst >= 0.7 ? 1 : 1.5))) {
-                player.heal(0.1F);
+                player.heal(player.hasStatusEffect(HcsEffects.COLD) ? 0.065F : 0.1F);
                 this.addExhaustion(0.6F);
                 this.foodTickTimer = 0;
             }

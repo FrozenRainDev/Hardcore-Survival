@@ -235,6 +235,7 @@ public abstract class PlayerEntityMixin extends LivingEntity implements StatAcce
         this.moodManager.setPanic(nbt.contains(MoodManager.PANIC_NBT) ? nbt.getDouble(MoodManager.PANIC_NBT) : 0.0);
         this.moodManager.setPanicKillerApplied(nbt.contains(MoodManager.PANIC_KILLER_APPLIED_NBT) ? nbt.getInt(MoodManager.PANIC_KILLER_APPLIED_NBT) : 0);
         this.diseaseManager.setParasite(nbt.contains(DiseaseManager.PARASITE_NBT) ? nbt.getDouble(DiseaseManager.PARASITE_NBT) : 0.0);
+        this.diseaseManager.setCold(nbt.contains(DiseaseManager.COLD_NBT) ? nbt.getDouble(DiseaseManager.COLD_NBT) : 0.0);
     }
 
     @Inject(method = "writeCustomDataToNbt", at = @At("TAIL"))
@@ -258,6 +259,7 @@ public abstract class PlayerEntityMixin extends LivingEntity implements StatAcce
         nbt.putInt(MoodManager.PANIC_KILLER_APPLIED_NBT, this.moodManager.getPanicKillerApplied());
         nbt.putDouble(InjuryManager.FRACTURE_NBT, this.injuryManager.getFracture());
         nbt.putDouble(DiseaseManager.PARASITE_NBT, this.diseaseManager.getParasite());
+        nbt.putDouble(DiseaseManager.COLD_NBT, this.diseaseManager.getCold());
     }
 
     @Inject(method = "getBlockBreakingSpeed", at = @At("RETURN"), cancellable = true)
@@ -326,6 +328,7 @@ public abstract class PlayerEntityMixin extends LivingEntity implements StatAcce
                 else if (name.contains("berries") || name.contains("berry")) this.nutritionManager.addVegetable(0.21);
                 else if (name.contains("apple") || name.contains("orange") || name.contains("carrot") || name.contains("cactus") || name.contains("melon") || name.contains("potherb") || name.contains("shoot") || name.contains("salad") || name.contains("fruit"))
                     this.nutritionManager.addVegetable(0.35);
+                if (name.contains("ginger")) this.diseaseManager.setCold(-0.2);
                 int freshLevel = RotHelper.addDebuff(world, player, stack);
                 if (item == Items.GOLDEN_APPLE || item == Items.ENCHANTED_GOLDEN_APPLE) {
                     this.sanityManager.add(1.0);
@@ -484,7 +487,7 @@ public abstract class PlayerEntityMixin extends LivingEntity implements StatAcce
                     if (shouldPauseRestoring) this.staminaManager.pauseRestoring();
                 }
             } else {
-                if (this.getThirstManager().get() > 0.6 && this.getHungerManager().getFoodLevel() > 12)
+                if (this.getThirstManager().get() > 0.6 && this.getHungerManager().getFoodLevel() > 12 && !this.hasStatusEffect(HcsEffects.COLD))
                     this.staminaManager.add(0.006, this);
                 else if (this.getThirstManager().get() > 0.3 && this.getHungerManager().getFoodLevel() > 6)
                     this.staminaManager.add(0.003, this);
@@ -561,7 +564,7 @@ public abstract class PlayerEntityMixin extends LivingEntity implements StatAcce
             }
         }
         //Disease
-        this.diseaseManager.tick();
+        this.diseaseManager.tick(!this.hasStatusEffect(HcsEffects.WET));
     }
 
     @Inject(method = "getXpToDrop", at = @At("HEAD"), cancellable = true)

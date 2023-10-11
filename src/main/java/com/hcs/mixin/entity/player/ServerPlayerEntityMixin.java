@@ -175,10 +175,11 @@ public abstract class ServerPlayerEntityMixin extends PlayerEntity {
         //Debuff of Fracture
         if (injuryManager.getFracture() > 0.0) EntityHelper.addHcsDebuff(this, HcsEffects.FRACTURE);
 
-        //Debuff of Parasite
+        //Debuff of Parasite & cold
         DiseaseManager diseaseManager = ((StatAccessor) this).getDiseaseManager();
-        final double currParasite = diseaseManager.getParasite();
+        final double currParasite = diseaseManager.getParasite(), currCold = diseaseManager.getCold();
         if (currParasite > 0.1)
             EntityHelper.addHcsDebuff(this, HcsEffects.PARASITE_INFECTION, MathHelper.clamp((int) currParasite, 0, 2));
+        if (currCold > 1.0) EntityHelper.addHcsDebuff(this, HcsEffects.COLD);
     }
 }

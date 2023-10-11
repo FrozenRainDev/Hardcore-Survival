@@ -82,7 +82,7 @@ public class RotHelper {
         if (item == Items.APPLE || item == Items.SUGAR_CANE || item == Items.POISONOUS_POTATO || name.contains("melon"))
             return 20;
         if (item == Items.CARROT || item == Items.BEETROOT) return 30;
-        if (item == Items.EGG || item == Items.TURTLE_EGG || item == Reg.CACTUS_FLESH || item == Reg.ORANGE || item == Items.POTATO)
+        if (item == Items.EGG || item == Items.TURTLE_EGG || item == Reg.CACTUS_FLESH || item == Reg.ORANGE || item == Items.POTATO || item == Reg.GINGER)
             return 45;
         if (name.contains("jerky") || item == Items.COOKIE || item == Items.DRIED_KELP || item == Items.FERMENTED_SPIDER_EYE)
             return 60;

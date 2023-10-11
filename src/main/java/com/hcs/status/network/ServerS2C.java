@@ -83,8 +83,8 @@ public class ServerS2C {
         player.networkHandler.sendPacket(new CustomPayloadS2CPacket(PAIN_ID, buf8));
 
         PacketByteBuf buf10 = new PacketByteBuf(Unpooled.buffer());
-        DiseaseManager DiseaseManager = ((StatAccessor) player).getDiseaseManager();
-        buf10.writeIntArray(new int[]{player.getId(), dtoi(DiseaseManager.getParasite())});
+        DiseaseManager diseaseManager = ((StatAccessor) player).getDiseaseManager();
+        buf10.writeIntArray(new int[]{player.getId(), dtoi(diseaseManager.getParasite()), dtoi(diseaseManager.getCold())});
         player.networkHandler.sendPacket(new CustomPayloadS2CPacket(DISEASE_ID, buf10));
     }
 }
