@@ -399,4 +399,16 @@ public class EntityHelper {
         return null;
     }
 
+    public static boolean isPlayerStaring(LivingEntity stared, PlayerEntity player) { //From EndermanEntity
+        if (!isExistent(player, stared)) return false;
+        ItemStack itemStack = player.getInventory().armor.get(3);
+        if (itemStack.isOf(Blocks.CARVED_PUMPKIN.asItem())) return false;
+        Vec3d vec3d = player.getRotationVec(1.0f).normalize();
+        Vec3d vec3d2 = new Vec3d(stared.getX() - player.getX(), stared.getEyeY() - player.getEyeY(), stared.getZ() - player.getZ());
+        double d = vec3d2.length();
+        double e = vec3d.dotProduct(vec3d2.normalize());
+        if (e > 1.0 - 0.025 / d) return player.canSee(stared);
+        return false;
+    }
+
 }

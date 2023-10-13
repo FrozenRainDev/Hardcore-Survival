@@ -440,6 +440,14 @@ public class Reg implements ModInitializer {
         FuelRegistry.INSTANCE.add(BANDAGE, 80);
         FuelRegistry.INSTANCE.add(IMPROVISED_BANDAGE, 60);
         FuelRegistry.INSTANCE.add(SPLINT, 100);
+        FuelRegistry.INSTANCE.add(WOOLEN_HOOD, 150);
+        FuelRegistry.INSTANCE.add(WOOLEN_COAT, 240);
+        FuelRegistry.INSTANCE.add(WOOLEN_TROUSERS, 210);
+        FuelRegistry.INSTANCE.add(WOOLEN_BOOTS, 120);
+        FuelRegistry.INSTANCE.add(WOODEN_HELMET, 300);
+        FuelRegistry.INSTANCE.add(WOODEN_CHESTPLATE, 480);
+        FuelRegistry.INSTANCE.add(WOODEN_LEGGINGS, 420);
+        FuelRegistry.INSTANCE.add(WOODEN_BOOTS, 240);
 
         ComposterBlock.ITEM_TO_LEVEL_INCREASE_CHANCE.put(BERRY_BUSH, 0.3F);
         ComposterBlock.ITEM_TO_LEVEL_INCREASE_CHANCE.put(ROASTED_SEEDS, 0.3F);

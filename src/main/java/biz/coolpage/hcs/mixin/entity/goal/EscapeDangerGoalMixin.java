@@ -2,6 +2,7 @@ package biz.coolpage.hcs.mixin.entity.goal;
 
 import net.minecraft.entity.ai.goal.EscapeDangerGoal;
 import net.minecraft.entity.mob.PathAwareEntity;
+import net.minecraft.entity.passive.CowEntity;
 import org.jetbrains.annotations.NotNull;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
@@ -34,7 +35,7 @@ public class EscapeDangerGoalMixin {
     @Inject(method = "start", at = @At("HEAD"), cancellable = true)
     public void start(@NotNull CallbackInfo cir) {
         //Improve escaping speed
-        this.mob.getNavigation().startMovingTo(this.targetX, this.targetY, this.targetZ, this.speed * 1.4);//1.65
+        this.mob.getNavigation().startMovingTo(this.targetX, this.targetY, this.targetZ, this.speed * (mob instanceof CowEntity ? 1.0 : 1.4));
         this.active = true;
         cir.cancel();
     }

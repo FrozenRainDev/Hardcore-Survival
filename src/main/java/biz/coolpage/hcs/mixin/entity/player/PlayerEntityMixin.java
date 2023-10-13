@@ -1,6 +1,7 @@
 package biz.coolpage.hcs.mixin.entity.player;
 
 import biz.coolpage.hcs.Reg;
+import biz.coolpage.hcs.item.KnifeItem;
 import biz.coolpage.hcs.status.HcsEffects;
 import biz.coolpage.hcs.status.accessor.DamageSourcesAccessor;
 import biz.coolpage.hcs.status.accessor.StatAccessor;
@@ -53,6 +54,7 @@ import java.util.Objects;
 
 import static biz.coolpage.hcs.recipe.CustomDryingRackRecipe.HAS_COOKED;
 import static biz.coolpage.hcs.status.manager.DiseaseManager.getParasitePossibility;
+import static biz.coolpage.hcs.util.DigRestrictHelper.Predicates.IS_PLANT;
 import static biz.coolpage.hcs.util.EntityHelper.*;
 
 
@@ -293,8 +295,13 @@ public abstract class PlayerEntityMixin extends LivingEntity implements StatAcce
             speed /= 2.0F;
         else if ((mainHand != Reg.FLINT_HATCHET && (state.isIn(BlockTags.AXE_MINEABLE))) || mainHand instanceof SwordItem)
             speed /= 3.0F;
-        if (mainHand instanceof HoeItem && (block instanceof CropBlock || block instanceof StemBlock || state.isIn(BlockTags.REPLACEABLE_PLANTS)))
-            speed *= 5.0F;
+        boolean isKnife = mainHand instanceof KnifeItem;
+        if ((mainHand instanceof HoeItem || isKnife) && (block instanceof CropBlock || block instanceof StemBlock || state.isIn(BlockTags.REPLACEABLE_PLANTS)))
+            speed *= 2.0F;
+        else if (isKnife) {
+            if (IS_PLANT.test(block) || block instanceof CobwebBlock) speed *= 3.0F;
+            else speed /= 10.0F;
+        }
         if (this.hasStatusEffect(HcsEffects.DEHYDRATED)) speed /= 2.0F;
         if (this.hasStatusEffect(HcsEffects.STARVING)) speed /= 2.0F;
         if (this.hasStatusEffect(HcsEffects.EXHAUSTED)) speed /= 2.0F;
@@ -369,10 +376,10 @@ public abstract class PlayerEntityMixin extends LivingEntity implements StatAcce
                     else if (item == Items.MUSHROOM_STEW || item == Reg.COOKED_CACTUS_FLESH || item == Items.BEETROOT_SOUP)
                         this.sanityManager.add(0.07);
                     else if (item == Items.DRIED_KELP) this.sanityManager.add(0.05);
-                    else if (item == Items.COOKIE || item == Items.APPLE || item == Reg.ORANGE)
-                        this.sanityManager.add(0.03);
-                    else if (HAS_COOKED.test(name) || item == Items.BREAD || item == Items.SUGAR)
-                        this.sanityManager.add(0.02);
+                    else if (item == Items.COOKIE || item == Items.APPLE || item == Reg.ORANGE || item == Items.SUGAR)
+                        this.sanityManager.add(0.025);
+                    else if (HAS_COOKED.test(name) || item == Items.BREAD)
+                        this.sanityManager.add(0.01);
                 }
                 if (item == Items.WHEAT || item == Items.SUGAR || item == Items.SUGAR_CANE || item == Reg.POTHERB || item == Reg.ROASTED_SEEDS)
                     this.hungerManager.setFoodLevel(Math.min(this.hungerManager.getFoodLevel() + 1, 20));

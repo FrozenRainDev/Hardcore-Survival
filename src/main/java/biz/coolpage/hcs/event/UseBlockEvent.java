@@ -47,11 +47,16 @@ public class UseBlockEvent {
                     world.setBlockState(posUp, Blocks.POTATOES.getDefaultState());
                     if (!player.isCreative()) mainHandStack.decrement(1);
                 }
-                if (block instanceof BedBlock && (EntityHelper.getEffectAmplifier(player, HcsEffects.PAIN) > 0)) {
-                    EntityHelper.msgById(player, "hcs.tip.too_pain_to_sleep");
-                    serverPlayer.setSpawnPoint(world.getRegistryKey(), pos, 0.0f, false, true);
-                    EntityHelper.msgById(player, "block.minecraft.set_spawn", false);
-                    return ActionResult.FAIL;
+                if (block instanceof BedBlock) {
+                    boolean b1 = EntityHelper.getEffectAmplifier(player, HcsEffects.PAIN) > 0;
+                    boolean b2 = ((StatAccessor) player).getSanityManager().get() < 0.15;
+                    if (b1 || b2) {
+                        if (b1) EntityHelper.msgById(player, "hcs.tip.too_pain_to_sleep");
+                        else EntityHelper.msgById(player, "hcs.tip.insanity_insomnia");
+                        serverPlayer.setSpawnPoint(world.getRegistryKey(), pos, 0.0f, false, true);
+                        EntityHelper.msgById(player, "block.minecraft.set_spawn", false);
+                        return ActionResult.FAIL;
+                    }
                 }
                 debugger = hitResult;
             }

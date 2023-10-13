@@ -1,6 +1,7 @@
 package biz.coolpage.hcs.event;
 
 import biz.coolpage.hcs.Reg;
+import biz.coolpage.hcs.item.KnifeItem;
 import biz.coolpage.hcs.util.EntityHelper;
 import net.fabricmc.fabric.api.event.player.PlayerBlockBreakEvents;
 import net.minecraft.block.*;
@@ -45,6 +46,8 @@ public class BreakBlockEvent {
                         else if (rand < 0.6) EntityHelper.dropItem(player, x, y, z, Items.STICK, 1);
                         else if (rand < 0.6003) EntityHelper.dropItem(player, x, y, z, Reg.SELAGINELLA, 1);
                         else if (rand < 0.6083) EntityHelper.dropItem(player, x, y, z, Reg.GINGER, 1);
+                        else if (player.getMainHandStack().getItem() instanceof KnifeItem)
+                            EntityHelper.dropItem(player, x, y, z, Reg.GRASS_FIBER, 1);
                     } else if (block == Blocks.TALL_GRASS) {
                         if (rand < 0.007) EntityHelper.dropItem(player, x, y, z, Reg.FEARLESSNESS_HERB, 2);
                         else if (rand < 0.012) EntityHelper.dropItem(player, x, y, z, Reg.WORM, 2);
@@ -54,6 +57,8 @@ public class BreakBlockEvent {
                         else if (rand < 0.6) EntityHelper.dropItem(player, x, y, z, Items.STICK, 2);
                         else if (rand < 0.6003) EntityHelper.dropItem(player, x, y, z, Reg.SELAGINELLA, 2);
                         else if (rand < 0.6083) EntityHelper.dropItem(player, x, y, z, Reg.GINGER, 2);
+                        else if (player.getMainHandStack().getItem() instanceof KnifeItem)
+                            EntityHelper.dropItem(player, x, y, z, Reg.GRASS_FIBER, 2);
                     } else if (block == Blocks.VINE) EntityHelper.dropItem(player, x, y, z, Reg.FIBER_STRING, 1);
                 }
                 //!mainHand.isEnchantable(new ItemStack(mainHand))

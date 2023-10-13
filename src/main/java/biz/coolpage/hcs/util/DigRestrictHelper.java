@@ -4,7 +4,6 @@ import biz.coolpage.hcs.Reg;
 import net.minecraft.block.*;
 import net.minecraft.item.Item;
 import net.minecraft.item.Items;
-import net.minecraft.item.SwordItem;
 import net.minecraft.item.ToolItem;
 import net.minecraft.registry.tag.BlockTags;
 
@@ -38,6 +37,7 @@ public class DigRestrictHelper {
         };
 
         public static final Predicate<Block> IS_BREAKABLE_FUNCTIONAL = block -> (block instanceof BlockWithEntity || block instanceof CraftingTableBlock || block instanceof AnvilBlock) && block.getHardness() >= 0 || block == Reg.ICEBOX || block == Reg.DRYING_RACK;
+        public static final Predicate<Block> IS_PLANT = block -> block instanceof PlantBlock || block instanceof LeavesBlock || block instanceof VineBlock;
     }
 
 
@@ -51,9 +51,9 @@ public class DigRestrictHelper {
         if (mainHand instanceof ToolItem) { //prev: stack.isEnchantable
             if (IS_UNDIGABLE_TOOLS.test(mainHand)) return false;
             if (block == Blocks.BAMBOO) return true;
-            boolean isPlant = block instanceof PlantBlock || block instanceof LeavesBlock || block instanceof VineBlock;
-            if (mainHand instanceof SwordItem) // mainHand == Reg.STONE_KNIFE || mainHand == Reg.FLINT_KNIFE || mainHand == Reg.STONE_SPEAR || mainHand == Reg.FLINT_SPEAR || mainHand == Items.WOODEN_SWORD || mainHand == Reg.SPIKED_CLUB
-                return isPlant || block instanceof CobwebBlock;
+            boolean isPlant = IS_PLANT.test(block);
+//            if (mainHand instanceof SwordItem) // mainHand == Reg.STONE_KNIFE || mainHand == Reg.FLINT_KNIFE || mainHand == Reg.STONE_SPEAR || mainHand == Reg.FLINT_SPEAR || mainHand == Items.WOODEN_SWORD || mainHand == Reg.SPIKED_CLUB
+//                return isPlant || block instanceof CobwebBlock;
             if (mainHand == Reg.STONE_CONE || mainHand == Reg.FLINT_CONE || mainHand == Reg.SHARP_BROKEN_BONE || mainHand == Items.WOODEN_SHOVEL)
                 return isPlant || state.isIn(BlockTags.SHOVEL_MINEABLE);
             if (mainHand == Reg.FLINT_HATCHET)

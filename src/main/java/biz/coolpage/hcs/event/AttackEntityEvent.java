@@ -18,7 +18,14 @@ public class AttackEntityEvent {
             if (entity instanceof LivingEntity /*victim*/) {
                 final double rand = Math.random();
                 ItemStack mainHandStack = player.getMainHandStack();
-                if (mainHandStack.isOf(Items.STICK) && rand < 0.05) {
+                if (mainHandStack.isOf(Reg.ROCK)) {
+                    entity.damage(player.world.getDamageSources().playerAttack(player), 1.0F);
+                    if (rand < 0.02) {
+                        player.getMainHandStack().decrement(1);
+                        player.sendToolBreakStatus(Hand.MAIN_HAND);
+                        EntityHelper.dropItem(player, Reg.SHARP_ROCK);
+                    }
+                } else if (mainHandStack.isOf(Items.STICK) && rand < 0.05) {
                     player.getMainHandStack().decrement(1);
                     player.sendToolBreakStatus(Hand.MAIN_HAND);
                     EntityHelper.dropItem(player, Reg.SHORT_STICK, 2);

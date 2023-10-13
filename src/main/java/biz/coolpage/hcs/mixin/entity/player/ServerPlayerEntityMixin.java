@@ -120,7 +120,7 @@ public abstract class ServerPlayerEntityMixin extends PlayerEntity {
         if (currSan < 0.3) {
             EntityHelper.addHcsDebuff(this, HcsEffects.INSANITY, currSan < 0.15 ? (currSan < 0.1 ? (currSan < 0.05 ? 3 : 2) : 1) : 0);
             if (currSan < 0.05)
-                this.addStatusEffect(new StatusEffectInstance(StatusEffects.DARKNESS, 10, 0, false, false, false));
+                this.addStatusEffect(new StatusEffectInstance(StatusEffects.DARKNESS, 50 /*prev 10*/, 0, false, false, false));
         }
         //Debuff of malnutrition
         double vegetable = ((StatAccessor) this).getNutritionManager().getVegetable();
