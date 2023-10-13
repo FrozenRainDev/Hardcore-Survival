@@ -1,0 +1,12 @@
+{
+    "sources": [
+        {
+            "type": "single",
+            "resource": "hcs:entity/improvised_shield_base"
+        },
+        {
+            "type": "single",
+            "resource": "hcs:entity/improvised_shield_base_nopattern"
+        }
+    ]
+}

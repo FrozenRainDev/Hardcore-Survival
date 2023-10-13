@@ -91,11 +91,11 @@
   "effect.hcs.parasite_infection": "寄生虫感染",
   "effect.hcs.parasite_infection.description": "需要南瓜籽",
   "effect.hcs.unhappy": "忧郁",
-  "effect.hcs.unhappy.description": "尝试让自己高兴起来",
+  "effect.hcs.unhappy.description": "效率和回血速度降低",
   "effect.hcs.cold": "感冒",
   "effect.hcs.cold.description": "咳嗽流涕，回血减慢",
   "effect.hcs.heavy_load": "负重",
-  "effect.hcs.heavy_load.description": "拿得太多了！",
+  "effect.hcs.heavy_load.description": "更快的耐力消耗",
 
   "hcs.food_info.fresh": "新鲜",
   "hcs.food_info.stale": "不新鲜",
@@ -110,7 +110,7 @@
   "hcs.tip.unlocked": "已解锁",
   "hcs.tip.cant_break_chest": "盛有物品的箱子不能被破坏或炸毁",
   "hcs.tip.need_bait": "需要在副手放诱饵",
-  "hcs.tip.welcome": "欢迎游玩硬核生存Mod！ `\\(≧▽≦*)o\n请访问官网以查阅教程，或提供反馈、赞助及翻译\n如果能帮忙宣传本模组，作者将不胜感激！\n警告：心脑血管疾病患者、癫痫患者以及其他不能受惊的群体不宜游玩，否则后果自负！\n",
+  "hcs.tip.welcome": "欢迎游玩硬核生存Mod！ `\\(≧▽≦*)o\n请访问官网以查阅教程，或提供反馈、赞助及翻译\n如果能帮忙宣传本模组，作者将不胜感激！\n警告：心脑血管疾病患者、癫痫患者以及其他不能受惊的群体不宜游玩，否则后果自负！\n当前版本: 0.14_beta(公测版)\n",
   "hcs.tip.reach_range_addition": "攻击距离 + ",
   "hcs.tip.too_pain_to_sleep": "你疼得睡不着",
   "hcs.tip.dark.warn": "黑暗中似乎有什么东西要吃掉你...",
@@ -118,6 +118,8 @@
   "hcs.tip.dark.fade": "那个声音消失了，暂时...",
   "hcs.tip.attack_failed": "你在惊慌之中没能击中",
   "hcs.tip.bandage_heal": "长按右键治疗",
+  "hcs.tip.hurt_hand_dig": "徒手挖坚硬方块会受伤！",
+  "hcs.tip.hurt_hand_attack": "徒手攻击可能会受伤！",
 
   "item.minecraft.potion.effect.hcs_ironskin": "铁皮药水",
   "item.minecraft.potion.effect.hcs_long_ironskin": "铁皮药水",
@@ -257,5 +259,11 @@
   "item.hcs.bandage": "绷带",
   "item.hcs.improvised_bandage": "简易绷带",
   "item.hcs.splint": "夹板",
-  "item.hcs.ginger": "生姜"
+  "item.hcs.ginger": "生姜",
+  "item.hcs.ginger.description": "有助于治疗感冒",
+  "item.hcs.improvised_shield": "简易盾牌",
+  "item.hcs.wooden_helmet": "木头盔",
+  "item.hcs.wooden_chestplate": "木胸甲",
+  "item.hcs.wooden_leggings": "木护腿",
+  "item.hcs.wooden_boots": "木靴子"
 }
