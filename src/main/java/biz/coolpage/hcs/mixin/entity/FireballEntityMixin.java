@@ -10,12 +10,12 @@ public class FireballEntityMixin {
 
     @ModifyArg(method = "onCollision", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/World;createExplosion(Lnet/minecraft/entity/Entity;DDDFZLnet/minecraft/world/World$ExplosionSourceType;)Lnet/minecraft/world/explosion/Explosion;"), index = 4)
     protected float onCollision(float power) {
-        return power * 4.0F;
+        return power * 3.0F;
     }
 
     @ModifyArg(method = "onEntityHit", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/Entity;damage(Lnet/minecraft/entity/damage/DamageSource;F)Z"), index = 1)
     protected float onEntityHit(float amount) {
-        return amount * 2.0F;
+        return amount * 1.4F;
     }
 
 }

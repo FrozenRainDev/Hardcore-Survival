@@ -121,6 +121,8 @@
   "hcs.tip.hurt_hand_dig": "徒手挖坚硬方块会受伤！",
   "hcs.tip.hurt_hand_attack": "徒手攻击可能会受伤！",
   "hcs.tip.insanity_insomnia": "无法入睡，阴森诡谲的幻象充斥于你的脑海中！",
+  "hcs.tip.can_gen_village": "当前世界可以生成村庄",
+  "hcs.tip.cant_gen_village": "当前世界不可以生成村庄",
 
   "item.minecraft.potion.effect.hcs_ironskin": "铁皮药水",
   "item.minecraft.potion.effect.hcs_long_ironskin": "铁皮药水",

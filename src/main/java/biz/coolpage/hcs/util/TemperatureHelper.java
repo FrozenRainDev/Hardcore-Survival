@@ -288,7 +288,7 @@ public abstract class TemperatureHelper implements WorldView {
             double wet = ((StatAccessor) player).getWetnessManager().get();
             float wetFactor = (float) Math.pow(wet, 1.4);
             x = wetFactor * x2 + (1 - wetFactor) * x;
-            if (wet > 0.3 && x >= 0.95F && x <= 1.5F) x = 0.95F;
+            if (wet > 0.3 && x >= 0.95F && x <= 1.48F) x = 0.95F;
             x += insulation * (1 - wetFactor);
             if (insulationLevel * (1 - wetFactor) >= 19.0F) {
                 //Fully wear woolen suit will gain an award of protection from bitter cold

@@ -5,6 +5,7 @@ import net.minecraft.entity.EntityType;
 import net.minecraft.entity.ai.goal.ActiveTargetGoal;
 import net.minecraft.entity.mob.HostileEntity;
 import net.minecraft.entity.mob.ZombieEntity;
+import net.minecraft.entity.mob.ZombieVillagerEntity;
 import net.minecraft.entity.passive.AnimalEntity;
 import net.minecraft.world.World;
 import org.spongepowered.asm.mixin.Mixin;
@@ -12,6 +13,7 @@ import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(ZombieEntity.class)
 public abstract class ZombieEntityMixin extends HostileEntity {
@@ -31,5 +33,11 @@ public abstract class ZombieEntityMixin extends HostileEntity {
         //Add animal target for adult zombies
         //Prioritize player(s) within 16 blocks in **TrackTargetGoalMixin/shouldContinue()**
         if (!this.isBaby()) this.targetSelector.add(2, new ActiveTargetGoal<>(this, AnimalEntity.class, false));
+    }
+
+    @Inject(method = "burnsInDaylight", at = @At("HEAD"), cancellable = true)
+    protected void burnsInDaylight(CallbackInfoReturnable<Boolean> cir) {
+        //noinspection ConstantValue
+        if ((Object) this instanceof ZombieVillagerEntity) cir.setReturnValue(false);
     }
 }

@@ -18,7 +18,7 @@ public class ServerEntityEvent {
         ServerEntityEvents.ENTITY_LOAD.register((
                 Entity entity, ServerWorld world) -> {
             if (entity instanceof ServerPlayerEntity player) {
-                WorldHelper.theWorld = world;
+                WorldHelper.currWorld = world;
                 if (player.getLastDeathPos().isEmpty() && player.getHungerManager().getFoodLevel() == 20 && player.getHungerManager().getExhaustion() == 0.0F && ((StatAccessor) player).getThirstManager().get() == 1.0 && player.getScore() == 0 && player.totalExperience == 0 && player.getInventory().isEmpty()) {
                     //Novice gift
                     player.getHungerManager().setExhaustion(2.0F);

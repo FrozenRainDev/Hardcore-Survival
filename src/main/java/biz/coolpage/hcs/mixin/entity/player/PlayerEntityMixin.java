@@ -299,7 +299,7 @@ public abstract class PlayerEntityMixin extends LivingEntity implements StatAcce
         if ((mainHand instanceof HoeItem || isKnife) && (block instanceof CropBlock || block instanceof StemBlock || state.isIn(BlockTags.REPLACEABLE_PLANTS)))
             speed *= 2.0F;
         else if (isKnife) {
-            if (IS_PLANT.test(block) || block instanceof CobwebBlock) speed *= 3.0F;
+            if (IS_PLANT.test(block) || block instanceof CobwebBlock || block == Blocks.SUGAR_CANE) speed *= 3.0F;
             else speed /= 10.0F;
         }
         if (this.hasStatusEffect(HcsEffects.DEHYDRATED)) speed /= 2.0F;

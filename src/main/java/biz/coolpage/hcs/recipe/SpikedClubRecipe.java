@@ -32,7 +32,7 @@ public class SpikedClubRecipe extends SpecialCraftingRecipe {
                     ++club;
                     this.nbt = stack.getOrCreateNbt();
                 }
-                if (stack.isOf(Reg.SHARP_BROKEN_BONE)) ++spike;
+                if (stack.isOf(Reg.SHARP_BROKEN_BONE) || stack.isOf(Reg.SHARP_FLINT)) ++spike;
             }
         }
         return club == 1 && spike == 1 && count == 2;

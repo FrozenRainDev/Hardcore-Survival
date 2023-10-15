@@ -46,13 +46,13 @@ public class CustomDryingRackRecipe {
     }
 
     public static @NotNull Item getCooked(Item rawMaterial) {
-        if (WorldHelper.theWorld == null) {
+        if (WorldHelper.currWorld == null) {
             Reg.LOGGER.error("CustomDryingRackRecipe/getCooked;RotHelper.theWorld==null");
             return rawMaterial;
         }
         ItemStack stack = new ItemStack(rawMaterial);
         Inventory inventory = new SimpleInventory(stack);
-        return CommUtil.optElse(RecipeManager.createCachedMatchGetter(RecipeType.CAMPFIRE_COOKING).getFirstMatch(inventory, WorldHelper.theWorld).map((recipe) -> recipe.craft(inventory, WorldHelper.theWorld.getRegistryManager())).orElse(stack).getItem(), rawMaterial);
+        return CommUtil.optElse(RecipeManager.createCachedMatchGetter(RecipeType.CAMPFIRE_COOKING).getFirstMatch(inventory, WorldHelper.currWorld).map((recipe) -> recipe.craft(inventory, WorldHelper.currWorld.getRegistryManager())).orElse(stack).getItem(), rawMaterial);
     }
 
 }

@@ -12,7 +12,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 @Mixin(PigEntity.class)
 public class PigEntityMixin {
 
-    @Inject(at = @At("RETURN"), method = "createPigAttributes", cancellable = true)
+    @Inject(method = "createPigAttributes", at = @At("RETURN"), cancellable = true)
     private static void createPigAttributes(@NotNull CallbackInfoReturnable<DefaultAttributeContainer.Builder> cir) {
         cir.setReturnValue(cir.getReturnValue().add(EntityAttributes.GENERIC_MAX_HEALTH, 20.0));
     }

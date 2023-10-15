@@ -116,6 +116,8 @@
   "hcs.tip.hurt_hand_dig": "Using bare hand to dig tough blocks can lead to injuries!",
   "hcs.tip.hurt_hand_attack": "Attacking with bare hand can lead to injuries!",
   "hcs.tip.insanity_insomnia": "You cannot fall asleep as your mind is overwhelmed by eerie and spooky phantasms!",
+  "hcs.tip.can_gen_village": "Generating villages is enabled in the current world",
+  "hcs.tip.cant_gen_village": "Generating villages is disabled the current world",
   "item.minecraft.potion.effect.hcs_ironskin": "Potion of Ironskin",
   "item.minecraft.potion.effect.hcs_long_ironskin": "Potion of Ironskin",
   "item.minecraft.potion.effect.hcs_strong_ironskin": "Potion of Ironskin",

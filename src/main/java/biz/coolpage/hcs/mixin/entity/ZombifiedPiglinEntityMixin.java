@@ -17,7 +17,7 @@ public abstract class ZombifiedPiglinEntityMixin extends ZombieEntity implements
         super(entityType, world);
     }
 
-    @Inject(at = @At("TAIL"), method = "initCustomGoals")
+    @Inject(method = "initCustomGoals", at = @At("TAIL"))
     protected void initCustomGoals(CallbackInfo ci) {
         this.targetSelector.add(2, new StaringRevengeGoal(this, this::shouldAngerAt));
     }

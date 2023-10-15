@@ -37,6 +37,11 @@ public class ChestBlockMixin {
     @Unique
     private static final BooleanProperty NATURALLY_GENERATED = BooleanProperty.of("hcs_naturally_gen");
 
+    @Unique
+    private static boolean isNaturallyGen(BlockState state) {
+        return state != null && state.getBlock() instanceof ChestBlock && state.get(NATURALLY_GENERATED) != null && state.get(NATURALLY_GENERATED);
+    }
+
     /*
      NOTES:
      1.Could Throw error if the name of property contains upper case letters
@@ -45,8 +50,12 @@ public class ChestBlockMixin {
 
     @Inject(method = "onPlaced", at = @At("HEAD"))
     private void onPlaced(@NotNull World world, BlockPos pos, BlockState state, LivingEntity placer, ItemStack itemStack, CallbackInfo ci) {
-        BlockEntity blockEntity = world.getBlockEntity(pos);
-        if (blockEntity instanceof ChestBlockEntity) world.setBlockState(pos, state.with(NATURALLY_GENERATED, false));
+        if (world.getBlockEntity(pos) instanceof ChestBlockEntity) {
+            for (BlockPos p : new BlockPos[]{pos.east(), pos.west(), pos.south(), pos.north()}) {
+                if (isNaturallyGen(world.getBlockState(p))) return;
+            }
+            world.setBlockState(pos, state.with(NATURALLY_GENERATED, false));
+        }
     }
 
     @Inject(method = "onUse", at = @At("HEAD"), cancellable = true)
@@ -54,8 +63,8 @@ public class ChestBlockMixin {
         BlockEntity blockEntity = world.getBlockEntity(pos);
         ItemStack mainHandStack = player.getMainHandStack();
         Item mainHand = mainHandStack.getItem();
-        if (blockEntity instanceof ChestBlockEntity && state.get(NATURALLY_GENERATED) != null && EntityHelper.IS_SURVIVAL_LIKE.test(player)) {
-            if (state.get(NATURALLY_GENERATED)) {
+        if (blockEntity instanceof ChestBlockEntity && EntityHelper.IS_SURVIVAL_LIKE.test(player)) {
+            if (isNaturallyGen(state)) {
                 cir.setReturnValue(ActionResult.SUCCESS);
                 if (mainHand instanceof PickaxeItem) {
                     EntityHelper.msgById(player, "hcs.tip.unlocked");
@@ -71,7 +80,7 @@ public class ChestBlockMixin {
     }
 
     @Inject(method = "scheduledTick", at = @At("HEAD"))
-    void scheduledTick(BlockState state, @NotNull ServerWorld world, BlockPos pos, Random random, CallbackInfo ci) {
+    public void scheduledTick(BlockState state, @NotNull ServerWorld world, BlockPos pos, Random random, CallbackInfo ci) {
         if (!world.isClient()) {
             ChestBlock chestBlock = (ChestBlock) state.getBlock();
             Inventory inv = ChestBlock.getInventory(chestBlock, state, world, pos, true);

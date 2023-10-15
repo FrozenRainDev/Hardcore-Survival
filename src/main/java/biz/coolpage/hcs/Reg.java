@@ -12,7 +12,9 @@ import biz.coolpage.hcs.status.HcsEffects;
 import biz.coolpage.hcs.status.accessor.StatAccessor;
 import biz.coolpage.hcs.status.manager.TemperatureManager;
 import biz.coolpage.hcs.status.network.ServerC2S;
+import biz.coolpage.hcs.util.WorldHelper;
 import net.fabricmc.api.ModInitializer;
+import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
 import net.fabricmc.fabric.api.itemgroup.v1.FabricItemGroup;
 import net.fabricmc.fabric.api.itemgroup.v1.ItemGroupEvents;
 import net.fabricmc.fabric.api.object.builder.v1.block.entity.FabricBlockEntityTypeBuilder;
@@ -35,6 +37,7 @@ import net.minecraft.recipe.SpecialRecipeSerializer;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
 import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.text.Text;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Identifier;
 import net.minecraft.world.World;
@@ -44,6 +47,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.function.Predicate;
+
+import static net.minecraft.server.command.CommandManager.literal;
 
 //DO NOT implement ModInitializer to abstract classes as it will crash
 //See customized damage sources in DamageSourcesMixin
@@ -163,7 +168,7 @@ public class Reg implements ModInitializer {
     public static final Item WOODEN_CHESTPLATE = new ArmorItem(HcsArmorMaterials.WOOD, ArmorItem.Type.CHESTPLATE, new Item.Settings());
     public static final Item WOODEN_LEGGINGS = new ArmorItem(HcsArmorMaterials.WOOD, ArmorItem.Type.LEGGINGS, new Item.Settings());
     public static final Item WOODEN_BOOTS = new ArmorItem(HcsArmorMaterials.WOOD, ArmorItem.Type.BOOTS, new Item.Settings());
-    public static final Item IMPROVISED_SHIELD = new ShieldItem(new Item.Settings().maxDamage(32)) {
+    public static final Item IMPROVISED_SHIELD = new ShieldItem(new Item.Settings().maxDamage(48)) {
         /**
          * Add an improvised shield:
          * 1. new assets/minecraft/atlases/shield_patterns.json
@@ -469,5 +474,14 @@ public class Reg implements ModInitializer {
         ComposterBlock.ITEM_TO_LEVEL_INCREASE_CHANCE.put(FEARLESSNESS_HERB, 0.5F);
 
         ModelPredicateProviderRegistry.register(IMPROVISED_SHIELD, new Identifier("blocking"), (stack, world, entity, seed) -> entity != null && entity.isUsingItem() && entity.getActiveItem() == stack ? 1.0F : 0.0F);
+
+        CommandRegistrationCallback.EVENT.register((dispatcher, registryAccess, environment) -> dispatcher.register(literal("village")
+                .executes(context -> {
+                    context.getSource().sendMessage(Text.translatable(WorldHelper.shouldGenerateVillages() ? "hcs.tip.can_gen_village" : "hcs.tip.cant_gen_village"));
+                    // For versions since 1.20, please use the following, which is intended to avoid creating Text objects if no feedback is needed.
+//                    context.getSource().sendMessage(() -> Text.literal("Called /foo with no arguments"));
+                    return 1;
+                })));
     }
 }
+

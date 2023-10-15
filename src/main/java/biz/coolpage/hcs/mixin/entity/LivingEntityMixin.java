@@ -8,6 +8,7 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.damage.DamageSource;
+import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.entity.effect.StatusEffects;
 import net.minecraft.entity.mob.EndermanEntity;
 import net.minecraft.entity.mob.HostileEntity;
@@ -24,6 +25,8 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
+
+import java.util.Collection;
 
 @Mixin(LivingEntity.class)
 public abstract class LivingEntityMixin extends Entity {
@@ -87,10 +90,10 @@ public abstract class LivingEntityMixin extends Entity {
                         EntityHelper.dropItem(this, Items.LEATHER, 1);
                 }
                 if (this.isBaby())
-                    EntityHelper.dropItem(this, this.getFireTicks() > 0 ? Reg.COOKED_MEAT : Reg.RAW_MEAT, 1);
+                    EntityHelper.dropItem(this, this.getFireTicks() > 0 ? Reg.COOKED_MEAT : Reg.RAW_MEAT);
             } else if (ent instanceof AxolotlEntity || ent instanceof CatEntity || ent instanceof FrogEntity || ent instanceof ParrotEntity || ent instanceof SquidEntity)
-                EntityHelper.dropItem(this, this.getFireTicks() > 0 ? Reg.COOKED_MEAT : Reg.RAW_MEAT, 1);
-            else if (!(ent instanceof BeeEntity || ent instanceof TadpoleEntity) && ent instanceof AnimalEntity) {
+                EntityHelper.dropItem(this, this.getFireTicks() > 0 ? Reg.COOKED_MEAT : Reg.RAW_MEAT);
+            else if (!(ent instanceof BeeEntity || ent instanceof TadpoleEntity || ent instanceof RabbitEntity) && ent instanceof AnimalEntity) {
                 EntityHelper.dropItem(this, this.getFireTicks() > 0 ? Reg.COOKED_MEAT : Reg.RAW_MEAT, (int) (Math.random() * 3) + 1);
                 //EntityHelper.dropItem(this, Items.BONE, 2);
                 EntityHelper.dropItem(this, Reg.ANIMAL_VISCERA, 1);
@@ -112,5 +115,11 @@ public abstract class LivingEntityMixin extends Entity {
         return velY;
     }
 
+    @Inject(method = "getStatusEffects", at = @At("RETURN"), cancellable = true)
+    public void getStatusEffects(@NotNull CallbackInfoReturnable<Collection<StatusEffectInstance>> cir) {
+        Collection<StatusEffectInstance> effects = cir.getReturnValue();
+        if (effects != null)
+            cir.setReturnValue(effects.stream().sorted().toList());
+    }
 
 }

@@ -1,8 +1,8 @@
 package biz.coolpage.hcs.util;
 
-import biz.coolpage.hcs.status.HcsEffects;
 import biz.coolpage.hcs.Reg;
 import biz.coolpage.hcs.entity.DryingRackBlockEntity;
+import biz.coolpage.hcs.status.HcsEffects;
 import biz.coolpage.hcs.status.accessor.StatAccessor;
 import biz.coolpage.hcs.status.manager.SanityManager;
 import net.minecraft.entity.effect.StatusEffectInstance;
@@ -16,6 +16,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.registry.tag.ItemTags;
+import net.minecraft.server.world.ServerWorld;
 import net.minecraft.text.MutableText;
 import net.minecraft.text.Text;
 import net.minecraft.text.TextContent;
@@ -39,11 +40,11 @@ public class RotHelper {
             Reg.LOGGER.error("RotHelper/combineNBT();countA+countB=" + (countA + countB));
             return;
         }
-        float avgFresh = (getFresh(WorldHelper.theWorld, stackA) * countA + getFresh(WorldHelper.theWorld, stackB) * countB) / (float) (countA + countB);
+        float avgFresh = (getFresh(WorldHelper.currWorld, stackA) * countA + getFresh(WorldHelper.currWorld, stackB) * countB) / (float) (countA + countB);
         if (nbtA.contains(HFE) || nbtA.contains(HFI))
-            createExp(WorldHelper.theWorld, stackA, avgFresh, nbtA.contains(HFI));
+            createExp(WorldHelper.currWorld, stackA, avgFresh, nbtA.contains(HFI));
         if (nbtB.contains(HFE) || nbtB.contains(HFI))
-            createExp(WorldHelper.theWorld, stackB, avgFresh, nbtB.contains(HFI));
+            createExp(WorldHelper.currWorld, stackB, avgFresh, nbtB.contains(HFI));
     }
 
     //To optimize performance, do not use stack.isOf
@@ -118,7 +119,7 @@ public class RotHelper {
     public static long getExp(@NotNull ItemStack stack) {
         if (stack.getOrCreateNbt().contains(HFI)) return stack.getOrCreateNbt().getLong(HFI);
         if (stack.getOrCreateNbt().contains(HFE)) return stack.getOrCreateNbt().getLong(HFE);
-        return createExp(WorldHelper.theWorld, stack);
+        return createExp(WorldHelper.currWorld, stack);
     }
 
     public static long getExp(@NotNull ItemStack stack, boolean isInIcebox) {
@@ -182,7 +183,7 @@ public class RotHelper {
             Reg.LOGGER.error("RotHelper/tick();world==null||inv==null");
             return;
         }
-        WorldHelper.theWorld = world;
+        if (world instanceof ServerWorld serverWorld) WorldHelper.currWorld = serverWorld;
         for (int i = 0; i < inv.size(); ++i) {
             ItemStack stack = inv.getStack(i);
             Item item = stack.getItem();
@@ -248,7 +249,6 @@ public class RotHelper {
 
     public static void appendInfo(World world, ItemStack stack, List<Text> tooltip) {
         if (world == null) return;
-        WorldHelper.theWorld = world;
         tooltip.add(getModifierText(world, stack));
     }
 
@@ -269,7 +269,7 @@ public class RotHelper {
         freshLevel = getFreshLevel(getFresh(world, stack));
         if (canRot(item) || item == Reg.ROT) {
             switch (item == Reg.ROT ? 0 : freshLevel) {
-                case 0 -> {
+                case 0: {
                     hungerManager.setSaturationLevel(0);
                     sanityManager.add(-0.1);
                     if (food != null) hungerManager.setFoodLevel(hungerManager.getFoodLevel() - food.getHunger() + 1);
@@ -278,7 +278,7 @@ public class RotHelper {
                     player.addStatusEffect(new StatusEffectInstance(StatusEffects.HUNGER, 600));
                     player.addStatusEffect(new StatusEffectInstance(HcsEffects.DIARRHEA, 600, 1));
                 }
-                case 1 -> {
+                case 1: {
                     sanityManager.add(-0.07);
                     if (food != null)
                         hungerManager.setFoodLevel(hungerManager.getFoodLevel() - (int) (Math.min(food.getHunger() - 1, food.getHunger() * 0.7)));
@@ -286,7 +286,7 @@ public class RotHelper {
                     player.addStatusEffect(new StatusEffectInstance(StatusEffects.NAUSEA, 200));
                     player.addStatusEffect(new StatusEffectInstance(HcsEffects.DIARRHEA, 600));
                 }
-                case 2 -> {
+                case 2: {
                     if (food != null)
                         hungerManager.setFoodLevel(hungerManager.getFoodLevel() - (int) (Math.min(food.getHunger() - 1, food.getHunger() * 0.3)));
                 }

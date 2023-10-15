@@ -26,7 +26,7 @@ public enum HcsArmorMaterials implements StringIdentifiable, ArmorMaterial {
         map.put(ArmorItem.Type.LEGGINGS, 0);
         map.put(ArmorItem.Type.BOOTS, 0);
     }), 15, SoundEvents.ITEM_ARMOR_EQUIP_LEATHER, 0.0F, 0.0F, Ingredient.fromTag(ItemTags.WOOL)),
-    WOOD("hcs_wood", 1, Util.make(new EnumMap<>(ArmorItem.Type.class), map -> {
+    WOOD("hcs_wood", 2, Util.make(new EnumMap<>(ArmorItem.Type.class), map -> {
         map.put(ArmorItem.Type.HELMET, 1);
         map.put(ArmorItem.Type.CHESTPLATE, 2);
         map.put(ArmorItem.Type.LEGGINGS, 1);

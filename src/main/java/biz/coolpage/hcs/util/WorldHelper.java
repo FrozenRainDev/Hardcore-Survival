@@ -1,6 +1,7 @@
 package biz.coolpage.hcs.util;
 
 import biz.coolpage.hcs.Reg;
+import biz.coolpage.hcs.status.HcsPersistentState;
 import net.minecraft.block.*;
 import net.minecraft.enchantment.Enchantments;
 import net.minecraft.entity.Entity;
@@ -32,8 +33,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Predicate;
 
+import static biz.coolpage.hcs.util.CommUtil.applyNullable;
+
 public class WorldHelper {
-    public static World theWorld = null;
+    public static ServerWorld currWorld = null;
     public static final BooleanProperty FERTILIZER_FREE = BooleanProperty.of("hcs_fertilizer_free");
     public static final Predicate<BlockState> IS_GRAVITY_AFFECTED = state -> state != null && (state.isOf(Blocks.DIRT) || state.isOf(Blocks.DIRT_PATH) || state.isOf(Blocks.CLAY) || state.isOf(Blocks.COARSE_DIRT));
     public static final Predicate<RegistryEntry<Biome>> IS_SALTY_WATER_BIOME = entry -> entry.isIn(BiomeTags.IS_OCEAN) || entry.isIn(BiomeTags.IS_DEEP_OCEAN) || entry.isIn(BiomeTags.IS_BEACH) || TemperatureHelper.getBiomeName(entry).contains("stony_shore");
@@ -61,8 +64,7 @@ public class WorldHelper {
     //Do not abuse
     @SuppressWarnings({"CommentedOutCode", "GrazieInspection"})
     public static @Nullable ServerWorld getServerWorld() {
-        if (theWorld instanceof ServerWorld serverWorld) return serverWorld;
-        return null;
+        return currWorld;
         //NOTE: Using MinecraftClient.class will crash in server env
         /*
         MinecraftClient client = MinecraftClient.getInstance();
@@ -179,5 +181,10 @@ public class WorldHelper {
             pos = pos.down();
         }
         return false;
+    }
+
+    public static boolean shouldGenerateVillages() {
+        if (currWorld == null) return false;
+        return currWorld.getTime() > 768000L && applyNullable(HcsPersistentState.getServerState(currWorld), state -> state.hasObtainedCopperPickaxe, false);
     }
 }

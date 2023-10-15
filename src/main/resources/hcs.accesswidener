@@ -8,6 +8,9 @@ accessible	method	net/minecraft/entity/Entity	isBeingRainedOn	()Z
 accessible  method  net/minecraft/entity/LivingEntity   computeFallDamage   (FF)I
 accessible	field	net/minecraft/item/ArmorMaterials   BASE_DURABILITY Ljava/util/EnumMap;
 accessible	method	net/minecraft/item/AxeItem   getStrippedState (Lnet/minecraft/block/BlockState;)Ljava/util/Optional;
+accessible  method  net/minecraft/server/command/LocateCommand  getStructureListForPredicate    (Lnet/minecraft/command/argument/RegistryPredicateArgumentType$RegistryPredicate;Lnet/minecraft/registry/Registry;)Ljava/util/Optional;
+accessible	field net/minecraft/server/command/LocateCommand STRUCTURE_NOT_FOUND_EXCEPTION Lcom/mojang/brigadier/exceptions/DynamicCommandExceptionType;
+accessible	field net/minecraft/server/command/LocateCommand STRUCTURE_INVALID_EXCEPTION Lcom/mojang/brigadier/exceptions/DynamicCommandExceptionType;
 accessible	method	net/minecraft/world/biome/Biome	computeTemperature	(Lnet/minecraft/util/math/BlockPos;)F
 accessible	class	net/minecraft/world/biome/Biome$Weather
 accessible	field	net/minecraft/world/biome/Biome weather Lnet/minecraft/world/biome/Biome$Weather;

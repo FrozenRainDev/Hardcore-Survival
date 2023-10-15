@@ -24,12 +24,12 @@ public abstract class ChickenEntityMixin extends AnimalEntity {
     @Shadow
     public int eggLayTime;
 
-    @Inject(at = @At("RETURN"), method = "createChickenAttributes", cancellable = true)
+    @Inject(method = "createChickenAttributes", at = @At("RETURN"), cancellable = true)
     private static void createChickenAttributes(@NotNull CallbackInfoReturnable<DefaultAttributeContainer.Builder> cir) {
         cir.setReturnValue(cir.getReturnValue().add(EntityAttributes.GENERIC_MAX_HEALTH, 6.0));
     }
 
-    @Inject(at = @At("HEAD"), method = "tickMovement")
+    @Inject(method = "tickMovement", at = @At("HEAD"))
     public void tickMovement(CallbackInfo ci) {
         if (this.eggLayTime == 6000) this.dropItem(Items.FEATHER);
     }

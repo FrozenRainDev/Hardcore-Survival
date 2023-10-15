@@ -2,6 +2,8 @@ package biz.coolpage.hcs.util;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.render.*;
+import net.minecraft.registry.RegistryKey;
+import net.minecraft.registry.entry.RegistryEntry;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -53,6 +55,13 @@ public class CommUtil {
     public static <T, R> @NotNull R applyNullable(@Nullable T instance, @NotNull Function<T, R> function, @NotNull R defaultVal) {
         if (instance == null) return defaultVal;
         return function.apply(instance);
+    }
+
+    @Contract(pure = true)
+    public static boolean regEntryContains(@NotNull RegistryEntry<?> entry, String pattern) {
+        Optional<? extends RegistryKey<?>> key = entry.getKey();
+        if (key != null && key.isPresent()) return key.get().getValue().getPath().contains(pattern);
+        return false;
     }
 
 }

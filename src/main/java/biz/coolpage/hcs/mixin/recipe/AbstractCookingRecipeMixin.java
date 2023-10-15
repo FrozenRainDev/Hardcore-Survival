@@ -57,7 +57,7 @@ public class AbstractCookingRecipeMixin {
         if (stackOut.isOf(Reg.HOT_WATER_BOTTLE)) {
             int stat = 1;
             NbtCompound nbt = stackOut.getOrCreateNbt();
-            HotWaterBottleItem.createExp(WorldHelper.theWorld, stackOut, true);
+            HotWaterBottleItem.createExp(WorldHelper.currWorld, stackOut, true);
             if (nbt.contains(HotWaterBottleItem.HHSM) && nbt.getBoolean(HotWaterBottleItem.HHSM))
                 stat = -1;
             HotWaterBottleItem.setStatus(stackOut, stat);
