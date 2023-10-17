@@ -26,7 +26,9 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Comparator;
 
 @Mixin(LivingEntity.class)
 public abstract class LivingEntityMixin extends Entity {
@@ -118,8 +120,11 @@ public abstract class LivingEntityMixin extends Entity {
     @Inject(method = "getStatusEffects", at = @At("RETURN"), cancellable = true)
     public void getStatusEffects(@NotNull CallbackInfoReturnable<Collection<StatusEffectInstance>> cir) {
         Collection<StatusEffectInstance> effects = cir.getReturnValue();
-        if (effects != null)
-            cir.setReturnValue(effects.stream().sorted().toList());
+        if (effects != null) {
+            ArrayList<StatusEffectInstance> effectList = new ArrayList<>(effects);
+            effectList.sort(Comparator.comparing(StatusEffectInstance::getTranslationKey));
+            cir.setReturnValue(effectList);
+        }
     }
 
 }

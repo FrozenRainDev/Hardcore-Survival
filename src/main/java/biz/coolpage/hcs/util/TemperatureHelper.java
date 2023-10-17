@@ -219,7 +219,6 @@ public abstract class TemperatureHelper implements WorldView {
                 BlockPos checkPos = playerPos.add(bpp[0], bpp[1], bpp[2]);
                 BlockState state = player.world.getBlockState(checkPos);
                 Block block = state.getBlock();
-//                if (player.getMainHandStack().isOf(Items.DEBUG_STICK)) player.world.setBlockState(player.getBlockPos().addRawPain(bpp[0], bpp[1], bpp[2]), Blocks.COBBLESTONE.getDefaultState());
                 RegistryEntry<Biome> biomeEntry = player.world.getBiome(playerPos);
                 Biome biome = biomeEntry.value();
                 if (biome != null) {

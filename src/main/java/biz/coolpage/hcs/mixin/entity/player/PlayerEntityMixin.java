@@ -236,7 +236,7 @@ public abstract class PlayerEntityMixin extends LivingEntity implements StatAcce
         this.statusManager.setInDarknessTicks(nbt.contains(StatusManager.IN_DARKNESS_TICKS) ? nbt.getInt(StatusManager.IN_DARKNESS_TICKS) : 0);
         this.moodManager.setPanic(nbt.contains(MoodManager.PANIC_NBT) ? nbt.getDouble(MoodManager.PANIC_NBT) : 0.0);
         this.moodManager.setPanicKillerApplied(nbt.contains(MoodManager.PANIC_KILLER_APPLIED_NBT) ? nbt.getInt(MoodManager.PANIC_KILLER_APPLIED_NBT) : 0);
-        this.moodManager.setHappiness(nbt.contains(MoodManager.HAPPINESS_NBT) ? nbt.getDouble(MoodManager.HAPPINESS_NBT) : 0.0);
+        this.moodManager.setHappiness(nbt.contains(MoodManager.HAPPINESS_NBT) ? nbt.getDouble(MoodManager.HAPPINESS_NBT) : 1.0);
         this.diseaseManager.setParasite(nbt.contains(DiseaseManager.PARASITE_NBT) ? nbt.getDouble(DiseaseManager.PARASITE_NBT) : 0.0);
         this.diseaseManager.setCold(nbt.contains(DiseaseManager.COLD_NBT) ? nbt.getDouble(DiseaseManager.COLD_NBT) : 0.0);
     }
@@ -287,7 +287,7 @@ public abstract class PlayerEntityMixin extends LivingEntity implements StatAcce
                     if (this.injuryManager.getRawPain() < 3.0) this.injuryManager.addRawPain(0.002);
                     if (this.injuryManager.getBleeding() < 3.5) this.injuryManager.addBleeding(0.004);
                     if (this.statusManager.getBareDiggingTicks() > 80 && this.world.getTime() % 40 == 0)
-                        this.damage(this.world.getDamageSources().cactus(), 1.0F);
+                        this.damage(((DamageSourcesAccessor) this.world.getDamageSources()).bleeding(), 1.0F);
                 }
             }
         }
@@ -310,7 +310,7 @@ public abstract class PlayerEntityMixin extends LivingEntity implements StatAcce
         speed /= (float) Math.max(1.0, Math.pow(1.15, (EntityHelper.getEffectAmplifier(this, HcsEffects.PAIN) + 1) + (EntityHelper.getEffectAmplifier(this, HcsEffects.INJURY) + 1)));
         if (DigRestrictHelper.Predicates.IS_BREAKABLE_FUNCTIONAL.test(block))
             speed *= (block instanceof AbstractFurnaceBlock || block == Blocks.ENDER_CHEST) ? 16.0F : 4.0F;
-        if (block == Blocks.SUGAR_CANE || block == Blocks.CLAY) speed /= 9.0F;
+        if (block == Blocks.SUGAR_CANE || (block == Blocks.CLAY && !shovelMineable)) speed /= 9.0F;
         else if (block instanceof LeavesBlock && !(mainHand instanceof SwordItem) && !(mainHand instanceof AxeItem))
             speed /= 25.0F;
         if (block instanceof TorchBlock || state.isIn(BlockTags.FLOWERS)) speed = 999999.0F;

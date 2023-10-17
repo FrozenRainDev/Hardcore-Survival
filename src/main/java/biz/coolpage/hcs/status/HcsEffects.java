@@ -1,12 +1,12 @@
 package biz.coolpage.hcs.status;
 
-import com.google.common.collect.ArrayListMultimap;
-import com.google.common.collect.Multimap;
-import com.google.common.collect.Multimaps;
 import biz.coolpage.hcs.status.accessor.DamageSourcesAccessor;
 import biz.coolpage.hcs.status.accessor.StatAccessor;
 import biz.coolpage.hcs.status.manager.InjuryManager;
 import biz.coolpage.hcs.util.EntityHelper;
+import com.google.common.collect.ArrayListMultimap;
+import com.google.common.collect.Multimap;
+import com.google.common.collect.Multimaps;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.attribute.*;
 import net.minecraft.entity.damage.DamageSource;
@@ -20,7 +20,6 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Map;
 import java.util.UUID;
-import java.util.function.BiFunction;
 import java.util.function.Predicate;
 
 import static biz.coolpage.hcs.util.EntityHelper.IS_SURVIVAL_AND_SERVER;
@@ -182,18 +181,6 @@ public class HcsEffects {
     };
 
     public static final StatusEffect WET = new StatusEffect(StatusEffectCategory.HARMFUL, 0x99a9d7) {
-        int lastAmplifier = 0;
-
-        @Override
-        protected String loadTranslationKey() {
-            return GET_AMP3_KEY.apply("wet", this.lastAmplifier);
-        }
-
-        @Override
-        public void onApplied(LivingEntity entity, AttributeContainer attributes, int amplifier) {
-            this.lastAmplifier = amplifier;
-        }
-
         @Override
         public boolean canApplyUpdateEffect(int duration, int amplifier) {
             return true;
@@ -224,16 +211,9 @@ public class HcsEffects {
 
     public static final StatusEffect INJURY = new StatusEffect(StatusEffectCategory.HARMFUL, 0x8c1000) {
         final Multimap<EntityAttribute, EntityAttributeModifier> customAttributeModifiers = Multimaps.synchronizedMultimap(ArrayListMultimap.create());
-        int lastAmplifier = 0;
-
-        @Override
-        protected String loadTranslationKey() {
-            return GET_AMP4_KEY.apply("injury", this.lastAmplifier);
-        }
 
         @Override
         public void onApplied(LivingEntity entity, AttributeContainer attributes, int amplifier) {
-            this.lastAmplifier = amplifier;
             if (entity == null) return;
             switch (amplifier) {
                 default -> { //Minor Injuries: speed -5%, attack speed -5%, knockback -10%
@@ -275,16 +255,9 @@ public class HcsEffects {
 
     public static final StatusEffect PAIN = new StatusEffect(StatusEffectCategory.HARMFUL, 0x421d0a) {
         final Multimap<EntityAttribute, EntityAttributeModifier> customAttributeModifiers = Multimaps.synchronizedMultimap(ArrayListMultimap.create());
-        int lastAmplifier = 0;
-
-        @Override
-        protected String loadTranslationKey() {
-            return GET_AMP4_KEY.apply("pain", this.lastAmplifier);
-        }
 
         @Override
         public void onApplied(LivingEntity entity, AttributeContainer attributes, int amplifier) {
-            this.lastAmplifier = amplifier;
             if (entity == null) return;
             switch (amplifier) {
                 default -> { //Minor Pain: speed -5%, attack speed -5%, knockback -10%
@@ -325,33 +298,9 @@ public class HcsEffects {
     };
 
     public static final StatusEffect PANIC = new StatusEffect(StatusEffectCategory.HARMFUL, 0xffffff) {
-        int lastAmplifier = 0;
-
-        @Override
-        protected String loadTranslationKey() {
-            return GET_AMP4_KEY.apply("panic", this.lastAmplifier);
-        }
-
-        @Override
-        public void onApplied(LivingEntity entity, AttributeContainer attributes, int amplifier) {
-            this.lastAmplifier = amplifier;
-        }
-
     };
 
     public static final StatusEffect BLEEDING = new StatusEffect(StatusEffectCategory.HARMFUL, 0xcf0303) {
-        int lastAmplifier = 0;
-
-        @Override
-        protected String loadTranslationKey() {
-            return GET_AMP4_KEY.apply("bleeding", this.lastAmplifier);
-        }
-
-        @Override
-        public void onApplied(LivingEntity entity, AttributeContainer attributes, int amplifier) {
-            this.lastAmplifier = amplifier;
-        }
-
         @Override
         public boolean canApplyUpdateEffect(int duration, int amplifier) {
             return true;
@@ -422,16 +371,16 @@ public class HcsEffects {
     public static final StatusEffect HEAVY_LOAD = new StatusEffect(StatusEffectCategory.HARMFUL, 0xfed93f) {
     };
 
-    public static final BiFunction<String, Integer, String> GET_AMP4_KEY = (name, amplifier) -> switch (amplifier) {
-        case 0, 1, 2, 3 -> "effect.hcs." + name + "." + (amplifier + 1);
-        default -> "effect.hcs." + name;
-    };
-
-    public static final BiFunction<String, Integer, String> GET_AMP3_KEY = (name, amplifier) -> GET_AMP4_KEY.apply(name, amplifier == 3 ? 2 : amplifier);
-
     public static final Predicate<StatusEffect> IS_EFFECT_NAME_VARIABLE = effect -> effect == PAIN || effect == INJURY || effect == PANIC || effect == BLEEDING || effect == WET; // A predicate determines whether an effect should be appended by Roman numerals to express level
 
-    public static void removeTempAttributes(AttributeContainer attributes, @NotNull Multimap<EntityAttribute, EntityAttributeModifier> customAttributeModifiers) {
+    public static String getEffectVarName(String key, int amplifier) {
+        return switch (amplifier) {
+            case 0, 1, 2, 3 -> key + "." + (amplifier + 1);
+            default -> key;
+        };
+    }
+
+    private static void removeTempAttributes(AttributeContainer attributes, @NotNull Multimap<EntityAttribute, EntityAttributeModifier> customAttributeModifiers) {
         for (Map.Entry<EntityAttribute, EntityAttributeModifier> entry : customAttributeModifiers.entries()) {
             EntityAttributeInstance entityAttributeInstance = attributes.getCustomInstance(entry.getKey());
             if (entityAttributeInstance == null) continue;

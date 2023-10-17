@@ -22,7 +22,6 @@ import net.fabricmc.fabric.api.object.builder.v1.entity.FabricEntityTypeBuilder;
 import net.fabricmc.fabric.api.registry.FuelRegistry;
 import net.minecraft.block.*;
 import net.minecraft.block.entity.BlockEntityType;
-import net.minecraft.client.item.ModelPredicateProviderRegistry;
 import net.minecraft.entity.EntityDimensions;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
@@ -176,7 +175,7 @@ public class Reg implements ModInitializer {
          * 3. BuiltinModelItemRendererMixin
          * 4. entity/improvised_shield_base.png
          * 5. models/item/improvised_shield(+_blocking).json // "overrides" cannot be neglected;blocking is the model when using it
-         * 6. ModelPredicateProviderRegistry.register()
+         * 6. Client: ModelPredicateProviderRegistry.register()
          * */
         @Contract(pure = true)
         @Override
@@ -472,8 +471,6 @@ public class Reg implements ModInitializer {
         ComposterBlock.ITEM_TO_LEVEL_INCREASE_CHANCE.put(BARK, 0.5F);
         ComposterBlock.ITEM_TO_LEVEL_INCREASE_CHANCE.put(WILLOW_BARK, 0.5F);
         ComposterBlock.ITEM_TO_LEVEL_INCREASE_CHANCE.put(FEARLESSNESS_HERB, 0.5F);
-
-        ModelPredicateProviderRegistry.register(IMPROVISED_SHIELD, new Identifier("blocking"), (stack, world, entity, seed) -> entity != null && entity.isUsingItem() && entity.getActiveItem() == stack ? 1.0F : 0.0F);
 
         CommandRegistrationCallback.EVENT.register((dispatcher, registryAccess, environment) -> dispatcher.register(literal("village")
                 .executes(context -> {

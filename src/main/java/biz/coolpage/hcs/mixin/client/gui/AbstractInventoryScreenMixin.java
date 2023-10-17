@@ -16,6 +16,8 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
+import static biz.coolpage.hcs.status.HcsEffects.IS_EFFECT_NAME_VARIABLE;
+
 @Environment(value = EnvType.CLIENT)
 @Mixin(AbstractInventoryScreen.class)
 public abstract class AbstractInventoryScreenMixin {
@@ -38,8 +40,8 @@ public abstract class AbstractInventoryScreenMixin {
 
     @Inject(method = "getStatusEffectDescription", at = @At("HEAD"), cancellable = true)
     private void getStatusEffectDescription(@NotNull StatusEffectInstance statusEffect, CallbackInfoReturnable<Text> cir) {
-        if (HcsEffects.IS_EFFECT_NAME_VARIABLE.test(statusEffect.getEffectType()))
-            cir.setReturnValue(statusEffect.getEffectType().getName().copy());
+        if (IS_EFFECT_NAME_VARIABLE.test(statusEffect.getEffectType()))
+            cir.setReturnValue(Text.translatable(HcsEffects.getEffectVarName(statusEffect.getTranslationKey(), statusEffect.getAmplifier())));
     }
 
 }
