@@ -29,4 +29,5 @@ public class ClientC2S {
             ClientPlayNetworking.send(ServerC2S.ON_PLAYER_ENTER, buf1);
         }
     }
+
 }

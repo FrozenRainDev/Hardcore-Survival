@@ -3,7 +3,8 @@ package biz.coolpage.hcs.status.manager;
 public class StatusManager {
     public static final String MAX_LVL_NBT = "hcs_max_lvl_reached";
     public static final String IS_SOUL_IMPAIRED_NBT = "hcs_is_soul_impaired";
-    public static final String IN_DARKNESS_TICKS = "hcs_in_darkness";
+    public static final String IN_DARKNESS_TICKS_NBT = "hcs_in_darkness";
+    public static final String ENTER_TIMES_NBT = "hcs_enter_curr_wld";
     private float exhaustion = 0.0F; //A field in HungerManager that needs to used in InGameHudMixin
     private int recentAttackTicks = 0; //Increase when player attacks an entity; Decrease over time
     private int recentMiningTicks = 0;
@@ -21,6 +22,7 @@ public class StatusManager {
     private int recentWetTicks = 0;
     private int inDarknessTicks = 0, lastInDarknessTicks = 0;
     private int bareDiggingTicks = 0; //Ticks of digging blocks with bare hand; Server only
+    private int enterCurrWldTimes = 0;
 
     public void reset(int lvlReached, int soulImpaired) {
         setSoulImpairedStat(soulImpaired);
@@ -196,5 +198,13 @@ public class StatusManager {
 
     public void addBareDiggingTicks() {
         if (bareDiggingTicks < 10000) ++bareDiggingTicks;
+    }
+
+    public int getEnterCurrWldTimes() {
+        return enterCurrWldTimes;
+    }
+
+    public void setEnterCurrWldTimes(int val) {
+        enterCurrWldTimes = val;
     }
 }

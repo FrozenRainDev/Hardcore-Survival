@@ -93,6 +93,7 @@ public class ClientS2C {
                         statusManager.setRecentSleepTicks(bufArr[11]);
                         statusManager.setRecentWetTicks(bufArr[12]);
                         statusManager.setInDarknessTicks(bufArr[13]);
+                        statusManager.setEnterCurrWldTimes(bufArr[14]);
                     }
                 }
             });

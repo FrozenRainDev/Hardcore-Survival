@@ -2,6 +2,7 @@ package biz.coolpage.hcs.event;
 
 import biz.coolpage.hcs.Reg;
 import biz.coolpage.hcs.item.KnifeItem;
+import biz.coolpage.hcs.status.accessor.StatAccessor;
 import biz.coolpage.hcs.util.EntityHelper;
 import net.fabricmc.fabric.api.event.player.PlayerBlockBreakEvents;
 import net.minecraft.block.*;
@@ -76,6 +77,7 @@ public class BreakBlockEvent {
                 }
                 if ((block == Blocks.CACTUS || block instanceof AbstractGlassBlock || block instanceof PaneBlock) && player.getMainHandStack().isEmpty()) {
                     player.damage(world.getDamageSources().cactus(), 2f);
+                    ((StatAccessor) player).getInjuryManager().addBleeding(1.2);
                 } else if (block == Blocks.SWEET_BERRY_BUSH) EntityHelper.dropItem(player, x, y, z, Reg.BERRY_BUSH, 1);
 
             }

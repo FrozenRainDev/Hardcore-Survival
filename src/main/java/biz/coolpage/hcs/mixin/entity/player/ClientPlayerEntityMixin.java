@@ -1,8 +1,10 @@
 package biz.coolpage.hcs.mixin.entity.player;
 
+import biz.coolpage.hcs.event.ClientPlayConnectionEvent;
 import biz.coolpage.hcs.status.HcsEffects;
 import biz.coolpage.hcs.status.accessor.StatAccessor;
 import biz.coolpage.hcs.status.manager.SanityManager;
+import biz.coolpage.hcs.status.manager.StatusManager;
 import biz.coolpage.hcs.util.EntityHelper;
 import com.mojang.authlib.GameProfile;
 import net.fabricmc.api.EnvType;
@@ -14,6 +16,9 @@ import net.minecraft.client.world.ClientWorld;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvent;
 import net.minecraft.sound.SoundEvents;
+import net.minecraft.text.ClickEvent;
+import net.minecraft.text.Text;
+import net.minecraft.util.Formatting;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.MathHelper;
 import org.jetbrains.annotations.NotNull;
@@ -57,6 +62,8 @@ public abstract class ClientPlayerEntityMixin extends AbstractClientPlayerEntity
     private int ticks = 0;
     @Unique
     private int horriblyPlayedTicks = 0;
+    @Unique
+    private boolean hasCheckedSponsorTip = false;
 
     public ClientPlayerEntityMixin(ClientWorld world, GameProfile profile) {
         super(world, profile);
@@ -71,13 +78,20 @@ public abstract class ClientPlayerEntityMixin extends AbstractClientPlayerEntity
         boolean isThirdPerson = this.client.gameRenderer.getCamera().isThirdPerson();
         boolean darknessEnveloped = this.hasStatusEffect(HcsEffects.DARKNESS_ENVELOPED);
         boolean hasInsanity = this.hasStatusEffect(HcsEffects.INSANITY);
+        StatusManager statusManager = ((StatAccessor) this).getStatusManager();
         if (!hasInsanity && !darknessEnveloped && this.horriblyPlayedTicks > 0) {
             this.client.getSoundManager().stopSounds(null, SoundCategory.AMBIENT);
             this.horriblyPlayedTicks = 0;
         }
+        if (!this.hasCheckedSponsorTip) {
+            int enterWorldTimes = statusManager.getEnterCurrWldTimes();
+            if (enterWorldTimes > 0 && enterWorldTimes % 5 == 0)
+                this.sendMessage(Text.literal("\n").append(Text.translatable("hcs.tip.sponsor", enterWorldTimes)).append(Text.literal(ClientPlayConnectionEvent.SPONSOR_URL).formatted(Formatting.UNDERLINE).formatted(Formatting.AQUA).styled(style -> style.withClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, ClientPlayConnectionEvent.SPONSOR_URL)))), false);
+            this.hasCheckedSponsorTip = true;
+        }
         if (EntityHelper.IS_SURVIVAL_LIKE.test(this)) {
             if (darknessEnveloped) {
-                final int darkTicks = ((StatAccessor) this).getStatusManager().getInDarknessTicks();
+                final int darkTicks = statusManager.getInDarknessTicks();
                 if (darkTicks == 60) playHallAmbient(this);
                 else if (darkTicks == 290) {
                     this.world.playSound(this.getX(), this.getY(), this.getZ(), ENTITY_ENDERMAN_SCREAM, SoundCategory.AMBIENT, 26, -13, false);

@@ -217,7 +217,7 @@ public abstract class PlayerEntityMixin extends LivingEntity implements StatAcce
     }
 
     @Inject(method = "readCustomDataFromNbt", at = @At("TAIL"))
-    public void readCustomDataFromNbt(NbtCompound nbt, CallbackInfo info) {
+    public void readCustomDataFromNbt(@NotNull NbtCompound nbt, CallbackInfo info) {
         if (this.world.isClient) return;
         this.thirstManager.set(nbt.contains(ThirstManager.THIRST_NBT, NbtElement.DOUBLE_TYPE) ? nbt.getDouble(ThirstManager.THIRST_NBT) : 1.0);
         this.thirstManager.setSaturation(nbt.contains(ThirstManager.THIRST_SATURATION_NBT, NbtElement.FLOAT_TYPE) ? nbt.getFloat(ThirstManager.THIRST_SATURATION_NBT) : 0.2F);
@@ -229,11 +229,12 @@ public abstract class PlayerEntityMixin extends LivingEntity implements StatAcce
         this.nutritionManager.setVegetable(nbt.contains(NutritionManager.NUTRITION_VEGETABLE_NBT, NbtElement.DOUBLE_TYPE) ? nbt.getDouble(NutritionManager.NUTRITION_VEGETABLE_NBT) : 1.0);
         this.wetnessManager.set(nbt.contains(WetnessManager.WETNESS_NBT, NbtElement.DOUBLE_TYPE) ? nbt.getDouble(WetnessManager.WETNESS_NBT) : 0.0);
         this.statusManager.setSoulImpairedStat(nbt.contains(StatusManager.IS_SOUL_IMPAIRED_NBT) ? nbt.getInt(StatusManager.IS_SOUL_IMPAIRED_NBT) : 0);
+        this.statusManager.setEnterCurrWldTimes(nbt.contains(StatusManager.ENTER_TIMES_NBT) ? nbt.getInt(StatusManager.ENTER_TIMES_NBT) : 0);
         this.injuryManager.setRawPain(nbt.contains(InjuryManager.PAIN_NBT) ? nbt.getDouble(InjuryManager.PAIN_NBT) : 0.0);
         this.injuryManager.setPainkillerApplied(nbt.contains(InjuryManager.PAINKILLER_APPLIED_NBT) ? nbt.getInt(InjuryManager.PAINKILLER_APPLIED_NBT) : 0);
         this.injuryManager.setBleeding(nbt.contains(InjuryManager.BLEEDING_NBT) ? nbt.getDouble(InjuryManager.BLEEDING_NBT) : 0.0);
         this.injuryManager.setFracture(nbt.contains(InjuryManager.FRACTURE_NBT) ? nbt.getDouble(InjuryManager.FRACTURE_NBT) : 0.0);
-        this.statusManager.setInDarknessTicks(nbt.contains(StatusManager.IN_DARKNESS_TICKS) ? nbt.getInt(StatusManager.IN_DARKNESS_TICKS) : 0);
+        this.statusManager.setInDarknessTicks(nbt.contains(StatusManager.IN_DARKNESS_TICKS_NBT) ? nbt.getInt(StatusManager.IN_DARKNESS_TICKS_NBT) : 0);
         this.moodManager.setPanic(nbt.contains(MoodManager.PANIC_NBT) ? nbt.getDouble(MoodManager.PANIC_NBT) : 0.0);
         this.moodManager.setPanicKillerApplied(nbt.contains(MoodManager.PANIC_KILLER_APPLIED_NBT) ? nbt.getInt(MoodManager.PANIC_KILLER_APPLIED_NBT) : 0);
         this.moodManager.setHappiness(nbt.contains(MoodManager.HAPPINESS_NBT) ? nbt.getDouble(MoodManager.HAPPINESS_NBT) : 1.0);
@@ -242,7 +243,7 @@ public abstract class PlayerEntityMixin extends LivingEntity implements StatAcce
     }
 
     @Inject(method = "writeCustomDataToNbt", at = @At("TAIL"))
-    public void writeCustomDataToNbt(NbtCompound nbt, CallbackInfo info) {
+    public void writeCustomDataToNbt(@NotNull NbtCompound nbt, CallbackInfo info) {
         if (this.world.isClient) return;
         nbt.putDouble(ThirstManager.THIRST_NBT, this.thirstManager.get());
         nbt.putFloat(ThirstManager.THIRST_SATURATION_NBT, this.thirstManager.getSaturation());
@@ -257,13 +258,14 @@ public abstract class PlayerEntityMixin extends LivingEntity implements StatAcce
         nbt.putDouble(InjuryManager.PAIN_NBT, this.injuryManager.getRawPain());
         nbt.putInt(InjuryManager.PAINKILLER_APPLIED_NBT, this.injuryManager.getPainkillerApplied());
         nbt.putDouble(InjuryManager.BLEEDING_NBT, this.injuryManager.getBleeding());
-        nbt.putInt(StatusManager.IN_DARKNESS_TICKS, this.statusManager.getInDarknessTicks());
+        nbt.putInt(StatusManager.IN_DARKNESS_TICKS_NBT, this.statusManager.getInDarknessTicks());
         nbt.putDouble(MoodManager.PANIC_NBT, this.moodManager.getRawPanic());
         nbt.putInt(MoodManager.PANIC_KILLER_APPLIED_NBT, this.moodManager.getPanicKillerApplied());
         nbt.putDouble(InjuryManager.FRACTURE_NBT, this.injuryManager.getFracture());
         nbt.putDouble(DiseaseManager.PARASITE_NBT, this.diseaseManager.getParasite());
         nbt.putDouble(DiseaseManager.COLD_NBT, this.diseaseManager.getCold());
         nbt.putDouble(MoodManager.HAPPINESS_NBT, this.moodManager.getHappiness());
+        nbt.putInt(StatusManager.ENTER_TIMES_NBT, this.statusManager.getEnterCurrWldTimes() + 1);
     }
 
     @Inject(method = "getBlockBreakingSpeed", at = @At("RETURN"), cancellable = true)
