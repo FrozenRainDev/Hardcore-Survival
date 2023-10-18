@@ -15,16 +15,14 @@ public class AttackEntityEvent {
     public static void init() {
         // Also view PlayerEntityMixin/attack()
         AttackEntityCallback.EVENT.register((player, world, hand, entity, hitResult) -> {
-            if (entity instanceof LivingEntity victim) {
+            if (entity instanceof LivingEntity /*victim*/) {
                 final double rand = Math.random();
                 ItemStack mainHandStack = player.getMainHandStack();
-                if (mainHandStack.isOf(Reg.ROCK)) {
-                    victim.damage(player.world.getDamageSources().playerAttack(player), 1.0F);
-                    if (rand < 0.02) {
+                if (mainHandStack.isOf(Reg.ROCK)&&rand < 0.02) {
+// FIXME                    victim.damage(player.world.getDamageSources().playerAttack(player), 1.0F); drop a viscera before death
                         player.getMainHandStack().decrement(1);
                         player.sendToolBreakStatus(Hand.MAIN_HAND);
                         EntityHelper.dropItem(player, Reg.SHARP_ROCK);
-                    }
                 } else if (mainHandStack.isOf(Items.STICK) && rand < 0.05) {
                     player.getMainHandStack().decrement(1);
                     player.sendToolBreakStatus(Hand.MAIN_HAND);
