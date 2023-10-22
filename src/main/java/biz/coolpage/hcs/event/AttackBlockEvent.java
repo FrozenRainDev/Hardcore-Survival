@@ -26,9 +26,6 @@ public class AttackBlockEvent {
             BlockState state = world.getBlockState(pos);
             Block block = state.getBlock();
             BlockEntity blockEntity = world.getBlockEntity(pos);
-            int x = pos.getX();
-            int y = pos.getY();
-            int z = pos.getZ();
             ItemStack mainHandStack = player.getMainHandStack();
             Item mainHand = mainHandStack.getItem();
             if (EntityHelper.IS_SURVIVAL_AND_SERVER.test(player)) {
@@ -47,20 +44,20 @@ public class AttackBlockEvent {
                         world.syncWorldEvent(WorldEvents.BLOCK_BROKEN, pos, Block.getRawIdFromState(state));
                         mainHandStack.decrement(1);
                         if (Math.random() < (0.5 + player.experienceLevel / 40.0)) {
-                            EntityHelper.dropItem(player, x, y, z, Reg.SHARP_ROCK, 1);
+                            EntityHelper.dropItem(player, Reg.SHARP_ROCK);
                             EntityHelper.msgById(player, "hcs.tip.chip_succeed");
                         } else EntityHelper.msgById(player, "hcs.tip.chip_failed");
                     } else if (mainHand == Items.FLINT) {
                         mainHandStack.decrement(1);
                         if (Math.random() < (0.25 + player.experienceLevel / 40.0)) {
-                            EntityHelper.dropItem(player, x, y, z, Reg.SHARP_FLINT, 1);
+                            EntityHelper.dropItem(player, Reg.SHARP_FLINT);
                             EntityHelper.msgById(player, "hcs.tip.chip_succeed");
                         } else EntityHelper.msgById(player, "hcs.tip.chip_failed");
                     } else if (mainHand == Items.BONE) {
                         world.syncWorldEvent(WorldEvents.BLOCK_BROKEN, pos, Block.getRawIdFromState(state));
                         mainHandStack.decrement(1);
                         EntityHelper.msgById(player, "hcs.tip.chip_succeed");
-                        EntityHelper.dropItem(player, x, y, z, Reg.SHARP_BROKEN_BONE, 1);
+                        EntityHelper.dropItem(player, Reg.SHARP_BROKEN_BONE);
                     }
                 }
 

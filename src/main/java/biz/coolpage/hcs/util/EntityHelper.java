@@ -66,7 +66,7 @@ public class EntityHelper {
         ItemStack stack = player.getMainHandStack(); //Do not use getActiveItem
 //        return stack.isEmpty();
         if (stack == null) return false;
-        return !(stack.getItem() instanceof ToolItem) && !stack.isOf(Items.STICK) && !stack.isOf(Items.BONE) && !stack.isOf(Reg.ROCK);
+        return !(stack.getItem() instanceof ToolItem) && !stack.isOf(Items.STICK) && !stack.isOf(Items.BONE) && !stack.isOf(Reg.ROCK)&&!stack.isOf(Items.FLINT);
     };
     public static final BiPredicate<ItemStack, ItemStack> IS_HOLDING_BLOCK = (stack1, stack2) -> {
         if (stack1 == null || stack2 == null) return false;
@@ -118,8 +118,8 @@ public class EntityHelper {
         }
     }
 
-    public static void dropItem(@NotNull Entity entity, @NotNull Item item) {
-        dropItem(entity, new ItemStack(item));
+    public static void dropItem(Entity entity, Item item) {
+        if (entity != null && item != null) dropItem(entity, new ItemStack(item));
     }
 
     public static void dropItem(World world, BlockPos pos, ItemStack stack) {
