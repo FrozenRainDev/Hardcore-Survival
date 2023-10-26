@@ -43,13 +43,13 @@ public class AttackBlockEvent {
                         // Add sound and particles
                         world.syncWorldEvent(WorldEvents.BLOCK_BROKEN, pos, Block.getRawIdFromState(state));
                         mainHandStack.decrement(1);
-                        if (Math.random() < (0.5 + player.experienceLevel / 40.0)) {
+                        if (Math.random() < (0.7 + player.experienceLevel / 40.0)) {
                             EntityHelper.dropItem(player, Reg.SHARP_ROCK);
                             EntityHelper.msgById(player, "hcs.tip.chip_succeed");
                         } else EntityHelper.msgById(player, "hcs.tip.chip_failed");
                     } else if (mainHand == Items.FLINT) {
                         mainHandStack.decrement(1);
-                        if (Math.random() < (0.25 + player.experienceLevel / 40.0)) {
+                        if (Math.random() < (0.4 + player.experienceLevel / 40.0)) {
                             EntityHelper.dropItem(player, Reg.SHARP_FLINT);
                             EntityHelper.msgById(player, "hcs.tip.chip_succeed");
                         } else EntityHelper.msgById(player, "hcs.tip.chip_failed");

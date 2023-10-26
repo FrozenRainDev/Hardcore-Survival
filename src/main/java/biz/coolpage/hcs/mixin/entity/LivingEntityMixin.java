@@ -87,9 +87,9 @@ public abstract class LivingEntityMixin extends Entity {
             if (ent instanceof ChickenEntity || ent instanceof CowEntity || ent instanceof PigEntity || ent instanceof SheepEntity) {
                 if (!(ent instanceof ChickenEntity)) {
                     //EntityHelper.dropItem(this, Items.BONE, 2);
-                    EntityHelper.dropItem(this, Reg.ANIMAL_VISCERA, 1);
+                    EntityHelper.dropItem(this, Reg.ANIMAL_VISCERA);
                     if (ent instanceof SheepEntity && Math.random() < 0.6)
-                        EntityHelper.dropItem(this, Items.LEATHER, 1);
+                        EntityHelper.dropItem(this, Items.LEATHER);
                 }
                 if (this.isBaby())
                     EntityHelper.dropItem(this, this.getFireTicks() > 0 ? Reg.COOKED_MEAT : Reg.RAW_MEAT);
@@ -98,7 +98,7 @@ public abstract class LivingEntityMixin extends Entity {
             else if (!(ent instanceof BeeEntity || ent instanceof TadpoleEntity || ent instanceof RabbitEntity) && ent instanceof AnimalEntity) {
                 EntityHelper.dropItem(this, this.getFireTicks() > 0 ? Reg.COOKED_MEAT : Reg.RAW_MEAT, (int) (Math.random() * 3) + 1);
                 //EntityHelper.dropItem(this, Items.BONE, 2);
-                EntityHelper.dropItem(this, Reg.ANIMAL_VISCERA, 1);
+                EntityHelper.dropItem(this, Reg.ANIMAL_VISCERA);
             }
             //Also see at BatEntityMixin
         }

@@ -7,22 +7,19 @@ import biz.coolpage.hcs.util.EntityHelper;
 import net.fabricmc.fabric.api.event.player.PlayerBlockBreakEvents;
 import net.minecraft.block.*;
 import net.minecraft.item.*;
-import net.minecraft.util.math.BlockPos;
+import net.minecraft.registry.tag.BlockTags;
+import net.minecraft.util.ItemScatterer;
 
 
 public class BreakBlockEvent {
     public static void init() {
         PlayerBlockBreakEvents.BEFORE.register(((world, player, pos, state, blockEntity) -> {
             if (EntityHelper.IS_SURVIVAL_AND_SERVER.test(player)) {
-                Block block = state.getBlock();
                 int x = pos.getX();
                 int y = pos.getY();
                 int z = pos.getZ();
-                if (block == Blocks.BAMBOO) {
-                    if (world.getBlockState(new BlockPos(x, y + 10, z)).getBlock() == Blocks.BAMBOO && world.getBlockState(new BlockPos(x - 1, y, z)).getBlock() == Blocks.BAMBOO && world.getBlockState(new BlockPos(x + 1, y, z)).getBlock() == Blocks.BAMBOO && world.getBlockState(new BlockPos(x, y, z - 1)).getBlock() == Blocks.BAMBOO && world.getBlockState(new BlockPos(x, y, z + 1)).getBlock() == Blocks.BAMBOO) {
-                        EntityHelper.dropItem(player, x, y, z, Reg.BAMBOO_SHOOT, 1);
-                    }
-                }
+                if (state.isOf(Blocks.BAMBOO) && world.getBlockState(pos.down()).isIn(BlockTags.BAMBOO_PLANTABLE_ON) && world.getBlockState(pos.up(10)).isOf(Blocks.BAMBOO) && world.getBlockState(pos.east()).isOf(Blocks.BAMBOO) && world.getBlockState(pos.west()).isOf(Blocks.BAMBOO) && world.getBlockState(pos.south()).isOf(Blocks.BAMBOO) && world.getBlockState(pos.north()).isOf(Blocks.BAMBOO))
+                    ItemScatterer.spawn(world, x, y, z, Reg.BAMBOO_SHOOT.getDefaultStack());
             }
             return true;
         }));
@@ -45,7 +42,7 @@ public class BreakBlockEvent {
                         else if (rand < 0.35) EntityHelper.dropItem(player, x, y, z, Reg.ROCK, 1);
                         else if (rand < 0.55) EntityHelper.dropItem(player, x, y, z, Reg.GRASS_FIBER, 1);
                         else if (rand < 0.6) EntityHelper.dropItem(player, x, y, z, Items.STICK, 1);
-                        else if (rand < 0.6003) EntityHelper.dropItem(player, x, y, z, Reg.SELAGINELLA, 1);
+                        else if (rand < 0.6009) EntityHelper.dropItem(player, x, y, z, Reg.SELAGINELLA, 1);
                         else if (rand < 0.6083) EntityHelper.dropItem(player, x, y, z, Reg.GINGER, 1);
                         else if (player.getMainHandStack().getItem() instanceof KnifeItem)
                             EntityHelper.dropItem(player, x, y, z, Reg.GRASS_FIBER, 1);
@@ -56,7 +53,7 @@ public class BreakBlockEvent {
                         else if (rand < 0.35) EntityHelper.dropItem(player, x, y, z, Reg.ROCK, 2);
                         else if (rand < 0.55) EntityHelper.dropItem(player, x, y, z, Reg.GRASS_FIBER, 2);
                         else if (rand < 0.6) EntityHelper.dropItem(player, x, y, z, Items.STICK, 2);
-                        else if (rand < 0.6003) EntityHelper.dropItem(player, x, y, z, Reg.SELAGINELLA, 2);
+                        else if (rand < 0.6009) EntityHelper.dropItem(player, x, y, z, Reg.SELAGINELLA, 2);
                         else if (rand < 0.6083) EntityHelper.dropItem(player, x, y, z, Reg.GINGER, 2);
                         else if (player.getMainHandStack().getItem() instanceof KnifeItem)
                             EntityHelper.dropItem(player, x, y, z, Reg.GRASS_FIBER, 2);

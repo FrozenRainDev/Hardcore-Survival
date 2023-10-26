@@ -1,10 +1,10 @@
-# Hardcore Survival
+# Rain's Hardcore Survival
 
 Links:
 
 - <a href="https://modrinth.com/mod/hardcore-survival" target="_blank">Modrinth</a>
-- <a href="http://hcs.coolpage.biz/en" target="_blank">Official Webpage</a>
-- <a href="https://www.mcmod.cn/class/12595.html" target="_blank">Chinese description & Wiki</a>
+- <a href="http://hcs.coolpage.biz/en" target="_blank">Official Website</a>
+- <a href="https://www.mcmod.cn/class/12595.html" target="_blank">McMod (Chinese Description & Wiki)</a>
 
 ## Profile
 
@@ -13,10 +13,14 @@ The hardcore survival mod is an **unprecedented**, difficulty-increasing, surviv
 It is a combination of
 
 - Transformation of gameplay
-  - Elements inspired by mods like MITE, BTW, and TFC
-  - Mechanics borrowed from hardcore survival games: Don't Starve, Project Zomboid, CDDA, and more
+    - Elements inspired by MC mods like *MITE*, *BTW*, *TFC*, *TAN*, and *Enviromine*.
+    - Mechanics borrowed from hardcore survival games: *Don't Starve*, *Project Zomboid*, *Cataclysm: Dark Days Ahead*, and more
 - Survival elements: thirst, temperature, medicine, stamina, sanity, nutrition, etc.
 - Personal inspirations: stone tools, boss challenges, and rogue-like/adventure elements
+
+
+
+## Author's Note
 
 "Not to be missed for difficulty lovers, hardcore players and survival enthusiasts!"
 
@@ -44,7 +48,11 @@ It is a combination of
 ### Temperature <img src="https://s1.ax1x.com/2022/08/31/v5A2nJ.png" width="32px" />
 
 - Temperature is affected by the environment and players should be within the suitable temperature range.
-- To cope with extreme temperatures, wear specific clothing or drink thermostatic potions.
+- Ways to adjust body temperature (cope with extreme temperatures) :
+    - Wear specific clothing(e.g. wool clothes);
+    - Put heated or cooled hot water bags (similar to *Don't Starve*'s thermal stones) in your inventory so that you won't get too cold or hot;
+    - Drink thermostatic potions.
+
 
 ### Stamina <img src="https://s1.ax1x.com/2022/08/31/v5AvNt.png" width="32px" />
 
@@ -55,7 +63,7 @@ It is a combination of
 ### Sanity <img src="https://s1.ax1x.com/2022/08/31/v5A7cD.png" width="32px" />
 
 - It can be interpreted as mental health.
-- Exposure to darkness, combat with monsters, diseases, and unpalatable food can lower sanity.
+- Exposure to darkness, lack of sunshine, combat with monsters, diseases, and unpalatable food can lower sanity.
 - It can be restored by holding flowers, sleeping, or consuming enjoyable food.
 - Low sanity leads to horrible hallucinations.
 
@@ -79,13 +87,13 @@ Players must maintain a balanced diet, as excessive meat consumption can result 
 ### Mood
 
 - Panic
-  - Witnessing monsters or being in dark environments increases panic.
-  - Panic reduces the player's attack accuracy (i.e. probability of attacking failure) ,  and a minimum of 5% and maximum of 15% attack weakening.
-  - As one's level increases, players become less likely to get panicked.
-  - The panic effect can be temporarily removed with fearlessness herb.
+    - Witnessing monsters or being in dark environments increases panic.
+    - Panic reduces the player's attack accuracy (i.e. probability of attacking failure) ,  and a minimum of 5% and maximum of 15% attack weakening.
+    - As one's level increases, players become less likely to get panicked.
+    - The panic effect can be temporarily removed with fearlessness herb.
 - Hapiness
-  - Happiness is inversely related to sanity.
-  - Low sanity leads to decreased happiness, resulting in reduced healing and mining speeds.
+    - Happiness is inversely related to sanity.
+    - Low sanity leads to decreased happiness, resulting in reduced healing and mining speeds.
 
 
 
@@ -102,8 +110,8 @@ Players must maintain a balanced diet, as excessive meat consumption can result 
 ### Stone Age <img src="https://s1.ax1x.com/2022/08/31/v5AY6g.png" width="32px" />
 
 - At the start of the game, you'll need to break a lot of grass to obtain resources like grass fibers, sticks, and stones. These resources are essential for crafting stone tools:
-  - Processing raw materials for stone tools: Use grass fibers to craft fiber strings; Hit rock against hard blocks to get sharp stone blocks.
-  - Crafting basic stone weapons: By using Fiber strings, sharp stones, and sticks, you can craft stone cones (digging tools for dirt and gravels, etc.), stone knives, and stone spears.
+    - Processing raw materials for stone tools: Use grass fibers to craft fiber strings; Hit rock against hard blocks to get sharp stone blocks.
+    - Crafting basic stone weapons: By using Fiber strings, sharp stones, and sticks, you can craft stone cones (digging tools for dirt and gravels, etc.), stone knives, and stone spears.
 
 - You can also create a campfire by drilling with a fire bow, tinder, firewood, and sticks.
 
@@ -126,14 +134,14 @@ Players must maintain a balanced diet, as excessive meat consumption can result 
 - Villages will only spawn under following conditions: 1. The world has existed for more than 32 days; 2. The player has obtained a copper pickaxe. NOTE: All the villages will be zombie villages. (However, zombie villagers do not burn under sunlight)
 - If you tried to open a chest which is not placed by yourself, then you need a pickaxe to pry it open. Besides, chests containing items can't be broken or blown up.
 - Players now have a limited reach distance. By holding tools, you can extend your reach. This means you can no longer rely on having a longer reach than monsters to attack them.
-- Players can be engulfed by total darkness (similar to Don't Starve) when they find themselves in confined, opaque, pitch-dark spaces (excluding moonlight).
+- Players can be engulfed by total darkness (similar to *Don't Starve*) when they find themselves in confined, opaque, pitch-dark spaces (excluding moonlight).
 - Entities modification:
-  - Animals now exhibit improved escaping abilities.
-  - Zombies have enhanced target-searching abilities and can attempt to break blocks and attack animals.
-  - Spiders can spit out silk to trap you, and even common spider attacks can be poisonous.
-  - Skeletons are more fragile with only 4 hearts.
+    - Animals now exhibit improved escaping abilities.
+    - Zombies have enhanced target-searching abilities now, and can attempt to break blocks with hardness lower than planks, attack animals proactively.
+    - Spiders can spit out cobwebs to trap you, and even common spider attacks can be poisonous.
+    - Skeletons are much more fragile, with only 4 hearts.
 - Considerably slower crop growth. Bone meals nerfed.
-- Players will experience oxygen deficiency in the depths of caves, but this can be mitigated by placing leaves, consuming water breathing potions, or wearing helmets enchanted with respiration (underwater breathing).
+- Players will experience oxygen deficiency in the depths of caves, but this can be mitigated by placing plants, consuming water breathing potions, or wearing helmets enchanted with respiration (underwater breathing).
 - New food items.
 - There are still many more details waiting for you to explore.
 
@@ -159,7 +167,3 @@ The author has worked alone voluntarily for years to accomplish the mod without 
 
 - You can give donations via this <a href="http://hcs.coolpage.biz/sponsorship.html" target="_blank">link</a>.
 - The mod is **free** and will remain so in the future without any additional charges.
-
-<!--<iframe style="width:100%;height:auto;min-width:600px;min-height:400px;" src="https://star-history.com/embed?secret=Z2hwX1dnWDJaZG40eEFpTHpTd2RFaktwRnlubnhBYldCYzB5NUVoQQ==#FrozenRainDev/Hardcore-Survival&Date" frameBorder="0"></iframe>-->
-
-<!--PS: If you encountered bugs, you can report it in "issues", rather than emailing.-->

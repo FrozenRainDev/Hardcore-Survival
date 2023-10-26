@@ -104,7 +104,7 @@ public class Reg implements ModInitializer {
     public static final Item SALTWATER_BOTTLE = new BottleItem(new Item.Settings().maxCount(16), new StatusEffectInstance(HcsEffects.THIRST, 1200, 0, false, false, true));
     public static final Item ROASTED_WORM = new EffectiveFoodItem(new Item.Settings().food(new FoodComponent.Builder().hunger(3).saturationModifier(1.0f).statusEffect(new StatusEffectInstance(StatusEffects.NAUSEA, 60), 1).build()), 0.0F, -0.01);
     public static final Item ANIMAL_VISCERA = new Item(new Item.Settings().food(new FoodComponent.Builder().hunger(3).saturationModifier(2.0f).statusEffect(new StatusEffectInstance(StatusEffects.NAUSEA, 40), 1).meat().build()));
-    public static final Item COOKED_ANIMAL_VISCERA = new Item(new Item.Settings().food(new FoodComponent.Builder().hunger(8).saturationModifier(0.8f).meat().build()));
+    public static final Item COOKED_ANIMAL_VISCERA = new Item(new Item.Settings().food(new FoodComponent.Builder().hunger(8).saturationModifier(4F).meat().build()));
     public static final Item SHARP_BROKEN_BONE = new ShovelItem(HcsToolMaterials.SHARP_BROKEN_BONE, 3F, 1.6F - 4.0F, new Item.Settings().maxCount(1));
     public static final Item BAMBOO_SHOOT = new Item(new Item.Settings().food(new FoodComponent.Builder().hunger(1).saturationModifier(1f).build()));
     public static final Item COOKED_BAMBOO_SHOOT = new Item(new Item.Settings().food(new FoodComponent.Builder().hunger(3).saturationModifier(1f).build()));

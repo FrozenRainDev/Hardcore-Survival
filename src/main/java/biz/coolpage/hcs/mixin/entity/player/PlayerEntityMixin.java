@@ -528,13 +528,13 @@ public abstract class PlayerEntityMixin extends LivingEntity implements StatAcce
         if (this.hasStatusEffect(StatusEffects.WITHER)) this.sanityManager.add(-0.00008);
         else if (this.hasStatusEffect(StatusEffects.POISON)) this.sanityManager.add(-0.00003);
         boolean isInCavelike = skyBrightness < 1 && this.world.getDimension().hasSkyLight();
-        boolean isInUnpleasantDimension = !this.world.getDimension().bedWorks() || this.world.getRegistryKey() == World.NETHER;//Avoid mods conflict since sleeping in the nether is setRealPain to permissive
+        boolean isInUnpleasantDimension = !this.world.getDimension().bedWorks() || this.world.getRegistryKey() == World.NETHER; //Avoid mods conflicts since sleeping in the nether is setRealPain to permissive
         if (((this.world.isNight() || isInCavelike) && !this.hasStatusEffect(StatusEffects.NIGHT_VISION)) || isInUnpleasantDimension) {
             double sanDecrement = 0.00001;
             int blockBrightness = this.world.getLightLevel(LightType.BLOCK, headPos);
             if (!isInUnpleasantDimension) {
                 if (blockBrightness < 1 && isInCavelike) {
-                    sanDecrement = 0.0001;
+                    sanDecrement = 0.00006;
                     EntityHelper.addHcsDebuff(this, HcsEffects.DARKNESS_ENVELOPED);
                     final int currDarkTicks = this.statusManager.getInDarknessTicks();
                     if (currDarkTicks == 60) EntityHelper.msgById(this, "hcs.tip.dark.warn");
@@ -551,7 +551,7 @@ public abstract class PlayerEntityMixin extends LivingEntity implements StatAcce
                     this.statusManager.setInDarknessTicks(currDarkTicks + 1);
                     outOfDarkness = false;
                 } else if (blockBrightness < 3 && isInCavelike) sanDecrement = 0.00004;
-                else if (blockBrightness < 8) sanDecrement = 0.000015;
+                else if (blockBrightness < 8) sanDecrement = 0.000008;
             }
             this.sanityManager.add(-sanDecrement);
         }
