@@ -1,5 +1,8 @@
 package biz.coolpage.hcs.status.manager;
 
+import biz.coolpage.hcs.config.HcsDifficulty;
+import org.jetbrains.annotations.NotNull;
+
 public class StatusManager {
     public static final String MAX_LVL_NBT = "hcs_max_lvl_reached";
     public static final String IS_SOUL_IMPAIRED_NBT = "hcs_is_soul_impaired";
@@ -23,8 +26,10 @@ public class StatusManager {
     private int inDarknessTicks = 0, lastInDarknessTicks = 0;
     private int bareDiggingTicks = 0; //Ticks of digging blocks with bare hand; Server only
     private int enterCurrWldTimes = 0;
+    private int stonesSmashed = 0;
+    private Enum<HcsDifficulty.HcsDifficultyEnum> hcsDifficulty = HcsDifficulty.HcsDifficultyEnum.standard;
 
-    public void reset(int lvlReached, int soulImpaired) {
+    public void reset(int lvlReached, int soulImpaired, int smashed, Enum<HcsDifficulty.HcsDifficultyEnum> difficulty) {
         setSoulImpairedStat(soulImpaired);
         exhaustion = 0.0F;
         recentAttackTicks = 0;
@@ -42,6 +47,8 @@ public class StatusManager {
         recentWetTicks = 0;
         lastInDarknessTicks = inDarknessTicks = 0;
         bareDiggingTicks = 0;
+        stonesSmashed = smashed;
+        hcsDifficulty = difficulty;
     }
 
     public float getExhaustion() {
@@ -147,14 +154,12 @@ public class StatusManager {
     }
 
     public int getSoulImpairedStat() {
-        if (soulImpairedStat > 5) soulImpairedStat = 5;
-        else if (soulImpairedStat < 0) soulImpairedStat = 0;
+        if (soulImpairedStat < 0) soulImpairedStat = 0;
         return soulImpairedStat;
     }
 
-    public void setSoulImpairedStat(int val) {
-        if (val > 5) val = 5;
-        else if (val < 0) val = 0;
+    public void setSoulImpairedStat(int val) {//See end of PlayerEntityMixin/ticks(); -- controls max value
+        if (val < 0) val = 0;
         soulImpairedStat = val;
     }
 
@@ -188,6 +193,7 @@ public class StatusManager {
         inDarknessTicks = Math.min(114514, val);
     }
 
+    @Deprecated
     public int getBareDiggingTicks() {
         return bareDiggingTicks;
     }
@@ -196,6 +202,7 @@ public class StatusManager {
         bareDiggingTicks = val;
     }
 
+    @Deprecated
     public void addBareDiggingTicks() {
         if (bareDiggingTicks < 10000) ++bareDiggingTicks;
     }
@@ -206,5 +213,29 @@ public class StatusManager {
 
     public void setEnterCurrWldTimes(int val) {
         enterCurrWldTimes = val;
+    }
+
+    public int getStonesSmashed() {
+        if (stonesSmashed < 0) stonesSmashed = 0;
+        return stonesSmashed;
+    }
+
+    public void setStonesSmashed(int val) {
+        stonesSmashed = val;
+        if (stonesSmashed < 0) stonesSmashed = 0;
+        else if (stonesSmashed + val > 114514) stonesSmashed = 114514;
+    }
+
+    @Deprecated
+    public void addStonesSmashed() {
+        setStonesSmashed(getStonesSmashed() + 1);
+    }
+
+    public @NotNull Enum<HcsDifficulty.HcsDifficultyEnum> getHcsDifficulty() {
+        return hcsDifficulty;
+    }
+
+    public void setHcsDifficulty(Enum<HcsDifficulty.HcsDifficultyEnum> difficulty) {
+        hcsDifficulty = difficulty;
     }
 }

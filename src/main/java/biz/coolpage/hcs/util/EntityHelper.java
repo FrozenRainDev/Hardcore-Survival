@@ -66,7 +66,7 @@ public class EntityHelper {
         ItemStack stack = player.getMainHandStack(); //Do not use getActiveItem
 //        return stack.isEmpty();
         if (stack == null) return false;
-        return !(stack.getItem() instanceof ToolItem) && !stack.isOf(Items.STICK) && !stack.isOf(Items.BONE) && !stack.isOf(Reg.ROCK)&&!stack.isOf(Items.FLINT);
+        return !(stack.getItem() instanceof ToolItem) && !stack.isOf(Items.STICK) && !stack.isOf(Items.BONE) && !stack.isOf(Reg.ROCK) && !stack.isOf(Items.FLINT);
     };
     public static final BiPredicate<ItemStack, ItemStack> IS_HOLDING_BLOCK = (stack1, stack2) -> {
         if (stack1 == null || stack2 == null) return false;
@@ -408,6 +408,18 @@ public class EntityHelper {
         double d = vec3d2.length();
         double e = vec3d.dotProduct(vec3d2.normalize());
         if (e > 1.0 - 0.025 / d) return player.canSee(stared);
+        return false;
+    }
+
+    public static boolean isLuminousBlockWorking(LivingEntity entity) {
+        if (entity == null) return false;
+        for (Item item : new Item[]{entity.getMainHandStack().getItem(), entity.getOffHandStack().getItem()}) {
+            if (item instanceof BlockItem blockItem) {
+                Block block = blockItem.getBlock();
+                if (block.settings.luminance.applyAsInt(block.getDefaultState()) > 0)
+                    return !(block instanceof TorchBlock && entity.isSubmergedInWater());
+            }
+        }
         return false;
     }
 

@@ -71,7 +71,8 @@
     "recipe.ShapelessRecipeMixin",
     "server.PlayerManagerMixin",
     "world.ServerChunkManagerMixin",
-    "world.StructurePoolBasedGeneratorMixin"
+    "world.StructurePoolBasedGeneratorMixin",
+    "world.StructurePoolBasedGeneratorMixin$StructurePoolGeneratorMixin"
   ],
   "client": [
     "client.ClientPlayerInteractionManagerMixin",

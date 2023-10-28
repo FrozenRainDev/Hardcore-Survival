@@ -185,6 +185,6 @@ public class WorldHelper {
 
     public static boolean shouldGenerateVillages() {
         if (currWorld == null) return false;
-        return currWorld.getTime() > 768000L && applyNullable(HcsPersistentState.getServerState(currWorld), state -> state.hasObtainedCopperPickaxe, false);
+        return currWorld.getTime() > 768000L && applyNullable(HcsPersistentState.getServerState(currWorld), HcsPersistentState::hasObtainedCopperPickaxe, false);
     }
 }

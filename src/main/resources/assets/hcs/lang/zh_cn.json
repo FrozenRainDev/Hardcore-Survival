@@ -110,7 +110,7 @@
   "hcs.tip.unlocked": "已解锁",
   "hcs.tip.cant_break_chest": "盛有物品的箱子不能被破坏或炸毁",
   "hcs.tip.need_bait": "需要在副手放诱饵",
-  "hcs.tip.welcome": "欢迎游玩硬核生存Mod！^_^ 请访问官网以查阅教程，或提供反馈、赞助及翻译。如果能帮忙宣传本模组，作者将不胜感激！警告：心脑血管疾病患者、癫痫患者以及其他不能受惊的群体不宜游玩，否则后果自负！当前版本: 0.14.2_beta",
+  "hcs.tip.welcome": "欢迎游玩硬核生存Mod！^_^ 请访问官网以查阅教程，或提供反馈、赞助及翻译。如果能帮忙宣传本模组，作者将不胜感激！警告：心脑血管疾病患者、癫痫患者以及其他不能受惊的群体不宜游玩，否则后果自负！当前版本: 0.15.0_beta",
   "hcs.tip.reach_range_addition": "攻击距离 + ",
   "hcs.tip.too_pain_to_sleep": "你疼得睡不着",
   "hcs.tip.dark.warn": "黑暗中似乎有什么东西要吃掉你...",
@@ -124,6 +124,7 @@
   "hcs.tip.can_gen_village": "当前世界可以生成村庄",
   "hcs.tip.cant_gen_village": "当前世界不可以生成村庄",
   "hcs.tip.sponsor": "这是您第%1$s次使用硬核生存mod进入这个世界！作者独自一人，坚持数年，无偿创作，你真的不忍心赏几毛钱吗（可怜兮兮）？这对我很重要，谢谢！赞助链接：",
+  "hcs.tip.curr_difficulty": "当前难度为%1$s。输入/gamerule hcsDifficulty以调节难度",
 
   "item.minecraft.potion.effect.hcs_ironskin": "铁皮药水",
   "item.minecraft.potion.effect.hcs_long_ironskin": "铁皮药水",
@@ -161,8 +162,8 @@
   "item.minecraft.tipped_arrow.effect.hcs_strong_mining": "挖矿之箭",
   "item.minecraft.tipped_arrow.effect.hcs_constant_temperature": "恒温之箭",
   "item.minecraft.tipped_arrow.effect.hcs_long_constant_temperature": "恒温之箭",
-
   "item.minecraft.bone_meal.description": "如果滥用，你的作物会枯萎！",
+  "item.minecraft.flint.description": "可合成锋利燧石片",
   "item.hcs.rot.description": "如果滥用，你的作物会枯萎！",
 
   "item.hcs.fiber_string": "纤维绳",
@@ -170,7 +171,7 @@
   "item.hcs.grass_fiber": "草纤维",
   "item.hcs.roasted_seeds": "烤种子",
   "item.hcs.rock": "石块",
-  "item.hcs.rock.description": "左击坚硬方块打制，右击扔出",
+  "item.hcs.rock.description": "可合成锋利石片；右击扔出",
   "item.hcs.sharp_rock": "锋利石片",
   "item.hcs.sharp_flint": "锋利燧石片",
   "item.hcs.firewood": "柴",

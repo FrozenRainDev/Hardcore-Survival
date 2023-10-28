@@ -1,5 +1,6 @@
 package biz.coolpage.hcs.mixin.entity.player;
 
+import biz.coolpage.hcs.config.HcsDifficulty;
 import biz.coolpage.hcs.status.HcsEffects;
 import biz.coolpage.hcs.status.accessor.DamageSourcesAccessor;
 import biz.coolpage.hcs.status.accessor.StatAccessor;
@@ -7,6 +8,7 @@ import biz.coolpage.hcs.status.manager.*;
 import biz.coolpage.hcs.status.network.ServerS2C;
 import biz.coolpage.hcs.util.EntityHelper;
 import biz.coolpage.hcs.util.TemperatureHelper;
+import biz.coolpage.hcs.util.WorldHelper;
 import com.mojang.authlib.GameProfile;
 import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.effect.StatusEffectInstance;
@@ -56,6 +58,11 @@ public abstract class ServerPlayerEntityMixin extends PlayerEntity {
         TemperatureHelper.updateAmbientBlocks(this);
         TemperatureHelper.getTemp(this); //Update temp cache
         ServerS2C.writeS2CPacket(this);
+        StatusManager statusManager = ((StatAccessor) this).getStatusManager();
+        if (this.world instanceof ServerWorld serverWorld) {
+            WorldHelper.currWorld = serverWorld;
+            statusManager.setHcsDifficulty(HcsDifficulty.getDifficulty(serverWorld));
+        }
         if (!EntityHelper.IS_SURVIVAL_LIKE.test(this)) return;
         //Init variables
         if (this.hasStatusEffect(HcsEffects.OVEREATEN) && this.hungerManager.getFoodLevel() < 20)
@@ -72,6 +79,7 @@ public abstract class ServerPlayerEntityMixin extends PlayerEntity {
         float envTemp = TemperatureHelper.getFeelingTemp(this, envTempReal, biomeName, skyLightLevel);
         double span1 = TemperatureManager.CHANGE_SPAN * ((playerTemp > 0.75) ? 0.3 : 1.0), span2 = -TemperatureManager.CHANGE_SPAN * ((playerTemp < 0.25) ? 0.3 : 1.0);
         final long currTime = this.world.getTime();
+        final boolean isRelaxingMode = HcsDifficulty.isOf(this.world, HcsDifficulty.HcsDifficultyEnum.relaxing);
 
         //Players' temp affected by environment and change
         if (this.inPowderSnow) {
@@ -130,51 +138,55 @@ public abstract class ServerPlayerEntityMixin extends PlayerEntity {
         if (wet > 0.72) EntityHelper.addHcsDebuff(this, HcsEffects.WET, 2);
         if (wet > 0.4) EntityHelper.addHcsDebuff(this, HcsEffects.WET, 1);
         if (wet > 0.1) EntityHelper.addHcsDebuff(this, HcsEffects.WET, 0);
-        //Debuff for soul impaired(death punishment)
-        StatusManager statusManager = ((StatAccessor) this).getStatusManager();
-        int soulImpairedStat = statusManager.getSoulImpairedStat();
-        if (soulImpairedStat > 0) {
-            if (this.getHealth() > this.getMaxHealth()) this.setHealth(this.getMaxHealth());
-            EntityHelper.addHcsDebuff(this, HcsEffects.SOUL_IMPAIRED, soulImpairedStat - 1);
-        }
 
-        //Debuff of injury
-        float hpPercent = this.getHealth() / this.getMaxHealth();
-        if (hpPercent < 0.1F) EntityHelper.addHcsDebuff(this, HcsEffects.INJURY, 3);
-        else if (hpPercent < 0.25F) EntityHelper.addHcsDebuff(this, HcsEffects.INJURY, 2);
-        else if (hpPercent < 0.45F) EntityHelper.addHcsDebuff(this, HcsEffects.INJURY, 1);
-        else if (hpPercent < 0.7F) EntityHelper.addHcsDebuff(this, HcsEffects.INJURY, 0);
-
-        //Debuff of pain (view add pain in PlayerEntityMixin/applyDamage)
         InjuryManager injuryManager = ((StatAccessor) this).getInjuryManager();
-        final double pain = injuryManager.getRealPain();
-        if (pain > 0.0) EntityHelper.addHcsDebuff(this, HcsEffects.PAIN, MathHelper.clamp((int) pain, 0, 3));
-        injuryManager.tick();
-        sanityManager.tickEnemies(this);
-
-        //Debuff of bleeding
-        final double bleeding = injuryManager.getBleeding() - 1.0;
-        if (bleeding > 0.0)
-            EntityHelper.addHcsDebuff(this, HcsEffects.BLEEDING, MathHelper.clamp((int) bleeding, 0, 3));
-
-        //Panic; also view PlayerEntityMixin/tick()
         MoodManager moodManager = ((StatAccessor) this).getMoodManager();
-        final boolean isDarkEnv = this.hasStatusEffect(HcsEffects.DARKNESS_ENVELOPED);
-        final double currRawPanic = moodManager.getRawPanic(), currRealPanic = moodManager.getRealPanic(), expectedRawPanic = isDarkEnv ? 4 : MathHelper.clamp(sanityManager.countEnemies() * 0.5, 0.0, 4), panicDiff = Math.abs(currRawPanic - expectedRawPanic);
-        moodManager.tick(currRawPanic, expectedRawPanic, panicDiff, currSan);
-        if (currRealPanic > 0.0) {
-            double finalPanic = currRealPanic;
-            if (!isDarkEnv) {
-                finalPanic -= 0.06 * MathHelper.clamp(statusManager.getMaxExpLevelReached(), 0, 30); //Reduce panic when player reaches higher exp level
-                if (expectedRawPanic > 0.0)
-                    sanityManager.add(-MathHelper.clamp(0.00003 * finalPanic, 0.000008, 0.0001));
+
+        if (!isRelaxingMode) {
+            //Debuff for soul impaired(death punishment)
+            int soulImpairedStat = statusManager.getSoulImpairedStat();
+            if (soulImpairedStat > 0) {
+                if (this.getHealth() > this.getMaxHealth()) this.setHealth(this.getMaxHealth());
+                EntityHelper.addHcsDebuff(this, HcsEffects.SOUL_IMPAIRED, soulImpairedStat - 1);
             }
-            if (finalPanic > 0.0)
-                EntityHelper.addHcsDebuff(this, HcsEffects.PANIC, MathHelper.clamp((int) finalPanic, 0, 3));
+
+            //Debuff of injury
+            float hpPercent = this.getHealth() / this.getMaxHealth();
+            if (hpPercent < 0.1F) EntityHelper.addHcsDebuff(this, HcsEffects.INJURY, 3);
+            else if (hpPercent < 0.25F) EntityHelper.addHcsDebuff(this, HcsEffects.INJURY, 2);
+            else if (hpPercent < 0.45F) EntityHelper.addHcsDebuff(this, HcsEffects.INJURY, 1);
+            else if (hpPercent < 0.7F) EntityHelper.addHcsDebuff(this, HcsEffects.INJURY, 0);
+
+            //Debuff of pain (view add pain in PlayerEntityMixin/applyDamage)
+            final double pain = injuryManager.getRealPain();
+            if (pain > 0.0) EntityHelper.addHcsDebuff(this, HcsEffects.PAIN, MathHelper.clamp((int) pain, 0, 3));
+            injuryManager.tick();
+            sanityManager.tickEnemies(this);
+
+            //Debuff of bleeding
+            final double bleeding = injuryManager.getBleeding() - 1.0;
+            if (bleeding > 0.0)
+                EntityHelper.addHcsDebuff(this, HcsEffects.BLEEDING, MathHelper.clamp((int) bleeding, 0, 3));
+
+            //Panic; also view PlayerEntityMixin/tick()
+            final boolean isDarkEnv = this.hasStatusEffect(HcsEffects.DARKNESS_ENVELOPED);
+            final double currRawPanic = moodManager.getRawPanic(), currRealPanic = moodManager.getRealPanic(), expectedRawPanic = isDarkEnv ? 4 : MathHelper.clamp(sanityManager.countEnemies() * 0.5, 0.0, 4), panicDiff = Math.abs(currRawPanic - expectedRawPanic);
+            moodManager.tick(currRawPanic, expectedRawPanic, panicDiff, currSan);
+            if (currRealPanic > 0.0) {
+                double finalPanic = currRealPanic;
+                if (!isDarkEnv) {
+                    finalPanic -= 0.06 * MathHelper.clamp(statusManager.getMaxExpLevelReached(), 0, 30); //Reduce panic when player reaches higher exp level
+                    if (expectedRawPanic > 0.0)
+                        sanityManager.add(-MathHelper.clamp(0.00003 * finalPanic, 0.000008, 0.0001));
+                }
+                if (finalPanic > 0.0)
+                    EntityHelper.addHcsDebuff(this, HcsEffects.PANIC, MathHelper.clamp((int) finalPanic, 0, 3));
+            }
         }
 
         //Debuff of Fracture
-        if (injuryManager.getFracture() > 0.0) EntityHelper.addHcsDebuff(this, HcsEffects.FRACTURE);
+        if (injuryManager.getFracture() > 0.0)
+            EntityHelper.addHcsDebuff(this, HcsEffects.FRACTURE);
 
         //Debuff of Parasite & cold
         DiseaseManager diseaseManager = ((StatAccessor) this).getDiseaseManager();

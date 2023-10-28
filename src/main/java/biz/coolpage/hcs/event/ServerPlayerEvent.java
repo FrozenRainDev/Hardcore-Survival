@@ -1,5 +1,6 @@
 package biz.coolpage.hcs.event;
 
+import biz.coolpage.hcs.config.HcsDifficulty;
 import biz.coolpage.hcs.status.accessor.StatAccessor;
 import biz.coolpage.hcs.status.manager.*;
 import net.fabricmc.fabric.api.entity.event.v1.ServerPlayerEvents;
@@ -8,6 +9,7 @@ import net.minecraft.entity.player.HungerManager;
 public class ServerPlayerEvent {
     public static void init() {
         ServerPlayerEvents.AFTER_RESPAWN.register(((oldPlayer, newPlayer, alive) -> {
+            if(oldPlayer==null||newPlayer==null)return;
             HungerManager oldHungerManager = oldPlayer.getHungerManager();
             ThirstManager oldThirstManager = ((StatAccessor) oldPlayer).getThirstManager();
             StaminaManager oldStaminaManager = ((StatAccessor) oldPlayer).getStaminaManager();
@@ -46,7 +48,7 @@ public class ServerPlayerEvent {
                 newWetnessManager.set(oldWetnessManager.get());
             }
             StatusManager oldStatusManager = ((StatAccessor) oldPlayer).getStatusManager();
-            ((StatAccessor) newPlayer).getStatusManager().reset(oldStatusManager.getMaxExpLevelReached(), oldStatusManager.getSoulImpairedStat() + (alive ? 0 : 1));
+            ((StatAccessor) newPlayer).getStatusManager().reset(oldStatusManager.getMaxExpLevelReached(), oldStatusManager.getSoulImpairedStat() + (alive ? 0 : 1), oldStatusManager.getStonesSmashed(), HcsDifficulty.getDifficulty(oldPlayer.world));
         }));
     }
 }

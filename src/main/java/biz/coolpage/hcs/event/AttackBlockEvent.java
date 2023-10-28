@@ -23,6 +23,8 @@ import java.util.Objects;
 public class AttackBlockEvent {
     public static void init() {
         AttackBlockCallback.EVENT.register((player, world, hand, pos, direction) -> {
+//            player.sendMessage(Text.of(getDifficulty(WorldHelper.currWorld) + ""));
+//            player.sendMessage(Text.of(getDifficulty(player) + ""));
             BlockState state = world.getBlockState(pos);
             Block block = state.getBlock();
             BlockEntity blockEntity = world.getBlockEntity(pos);
@@ -38,22 +40,29 @@ public class AttackBlockEvent {
                     }
                 }
 
-                if ((state.isToolRequired() && !state.isOf(Blocks.COBWEB)) || block == Blocks.BEDROCK) {
+                if ((state.isToolRequired() && !state.isOf(Blocks.COBWEB)) || block == Blocks.BEDROCK) //noinspection GrazieInspection
+                {
+                    /*
+                    StatusManager statusManager = ((StatAccessor) player).getStatusManager();
+                    double smashingProficiencyAddition = statusManager.getStonesSmashed() / 60.0;
                     if (mainHand == Reg.ROCK) {
                         // Add sound and particles
                         world.syncWorldEvent(WorldEvents.BLOCK_BROKEN, pos, Block.getRawIdFromState(state));
                         mainHandStack.decrement(1);
-                        if (Math.random() < (0.7 + player.experienceLevel / 40.0)) {
+                        statusManager.addStonesSmashed();
+                        if (Math.random() < (HcsDifficulty.chooseVal(player, 1.0, 0.7, 0.4) + smashingProficiencyAddition)) {
                             EntityHelper.dropItem(player, Reg.SHARP_ROCK);
                             EntityHelper.msgById(player, "hcs.tip.chip_succeed");
                         } else EntityHelper.msgById(player, "hcs.tip.chip_failed");
                     } else if (mainHand == Items.FLINT) {
                         mainHandStack.decrement(1);
-                        if (Math.random() < (0.4 + player.experienceLevel / 40.0)) {
+                        statusManager.addStonesSmashed();
+                        if (Math.random() < (HcsDifficulty.chooseVal(player, 1.0, 0.5, 0.25) + smashingProficiencyAddition)) {
                             EntityHelper.dropItem(player, Reg.SHARP_FLINT);
                             EntityHelper.msgById(player, "hcs.tip.chip_succeed");
                         } else EntityHelper.msgById(player, "hcs.tip.chip_failed");
-                    } else if (mainHand == Items.BONE) {
+                    } else*/
+                    if (mainHand == Items.BONE) {
                         world.syncWorldEvent(WorldEvents.BLOCK_BROKEN, pos, Block.getRawIdFromState(state));
                         mainHandStack.decrement(1);
                         EntityHelper.msgById(player, "hcs.tip.chip_succeed");

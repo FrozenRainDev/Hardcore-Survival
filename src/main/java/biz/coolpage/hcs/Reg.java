@@ -2,6 +2,7 @@ package biz.coolpage.hcs;
 
 import biz.coolpage.hcs.block.DryingRackBlock;
 import biz.coolpage.hcs.block.IceboxBlock;
+import biz.coolpage.hcs.config.HcsDifficulty;
 import biz.coolpage.hcs.entity.DryingRackBlockEntity;
 import biz.coolpage.hcs.entity.IceboxBlockEntity;
 import biz.coolpage.hcs.entity.RockProjectileEntity;
@@ -15,6 +16,8 @@ import biz.coolpage.hcs.status.network.ServerC2S;
 import biz.coolpage.hcs.util.WorldHelper;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
+import net.fabricmc.fabric.api.gamerule.v1.GameRuleFactory;
+import net.fabricmc.fabric.api.gamerule.v1.rule.EnumRule;
 import net.fabricmc.fabric.api.itemgroup.v1.FabricItemGroup;
 import net.fabricmc.fabric.api.itemgroup.v1.ItemGroupEvents;
 import net.fabricmc.fabric.api.object.builder.v1.block.entity.FabricBlockEntityTypeBuilder;
@@ -39,6 +42,7 @@ import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.Text;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Identifier;
+import net.minecraft.world.GameRules;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
@@ -197,6 +201,8 @@ public class Reg implements ModInitializer {
     public static final RecipeSerializer<SaplingToStickRecipe> SAPLING_TO_STICK_RECIPE = new SpecialRecipeSerializer<>(SaplingToStickRecipe::new);
 
     public static final ItemGroup HCS_ITEM_GROUP = FabricItemGroup.builder(new Identifier("hcs", "main")).icon(() -> new ItemStack(FLINT_HATCHET)).build();
+    public static final String HCS_DIFFICULTY_NAME = "hcsDifficulty";
+    public static final GameRules.Key<EnumRule<HcsDifficulty.HcsDifficultyEnum>> HCS_DIFFICULTY = GameRules.register(HCS_DIFFICULTY_NAME, GameRules.Category.PLAYER, GameRuleFactory.createEnumRule(HcsDifficulty.HcsDifficultyEnum.standard, HcsDifficulty.HcsDifficultyEnum.values()));
     public static final Predicate<Item> IS_BARK = item -> item == BARK || item == WILLOW_BARK;
 
     @Override

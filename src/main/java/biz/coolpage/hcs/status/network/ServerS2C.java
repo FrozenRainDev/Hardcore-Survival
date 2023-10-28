@@ -59,7 +59,7 @@ public class ServerS2C {
         PacketByteBuf buf4 = new PacketByteBuf(Unpooled.buffer());
         StatusManager statusManager = ((StatAccessor) player).getStatusManager();
         statusManager.setExhaustion(player.getHungerManager().getExhaustion());
-        buf4.writeIntArray(new int[]{player.getId(), ftoi(statusManager.getExhaustion()), statusManager.getRecentAttackTicks(), statusManager.getRecentMiningTicks(), statusManager.getRecentHasColdWaterBagTicks(), statusManager.getRecentHasHotWaterBagTicks(), statusManager.getMaxExpLevelReached(), statusManager.getRecentLittleOvereatenTicks(), btoi(statusManager.hasDecimalFoodLevel()), statusManager.getOxygenLackLevel(), statusManager.getOxygenGenLevel(), statusManager.getRecentSleepTicks(), statusManager.getRecentWetTicks(), statusManager.getInDarknessTicks(), statusManager.getEnterCurrWldTimes()});
+        buf4.writeIntArray(new int[]{player.getId(), ftoi(statusManager.getExhaustion()), statusManager.getRecentAttackTicks(), statusManager.getRecentMiningTicks(), statusManager.getRecentHasColdWaterBagTicks(), statusManager.getRecentHasHotWaterBagTicks(), statusManager.getMaxExpLevelReached(), statusManager.getRecentLittleOvereatenTicks(), btoi(statusManager.hasDecimalFoodLevel()), statusManager.getOxygenLackLevel(), statusManager.getOxygenGenLevel(), statusManager.getRecentSleepTicks(), statusManager.getRecentWetTicks(), statusManager.getInDarknessTicks(), statusManager.getEnterCurrWldTimes(), statusManager.getStonesSmashed(), statusManager.getHcsDifficulty().ordinal()});
         player.networkHandler.sendPacket(new CustomPayloadS2CPacket(STATUS_ID, buf4));
 
         PacketByteBuf buf5 = new PacketByteBuf(Unpooled.buffer());

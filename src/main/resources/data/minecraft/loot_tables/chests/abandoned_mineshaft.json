@@ -7,11 +7,12 @@
         {
           "type": "minecraft:item",
           "name": "minecraft:golden_apple",
-          "weight": 20
+          "weight": 0
         },
         {
           "type": "minecraft:item",
-          "name": "minecraft:enchanted_golden_apple"
+          "name": "minecraft:enchanted_golden_apple",
+          "weight": 0
         },
         {
           "type": "minecraft:item",

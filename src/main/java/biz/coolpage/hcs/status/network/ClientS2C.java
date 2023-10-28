@@ -1,5 +1,6 @@
 package biz.coolpage.hcs.status.network;
 
+import biz.coolpage.hcs.config.HcsDifficulty;
 import biz.coolpage.hcs.status.accessor.StatAccessor;
 import biz.coolpage.hcs.status.manager.*;
 import net.fabricmc.api.EnvType;
@@ -94,6 +95,8 @@ public class ClientS2C {
                         statusManager.setRecentWetTicks(bufArr[12]);
                         statusManager.setInDarknessTicks(bufArr[13]);
                         statusManager.setEnterCurrWldTimes(bufArr[14]);
+                        statusManager.setStonesSmashed(bufArr[15]);
+                        statusManager.setHcsDifficulty(HcsDifficulty.HcsDifficultyEnum.values()[bufArr[16]]);
                     }
                 }
             });

@@ -41,7 +41,7 @@ public abstract class PlayerInventoryMixin {
             ItemStack stack = inv.getStack(i);
             if (stack.getItem() instanceof BlockItem) blocksCount += stack.getCount();
             if (stack.isOf(Reg.COPPER_PICKAXE) && player.world instanceof ServerWorld serverWorld)
-                applyNullable(HcsPersistentState.getServerState(serverWorld), state -> state.hasObtainedCopperPickaxe = true);
+                applyNullable(HcsPersistentState.getServerState(serverWorld), state -> state.setHasObtainedCopperPickaxe(true));
         }
         if (blocksCount > 128 && IS_SURVIVAL_AND_SERVER.test(this.player))
             EntityHelper.addHcsDebuff(this.player, HcsEffects.HEAVY_LOAD);

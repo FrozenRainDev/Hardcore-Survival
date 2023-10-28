@@ -1,5 +1,6 @@
 package biz.coolpage.hcs.mixin.entity.player;
 
+import biz.coolpage.hcs.config.HcsDifficulty;
 import biz.coolpage.hcs.event.ClientPlayConnectionEvent;
 import biz.coolpage.hcs.status.HcsEffects;
 import biz.coolpage.hcs.status.accessor.StatAccessor;
@@ -38,6 +39,10 @@ public abstract class ClientPlayerEntityMixin extends AbstractClientPlayerEntity
     @Shadow
     @Final
     protected MinecraftClient client;
+
+    @Shadow
+    public abstract void sendMessage(Text message);
+
     @Unique
     private static final SoundEvent[] HALLUCINATION_SOUNDS = {ENTITY_ENDERMAN_DEATH, ENTITY_ENDERMAN_HURT, ENTITY_ENDERMAN_AMBIENT, ENTITY_HUSK_DEATH, ENTITY_ENDERMITE_DEATH, ENTITY_BLAZE_AMBIENT, ENTITY_BLAZE_DEATH, ENTITY_PIG_DEATH, ENTITY_DROWNED_DEATH, ENTITY_STRAY_DEATH, BLOCK_ROOTED_DIRT_BREAK, BLOCK_BONE_BLOCK_HIT, BLOCK_FIRE_AMBIENT, BLOCK_VINE_PLACE, ENTITY_LIGHTNING_BOLT_THUNDER, ENTITY_GHAST_SCREAM, ENTITY_GENERIC_EXPLODE, ENTITY_ZOMBIE_ATTACK_IRON_DOOR, ENTITY_ZOMBIE_ATTACK_WOODEN_DOOR, ENTITY_SKELETON_AMBIENT, ENTITY_CREEPER_PRIMED, ENTITY_SPIDER_AMBIENT};
     //    private static final SoundEvent[] HALLUCINATION_SOUNDS_VERY_HORRIBLE = {ENTITY_ENDERMAN_SCREAM, ENTITY_ENDERMAN_STARE};
@@ -88,9 +93,11 @@ public abstract class ClientPlayerEntityMixin extends AbstractClientPlayerEntity
             if (enterWorldTimes > 0 && enterWorldTimes % 5 == 0)
                 this.sendMessage(Text.literal("\n").append(Text.translatable("hcs.tip.sponsor", enterWorldTimes)).append(Text.literal(ClientPlayConnectionEvent.SPONSOR_URL).formatted(Formatting.UNDERLINE).formatted(Formatting.AQUA).styled(style -> style.withClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, ClientPlayConnectionEvent.SPONSOR_URL)))), false);
             this.hasCheckedSponsorTip = true;
+            //Msg hcs difficulty
+            this.sendMessage(Text.translatable("hcs.tip.curr_difficulty", statusManager.getHcsDifficulty().name()));
         }
         if (EntityHelper.IS_SURVIVAL_LIKE.test(this)) {
-            if (darknessEnveloped) {
+            if (darknessEnveloped && !HcsDifficulty.isOf(this.client.player, HcsDifficulty.HcsDifficultyEnum.relaxing)) {
                 final int darkTicks = statusManager.getInDarknessTicks();
                 if (darkTicks == 60) playHallAmbient(this);
                 else if (darkTicks == 290) {

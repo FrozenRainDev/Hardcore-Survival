@@ -1,5 +1,6 @@
 package biz.coolpage.hcs.status;
 
+import biz.coolpage.hcs.config.HcsDifficulty;
 import biz.coolpage.hcs.status.accessor.DamageSourcesAccessor;
 import biz.coolpage.hcs.status.accessor.StatAccessor;
 import biz.coolpage.hcs.status.manager.InjuryManager;
@@ -22,8 +23,7 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.function.Predicate;
 
-import static biz.coolpage.hcs.util.EntityHelper.IS_SURVIVAL_AND_SERVER;
-import static biz.coolpage.hcs.util.EntityHelper.IS_SURVIVAL_LIKE;
+import static biz.coolpage.hcs.util.EntityHelper.*;
 
 public class HcsEffects {
 
@@ -125,7 +125,7 @@ public class HcsEffects {
         @Override
         public void applyUpdateEffect(LivingEntity entity, int amplifier) {
             if (entity instanceof ServerPlayerEntity player && !entity.isSpectator() && IS_SURVIVAL_AND_SERVER.test(player)) {
-                ((StatAccessor) player).getDiseaseManager().addCold(0.002 * (amplifier + 1));
+                ((StatAccessor) player).getDiseaseManager().addCold(0.0005);
                 if (amplifier > 0) {
                     ((StatAccessor) player).getSanityManager().add(-0.00001 * (amplifier + 1));
                     player.setSprinting(false);
@@ -188,7 +188,7 @@ public class HcsEffects {
 
         @Override
         public void applyUpdateEffect(LivingEntity entity, int amplifier) {
-            if (entity instanceof ServerPlayerEntity player && !player.isTouchingWater() && amplifier > 0)
+            if (entity instanceof ServerPlayerEntity player && !player.isTouchingWater() && amplifier > 0 && ((StatAccessor) player).getTemperatureManager().getEnvTempCache() < 0.6)
                 ((StatAccessor) player).getDiseaseManager().addCold(0.00002 * (amplifier + 1) * MathHelper.clamp(2 * (1 - ((StatAccessor) player).getTemperatureManager().getEnvTempCache()), 0.01, 2.0));
         }
     };
@@ -309,11 +309,12 @@ public class HcsEffects {
         @Override
         public void applyUpdateEffect(LivingEntity entity, int amplifier) {
             if (entity != null && entity.world != null && !entity.isInvulnerable() && amplifier > 0)
-                if (entity.world.getTime() % switch (amplifier) {
+                if (entity.world.getTime() % (long) (switch (amplifier) {
                     case 1 -> 600;
                     case 2 -> 150;
                     default -> 40;
-                } == 0) entity.damage(((DamageSourcesAccessor) entity.world.getDamageSources()).bleeding(), 1.0F);
+                } * HcsDifficulty.chooseVal(toPlayer(entity), 2.0F, 1.0F, 0.5F)) == 0)
+                    entity.damage(((DamageSourcesAccessor) entity.world.getDamageSources()).bleeding(), 1.0F);
         }
     };
 

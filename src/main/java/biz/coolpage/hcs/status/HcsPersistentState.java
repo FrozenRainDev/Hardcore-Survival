@@ -9,8 +9,16 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public class HcsPersistentState extends PersistentState {
-    public boolean hasObtainedCopperPickaxe = false;
+    private boolean hasObtainedCopperPickaxe = false;
     private static final String OBTAINED_COPPER_PICK = "hcs_obtained_copper_pick";
+
+    public boolean hasObtainedCopperPickaxe() {
+        return hasObtainedCopperPickaxe;
+    }
+
+    public void setHasObtainedCopperPickaxe(boolean val) {
+        hasObtainedCopperPickaxe = val;
+    }
 
     @Override
     public NbtCompound writeNbt(@NotNull NbtCompound nbt) {
@@ -20,7 +28,7 @@ public class HcsPersistentState extends PersistentState {
 
     public static @NotNull HcsPersistentState createFromNbt(@NotNull NbtCompound nbt) {
         HcsPersistentState state = new HcsPersistentState();
-        state.hasObtainedCopperPickaxe = nbt.contains(OBTAINED_COPPER_PICK) && nbt.getBoolean(OBTAINED_COPPER_PICK);
+        state.setHasObtainedCopperPickaxe(nbt.contains(OBTAINED_COPPER_PICK) && nbt.getBoolean(OBTAINED_COPPER_PICK));
         return state;
     }
 
