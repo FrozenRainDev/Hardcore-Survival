@@ -1,7 +1,6 @@
 package biz.coolpage.hcs.mixin.entity.player;
 
 import biz.coolpage.hcs.config.HcsDifficulty;
-import biz.coolpage.hcs.event.ClientPlayConnectionEvent;
 import biz.coolpage.hcs.status.HcsEffects;
 import biz.coolpage.hcs.status.accessor.StatAccessor;
 import biz.coolpage.hcs.status.manager.SanityManager;
@@ -17,9 +16,7 @@ import net.minecraft.client.world.ClientWorld;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvent;
 import net.minecraft.sound.SoundEvents;
-import net.minecraft.text.ClickEvent;
 import net.minecraft.text.Text;
-import net.minecraft.util.Formatting;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.MathHelper;
 import org.jetbrains.annotations.NotNull;
@@ -67,8 +64,6 @@ public abstract class ClientPlayerEntityMixin extends AbstractClientPlayerEntity
     private int ticks = 0;
     @Unique
     private int horriblyPlayedTicks = 0;
-    @Unique
-    private boolean hasCheckedSponsorTip = false;
 
     public ClientPlayerEntityMixin(ClientWorld world, GameProfile profile) {
         super(world, profile);
@@ -87,14 +82,6 @@ public abstract class ClientPlayerEntityMixin extends AbstractClientPlayerEntity
         if (!hasInsanity && !darknessEnveloped && this.horriblyPlayedTicks > 0) {
             this.client.getSoundManager().stopSounds(null, SoundCategory.AMBIENT);
             this.horriblyPlayedTicks = 0;
-        }
-        if (!this.hasCheckedSponsorTip) {
-            int enterWorldTimes = statusManager.getEnterCurrWldTimes();
-            if (enterWorldTimes > 0 && enterWorldTimes % 5 == 0)
-                this.sendMessage(Text.literal("\n").append(Text.translatable("hcs.tip.sponsor", enterWorldTimes)).append(Text.literal(ClientPlayConnectionEvent.SPONSOR_URL).formatted(Formatting.UNDERLINE).formatted(Formatting.AQUA).styled(style -> style.withClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, ClientPlayConnectionEvent.SPONSOR_URL)))), false);
-            this.hasCheckedSponsorTip = true;
-            //Msg hcs difficulty
-            this.sendMessage(Text.translatable("hcs.tip.curr_difficulty", statusManager.getHcsDifficulty().name()));
         }
         if (EntityHelper.IS_SURVIVAL_LIKE.test(this)) {
             if (darknessEnveloped && !HcsDifficulty.isOf(this.client.player, HcsDifficulty.HcsDifficultyEnum.relaxing)) {

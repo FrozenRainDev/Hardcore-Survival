@@ -8,6 +8,7 @@ import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.ai.NavigationConditions;
 import net.minecraft.entity.ai.goal.Goal;
 import net.minecraft.entity.mob.MobEntity;
+import net.minecraft.item.PickaxeItem;
 import net.minecraft.item.ShovelItem;
 import net.minecraft.registry.tag.BlockTags;
 import net.minecraft.util.math.BlockPos;
@@ -90,7 +91,7 @@ public class BreakBlockGoal extends Goal {
     }
 
     public boolean canBreakBlock(@NotNull BlockState state) {
-        return (!state.isAir() && (DoorBlock.isWoodenDoor(state) || (DigRestrictHelper.canBreak(this.mob.getMainHandStack().getItem(), state)) /*&& !state.getBlock().getTranslationKey().contains("brick")*/) || state.isIn(BlockTags.SHOVEL_MINEABLE));
+        return !state.isAir() && (DoorBlock.isWoodenDoor(state) || (DigRestrictHelper.canBreak(this.mob.getMainHandStack().getItem(), state) && (state.getBlock().getHardness() < Blocks.STONE.getHardness() || this.mob.getMainHandStack().getItem() instanceof PickaxeItem)) /*&& !state.getBlock().getTranslationKey().contains("brick")*/) || state.isIn(BlockTags.SHOVEL_MINEABLE);
     }
 
     @Override

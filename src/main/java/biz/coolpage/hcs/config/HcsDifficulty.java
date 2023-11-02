@@ -38,14 +38,26 @@ public class HcsDifficulty {
         return ((StatAccessor) player).getStatusManager().getHcsDifficulty().ordinal() == difficulty.ordinal();
     }
 
-    public static <T> T chooseVal(@Nullable PlayerEntity player/*amount to Enum<HcsDifficultyEnum>*/, T relax, T standard, T challenge) {
-        if (player == null) return standard;
-        Enum<HcsDifficultyEnum> difficulty;
-        if (player.world instanceof ServerWorld serverWorld) difficulty = getDifficulty(serverWorld);
-        else difficulty = getDifficulty(player);
-        if (difficulty == null) return standard;
-        if (difficulty.ordinal() == HcsDifficulty.HcsDifficultyEnum.relaxing.ordinal()) return relax;
-        if (difficulty.ordinal() == HcsDifficulty.HcsDifficultyEnum.challenging.ordinal()) return challenge;
+    public static <T> T chooseVal(@Nullable PlayerEntity player, T relax, T standard, T challenge) {
+        if (player != null) {
+            if (player.world instanceof ServerWorld serverWorld)
+                return chooseVal(getDifficulty(serverWorld), relax, standard, challenge);
+            return chooseVal(getDifficulty(player), relax, standard, challenge);
+        }
+        return standard;
+    }
+
+    public static <T> T chooseVal(@Nullable World world, T relax, T standard, T challenge) {
+        if (world instanceof ServerWorld serverWorld)
+            return chooseVal(getDifficulty(serverWorld), relax, standard, challenge);
+        return standard;
+    }
+
+    private static <T> T chooseVal(@Nullable Enum<HcsDifficultyEnum> difficulty, T relax, T standard, T challenge) {
+        if (difficulty != null) {
+            if (difficulty.ordinal() == HcsDifficulty.HcsDifficultyEnum.relaxing.ordinal()) return relax;
+            if (difficulty.ordinal() == HcsDifficulty.HcsDifficultyEnum.challenging.ordinal()) return challenge;
+        }
         return standard;
     }
 }

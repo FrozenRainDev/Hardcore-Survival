@@ -1,7 +1,6 @@
 package biz.coolpage.hcs.status.manager;
 
 import biz.coolpage.hcs.config.HcsDifficulty;
-import org.jetbrains.annotations.NotNull;
 
 public class StatusManager {
     public static final String MAX_LVL_NBT = "hcs_max_lvl_reached";
@@ -27,9 +26,10 @@ public class StatusManager {
     private int bareDiggingTicks = 0; //Ticks of digging blocks with bare hand; Server only
     private int enterCurrWldTimes = 0;
     private int stonesSmashed = 0;
-    private Enum<HcsDifficulty.HcsDifficultyEnum> hcsDifficulty = HcsDifficulty.HcsDifficultyEnum.standard;
+    private boolean hasCheckInitTips = false; //Client side only
+    Enum<HcsDifficulty.HcsDifficultyEnum> hcsDifficulty = HcsDifficulty.HcsDifficultyEnum.standard;
 
-    public void reset(int lvlReached, int soulImpaired, int smashed, Enum<HcsDifficulty.HcsDifficultyEnum> difficulty) {
+    public void reset(int lvlReached, int soulImpaired, int smashed, Enum<HcsDifficulty.HcsDifficultyEnum> hcsDifficulty, boolean hasCheckInitTips) {
         setSoulImpairedStat(soulImpaired);
         exhaustion = 0.0F;
         recentAttackTicks = 0;
@@ -48,7 +48,8 @@ public class StatusManager {
         lastInDarknessTicks = inDarknessTicks = 0;
         bareDiggingTicks = 0;
         stonesSmashed = smashed;
-        hcsDifficulty = difficulty;
+        this.hcsDifficulty = hcsDifficulty;
+        this.hasCheckInitTips = hasCheckInitTips;
     }
 
     public float getExhaustion() {
@@ -231,11 +232,20 @@ public class StatusManager {
         setStonesSmashed(getStonesSmashed() + 1);
     }
 
-    public @NotNull Enum<HcsDifficulty.HcsDifficultyEnum> getHcsDifficulty() {
+    public boolean hasShownInitTips() {
+        return hasCheckInitTips;
+    }
+
+    public void setHasCheckInitTips(boolean hasCheckInitTips) {
+        this.hasCheckInitTips = hasCheckInitTips;
+    }
+
+    public Enum<HcsDifficulty.HcsDifficultyEnum> getHcsDifficulty() {
         return hcsDifficulty;
     }
 
-    public void setHcsDifficulty(Enum<HcsDifficulty.HcsDifficultyEnum> difficulty) {
-        hcsDifficulty = difficulty;
+    public void setHcsDifficulty(Enum<HcsDifficulty.HcsDifficultyEnum> hcsDifficulty) {
+        this.hcsDifficulty = hcsDifficulty;
     }
+
 }

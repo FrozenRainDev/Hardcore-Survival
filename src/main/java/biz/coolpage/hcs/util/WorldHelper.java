@@ -3,21 +3,15 @@ package biz.coolpage.hcs.util;
 import biz.coolpage.hcs.Reg;
 import biz.coolpage.hcs.status.HcsPersistentState;
 import net.minecraft.block.*;
-import net.minecraft.enchantment.Enchantments;
-import net.minecraft.entity.Entity;
 import net.minecraft.entity.FallingBlockEntity;
-import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
 import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.registry.tag.BiomeTags;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.state.property.BooleanProperty;
-import net.minecraft.state.property.IntProperty;
-import net.minecraft.state.property.Properties;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.Heightmap;
 import net.minecraft.world.LightType;
@@ -105,61 +99,6 @@ public class WorldHelper {
         return world.getLightLevel(LightType.SKY, pos) <= maxSkyBrightness && world.getTopPosition(Heightmap.Type.MOTION_BLOCKING, pos).getY() > pos.getY() && pos.getY() <= maxHeight;
     }
 
-    public static int getCropAge(@NotNull BlockState state) {
-        Block block = state.getBlock();
-        if (block instanceof CropBlock)
-            for (IntProperty property : new IntProperty[]{Properties.AGE_1, Properties.AGE_2, Properties.AGE_3, Properties.AGE_4, Properties.AGE_5, Properties.AGE_7, Properties.AGE_15, Properties.AGE_25})
-                if (state.contains(property)) return state.get(property);
-        Reg.LOGGER.warn("WorldHelper/getCropAge/!state.contains(Properties.AGE_*);block=" + block);
-        return 0;
-    }
-
-    public static void modifyDroppedStacks(Block crop, Item seed, @NotNull BlockState state, ServerWorld world, CallbackInfoReturnable<List<ItemStack>> cir) {
-        if (state.isOf(crop)) {
-            int age = getCropAge(state);
-            if (age == 0) loseFreshness(seed, world, cir);
-        }
-    }
-
-    public static boolean modifyDroppedStacks(@NotNull BlockState state, ServerWorld world, BlockPos pos, CallbackInfoReturnable<List<ItemStack>> cir) {
-        // modifyDroppedStacks for all CropBlocks and StemBlocks
-        boolean isEligible = false;
-        Item seedItem = Items.AIR;
-        Block block = state.getBlock();
-        Block crop = Blocks.AIR;
-        if (block instanceof CropBlock cropBlock) {
-            crop = cropBlock;
-            seedItem = cropBlock.getSeedsItem().asItem();
-            isEligible = true;
-        } else if (block instanceof StemBlock stemBlock) {
-            crop = stemBlock;
-            seedItem = stemBlock.pickBlockItem.get();
-            isEligible = true;
-        }
-        if (isEligible) {
-            if (cir == null) loseFreshness(seedItem, world, pos);
-            else modifyDroppedStacks(crop, seedItem, state, world, cir);
-        }
-        return isEligible;
-    }
-
-    @Contract(pure = true)
-    public static void decreaseOreHarvest(Block @NotNull [] ores, Item oreItem, @NotNull BlockState state, @Nullable Entity entity, CallbackInfoReturnable<List<ItemStack>> cir) {
-        if (entity instanceof LivingEntity breaker) {
-            for (Block ore : ores) {
-                //noinspection SuspiciousMethodCalls
-                if (state.isOf(ore) && !breaker.getMainHandStack().getEnchantments().contains(Enchantments.FORTUNE)) {
-                    Item prevDrop = cir.getReturnValue().get(0).getItem();
-                    if (prevDrop == oreItem) { //exclude silk touch
-                        ArrayList<ItemStack> dropList = new ArrayList<>();
-                        dropList.add(new ItemStack(oreItem));
-                        cir.setReturnValue(dropList);
-                    }
-                }
-            }
-        }
-    }
-
     public static void loseFreshness(Item item, ServerWorld world, @NotNull CallbackInfoReturnable<List<ItemStack>> cir) {
         // Crops will lose freshness when they are harvested at the initial stage of growth or being applied to excessive bone meals
         ItemStack stack = new ItemStack(item);
@@ -186,5 +125,17 @@ public class WorldHelper {
     public static boolean shouldGenerateVillages() {
         if (currWorld == null) return false;
         return currWorld.getTime() > 768000L && applyNullable(HcsPersistentState.getServerState(currWorld), HcsPersistentState::hasObtainedCopperPickaxe, false);
+    }
+
+    @Contract(value = "null -> new", pure = true)
+    public static int @NotNull [] getTimeAsReal(World world) {
+        int[] time = {0, 0, 0};
+        if (world == null) return time;
+        long lunarTime = world.getLunarTime();
+        while (lunarTime > 24000L) lunarTime -= 24000L;
+        time[0] = (int) (Math.floor(lunarTime / 1000.0) + 6);
+        time[1] = (int) Math.floor((lunarTime - Math.floor(lunarTime / 1000.0) * 1000) * 0.06);
+        time[2] = (int) Math.floor((lunarTime - Math.floor(lunarTime / 100.0) * 100) * 0.6);
+        return time;
     }
 }

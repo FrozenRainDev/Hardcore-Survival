@@ -475,4 +475,20 @@ public abstract class InGameHudMixin extends DrawableHelper {
             return MutableText.of(text.getContent()).formatted(Formatting.OBFUSCATED);
         return text;
     }
+
+    /*
+    @Redirect(method = "renderStatusEffectOverlay", at = @At(value = "INVOKE", target = "Lcom/google/common/collect/Ordering;sortedCopy(Ljava/lang/Iterable;)Ljava/util/List;"))
+    protected <E> List<?> renderStatusEffectOverlay(Ordering<E> instance, Iterable<E> elements) {
+        if (elements instanceof Collection<E> collection) {
+            var array = collection.toArray();
+            if (array[0] instanceof StatusEffect) {
+                @SuppressWarnings("DataFlowIssue") StatusEffect[] effects = (StatusEffect[]) array;
+                Arrays.sort(effects, Comparator.comparing(StatusEffect::getTranslationKey));
+                return Lists.newArrayList(Arrays.asList(effects));
+            }
+        }
+        if (this.client == null || this.client.player == null) return List.of();
+        return Ordering.natural().reverse().sortedCopy(this.client.player.getStatusEffects());
+    }
+    */
 }

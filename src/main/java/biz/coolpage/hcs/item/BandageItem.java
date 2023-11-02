@@ -35,7 +35,7 @@ public class BandageItem extends Item {
     }
 
     public BandageItem(double bleedingReduction) {
-        this(bleedingReduction, 60);
+        this(bleedingReduction, 40);
     }
 
     @Override

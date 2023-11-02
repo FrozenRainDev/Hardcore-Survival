@@ -1,6 +1,6 @@
 package biz.coolpage.hcs.mixin.item;
 
-import biz.coolpage.hcs.util.WorldHelper;
+import biz.coolpage.hcs.util.LootHelper;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.block.CropBlock;
@@ -39,7 +39,7 @@ public class BoneMealItemMixin {
                     */
                     world.breakBlock(pos, false);
                     if (world instanceof ServerWorld serverWorld)
-                        WorldHelper.modifyDroppedStacks(state, serverWorld, pos, null);
+                        LootHelper.modifyDroppedStacks(state, serverWorld, pos, null);
                     world.syncWorldEvent(WorldEvents.LAVA_EXTINGUISHED, pos, 0);
                 }
             }

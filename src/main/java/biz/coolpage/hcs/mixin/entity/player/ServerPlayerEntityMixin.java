@@ -1,6 +1,7 @@
 package biz.coolpage.hcs.mixin.entity.player;
 
 import biz.coolpage.hcs.config.HcsDifficulty;
+import biz.coolpage.hcs.event.ClientPlayConnectionEvent;
 import biz.coolpage.hcs.status.HcsEffects;
 import biz.coolpage.hcs.status.accessor.DamageSourcesAccessor;
 import biz.coolpage.hcs.status.accessor.StatAccessor;
@@ -18,6 +19,9 @@ import net.minecraft.item.ShieldItem;
 import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
+import net.minecraft.text.ClickEvent;
+import net.minecraft.text.Text;
+import net.minecraft.util.Formatting;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.LightType;
@@ -62,6 +66,14 @@ public abstract class ServerPlayerEntityMixin extends PlayerEntity {
         if (this.world instanceof ServerWorld serverWorld) {
             WorldHelper.currWorld = serverWorld;
             statusManager.setHcsDifficulty(HcsDifficulty.getDifficulty(serverWorld));
+        }
+        if (!statusManager.hasShownInitTips()) {
+            int enterWorldTimes = statusManager.getEnterCurrWldTimes();
+            if (enterWorldTimes > 0 && enterWorldTimes % 5 == 0)
+                this.sendMessage(Text.literal("\n").append(Text.translatable("hcs.tip.sponsor", enterWorldTimes)).append(Text.translatable("hcs.tip.sponsor_link").formatted(Formatting.UNDERLINE, Formatting.AQUA).styled(style -> style.withClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, ClientPlayConnectionEvent.SPONSOR_URL)))), false);
+            //Msg hcs difficulty
+//            this.sendMessage(Text.translatable("hcs.tip.curr_difficulty"));
+            statusManager.setHasCheckInitTips(true);
         }
         if (!EntityHelper.IS_SURVIVAL_LIKE.test(this)) return;
         //Init variables

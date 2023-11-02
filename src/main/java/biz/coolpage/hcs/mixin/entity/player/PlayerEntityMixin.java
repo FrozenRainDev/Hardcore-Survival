@@ -633,7 +633,7 @@ public abstract class PlayerEntityMixin extends LivingEntity implements StatAcce
             if (!source.isIn(DamageTypeTags.BYPASSES_ARMOR))
                 feelingAmount = DamageUtil.getDamageLeft(amount, this.getArmor() * 0.6F, 0.0F);
             if (isBurningDamage) feelingAmount *= 2;
-            float hurtPercent = feelingAmount / Math.max(12.0F, this.getMaxHealth());
+            float hurtPercent = feelingAmount / 20.0F;//prev Math.max(12.0F, this.getMaxHealth())
             this.injuryManager.addRawPain(hurtPercent * 4.5);
             if (!isBurningDamage && EntityHelper.IS_BLEEDING_CAUSING_DAMAGE.test(source))
                 this.injuryManager.addBleeding(hurtPercent * 8);

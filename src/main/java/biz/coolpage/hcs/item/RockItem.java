@@ -25,10 +25,10 @@ public class RockItem extends Item {
         world.playSound(null, user.getX(), user.getY(), user.getZ(), SoundEvents.ENTITY_SNOWBALL_THROW, SoundCategory.NEUTRAL, 0.5F, 1F); // plays a globalSoundEvent
         user.getItemCooldownManager().set(this, 45);
         if (!world.isClient) {
-            RockProjectileEntity snowballEntity = new RockProjectileEntity(user, world);
-            snowballEntity.setItem(itemStack);
-            snowballEntity.setVelocity(user, user.getPitch(), user.getYaw(), 0.0F, 1.1F, 0F);//default speed is 1.5f
-            world.spawnEntity(snowballEntity);
+            RockProjectileEntity projectileEntity = new RockProjectileEntity(user, world);
+            projectileEntity.setItem(itemStack);
+            projectileEntity.setVelocity(user, user.getPitch(), user.getYaw(), 0.0F, 1.1F, 0F);//default speed is 1.5f
+            world.spawnEntity(projectileEntity);
             user.incrementStat(Stats.USED.getOrCreateStat(this));
             if (!user.getAbilities().invulnerable) {
                 itemStack.decrement(1);

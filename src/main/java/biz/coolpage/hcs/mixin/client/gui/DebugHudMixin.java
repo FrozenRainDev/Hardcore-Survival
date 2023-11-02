@@ -52,7 +52,7 @@ public abstract class DebugHudMixin {
         String biomeName = TemperatureHelper.getBiomeName(biomeEntry);
         list.add("[ HCS Debug ]");
         list.add("MainHandStackNbt: " + player.getMainHandStack().getOrCreateNbt().toString());
-        list.add("Time: tick=" + world.getTime() + ", lunar=of_day=" + world.getLunarTime());
+        list.add("Time: tick=" + world.getTime() + ", lunar(of_day)=" + world.getLunarTime() + ", difficulty=" + statusManager.getHcsDifficulty().name());
         list.add("Thirst: value=" + thirstManager.get() + ", saturation=" + thirstManager.getSaturation() + ", rate=" + thirstManager.getThirstRateAffectedByTemp());
         list.add("Hunger: level=" + hungerManager.getFoodLevel() + ", saturation=" + hungerManager.getSaturationLevel() + ", exhaustion=" + ((StatAccessor) player).getStatusManager().getExhaustion());
         list.add("Stamina: " + staminaManager.get());

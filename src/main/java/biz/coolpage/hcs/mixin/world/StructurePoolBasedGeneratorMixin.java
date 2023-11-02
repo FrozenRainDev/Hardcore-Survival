@@ -7,6 +7,8 @@ import net.minecraft.server.world.ServerWorld;
 import net.minecraft.structure.PoolStructurePiece;
 import net.minecraft.structure.pool.StructurePool;
 import net.minecraft.structure.pool.StructurePoolBasedGenerator;
+import net.minecraft.structure.pool.StructurePoolElement;
+import net.minecraft.structure.pool.StructurePoolElementType;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.shape.VoxelShape;
@@ -44,8 +46,13 @@ public class StructurePoolBasedGeneratorMixin {
     @Mixin(StructurePoolBasedGenerator.StructurePoolGenerator.class)
     private static class StructurePoolGeneratorMixin {
         @Inject(method = "generatePiece", at = @At("HEAD"), cancellable = true)
-        void generatePiece(@NotNull PoolStructurePiece piece, MutableObject<VoxelShape> pieceShape, int minY, boolean modifyBoundingBox, HeightLimitView world, NoiseConfig noiseConfig, CallbackInfo ci) {
-            if (piece.getPoolElement().getType().toString().contains("village") && !WorldHelper.shouldGenerateVillages())
+        void generatePiece(PoolStructurePiece piece, MutableObject<VoxelShape> pieceShape, int minY, boolean modifyBoundingBox, HeightLimitView world, NoiseConfig noiseConfig, CallbackInfo ci) {
+            if (piece == null) return;
+            StructurePoolElement element = piece.getPoolElement();
+            if (element == null) return;
+            StructurePoolElementType<?> type = element.getType();
+            if (type == null) return;
+            if (type.toString().contains("village") && !WorldHelper.shouldGenerateVillages())
                 ci.cancel();
         }
     }

@@ -14,6 +14,7 @@ import net.minecraft.entity.mob.EndermanEntity;
 import net.minecraft.entity.mob.HostileEntity;
 import net.minecraft.entity.passive.*;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.item.Item;
 import net.minecraft.item.Items;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.world.World;
@@ -34,9 +35,6 @@ import java.util.Comparator;
 public abstract class LivingEntityMixin extends Entity {
     @Shadow
     private int lastAttackedTime;
-
-    @Shadow
-    public abstract float getHealth();
 
     @Shadow
     public abstract boolean isBaby();
@@ -82,26 +80,6 @@ public abstract class LivingEntityMixin extends Entity {
         Object ent = this;
         if (ent instanceof ChickenEntity && source.toString().contains("EntityDamageSource"))
             EntityHelper.dropItem(this, Items.FEATHER, 1);
-        //On death
-        if ((this.getHealth() - amount) <= 0.0F && this.getHealth() > 0.0F) {
-            if (ent instanceof ChickenEntity || ent instanceof CowEntity || ent instanceof PigEntity || ent instanceof SheepEntity) {
-                if (!(ent instanceof ChickenEntity)) {
-                    //EntityHelper.dropItem(this, Items.BONE, 2);
-                    EntityHelper.dropItem(this, Reg.ANIMAL_VISCERA);
-                    if (ent instanceof SheepEntity && Math.random() < 0.6)
-                        EntityHelper.dropItem(this, Items.LEATHER);
-                }
-                if (this.isBaby())
-                    EntityHelper.dropItem(this, this.getFireTicks() > 0 ? Reg.COOKED_MEAT : Reg.RAW_MEAT);
-            } else if (ent instanceof AxolotlEntity || ent instanceof CatEntity || ent instanceof FrogEntity || ent instanceof ParrotEntity || ent instanceof SquidEntity)
-                EntityHelper.dropItem(this, this.getFireTicks() > 0 ? Reg.COOKED_MEAT : Reg.RAW_MEAT);
-            else if (!(ent instanceof BeeEntity || ent instanceof TadpoleEntity || ent instanceof RabbitEntity) && ent instanceof AnimalEntity) {
-                EntityHelper.dropItem(this, this.getFireTicks() > 0 ? Reg.COOKED_MEAT : Reg.RAW_MEAT, (int) (Math.random() * 3) + 1);
-                //EntityHelper.dropItem(this, Items.BONE, 2);
-                EntityHelper.dropItem(this, Reg.ANIMAL_VISCERA);
-            }
-            //Also see at BatEntityMixin
-        }
     }
 
     @Unique
@@ -125,6 +103,30 @@ public abstract class LivingEntityMixin extends Entity {
             effectList.sort(Comparator.comparing(StatusEffectInstance::getTranslationKey));
             cir.setReturnValue(effectList);
         }
+    }
+
+    @SuppressWarnings("ConstantValue")
+    @Inject(method = "onDeath", at = @At("TAIL"))
+    public void onDeath(DamageSource damageSource, CallbackInfo ci) {
+        Object ent = this;
+        Item meat = this.getFireTicks() > 0 ? Reg.COOKED_MEAT : Reg.RAW_MEAT;
+        if (ent instanceof ChickenEntity || ent instanceof CowEntity || ent instanceof PigEntity || ent instanceof SheepEntity) {
+            if (!(ent instanceof ChickenEntity)) {
+                //EntityHelper.dropItem(this, Items.BONE, 2);
+                EntityHelper.dropItem(this, Reg.ANIMAL_VISCERA);
+                if (ent instanceof SheepEntity && Math.random() < 0.6)
+                    EntityHelper.dropItem(this, Items.LEATHER);
+            }
+            if (this.isBaby())
+                EntityHelper.dropItem(this, meat);
+        } else if (ent instanceof AxolotlEntity || ent instanceof CatEntity || ent instanceof FrogEntity || ent instanceof ParrotEntity || ent instanceof SquidEntity)
+            EntityHelper.dropItem(this, meat);
+        else if (ent instanceof AnimalEntity && !(ent instanceof BeeEntity || ent instanceof TadpoleEntity || ent instanceof RabbitEntity)) {
+            EntityHelper.dropItem(this, meat, (int) (Math.random() * 3) + 1);
+            //EntityHelper.dropItem(this, Items.BONE, 2);
+            EntityHelper.dropItem(this, Reg.ANIMAL_VISCERA);
+        }
+        //Also see at BatEntityMixin
     }
 
 }

@@ -99,6 +99,7 @@ public class InjuryManager {
     }
 
     public void addBleeding(double val) {
+        if (val >= 1.0 && val <= 2.0) val = Math.max(1.0, val * 0.75);
         setBleeding(getBleeding() + val);
     }
 

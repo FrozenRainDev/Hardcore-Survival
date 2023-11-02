@@ -4,6 +4,7 @@ import biz.coolpage.hcs.status.accessor.StatAccessor;
 import biz.coolpage.hcs.status.manager.InjuryManager;
 import biz.coolpage.hcs.util.CommUtil;
 import biz.coolpage.hcs.util.EntityHelper;
+import biz.coolpage.hcs.util.LootHelper;
 import biz.coolpage.hcs.util.WorldHelper;
 import net.minecraft.block.*;
 import net.minecraft.block.entity.BlockEntity;
@@ -62,11 +63,11 @@ public class BlockMixin {
     @Inject(at = @At("RETURN"), method = "getDroppedStacks(Lnet/minecraft/block/BlockState;Lnet/minecraft/server/world/ServerWorld;Lnet/minecraft/util/math/BlockPos;Lnet/minecraft/block/entity/BlockEntity;Lnet/minecraft/entity/Entity;Lnet/minecraft/item/ItemStack;)Ljava/util/List;", cancellable = true)
     private static void getDroppedStacks(BlockState state, ServerWorld world, BlockPos pos, @Nullable BlockEntity blockEntity, @Nullable Entity entity, ItemStack stack, CallbackInfoReturnable<List<ItemStack>> cir) {
         //DO NOT addRawPain sugar cane as its age always 0 (game ver 1.19)
-        if (WorldHelper.modifyDroppedStacks(state, world, pos, cir)) return;
-        WorldHelper.modifyDroppedStacks(Blocks.MELON_STEM, Items.MELON_SEEDS, state, world, cir);
-        WorldHelper.modifyDroppedStacks(Blocks.PUMPKIN_STEM, Items.PUMPKIN_SEEDS, state, world, cir);
-        WorldHelper.decreaseOreHarvest(new Block[]{Blocks.COPPER_ORE, Blocks.DEEPSLATE_COPPER_ORE}, Items.RAW_COPPER, state, entity, cir);
-        WorldHelper.decreaseOreHarvest(new Block[]{Blocks.IRON_ORE, Blocks.DEEPSLATE_IRON_ORE}, Items.RAW_IRON, state, entity, cir);
+        if (LootHelper.modifyDroppedStacks(state, world, pos, cir)) return;
+        LootHelper.modifyDroppedStacks(Blocks.MELON_STEM, Items.MELON_SEEDS, state, world, cir);
+        LootHelper.modifyDroppedStacks(Blocks.PUMPKIN_STEM, Items.PUMPKIN_SEEDS, state, world, cir);
+        LootHelper.decreaseOreHarvest(new Block[]{Blocks.COPPER_ORE, Blocks.DEEPSLATE_COPPER_ORE}, Items.RAW_COPPER, state, entity, cir);
+        LootHelper.decreaseOreHarvest(new Block[]{Blocks.IRON_ORE, Blocks.DEEPSLATE_IRON_ORE}, Items.RAW_IRON, state, entity, cir);
     }
 
     @Inject(at = @At("HEAD"), method = "onLandedUpon", cancellable = true)
@@ -79,11 +80,13 @@ public class BlockMixin {
         else if (block == Blocks.PODZOL || block == Blocks.MYCELIUM || block == Blocks.DIRT_PATH || block == Blocks.DIRT)
             multiplier = 0.9F;
         else if (block.getHardness() > 2.0F) multiplier = 1.2F;
-        float exaggeratedFallDistance = (float) Math.pow(fallDistance, 1.2); //Gain more falling damage than before
-        if (!(fallDistance <= 4.5 && multiplier < 1)) {
-            if (entity instanceof PlayerEntity player && fallDistance >= 2.0F) //Moved from PlayerEntity/handleFallDamage()
-                player.increaseStat(Stats.FALL_ONE_CM, (int) Math.round((double) fallDistance * 100.0));
+        if (!(fallDistance <= 4.5F && multiplier < 1)) {
+            if (entity instanceof PlayerEntity player && fallDistance >= 2.0F) { //Moved from PlayerEntity/handleFallDamage()
+                player.increaseStat(Stats.FALL_ONE_CM, Math.round(fallDistance * 100.0F));
+                if (player.isSneaking()) fallDistance -= 1.2F;
+            }
             if (fallDistance > 3.0F) {
+                float exaggeratedFallDistance = (float) Math.pow(fallDistance, 1.2); //Gain more falling damage than before
                 entity.handleFallDamage(multiplier < 1 ? exaggeratedFallDistance - 2 : exaggeratedFallDistance, multiplier, entity.getDamageSources().fall());
                 if (entity instanceof ServerPlayerEntity player && EntityHelper.IS_SURVIVAL_LIKE.test(player) && fallDistance > 9.0F && (player.computeFallDamage(exaggeratedFallDistance, multiplier) / player.getMaxHealth()) > 0.4F) {
                     AtomicBoolean hasFF = new AtomicBoolean(false);
@@ -98,5 +101,7 @@ public class BlockMixin {
         }
         ci.cancel();
     }
+
+    //onDestroyedByExplosion only triggered when breaking air(1.19.4)
 
 }

@@ -48,11 +48,15 @@ public class UseBlockEvent {
                     if (!player.isCreative()) mainHandStack.decrement(1);
                 }
                 if (block instanceof BedBlock) {
+                    //HCS sleeping failure reasons
                     boolean b1 = EntityHelper.getEffectAmplifier(player, HcsEffects.PAIN) > 0;
                     boolean b2 = ((StatAccessor) player).getSanityManager().get() < 0.15;
-                    if (b1 || b2) {
+                    int hour = WorldHelper.getTimeAsReal(world)[0];
+                    boolean b3 = hour > 6 && hour < 21 && world.isNight();
+                    if (b1 || b2 || b3) {
                         if (b1) EntityHelper.msgById(player, "hcs.tip.too_pain_to_sleep");
-                        else EntityHelper.msgById(player, "hcs.tip.insanity_insomnia");
+                        else if (b2) EntityHelper.msgById(player, "hcs.tip.insanity_insomnia");
+                        else EntityHelper.msgById(player, "hcs.tip.too_early_to_sleep");
                         serverPlayer.setSpawnPoint(world.getRegistryKey(), pos, 0.0f, false, true);
                         EntityHelper.msgById(player, "block.minecraft.set_spawn", false);
                         return ActionResult.FAIL;

@@ -53,7 +53,7 @@ import java.util.function.Predicate;
 
 public class EntityHelper {
     public static final double[][] FIND_NEAREST_BLOCKS = {{0, -1, 0}, {0, 1, 0}, {0, 2, 0}, {-1, 0, 0}, {-1, 1, 0}, {1, 0, 0}, {1, 1, 0}, {0, 0, 1}, {0, 1, 1}, {0, 0, -1}, {0, 1, -1}};
-    public static final double ZOMBIE_SENSING_RANGE = 48.0;
+    public static double ZOMBIE_SENSING_RANGE = 40.0;
     public static final float HOLDING_BLOCK_REACHING_RANGE_ADDITION = 1.0F;
 
     public static final Predicate<DamageSource> IS_PHYSICAL_DAMAGE = damageSource -> !damageSource.isOf(DamageTypes.DROWN) && !damageSource.isOf(DamageTypes.STARVE) && !damageSource.isOf(DamageTypes.OUT_OF_WORLD) && !damageSource.isOf(DamageTypes.MAGIC) && !damageSource.isOf(DamageTypes.INDIRECT_MAGIC) && !damageSource.isOf(DamageTypes.WITHER);
@@ -385,7 +385,7 @@ public class EntityHelper {
     }
 
     public static boolean isExistent(@Nullable LivingEntity... entities) {
-        if (entities.length == 0) return false;
+        if (entities == null || entities.length == 0) return false;
         boolean result = true;
         for (LivingEntity entity : entities) {
             if (entity == null) return false;

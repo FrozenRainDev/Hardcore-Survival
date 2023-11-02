@@ -64,6 +64,8 @@
     "item.ShovelItemMixin",
     "item.SwordItemMixin",
     "item.ToolMaterialsMixin",
+    "loot.ExplosionDecayLootFunctionMixin",
+    "loot.SurvivesExplosionLootConditionMixin",
     "potion.PotionUtilMixin",
     "recipe.AbstractCookingRecipeMixin",
     "recipe.BrewingRecipeRegistryMixin",

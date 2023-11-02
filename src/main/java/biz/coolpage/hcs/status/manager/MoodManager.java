@@ -97,7 +97,7 @@ public class MoodManager {
         else if (currRawPanic > expectedRawPanic) addPanic(panic < 1 ? -0.003 : -0.007);
         else addPanic(Math.max(0.1, expectedRawPanic / 60));
         if (currSan > 0.75) addHappiness(0.0001);
-        else if (currSan < 0.65) addHappiness(-0.0001);
+        else if (currSan < 0.65) addHappiness(-0.00003);
     }
 
     public void reset() {

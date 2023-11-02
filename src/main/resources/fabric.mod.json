@@ -1,10 +1,10 @@
 {
   "schemaVersion": 1,
   "id": "hcs",
-  "version": "0.15.0",
+  "version": "0.15.1",
 
   "name": "Hardcore Survival",
-  "description": "A Minecraft mod brings incredibly realistic and tough survival experience with ambitious playing goals",
+  "description": "A difficulty-increasing, survival-oriented mod that delivers incredibly realistic and tough survival experiences with sophisticated gameplay conversion.",
   "authors": [
     "FrozenRain"
   ],
