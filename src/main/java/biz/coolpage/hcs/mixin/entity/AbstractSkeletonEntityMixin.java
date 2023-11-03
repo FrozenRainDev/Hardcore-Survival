@@ -13,7 +13,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 public class AbstractSkeletonEntityMixin {
     @Inject(method = "createAbstractSkeletonAttributes", at = @At("RETURN"), cancellable = true)
     private static void createAbstractSkeletonAttributes(@NotNull CallbackInfoReturnable<DefaultAttributeContainer.Builder> cir) {
-        cir.setReturnValue(cir.getReturnValue().add(EntityAttributes.GENERIC_MAX_HEALTH, 8.0));
+        cir.setReturnValue(cir.getReturnValue().add(EntityAttributes.GENERIC_MAX_HEALTH, 4.0));
         //improving speed can cause bugs
     }
 }

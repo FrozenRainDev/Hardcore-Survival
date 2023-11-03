@@ -2,6 +2,7 @@ package biz.coolpage.hcs.mixin.entity.player;
 
 import biz.coolpage.hcs.status.HcsEffects;
 import biz.coolpage.hcs.status.accessor.StatAccessor;
+import biz.coolpage.hcs.status.manager.StatusManager;
 import net.minecraft.entity.player.HungerManager;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.world.Difficulty;
@@ -9,12 +10,13 @@ import net.minecraft.world.GameRules;
 import org.jetbrains.annotations.NotNull;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(HungerManager.class)
-public class HungerManagerMixin {
+public abstract class HungerManagerMixin {
     @Shadow
     private int foodLevel = 20;
     @Shadow
@@ -26,9 +28,18 @@ public class HungerManagerMixin {
     @Shadow
     private int prevFoodLevel = 20;
 
-    @SuppressWarnings("EmptyMethod")
     @Shadow
-    public void addExhaustion(float exhaustion) {
+    public abstract void addExhaustion(float exhaustion);
+
+    @Unique
+    private static float adjustHealingAmount(@NotNull PlayerEntity player, float f) {
+        if (player.hasStatusEffect(HcsEffects.COLD)) f *= 0.65F;
+        if (player.hasStatusEffect(HcsEffects.UNHAPPY)) f *= 0.75F;
+        StatusManager statusManager = ((StatAccessor) player).getStatusManager();
+        if (statusManager.getBandageWorkTicks() > 0) {
+            f *= 1.5F;
+        }
+        return f;
     }
 
     @Inject(at = @At("HEAD"), method = "addExhaustion", cancellable = true)
@@ -69,8 +80,7 @@ public class HungerManagerMixin {
             if (!malnutrition || Math.random() < 0.5) ++this.foodTickTimer;
             if (this.foodTickTimer >= 10) {
                 float f = Math.min(1.0F + this.saturationLevel / 6.0F, 2.0F) / 100.0F;
-                if (player.hasStatusEffect(HcsEffects.COLD)) f *= 0.65F;
-                if (player.hasStatusEffect(HcsEffects.UNHAPPY)) f *= 0.7F;
+                f = adjustHealingAmount(player, f);
                 player.heal(f);
                 this.addExhaustion(f * 6.0F);
                 this.foodTickTimer = 0;
@@ -79,8 +89,7 @@ public class HungerManagerMixin {
             ++this.foodTickTimer;
             if (this.foodTickTimer >= (100 * (this.foodLevel >= 14 ? 1 : 2) * (thirst >= 0.7 ? 1 : 1.5))) {
                 float f = 0.1F;
-                if (player.hasStatusEffect(HcsEffects.COLD)) f *= 0.65F;
-                if (player.hasStatusEffect(HcsEffects.UNHAPPY)) f *= 0.75F;
+                f = adjustHealingAmount(player, f);
                 player.heal(f);
                 this.addExhaustion(0.6F);
                 this.foodTickTimer = 0;

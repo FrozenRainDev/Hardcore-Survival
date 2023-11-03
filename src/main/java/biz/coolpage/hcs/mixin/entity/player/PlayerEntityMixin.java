@@ -318,7 +318,8 @@ public abstract class PlayerEntityMixin extends LivingEntity implements StatAcce
         speed /= (float) Math.max(1.0, Math.pow(1.15, (EntityHelper.getEffectAmplifier(this, HcsEffects.PAIN) + 1) + (EntityHelper.getEffectAmplifier(this, HcsEffects.INJURY) + 1)));
         if (DigRestrictHelper.Predicates.IS_BREAKABLE_FUNCTIONAL.test(block))
             speed *= (block instanceof AbstractFurnaceBlock || block == Blocks.ENDER_CHEST) ? 16.0F : 4.0F;
-        if (block == Blocks.SUGAR_CANE || (block == Blocks.CLAY && !shovelMineable)) speed /= 9.0F;
+        else if (block == Blocks.OBSIDIAN || block == Blocks.CRYING_OBSIDIAN) speed *= 3.0F;
+        else if (block == Blocks.SUGAR_CANE || (block == Blocks.CLAY && !shovelMineable)) speed /= 9.0F;
         else if (block instanceof LeavesBlock && !(mainHand instanceof SwordItem) && !(mainHand instanceof AxeItem))
             speed /= 10.0F;
         if (block instanceof TorchBlock || state.isIn(BlockTags.FLOWERS)) speed = 999999.0F;
@@ -474,7 +475,7 @@ public abstract class PlayerEntityMixin extends LivingEntity implements StatAcce
         if (!IS_SURVIVAL_AND_SERVER.test(toPlayer(this))) return;
         // Painful sound effect
         final double currPain = ((StatAccessor) this).getInjuryManager().getRealPain();
-        boolean outOfDarkness = true;
+        boolean outOfDarkness = true, hasDarkDebuff = false;
         if (currPain > 2.0 && this.hasStatusEffect(HcsEffects.PAIN) && this.world.getTime() % Math.max(1, 30 * (6 - (int) currPain)) == 0)
             this.world.playSound(this.getX(), this.getY(), this.getZ(), SoundEvents.ENTITY_PLAYER_BREATH, SoundCategory.PLAYERS, (float) (currPain / 14), world.random.nextFloat() * 0.1f + 0.9f, false); // using expect ver seems avoids subtitles
         int oxyLackLvl = 0;
@@ -488,6 +489,7 @@ public abstract class PlayerEntityMixin extends LivingEntity implements StatAcce
         this.statusManager.setRecentHasHotWaterBagTicks(Math.max(0, this.statusManager.getRecentHasHotWaterBagTicks() - 1));
         this.statusManager.setRecentLittleOvereatenTicks(this.hungerManager.getFoodLevel() < 20 ? 0 : Math.max(0, this.statusManager.getRecentLittleOvereatenTicks() - 1));
         this.statusManager.setRecentSleepTicks(Math.max(0, this.statusManager.getRecentSleepTicks() - 1));
+        if (this.statusManager.getBandageWorkTicks() > 0) statusManager.addBandageWorkTicks(-1);
         if (this.isWet()) this.statusManager.setRecentWetTicks(20);
         else this.statusManager.setRecentWetTicks(Math.max(0, this.statusManager.getRecentWetTicks() - 1));
         if (this.statusManager.getRecentMiningTicks() < 20) this.statusManager.setBareDiggingTicks(0);
@@ -543,16 +545,16 @@ public abstract class PlayerEntityMixin extends LivingEntity implements StatAcce
             if (!isInUnpleasantDimension) {
                 if (blockBrightness < 1 && isInCavelike) {
                     sanDecrement = 0.00006;
-                    if (!isDarkSafe) EntityHelper.addHcsDebuff(this, HcsEffects.DARKNESS_ENVELOPED);
+                    if (!isDarkSafe) hasDarkDebuff = true;
                     final int currDarkTicks = isDarkSafe ? 0 : this.statusManager.getInDarknessTicks();
                     if (currDarkTicks == 60) EntityHelper.msgById(this, "hcs.tip.dark.warn");
                     else if (currDarkTicks > 60) {
                         sanDecrement = 0.0002;
                         this.moodManager.setPanic(4.0);
                         if (currDarkTicks == 340) EntityHelper.msgById(this, "hcs.tip.dark.closer");
-                        else if (currDarkTicks > 360) {
+                        else if (currDarkTicks > 720) {
                             sanDecrement = 0.1;
-                            if (currDarkTicks > 400 && currDarkTicks % 10 == 0)
+                            if (currDarkTicks > 800 && currDarkTicks % 10 == 0)
                                 this.damage(((DamageSourcesAccessor) this.world.getDamageSources()).darkness(), 2.0F);
                         }
                     }
@@ -599,9 +601,10 @@ public abstract class PlayerEntityMixin extends LivingEntity implements StatAcce
         //Disease
         this.diseaseManager.tick(!this.hasStatusEffect(HcsEffects.WET));
         //Controls the max percentage that soul impaired effect can deduct depending on the HcsDifficulty
-        int maxSoulImpaired = HcsDifficulty.chooseVal(toPlayer(this), 0, 5, 7);
+        int maxSoulImpaired = StatusManager.getMaxSoulImpaired(this);
         if (this.statusManager.getSoulImpairedStat() > maxSoulImpaired)
             this.statusManager.setSoulImpairedStat(maxSoulImpaired);
+        this.statusManager.setHasDarknessEnvelopedDebuff(hasDarkDebuff);
     }
 
     @Inject(method = "getXpToDrop", at = @At("HEAD"), cancellable = true)
@@ -635,8 +638,10 @@ public abstract class PlayerEntityMixin extends LivingEntity implements StatAcce
             if (isBurningDamage) feelingAmount *= 2;
             float hurtPercent = feelingAmount / 20.0F;//prev Math.max(12.0F, this.getMaxHealth())
             this.injuryManager.addRawPain(hurtPercent * 4.5);
-            if (!isBurningDamage && EntityHelper.IS_BLEEDING_CAUSING_DAMAGE.test(source))
+            if (!isBurningDamage && EntityHelper.IS_BLEEDING_CAUSING_DAMAGE.test(source)) {
                 this.injuryManager.addBleeding(hurtPercent * 8);
+                this.statusManager.setBandageWorkTicks(0);
+            }
         }
     }
 

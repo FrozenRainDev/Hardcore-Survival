@@ -2,7 +2,10 @@ package biz.coolpage.hcs.util;
 
 import biz.coolpage.hcs.Reg;
 import biz.coolpage.hcs.status.HcsPersistentState;
-import net.minecraft.block.*;
+import net.minecraft.block.BlockState;
+import net.minecraft.block.Blocks;
+import net.minecraft.block.FallingBlock;
+import net.minecraft.block.FarmlandBlock;
 import net.minecraft.entity.FallingBlockEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
@@ -124,7 +127,7 @@ public class WorldHelper {
 
     public static boolean shouldGenerateVillages() {
         if (currWorld == null) return false;
-        return currWorld.getTime() > 768000L && applyNullable(HcsPersistentState.getServerState(currWorld), HcsPersistentState::hasObtainedCopperPickaxe, false);
+        return applyNullable(HcsPersistentState.getServerState(currWorld), HcsPersistentState::hasObtainedCopperPickaxe, false);
     }
 
     @Contract(value = "null -> new", pure = true)

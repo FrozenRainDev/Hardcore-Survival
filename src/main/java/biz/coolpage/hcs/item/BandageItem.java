@@ -27,15 +27,17 @@ import static biz.coolpage.hcs.util.EntityHelper.IS_SURVIVAL_LIKE;
 public class BandageItem extends Item {
     private final double bleedingReduction;
     private final int useTime;
+    private final int bandageWorkTicks;
 
     public BandageItem(double bleedingReduction, int useTime) {
+        this(bleedingReduction, useTime, 0);
+    }
+
+    public BandageItem(double bleedingReduction, int useTime, int bandageWorkTicks) {
         super(new Item.Settings());
         this.bleedingReduction = bleedingReduction;
         this.useTime = useTime;
-    }
-
-    public BandageItem(double bleedingReduction) {
-        this(bleedingReduction, 40);
+        this.bandageWorkTicks = bandageWorkTicks;
     }
 
     @Override
@@ -66,6 +68,7 @@ public class BandageItem extends Item {
             InjuryManager injuryManager = ((StatAccessor) player).getInjuryManager();
             injuryManager.addBleeding(-bleedingReduction);
             if (IS_SURVIVAL_LIKE.test(player)) stack.decrement(1);
+            ((StatAccessor) player).getStatusManager().addBandageWorkTicks(bandageWorkTicks);
             player.playSound(SoundEvents.BLOCK_WOOL_PLACE, SoundCategory.PLAYERS, 1.0F, 0.5F);
         }
         return super.finishUsing(stack, world, user);

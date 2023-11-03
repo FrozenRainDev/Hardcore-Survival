@@ -47,7 +47,10 @@ public class ServerPlayerEvent {
                 newWetnessManager.set(oldWetnessManager.get());
             }
             StatusManager oldStatusManager = ((StatAccessor) oldPlayer).getStatusManager();
-            ((StatAccessor) newPlayer).getStatusManager().reset(oldStatusManager.getMaxExpLevelReached(), oldStatusManager.getSoulImpairedStat() + (alive ? 0 : 1), oldStatusManager.getStonesSmashed(), oldStatusManager.getHcsDifficulty(), oldStatusManager.hasShownInitTips());
+            int maxSoulImpaired = StatusManager.getMaxSoulImpaired(newPlayer);
+            if (oldStatusManager.getSoulImpairedStat() > maxSoulImpaired)
+                oldStatusManager.setSoulImpairedStat(maxSoulImpaired);
+            ((StatAccessor) newPlayer).getStatusManager().reset(oldStatusManager.getMaxExpLevelReached(), Math.min(maxSoulImpaired, oldStatusManager.getSoulImpairedStat() + (alive ? 0 : 1)), oldStatusManager.getStonesSmashed(), oldStatusManager.getHcsDifficulty(), oldStatusManager.hasShownInitTips(), oldStatusManager.getEnterCurrWldTimes());
         }));
     }
 }

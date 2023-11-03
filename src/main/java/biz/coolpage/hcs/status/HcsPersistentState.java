@@ -29,6 +29,7 @@ public class HcsPersistentState extends PersistentState {
     public static @NotNull HcsPersistentState createFromNbt(@NotNull NbtCompound nbt) {
         HcsPersistentState state = new HcsPersistentState();
         state.setHasObtainedCopperPickaxe(nbt.contains(OBTAINED_COPPER_PICK) && nbt.getBoolean(OBTAINED_COPPER_PICK));
+        state.markDirty();
         return state;
     }
 

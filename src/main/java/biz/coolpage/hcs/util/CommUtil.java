@@ -10,7 +10,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.BufferedReader;
-import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URL;
 import java.net.URLConnection;
@@ -77,7 +76,7 @@ public class CommUtil {
     }
 
     public static class UpdateHelper {
-        public static final String MOD_VER = "0.15.1";
+        public static final String MOD_VER = "0.15.2";
 
         @Contract(pure = true)
         public static String fetchLatestVersion() {
@@ -86,6 +85,8 @@ public class CommUtil {
                 URL website = new URL(url);
                 URLConnection connection = website.openConnection();
                 connection.setRequestProperty("charset", "UTF-8");
+                connection.setConnectTimeout(10000);
+                connection.setReadTimeout(10000);
                 BufferedReader reader = new BufferedReader(new InputStreamReader(connection.getInputStream(), StandardCharsets.UTF_8));
                 String line;
                 StringBuilder htmlCode = new StringBuilder();
@@ -100,7 +101,7 @@ public class CommUtil {
                     versions.add(download);
                 }
                 return getLatestVersionInList(versions);
-            } catch (IOException exception) {
+            } catch (Exception exception) {
                 Reg.LOGGER.error("UpdateHelper: " + exception.getMessage());
             }
             return "";

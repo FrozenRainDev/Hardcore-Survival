@@ -182,10 +182,10 @@ public abstract class InGameHudMixin extends DrawableHelper {
             else if (temp <= 0.0F && this.client.player.getFrozenTicks() <= 0 && this.client.player.hasStatusEffect(HcsEffects.HYPOTHERMIA))
                 this.renderOverlay(matrices, POWDER_SNOW_OUTLINE, opacity);
             int inDarkTicks = ((StatAccessor) this.client.player).getStatusManager().getInDarknessTicks();
-            if (inDarkTicks > 360 && inDarkTicks < 380 && HcsDifficulty.isOf(this.client.player, HcsDifficulty.HcsDifficultyEnum.challenging))
+            if (inDarkTicks > 720 && inDarkTicks < 740 && HcsDifficulty.isOf(this.client.player, HcsDifficulty.HcsDifficultyEnum.challenging))
                 this.renderOverlay(matrices, DARKNESS_JUMP_SCARE, 0.9F);
             else if (inDarkTicks > 60)
-                this.renderOverlay(matrices, DARKNESS, MathHelper.clamp((inDarkTicks - 60) / 400.0F, 0.0F, 1.0F));
+                this.renderOverlay(matrices, DARKNESS, MathHelper.clamp((inDarkTicks - 60) / 800.0F, 0.0F, 1.0F));
         }
     }
 

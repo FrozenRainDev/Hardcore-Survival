@@ -157,8 +157,8 @@ public class Reg implements ModInitializer {
     public static final Item BARK = new Item(new Item.Settings().food(new FoodComponent.Builder().hunger(0).saturationModifier(0.0F).build()));
     public static final Item WILLOW_BARK = new Item(new Item.Settings().food(new FoodComponent.Builder().hunger(0).saturationModifier(0.0F).build()));
     public static final Item FEARLESSNESS_HERB = new Item(new Item.Settings().food(new FoodComponent.Builder().hunger(0).saturationModifier(0.0F).build()));
-    public static final Item BANDAGE = new BandageItem(2.0);
-    public static final Item IMPROVISED_BANDAGE = new BandageItem(0.8, 60);
+    public static final Item BANDAGE = new BandageItem(2.0, 40, 200);
+    public static final Item IMPROVISED_BANDAGE = new BandageItem(0.8, 60, 120);
     public static final Item SPLINT = new BandageItem(0.5, 140) {
         @Override
         public ItemStack finishUsing(ItemStack stack, World world, LivingEntity user) {

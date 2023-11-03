@@ -1,6 +1,10 @@
 package biz.coolpage.hcs.status.manager;
 
 import biz.coolpage.hcs.config.HcsDifficulty;
+import net.minecraft.entity.LivingEntity;
+import org.jetbrains.annotations.Nullable;
+
+import static biz.coolpage.hcs.util.EntityHelper.toPlayer;
 
 public class StatusManager {
     public static final String MAX_LVL_NBT = "hcs_max_lvl_reached";
@@ -28,8 +32,15 @@ public class StatusManager {
     private int stonesSmashed = 0;
     private boolean hasCheckInitTips = false; //Client side only
     Enum<HcsDifficulty.HcsDifficultyEnum> hcsDifficulty = HcsDifficulty.HcsDifficultyEnum.standard;
+    private boolean hasDarknessEnvelopedDebuff = false; //Server side only -- add all debuffs in ServerPlayerEntityMixin/tick() so the order of hcs debuffs won't change randomly
+    private boolean hasHeavyLoadDebuff = false; //Server side only
+    private int bandageWorkTicks = 0; //Server side only
 
-    public void reset(int lvlReached, int soulImpaired, int smashed, Enum<HcsDifficulty.HcsDifficultyEnum> hcsDifficulty, boolean hasCheckInitTips) {
+    public static int getMaxSoulImpaired(@Nullable LivingEntity entity) {
+        return HcsDifficulty.chooseVal(toPlayer(entity), 0, 4, 7);
+    }
+
+    public void reset(int lvlReached, int soulImpaired, int smashed, Enum<HcsDifficulty.HcsDifficultyEnum> hcsDifficulty, boolean hasCheckInitTips, int enterCurrWldTimes) {
         setSoulImpairedStat(soulImpaired);
         exhaustion = 0.0F;
         recentAttackTicks = 0;
@@ -50,6 +61,10 @@ public class StatusManager {
         stonesSmashed = smashed;
         this.hcsDifficulty = hcsDifficulty;
         this.hasCheckInitTips = hasCheckInitTips;
+        hasDarknessEnvelopedDebuff = false;
+        hasHeavyLoadDebuff = false;
+        bandageWorkTicks = 0;
+        this.enterCurrWldTimes = enterCurrWldTimes;
     }
 
     public float getExhaustion() {
@@ -246,6 +261,36 @@ public class StatusManager {
 
     public void setHcsDifficulty(Enum<HcsDifficulty.HcsDifficultyEnum> hcsDifficulty) {
         this.hcsDifficulty = hcsDifficulty;
+    }
+
+    public boolean hasDarknessEnvelopedDebuff() {
+        return hasDarknessEnvelopedDebuff;
+    }
+
+    public void setHasDarknessEnvelopedDebuff(boolean hasDarknessEnvelopedDebuff) {
+        this.hasDarknessEnvelopedDebuff = hasDarknessEnvelopedDebuff;
+    }
+
+    public boolean hasHeavyLoadDebuff() {
+        return hasHeavyLoadDebuff;
+    }
+
+    public void setHasHeavyLoadDebuff(boolean hasHeavyLoadDebuff) {
+        this.hasHeavyLoadDebuff = hasHeavyLoadDebuff;
+    }
+
+    public int getBandageWorkTicks() {
+        return bandageWorkTicks;
+    }
+
+    public void setBandageWorkTicks(int bandageWorkTicks) {
+        this.bandageWorkTicks = bandageWorkTicks;
+    }
+
+    public void addBandageWorkTicks(int increment) {
+        int result = getBandageWorkTicks() + increment;
+        if (result < 0) result = 0;
+        setBandageWorkTicks(result);
     }
 
 }

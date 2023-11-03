@@ -19,6 +19,8 @@ import net.minecraft.item.ShieldItem;
 import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
+import net.minecraft.stat.ServerStatHandler;
+import net.minecraft.stat.Stats;
 import net.minecraft.text.ClickEvent;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
@@ -27,6 +29,7 @@ import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.LightType;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.Biome;
+import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
@@ -56,6 +59,10 @@ public abstract class ServerPlayerEntityMixin extends PlayerEntity {
     @Inject(method = "getSpawnPointPosition", at = @At("HEAD"))
     See at main.event.ServerPlayerEvent
     */
+
+    @Shadow
+    @Final
+    private ServerStatHandler statHandler;
 
     @Inject(at = @At("HEAD"), method = "tick")
     public void tick(CallbackInfo ci) {
@@ -187,7 +194,7 @@ public abstract class ServerPlayerEntityMixin extends PlayerEntity {
             if (currRealPanic > 0.0) {
                 double finalPanic = currRealPanic;
                 if (!isDarkEnv) {
-                    finalPanic -= 0.06 * MathHelper.clamp(statusManager.getMaxExpLevelReached(), 0, 30); //Reduce panic when player reaches higher exp level
+                    finalPanic -= 0.06 * MathHelper.clamp(statusManager.getMaxExpLevelReached() + this.statHandler.getStat(Stats.CUSTOM.getOrCreateStat(Stats.MOB_KILLS)) / 5.0, 0.0, 30.0); //Reduce panic when player reaches higher exp level
                     if (expectedRawPanic > 0.0)
                         sanityManager.add(-MathHelper.clamp(0.00003 * finalPanic, 0.000008, 0.0001));
                 }
@@ -209,5 +216,11 @@ public abstract class ServerPlayerEntityMixin extends PlayerEntity {
 
         //Debuff of unhappiness
         if (moodManager.getHappiness() < 0.5) EntityHelper.addHcsDebuff(this, HcsEffects.UNHAPPY);
+
+        //Debuff of darkness enveloped
+        if (statusManager.hasDarknessEnvelopedDebuff()) EntityHelper.addHcsDebuff(this, HcsEffects.DARKNESS_ENVELOPED);
+
+        //Debuff of heavy load
+        if (statusManager.hasHeavyLoadDebuff()) EntityHelper.addHcsDebuff(this, HcsEffects.HEAVY_LOAD);
     }
 }

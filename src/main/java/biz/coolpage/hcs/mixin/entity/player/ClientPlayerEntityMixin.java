@@ -87,12 +87,12 @@ public abstract class ClientPlayerEntityMixin extends AbstractClientPlayerEntity
             if (darknessEnveloped && !HcsDifficulty.isOf(this.client.player, HcsDifficulty.HcsDifficultyEnum.relaxing)) {
                 final int darkTicks = statusManager.getInDarknessTicks();
                 if (darkTicks == 60) playHallAmbient(this);
-                else if (darkTicks == 290) {
+                else if (darkTicks == 580) {
                     this.world.playSound(this.getX(), this.getY(), this.getZ(), ENTITY_ENDERMAN_SCREAM, SoundCategory.AMBIENT, 26, -13, false);
                     this.world.playSound(this.getX(), this.getY(), this.getZ(), ENTITY_ENDERMAN_STARE, SoundCategory.AMBIENT, 26, -13, false);
-                } else if (darkTicks == 360) // Also view SoundSystemMixin/getAdjustedVolume()
+                } else if (darkTicks == 720) // Also view SoundSystemMixin/getAdjustedVolume()
                     this.world.playSound(this.getX(), this.getY(), this.getZ(), ENTITY_ELDER_GUARDIAN_CURSE, SoundCategory.AMBIENT, 1145.0F, -13, false);
-                else if (darkTicks > 120 && Math.random() < 0.01) {
+                else if (darkTicks > 240 && Math.random() < 0.01) {
                     if (Math.random() < 0.5) playHall(this);
                     else playHallAmbient(this);
                     this.world.playSound(this.getX(), this.getY(), this.getZ(), SoundEvents.ENTITY_PLAYER_BREATH, SoundCategory.AMBIENT, 0.5f, world.random.nextFloat() * 0.1f + 0.9f, false);
