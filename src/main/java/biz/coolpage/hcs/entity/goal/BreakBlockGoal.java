@@ -1,5 +1,6 @@
 package biz.coolpage.hcs.entity.goal;
 
+import biz.coolpage.hcs.config.HcsDifficulty;
 import biz.coolpage.hcs.util.DigRestrictHelper;
 import biz.coolpage.hcs.util.EntityHelper;
 import biz.coolpage.hcs.util.WorldHelper;
@@ -87,7 +88,7 @@ public class BreakBlockGoal extends Goal {
     }
 
     public int getMaxProgress() {
-        return (int) (500.0F * this.breakState.getBlock().getHardness() * ((this.mob.getMainHandStack().getItem() instanceof ShovelItem) ? 0.2F : 1.0F));
+        return (int) (HcsDifficulty.chooseVal(this.mob.world, 2000.0F, 1000.0F, 500.0F) * this.breakState.getBlock().getHardness() * ((this.mob.getMainHandStack().getItem() instanceof ShovelItem) ? 0.2F : 1.0F));
     }
 
     public boolean canBreakBlock(@NotNull BlockState state) {
@@ -99,7 +100,7 @@ public class BreakBlockGoal extends Goal {
         ++this.breakProgress;
         if (this.offsetX * (float) ((double) this.breakPos.getX() + 0.5 - this.mob.getX()) + this.offsetZ * (float) ((double) this.breakPos.getZ() + 0.5 - this.mob.getZ()) < 0.0f)
             this.shouldStop = true;
-        if (this.breakProgress % 20 == 0 && !this.mob.handSwinging) this.mob.swingHand(this.mob.getActiveHand());
+        if (this.breakProgress % 40 == 0 && !this.mob.handSwinging) this.mob.swingHand(this.mob.getActiveHand());
         int breakStage = (int) ((float) this.breakProgress / (float) this.getMaxProgress() * 10.0f);
         if (breakStage != this.prevBreakStage) {
             this.mob.world.setBlockBreakingInfo(this.mob.getId(), this.breakPos, breakStage);

@@ -11,7 +11,6 @@ import biz.coolpage.hcs.util.DigRestrictHelper;
 import biz.coolpage.hcs.util.EntityHelper;
 import biz.coolpage.hcs.util.RotHelper;
 import net.minecraft.block.*;
-import net.minecraft.entity.DamageUtil;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
@@ -300,7 +299,9 @@ public abstract class PlayerEntityMixin extends LivingEntity implements StatAcce
         if (shovelMineable && mainHand instanceof ShovelItem && mainHand != Reg.FLINT_CONE)
             speed /= 2.0F;
         else if (state.isIn(BlockTags.AXE_MINEABLE) || mainHand instanceof SwordItem) {
+//            System.out.println(speed);//0.00952381
             if (mainHand == Reg.FLINT_HATCHET) speed *= 6.0F;
+            else if (block == Blocks.BAMBOO || block == Blocks.SWEET_BERRY_BUSH) speed = 2.0F;
             else speed /= 2.5F;
         }
         boolean isKnife = mainHand instanceof KnifeItem;
@@ -387,10 +388,10 @@ public abstract class PlayerEntityMixin extends LivingEntity implements StatAcce
                     else if (item == Items.DRIED_KELP) this.sanityManager.add(0.05);
                     else if (item == Items.COOKIE || item == Items.APPLE || item == Reg.ORANGE || item == Items.SUGAR)
                         this.sanityManager.add(0.025);
-                    else if (HAS_COOKED.test(name) || item == Items.BREAD)
-                        this.sanityManager.add(0.01);
+                    else if ((HAS_COOKED.test(name) && item != Reg.ROASTED_WORM) || item == Items.BREAD)
+                        this.sanityManager.add(food.isSnack() ? 0.005 : 0.01);
                 }
-                if (item == Items.WHEAT || item == Items.SUGAR || item == Items.SUGAR_CANE || item == Reg.POTHERB || item == Reg.ROASTED_SEEDS)
+                if (item == Items.WHEAT || item == Items.SUGAR || item == Items.SUGAR_CANE || item == Reg.POTHERB)
                     this.hungerManager.setFoodLevel(Math.min(this.hungerManager.getFoodLevel() + 1, 20));
                 else if (((name.contains("seeds") || Reg.IS_BARK.test(item)) && food.getHunger() == 0) || item == Reg.COOKED_SWEET_BERRIES || item == Reg.ROT || item == Items.KELP || item == Reg.PETALS_SALAD) {
                     EntityHelper.addDecimalFoodLevel(player, 0.4F, false);
@@ -499,7 +500,8 @@ public abstract class PlayerEntityMixin extends LivingEntity implements StatAcce
         int maxLvlReached = this.statusManager.getMaxExpLevelReached();
         EntityAttributeInstance instance = this.getAttributeInstance(EntityAttributes.GENERIC_MAX_HEALTH);
         if (instance != null) {
-            int limitedMaxHealth = (this.statusManager.getHcsDifficulty().ordinal() == HcsDifficulty.HcsDifficultyEnum.relaxing.ordinal()) ? 20 : Math.min(20, (int) Math.floor(maxLvlReached / 5.0) + 12);//Cut down max health when in low exp lvl
+            final int limitedMaxHealth = HcsDifficulty.isOf(toPlayer(this), HcsDifficulty.HcsDifficultyEnum.relaxing) ? 20 : Math.min(20, (int) Math.floor(maxLvlReached / 4.0) + 12);//Cut down max health when in low exp lvl
+            //HcsDifficulty.chooseVal(toPlayer(this), Math.min(30, (int) Math.floor(maxLvlReached / 3.0) + 20), Math.min(30, (int) Math.floor(maxLvlReached / 2.0) + 12), Math.min(20, (int) Math.floor(maxLvlReached / 3.0) + 12));
             final double currMaxHealth = instance.getBaseValue();
             if (limitedMaxHealth > currMaxHealth || (limitedMaxHealth < currMaxHealth && maxLvlReached < 36)) {
                 instance.setBaseValue(limitedMaxHealth);
@@ -543,10 +545,10 @@ public abstract class PlayerEntityMixin extends LivingEntity implements StatAcce
             double sanDecrement = 0.00001;
             int blockBrightness = this.world.getLightLevel(LightType.BLOCK, headPos);
             if (!isInUnpleasantDimension) {
-                if (blockBrightness < 1 && isInCavelike) {
+                if (blockBrightness < 1 && isInCavelike && !isDarkSafe) {
                     sanDecrement = 0.00006;
-                    if (!isDarkSafe) hasDarkDebuff = true;
-                    final int currDarkTicks = isDarkSafe ? 0 : this.statusManager.getInDarknessTicks();
+                    hasDarkDebuff = true;
+                    final int currDarkTicks = this.statusManager.getInDarknessTicks();
                     if (currDarkTicks == 60) EntityHelper.msgById(this, "hcs.tip.dark.warn");
                     else if (currDarkTicks > 60) {
                         sanDecrement = 0.0002;
@@ -634,7 +636,7 @@ public abstract class PlayerEntityMixin extends LivingEntity implements StatAcce
             float feelingAmount = amount;
             boolean isBurningDamage = EntityHelper.IS_BURNING_DAMAGE.test(source);
             if (!source.isIn(DamageTypeTags.BYPASSES_ARMOR))
-                feelingAmount = DamageUtil.getDamageLeft(amount, this.getArmor() * 0.6F, 0.0F);
+                feelingAmount = EntityHelper.getDamageLeft(amount, this.getArmor(), (float) this.getAttributeValue(EntityAttributes.GENERIC_ARMOR_TOUGHNESS));
             if (isBurningDamage) feelingAmount *= 2;
             float hurtPercent = feelingAmount / 20.0F;//prev Math.max(12.0F, this.getMaxHealth())
             this.injuryManager.addRawPain(hurtPercent * 4.5);

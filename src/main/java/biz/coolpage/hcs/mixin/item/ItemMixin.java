@@ -116,5 +116,14 @@ public class ItemMixin {
             tooltip.add(description.formatted((descriptionContent.contains("!") || descriptionContent.contains("！")) ? Formatting.RED : Formatting.GRAY));
     }
 
+    /*
+    @Inject(method = "use", at = @At("HEAD"), cancellable = true)
+    public void use(World world, PlayerEntity user, Hand hand, CallbackInfoReturnable<TypedActionResult<ItemStack>> cir) {
+        //noinspection EqualsBetweenInconvertibleTypes
+        if (Objects.equals(this, Items.FLINT)) cir.setReturnValue(RockItem.throwOut(world, user, hand));
+    }
+    */
+
+
 }
 

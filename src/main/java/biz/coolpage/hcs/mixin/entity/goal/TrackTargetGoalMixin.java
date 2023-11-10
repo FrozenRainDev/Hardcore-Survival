@@ -42,7 +42,7 @@ public abstract class TrackTargetGoalMixin {
 
     @Inject(at = @At("HEAD"), method = "shouldContinue", cancellable = true)
     public void shouldContinue(CallbackInfoReturnable<Boolean> cir) {
-        if (this.mob instanceof ZombieEntity && this.mob.getTarget() /*this.target is ALWAYS null!!*/ instanceof AnimalEntity && this.mob.world.getClosestPlayer(this.mob.getX(), this.mob.getY(), this.mob.getZ(), 16.0, true) != null) {
+        if (this.mob instanceof ZombieEntity && this.mob.getTarget() /*this.target is ALWAYS null!!*/ instanceof AnimalEntity && this.mob.world.getClosestPlayer(this.mob.getX(), this.mob.getY(), this.mob.getZ(), 8.0, true) != null) {
             this.stop();
             cir.setReturnValue(false);
         }

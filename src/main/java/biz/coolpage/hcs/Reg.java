@@ -68,7 +68,7 @@ public class Reg implements ModInitializer {
     public static final Potion LONG_CONSTANT_TEMPERATURE_POTION = new Potion("hcs_long_constant_temperature", new StatusEffectInstance(HcsEffects.CONSTANT_TEMPERATURE, 9600));
     public static final Item FIBER_STRING = new Item(new Item.Settings());
     public static final Item GRASS_FIBER = new Item(new Item.Settings());
-    public static final Item ROASTED_SEEDS = new Item(new Item.Settings().food(new FoodComponent.Builder().hunger(0).snack().saturationModifier(0.5f).build()));
+    public static final Item ROASTED_SEEDS = new Item(new Item.Settings().food(new FoodComponent.Builder().hunger(0).saturationModifier(0f).snack().build()));
     public static final Item ROCK = new RockItem(new Item.Settings());
     public static final Item SHARP_ROCK = new Item(new Item.Settings());
     public static final Item SHARP_FLINT = new Item(new Item.Settings());
@@ -77,7 +77,7 @@ public class Reg implements ModInitializer {
     public static final Item EXTINGUISHED_CAMPFIRE = new Item(new Item.Settings());
     public static final Item FIRE_BOW = new Item(new Item.Settings().maxCount(1));
     public static final Item TINDER = new Item(new Item.Settings());
-    public static final Item WORM = new EffectiveFoodItem(new Item.Settings().food(new FoodComponent.Builder().hunger(2).saturationModifier(1.0f).statusEffect(new StatusEffectInstance(StatusEffects.NAUSEA, 200), 1).build()), 0.0F, -0.08);
+    public static final Item WORM = new EffectiveFoodItem(new Item.Settings().food(new FoodComponent.Builder().hunger(1).saturationModifier(1.0f).statusEffect(new StatusEffectInstance(StatusEffects.NAUSEA, 200), 1).build()), 0.0F, -0.08);
     public static final Item PUMPKIN_SLICE = new Item(new Item.Settings().food(new FoodComponent.Builder().hunger(2).saturationModifier(1f).build()));
     public static final Item POTHERB = new Item(new Item.Settings().food(new FoodComponent.Builder().hunger(0).saturationModifier(1f).build()));
     public static final Item STONE_KNIFE = new KnifeItem(HcsToolMaterials.STONE_WEAPON, 1, 1.6F - 4.0F, new Item.Settings().maxCount(1));
@@ -106,12 +106,12 @@ public class Reg implements ModInitializer {
     public static final Item CACTUS_JUICE = new BottleItem(new Item.Settings().maxCount(16), new StatusEffectInstance(StatusEffects.POISON, 160));
     public static final Item PURIFIED_WATER_BOTTLE = new BottleItem(new Item.Settings().maxCount(16));
     public static final Item SALTWATER_BOTTLE = new BottleItem(new Item.Settings().maxCount(16), new StatusEffectInstance(HcsEffects.THIRST, 1200, 0, false, false, true));
-    public static final Item ROASTED_WORM = new EffectiveFoodItem(new Item.Settings().food(new FoodComponent.Builder().hunger(3).saturationModifier(1.0f).statusEffect(new StatusEffectInstance(StatusEffects.NAUSEA, 60), 1).build()), 0.0F, -0.01);
+    public static final Item ROASTED_WORM = new EffectiveFoodItem(new Item.Settings().food(new FoodComponent.Builder().hunger(2).saturationModifier(1.0f).statusEffect(new StatusEffectInstance(StatusEffects.NAUSEA, 60), 1).build()), 0.0F, -0.01);
     public static final Item ANIMAL_VISCERA = new Item(new Item.Settings().food(new FoodComponent.Builder().hunger(3).saturationModifier(2.0f).statusEffect(new StatusEffectInstance(StatusEffects.NAUSEA, 40), 1).meat().build()));
     public static final Item COOKED_ANIMAL_VISCERA = new Item(new Item.Settings().food(new FoodComponent.Builder().hunger(8).saturationModifier(4F).meat().build()));
     public static final Item SHARP_BROKEN_BONE = new ShovelItem(HcsToolMaterials.SHARP_BROKEN_BONE, 3F, 1.6F - 4.0F, new Item.Settings().maxCount(1));
     public static final Item BAMBOO_SHOOT = new Item(new Item.Settings().food(new FoodComponent.Builder().hunger(1).saturationModifier(1f).build()));
-    public static final Item COOKED_BAMBOO_SHOOT = new Item(new Item.Settings().food(new FoodComponent.Builder().hunger(3).saturationModifier(1f).build()));
+    public static final Item COOKED_BAMBOO_SHOOT = new Item(new Item.Settings().food(new FoodComponent.Builder().hunger(2).saturationModifier(1f).build()));
     public static final Item COOKED_CARROT = new Item(new Item.Settings().food(new FoodComponent.Builder().hunger(4).saturationModifier(2f).build()));
     public static final Item COOKED_PUMPKIN_SLICE = new Item(new Item.Settings().food(new FoodComponent.Builder().hunger(3).saturationModifier(1f).build()));
     public static final Item COOKED_SWEET_BERRIES = new Item(new Item.Settings().food(new FoodComponent.Builder().hunger(1).saturationModifier(1f).build()));
@@ -441,6 +441,7 @@ public class Reg implements ModInitializer {
         RecipeSerializer.register("hcs_sapling_to_stick_recipe", SAPLING_TO_STICK_RECIPE);
 
         FuelRegistry.INSTANCE.add(GRASS_FIBER, 50);
+        FuelRegistry.INSTANCE.add(FIBER_STRING, 100);
         FuelRegistry.INSTANCE.add(SHORT_STICK, 80);
         FuelRegistry.INSTANCE.add(FIREWOOD, 300);
         FuelRegistry.INSTANCE.add(TINDER, 30);
@@ -450,6 +451,7 @@ public class Reg implements ModInitializer {
         FuelRegistry.INSTANCE.add(BANDAGE, 80);
         FuelRegistry.INSTANCE.add(IMPROVISED_BANDAGE, 60);
         FuelRegistry.INSTANCE.add(SPLINT, 100);
+        FuelRegistry.INSTANCE.add(SPIKED_CLUB, 160);
         FuelRegistry.INSTANCE.add(WOOLEN_HOOD, 150);
         FuelRegistry.INSTANCE.add(WOOLEN_COAT, 240);
         FuelRegistry.INSTANCE.add(WOOLEN_TROUSERS, 210);

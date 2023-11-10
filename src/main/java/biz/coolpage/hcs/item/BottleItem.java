@@ -1,10 +1,10 @@
 package biz.coolpage.hcs.item;
 
 import biz.coolpage.hcs.status.HcsEffects;
-import biz.coolpage.hcs.status.manager.TemperatureManager;
-import biz.coolpage.hcs.util.RotHelper;
 import biz.coolpage.hcs.status.accessor.StatAccessor;
+import biz.coolpage.hcs.status.manager.TemperatureManager;
 import biz.coolpage.hcs.util.EntityHelper;
+import biz.coolpage.hcs.util.RotHelper;
 import net.minecraft.advancement.criterion.Criteria;
 import net.minecraft.client.item.TooltipContext;
 import net.minecraft.entity.LivingEntity;
@@ -68,6 +68,7 @@ public class BottleItem extends PotionItem {
 
     @Override
     public void appendTooltip(ItemStack stack, World world, List<Text> tooltip, TooltipContext tooltipContext) {
+        super.appendTooltip(stack, world, tooltip, tooltipContext);
         if (stack != null && RotHelper.canRot(stack.getItem())) RotHelper.appendInfo(world, stack, tooltip);
     }
 }

@@ -36,7 +36,7 @@ public abstract class FishingRodItemMixin extends Item {
                     || offItem == Items.BEEF || offItem == Items.COOKED_BEEF
                     || offItem == Items.PORKCHOP || offItem == Items.COOKED_PORKCHOP
                     || offItem == Items.MUTTON || offItem == Items.COOKED_MUTTON
-                    || offItem == Items.RABBIT || offItem == Items.COOKED_RABBIT
+                    || offItem == Items.RABBIT || offItem == Items.COOKED_RABBIT || offItem == Items.ROTTEN_FLESH
             ) {
                 offStack.decrement(1);
             } else {

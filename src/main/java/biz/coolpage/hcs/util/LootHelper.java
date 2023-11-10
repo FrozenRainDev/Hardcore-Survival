@@ -2,7 +2,6 @@ package biz.coolpage.hcs.util;
 
 import biz.coolpage.hcs.Reg;
 import net.minecraft.block.*;
-import net.minecraft.enchantment.Enchantments;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.TntEntity;
@@ -23,6 +22,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 public class LootHelper {
 
@@ -68,8 +68,12 @@ public class LootHelper {
     public static void decreaseOreHarvest(Block @NotNull [] ores, Item oreItem, @NotNull BlockState state, @Nullable Entity entity, CallbackInfoReturnable<List<ItemStack>> cir) {
         if (entity instanceof LivingEntity breaker) {
             for (Block ore : ores) {
-                //noinspection SuspiciousMethodCalls
-                if (state.isOf(ore) && !breaker.getMainHandStack().getEnchantments().contains(Enchantments.FORTUNE)) {
+                AtomicBoolean hasFortuneEnchantment = new AtomicBoolean(false);
+                breaker.getMainHandStack().getEnchantments().forEach(nbtElement -> {
+                    if (nbtElement == null) return;
+                    if (nbtElement.asString().contains("fortune")) hasFortuneEnchantment.set(true);
+                });
+                if (state.isOf(ore) && !hasFortuneEnchantment.get()) {
                     Item prevDrop = cir.getReturnValue().get(0).getItem();
                     if (prevDrop == oreItem) { //exclude silk touch
                         ArrayList<ItemStack> dropList = new ArrayList<>();
@@ -91,7 +95,7 @@ public class LootHelper {
         final boolean isOreOrMetal = state.getMaterial() == Material.METAL || (state.getBlock() instanceof ExperienceDroppingBlock && state.getMaterial() == Material.STONE);
         final boolean isCreeper = explodedEnt instanceof CreeperEntity;
         final boolean isTnt = explodedEnt instanceof TntEntity;
-        if ((isCreeper && (isLog || isOreOrMetal)) || (isTnt && isOreOrMetal))
+        if ((isCreeper && (isLog || state.getBlock() == Blocks.STONE || isOreOrMetal)) || (isTnt && isOreOrMetal))
             cir.setReturnValue(cancelVal);
     }
 

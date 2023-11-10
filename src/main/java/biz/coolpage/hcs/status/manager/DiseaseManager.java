@@ -13,6 +13,7 @@ public class DiseaseManager {
     private double cold = 0.0; //[0,2] 0~1 pre 1~2 symptom appearing
 
     public static double getParasitePossibility(Item item) {
+        if (item == Reg.WORM) return 0.08;
         if (IS_RAW_MEAT.test(item)) {
             if (item == Items.PORKCHOP || item == Reg.ANIMAL_VISCERA) return 0.08;
             return 0.04;

@@ -319,7 +319,7 @@ public class HcsEffects {
     };
 
     public static final StatusEffect DARKNESS_ENVELOPED = new StatusEffect(StatusEffectCategory.HARMFUL, 0x000000) {
-    }.addAttributeModifier(EntityAttributes.GENERIC_MOVEMENT_SPEED, "75AD9D60-968B-4788-8B9F-3A545D3534E7", -0.4F, EntityAttributeModifier.Operation.MULTIPLY_TOTAL);
+    }.addAttributeModifier(EntityAttributes.GENERIC_MOVEMENT_SPEED, "75AD9D60-968B-4788-8B9F-3A545D3534E7", -0.6F, EntityAttributeModifier.Operation.MULTIPLY_TOTAL);
 
     public static final StatusEffect FRACTURE = new StatusEffect(StatusEffectCategory.HARMFUL, 0xe8e5d2) {
         @Override

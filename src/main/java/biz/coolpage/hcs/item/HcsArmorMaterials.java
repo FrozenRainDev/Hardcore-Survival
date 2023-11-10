@@ -15,7 +15,7 @@ import java.util.EnumMap;
 
 public enum HcsArmorMaterials implements StringIdentifiable, ArmorMaterial {
     COPPER("hcs_copper", 12, Util.make(new EnumMap<>(ArmorItem.Type.class), map -> {
-        map.put(ArmorItem.Type.HELMET, 3);
+        map.put(ArmorItem.Type.HELMET, 2);
         map.put(ArmorItem.Type.CHESTPLATE, 3);
         map.put(ArmorItem.Type.LEGGINGS, 1);
         map.put(ArmorItem.Type.BOOTS, 1);
@@ -28,7 +28,7 @@ public enum HcsArmorMaterials implements StringIdentifiable, ArmorMaterial {
     }), 15, SoundEvents.ITEM_ARMOR_EQUIP_LEATHER, 0.0F, 0.0F, Ingredient.fromTag(ItemTags.WOOL)),
     WOOD("hcs_wood", 2, Util.make(new EnumMap<>(ArmorItem.Type.class), map -> {
         map.put(ArmorItem.Type.HELMET, 1);
-        map.put(ArmorItem.Type.CHESTPLATE, 2);
+        map.put(ArmorItem.Type.CHESTPLATE, 1);
         map.put(ArmorItem.Type.LEGGINGS, 1);
         map.put(ArmorItem.Type.BOOTS, 1);
     }), 9, SoundEvents.ITEM_ARMOR_EQUIP_GENERIC, 0.0F, 0.0F, Ingredient.fromTag(ItemTags.PLANKS));

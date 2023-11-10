@@ -7,6 +7,8 @@ import biz.coolpage.hcs.util.EntityHelper;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.attribute.EntityAttribute;
+import net.minecraft.entity.attribute.EntityAttributes;
 import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.entity.effect.StatusEffects;
@@ -32,12 +34,19 @@ import java.util.Collection;
 import java.util.Comparator;
 
 @Mixin(LivingEntity.class)
+@SuppressWarnings("ConstantValue")
 public abstract class LivingEntityMixin extends Entity {
     @Shadow
     private int lastAttackedTime;
 
     @Shadow
     public abstract boolean isBaby();
+
+    @Shadow
+    public abstract int getArmor();
+
+    @Shadow
+    public abstract double getAttributeValue(EntityAttribute attribute);
 
     public LivingEntityMixin(EntityType<?> type, World world) {
         super(type, world);
@@ -73,8 +82,6 @@ public abstract class LivingEntityMixin extends Entity {
         }
     }
 
-
-    @SuppressWarnings("ConstantValue")
     @Inject(method = "damage", at = @At("HEAD"))
     public void damage(DamageSource source, float amount, CallbackInfoReturnable<Integer> cir) {
         Object ent = this;
@@ -95,7 +102,9 @@ public abstract class LivingEntityMixin extends Entity {
         return velY;
     }
 
-    @Inject(method = "getStatusEffects", at = @At("RETURN"), cancellable = true)
+    @Unique
+    @Deprecated
+//    @Inject(method = "getStatusEffects", at = @At("RETURN"), cancellable = true)
     public void getStatusEffects(@NotNull CallbackInfoReturnable<Collection<StatusEffectInstance>> cir) {
         Collection<StatusEffectInstance> effects = cir.getReturnValue();
         if (effects != null) {
@@ -105,20 +114,18 @@ public abstract class LivingEntityMixin extends Entity {
         }
     }
 
-    @SuppressWarnings("ConstantValue")
     @Inject(method = "onDeath", at = @At("TAIL"))
-    public void onDeath(DamageSource damageSource, CallbackInfo ci) {
+    public void onDeath(@NotNull DamageSource source, CallbackInfo ci) {
+        if (source == null || source.getAttacker() instanceof HostileEntity) return;
         Object ent = this;
         Item meat = this.getFireTicks() > 0 ? Reg.COOKED_MEAT : Reg.RAW_MEAT;
         if (ent instanceof ChickenEntity || ent instanceof CowEntity || ent instanceof PigEntity || ent instanceof SheepEntity) {
             if (!(ent instanceof ChickenEntity)) {
                 //EntityHelper.dropItem(this, Items.BONE, 2);
                 EntityHelper.dropItem(this, Reg.ANIMAL_VISCERA);
-                if (ent instanceof SheepEntity && Math.random() < 0.6)
-                    EntityHelper.dropItem(this, Items.LEATHER);
+                if (ent instanceof SheepEntity && Math.random() < 0.6) EntityHelper.dropItem(this, Items.LEATHER);
             }
-            if (this.isBaby())
-                EntityHelper.dropItem(this, meat);
+            if (this.isBaby()) EntityHelper.dropItem(this, meat);
         } else if (ent instanceof AxolotlEntity || ent instanceof CatEntity || ent instanceof FrogEntity || ent instanceof ParrotEntity || ent instanceof SquidEntity)
             EntityHelper.dropItem(this, meat);
         else if (ent instanceof AnimalEntity && !(ent instanceof BeeEntity || ent instanceof TadpoleEntity || ent instanceof RabbitEntity)) {
@@ -126,7 +133,17 @@ public abstract class LivingEntityMixin extends Entity {
             //EntityHelper.dropItem(this, Items.BONE, 2);
             EntityHelper.dropItem(this, Reg.ANIMAL_VISCERA);
         }
-        //Also see at BatEntityMixin
+    }
+
+    @Inject(method = "drop", at = @At("HEAD"), cancellable = true)
+    protected void drop(DamageSource source, CallbackInfo ci) {
+        if (source == null || source.getAttacker() instanceof HostileEntity) ci.cancel();
+    }
+
+    @Inject(method = "applyArmorToDamage", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/DamageUtil;getDamageLeft(FFF)F"), cancellable = true)
+    protected void applyArmorToDamage(DamageSource source, float amount, @NotNull CallbackInfoReturnable<Float> cir) {
+        if (((Object) this) instanceof PlayerEntity)
+            cir.setReturnValue(EntityHelper.getDamageLeft(amount, this.getArmor(), (float) this.getAttributeValue(EntityAttributes.GENERIC_ARMOR_TOUGHNESS)));
     }
 
 }

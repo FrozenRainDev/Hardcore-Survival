@@ -158,8 +158,7 @@ public class RotHelper {
     }
 
     public static float getFreshCooked(float prevFresh) {
-        if (prevFresh > 1.0F) prevFresh = 1.0F;
-        else if (prevFresh < 0.0F) prevFresh = 0.0F;
+        if (prevFresh <= 0.0F) return 0.0F; //Cooked rotten food is still rotten
         return Math.min(1.0F, 0.4F + prevFresh / 1.5F);
     }
 
@@ -269,7 +268,7 @@ public class RotHelper {
         freshLevel = getFreshLevel(getFresh(world, stack));
         if (canRot(item) || item == Reg.ROT) {
             switch (item == Reg.ROT ? 0 : freshLevel) {
-                case 0: {
+                case 0 -> {
                     hungerManager.setSaturationLevel(0);
                     sanityManager.add(-0.1);
                     if (food != null) hungerManager.setFoodLevel(hungerManager.getFoodLevel() - food.getHunger() + 1);
@@ -278,7 +277,7 @@ public class RotHelper {
                     player.addStatusEffect(new StatusEffectInstance(StatusEffects.HUNGER, 600));
                     player.addStatusEffect(new StatusEffectInstance(HcsEffects.DIARRHEA, 600, 1));
                 }
-                case 1: {
+                case 1 -> {
                     sanityManager.add(-0.07);
                     if (food != null)
                         hungerManager.setFoodLevel(hungerManager.getFoodLevel() - (int) (Math.min(food.getHunger() - 1, food.getHunger() * 0.7)));
@@ -286,7 +285,7 @@ public class RotHelper {
                     player.addStatusEffect(new StatusEffectInstance(StatusEffects.NAUSEA, 200));
                     player.addStatusEffect(new StatusEffectInstance(HcsEffects.DIARRHEA, 600));
                 }
-                case 2: {
+                case 2 -> {
                     if (food != null)
                         hungerManager.setFoodLevel(hungerManager.getFoodLevel() - (int) (Math.min(food.getHunger() - 1, food.getHunger() * 0.3)));
                 }

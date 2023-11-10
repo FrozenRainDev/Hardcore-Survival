@@ -37,7 +37,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import java.util.HashMap;
 import java.util.Map;
 
-import static biz.coolpage.hcs.util.CommUtil.customNumFormat;
+import static biz.coolpage.hcs.util.CommUtil.numFormat;
 
 
 @Mixin(InGameHud.class)
@@ -297,7 +297,7 @@ public abstract class InGameHudMixin extends DrawableHelper {
             strShake = Math.round((float) Math.random() * 2) - 1;
         this.drawHCSTexture(matrices, xx, yy + strShake, 0, 112, 16, 16);
         this.drawHCSTexture(matrices, xx, yy + (16 - strHeight) + strShake, 16 + strDeviation, 128 - strHeight, 16, strHeight);
-        this.drawTextWithThickShadow(matrices, CommUtil.customNumFormat(str < 0.1 ? " #%" : "##%", str), xx + 2, yyy + 11, getColorByPercentage(str), 0.75F);
+        this.drawTextWithThickShadow(matrices, CommUtil.numFormat(str < 0.1 ? " #%" : "##%", str), xx + 2, yyy + 11, getColorByPercentage(str), 0.75F);
         //THIRST
         displacement.put("thi", true);
         xx += 20;
@@ -313,7 +313,7 @@ public abstract class InGameHudMixin extends DrawableHelper {
             thiDeviation = 16;
         this.drawHCSTexture(matrices, xx, yy + thiShake, 0, 48, 16, 16);
         this.drawHCSTexture(matrices, xx, yy + (16 - thiHeight) + thiShake, 16 + thiDeviation, 64 - thiHeight, 16, thiHeight);
-        this.drawTextWithThickShadow(matrices, CommUtil.customNumFormat(thi < 0.1 ? " #%" : "##%", thi), xx + 2, yyy + 11, getColorByPercentage(thi), 0.75F);
+        this.drawTextWithThickShadow(matrices, CommUtil.numFormat(thi < 0.1 ? " #%" : "##%", thi), xx + 2, yyy + 11, getColorByPercentage(thi), 0.75F);
         //HUNGER
         //this.client.getProfiler().swap("food");
         displacement.put("hun", true);
@@ -333,7 +333,7 @@ public abstract class InGameHudMixin extends DrawableHelper {
             hunDeviation = 16;
         this.drawHCSTexture(matrices, xx, yy + hunShake, 0, 16, 16, 16);
         this.drawHCSTexture(matrices, xx, yy + (16 - hunHeight) + hunShake, 16 + hunDeviation, 32 - hunHeight, 16, hunHeight);
-        this.drawTextWithThickShadow(matrices, customNumFormat(hunPercentage < 0.1 ? " #%" : "##%", hunPercentage), xx + 2, yyy + 11, getColorByPercentage(hunPercentage), 0.75F);
+        this.drawTextWithThickShadow(matrices, numFormat(hunPercentage < 0.1 ? " #%" : "##%", hunPercentage), xx + 2, yyy + 11, getColorByPercentage(hunPercentage), 0.75F);
         //SANITY
         displacement.put("san", true);
         xx += 20;
@@ -370,7 +370,7 @@ public abstract class InGameHudMixin extends DrawableHelper {
             }
             this.drawHCSTexture(matrices, xx, yy + (((this.ticks % (shakeInterval * 2)) < shakeInterval) ? 1 : 0), devi, 80, 16, 16);
         }
-        this.drawTextWithThickShadow(matrices, CommUtil.customNumFormat(san < 0.1F ? " #%" : "##%", san), xx + 2, yyy + 11, getColorByPercentage(san), 0.75F);
+        this.drawTextWithThickShadow(matrices, CommUtil.numFormat(san < 0.1F ? " #%" : "##%", san), xx + 2, yyy + 11, getColorByPercentage(san), 0.75F);
         //TEMPERATURE
         displacement.put("tem", true);
         xx += 20;
@@ -403,7 +403,7 @@ public abstract class InGameHudMixin extends DrawableHelper {
             float airPercentage = (float) air / airMax;
             if (air <= (airMax / 3) && this.ticks % 3 == 0) airShake = Math.round((float) Math.random() * 2) - 1;
             this.drawHCSTexture(matrices, xx, yy + airShake, 32, 32, 16, 16);//, Math.max((float)Math.pow(airPercentage,0.67F),0.33F)
-            this.drawTextWithThickShadow(matrices, customNumFormat(airPercentage < 0.1 ? " #%" : "##%", airPercentage), xx + 2, yyy + 11, getColorByPercentage(airPercentage), 0.75F);
+            this.drawTextWithThickShadow(matrices, numFormat(airPercentage < 0.1 ? " #%" : "##%", airPercentage), xx + 2, yyy + 11, getColorByPercentage(airPercentage), 0.75F);
         } else displacement.put("air", false);
         //MOUNT HEALTH
         if (shouldRenderMountHealth && livingEntity != null) {
@@ -428,7 +428,7 @@ public abstract class InGameHudMixin extends DrawableHelper {
             int wetShake = 0;
             this.drawHCSTexture(matrices, xx, yy + wetShake, 0, 128, 16, 16);
             this.drawHCSTexture(matrices, xx, yy + (16 - wetHeight) + wetShake, 16, 144 - wetHeight, 16, wetHeight);
-            this.drawTextWithThickShadow(matrices, customNumFormat(wet < 0.1 ? " #%" : "##%", wet), xx + 2, yyy + 11, getColorByPercentage(1.0 - wet), 0.75F);
+            this.drawTextWithThickShadow(matrices, numFormat(wet < 0.1 ? " #%" : "##%", wet), xx + 2, yyy + 11, getColorByPercentage(1.0 - wet), 0.75F);
         } else displacement.put("wet", false);
         */
         //this.client.getProfiler().pop();

@@ -70,8 +70,8 @@ public class AttackBlockEvent {
                     }
                 }
 
+                String name = mainHandStack.getItem().getName().toString();
                 if (RotHelper.canRot(mainHand)) {
-                    String name = mainHandStack.getItem().getName().toString();
                     if (RotHelper.getFresh(world, mainHandStack) <= 0.0001F && RotHelper.getPackageType(name) == 1) {
                         if (name.contains("stew") || name.contains("salad") || name.contains("soup")) {
                             player.setStackInHand(Hand.MAIN_HAND, new ItemStack(Items.BOWL, mainHandStack.getCount()));
@@ -79,10 +79,10 @@ public class AttackBlockEvent {
                         }
                         if (name.contains("bucket"))
                             player.setStackInHand(Hand.MAIN_HAND, new ItemStack(Items.BUCKET, mainHandStack.getCount()));
-                        if (name.contains("bottle") || name.contains("juice"))
-                            player.setStackInHand(Hand.MAIN_HAND, new ItemStack(Items.GLASS_BOTTLE, mainHandStack.getCount()));
                     }
                 }
+                if (name.contains("bottle") || name.contains("juice") || mainHand == Reg.SALTWATER_BOTTLE)
+                    player.setStackInHand(Hand.MAIN_HAND, new ItemStack(Items.GLASS_BOTTLE, mainHandStack.getCount()));
 
             }
             return ActionResult.PASS;

@@ -72,7 +72,7 @@ public class AbstractCookingRecipeMixin {
 
     @Inject(method = "getExperience", at = @At("RETURN"), cancellable = true)
     public void getExperience(@NotNull CallbackInfoReturnable<Float> cir) {
-        if (cir.getReturnValue() >= 0.6F) cir.setReturnValue(cir.getReturnValue() * 2.0F);//Ores
+        if (cir.getReturnValue() >= 0.6F) cir.setReturnValue(cir.getReturnValue() * 2.0F); //Ores
         else cir.setReturnValue(Math.max(0.0F, cir.getReturnValue() - 0.15F));
     }
 

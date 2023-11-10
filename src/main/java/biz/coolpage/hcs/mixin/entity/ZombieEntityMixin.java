@@ -31,8 +31,8 @@ public abstract class ZombieEntityMixin extends HostileEntity {
         //Zombies will break blocks when its path is obstructed
         this.targetSelector.add(1, new BreakBlockGoal(this));
         //Add animal target for adult zombies
-        //Prioritize player(s) within 16 blocks in **TrackTargetGoalMixin/shouldContinue()**
-        if (!this.isBaby()) this.targetSelector.add(2, new ActiveTargetGoal<>(this, AnimalEntity.class, false));
+        //Prioritize player(s) within 8 blocks in **TrackTargetGoalMixin/shouldContinue()**
+        this.targetSelector.add(2, new ActiveTargetGoal<>(this, AnimalEntity.class, false));
     }
 
     @Inject(method = "burnsInDaylight", at = @At("HEAD"), cancellable = true)

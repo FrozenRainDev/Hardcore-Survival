@@ -265,9 +265,9 @@ public class EntityHelper {
             dist += 1.5F;
         else if (IS_HOLDING_BLOCK.test(mainHandStack, offHandStack))
             return HOLDING_BLOCK_REACHING_RANGE_ADDITION;
-        else if (name.contains("spear") || (item instanceof TridentItem)) dist += 2.0F;
-        else if ((item instanceof ShovelItem) || (item instanceof PickaxeItem) || (item instanceof AxeItem) || (item instanceof SwordItem) || (item instanceof HoeItem))
+        else if (item instanceof ShovelItem || item instanceof PickaxeItem || item instanceof AxeItem || item instanceof HoeItem)
             dist += 2.0F;
+        else if (name.contains("spear") || item instanceof TridentItem || item instanceof SwordItem) dist += 2.5F;
         else if (mainHandStack.isEnchantable() && !(item instanceof ArmorItem)) dist += 1.5F;
         return dist;
     }
@@ -421,6 +421,22 @@ public class EntityHelper {
             }
         }
         return false;
+    }
+
+    public static float getDamageLeft(float damage, float protection, float toughness) {
+        /* Edit damage left mechanism ( DamageUtil/getDamageLeft() ):
+            diff: 1. damage < 5.0F ? 0.0F : damage -- damage
+                  2. Math.pow(0.5, g / 6)          -- 1.0f - g / 25.0f
+          NOTE: DamageUtil/getInflictedDamage() ONLY be called when having protection enchantment
+
+          Explanation of armor - damage / f:
+            See https://www.mcmod.cn/item/577939.html
+            1. damage / f: armor protection decrement -- damage↑ → protection↓
+            2. f: armor toughness↑ → armor protection decrement↓
+         */
+        float f = 2.0f + toughness / 4.0f; //÷4: Every slot may have armor toughness → need avg
+        float g = MathHelper.clamp(protection - (damage < 5.0F ? 0.0F : damage) / f, protection * 0.2f, 20.0f);
+        return damage * (float) Math.pow(0.5, g / 6);
     }
 
 }
