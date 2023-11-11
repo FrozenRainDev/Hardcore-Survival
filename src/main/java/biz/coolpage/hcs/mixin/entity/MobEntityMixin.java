@@ -7,6 +7,7 @@ import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.mob.MobEntity;
 import net.minecraft.entity.mob.Monster;
+import net.minecraft.entity.mob.SlimeEntity;
 import net.minecraft.entity.mob.ZombieEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.world.World;
@@ -41,8 +42,9 @@ public abstract class MobEntityMixin extends LivingEntity {
 
     @Inject(method = "tick", at = @At("HEAD"))
     public void tick(CallbackInfo ci) {
-        //noinspection RedundantCast
-        if ((Object) this instanceof Monster && this.getTarget() instanceof PlayerEntity player && SanityManager.CAN_CLOSELY_SEE.test(player, this))
+        Object ent = this;
+        //noinspection ConstantValue
+        if (ent instanceof Monster && this.getTarget() instanceof PlayerEntity player && SanityManager.CAN_CLOSELY_SEE.test(player, this) && !(ent instanceof SlimeEntity slime && slime.isSmall()))
             ((StatAccessor) player).getSanityManager().addEnemy(this);
     }
 

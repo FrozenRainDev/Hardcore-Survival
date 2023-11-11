@@ -41,7 +41,7 @@ public class StaminaManager {
             if (restoringCoolDown <= 0) addDirectly(player.hasStatusEffect(HcsEffects.COLD) ? val * 0.65 : val);
             else --restoringCoolDown;
         } else if (!player.hasStatusEffect(StatusEffects.STRENGTH))
-            addDirectly(player.hasStatusEffect(HcsEffects.HEAVY_LOAD) ? val * 1.8 : val);
+            addDirectly(player.hasStatusEffect(HcsEffects.HEAVY_LOAD) ? val * 2.0 : val);
     }
 
     public void addDirectly(double val) {

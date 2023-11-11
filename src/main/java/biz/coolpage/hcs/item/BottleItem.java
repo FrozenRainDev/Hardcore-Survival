@@ -6,7 +6,6 @@ import biz.coolpage.hcs.status.manager.TemperatureManager;
 import biz.coolpage.hcs.util.EntityHelper;
 import biz.coolpage.hcs.util.RotHelper;
 import net.minecraft.advancement.criterion.Criteria;
-import net.minecraft.client.item.TooltipContext;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.entity.player.PlayerEntity;
@@ -15,12 +14,10 @@ import net.minecraft.item.Items;
 import net.minecraft.item.PotionItem;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.stat.Stats;
-import net.minecraft.text.Text;
 import net.minecraft.world.World;
 import net.minecraft.world.event.GameEvent;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.List;
 import java.util.Objects;
 
 import static biz.coolpage.hcs.util.EntityHelper.IS_SURVIVAL_LIKE;
@@ -64,11 +61,5 @@ public class BottleItem extends PotionItem {
         }
         if (livingEntity != null) livingEntity.emitGameEvent(GameEvent.DRINK);
         return stack;
-    }
-
-    @Override
-    public void appendTooltip(ItemStack stack, World world, List<Text> tooltip, TooltipContext tooltipContext) {
-        super.appendTooltip(stack, world, tooltip, tooltipContext);
-        if (stack != null && RotHelper.canRot(stack.getItem())) RotHelper.appendInfo(world, stack, tooltip);
     }
 }

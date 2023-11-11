@@ -7,9 +7,11 @@ import biz.coolpage.hcs.status.accessor.StatAccessor;
 import biz.coolpage.hcs.status.manager.StatusManager;
 import biz.coolpage.hcs.status.manager.TemperatureManager;
 import biz.coolpage.hcs.util.RotHelper;
+import net.minecraft.block.TorchBlock;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.BlockItem;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.server.world.ServerWorld;
@@ -40,7 +42,9 @@ public abstract class PlayerInventoryMixin {
         int blocksCount = 0;
         for (int i = 0; i < inv.size(); ++i) {
             ItemStack stack = inv.getStack(i);
-            if (stack.getItem() instanceof BlockItem) blocksCount += stack.getCount();
+            Item item = stack.getItem();
+            if (item instanceof BlockItem blockItem && !(blockItem.getBlock() instanceof TorchBlock))
+                blocksCount += stack.getCount();
             else if ((stack.isOf(Reg.COPPER_PICKAXE) || stack.isOf(Items.IRON_PICKAXE)) && player.world instanceof ServerWorld serverWorld)
                 applyNullable(HcsPersistentState.getServerState(serverWorld), state -> {
                     state.setHasObtainedCopperPickaxe(true);

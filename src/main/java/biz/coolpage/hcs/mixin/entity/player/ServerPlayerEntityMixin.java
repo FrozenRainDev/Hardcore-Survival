@@ -129,7 +129,7 @@ public abstract class ServerPlayerEntityMixin extends PlayerEntity {
         if (thirstManager.get() <= 0.3) EntityHelper.addHcsDebuff(this, HcsEffects.DEHYDRATED);
         if (this.getHungerManager().getFoodLevel() <= 6) EntityHelper.addHcsDebuff(this, HcsEffects.STARVING);
         if (currStamina <= 0.3)
-            EntityHelper.addHcsDebuff(this, HcsEffects.EXHAUSTED, currStamina <= 0.15 ? 1 : 0);
+            EntityHelper.addHcsDebuff(this, HcsEffects.EXHAUSTED, currStamina < 0.01 ? 1 : 0);
         if (playerTemp >= 1.0) EntityHelper.addHcsDebuff(this, HcsEffects.HEATSTROKE, (int) tempSatuPercent);
         else if (playerTemp <= 0.0) EntityHelper.addHcsDebuff(this, HcsEffects.HYPOTHERMIA, (int) tempSatuPercent);
         if (this.isUsingItem() && (this.getMainHandStack().getItem() instanceof ShieldItem || this.getOffHandStack().getItem() instanceof ShieldItem))

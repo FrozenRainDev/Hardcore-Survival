@@ -54,6 +54,6 @@ public class SaplingToStickRecipe extends SpecialCraftingRecipe {
 
     @Override
     public RecipeSerializer<?> getSerializer() {
-        return Reg.COLD_WATER_BOTTLE_RECIPE;
+        return Reg.SAPLING_TO_STICK_RECIPE;
     }
 }

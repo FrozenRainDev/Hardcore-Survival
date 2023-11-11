@@ -16,7 +16,9 @@ import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.damage.DamageTypes;
 import net.minecraft.entity.effect.StatusEffect;
 import net.minecraft.entity.effect.StatusEffectInstance;
+import net.minecraft.entity.mob.HostileEntity;
 import net.minecraft.entity.mob.SkeletonEntity;
+import net.minecraft.entity.passive.AnimalEntity;
 import net.minecraft.entity.player.HungerManager;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.*;
@@ -76,6 +78,10 @@ public class EntityHelper {
             result = result || (item instanceof BlockItem && (!RotHelper.canRot(item) || !(name.contains("seed") && (name.contains("pumpkin") || name.contains("melon")))));
         }
         return result;
+    };
+    public static final BiPredicate<Entity, DamageSource> SHOULD_DROP_AFTER_DEATH = (victim, source) -> {
+        if (source == null || !(source.getAttacker() instanceof HostileEntity)) return false;
+        return victim instanceof AnimalEntity;
     };
 
 

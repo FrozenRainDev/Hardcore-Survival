@@ -2,7 +2,6 @@ package biz.coolpage.hcs.event;
 
 import biz.coolpage.hcs.Reg;
 import biz.coolpage.hcs.util.EntityHelper;
-import biz.coolpage.hcs.util.RotHelper;
 import net.fabricmc.fabric.api.event.player.AttackBlockCallback;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
@@ -14,7 +13,6 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.util.ActionResult;
-import net.minecraft.util.Hand;
 import net.minecraft.world.WorldEvents;
 
 import java.util.Objects;
@@ -69,21 +67,6 @@ public class AttackBlockEvent {
                         EntityHelper.dropItem(player, Reg.SHARP_BROKEN_BONE);
                     }
                 }
-
-                String name = mainHandStack.getItem().getName().toString();
-                if (RotHelper.canRot(mainHand)) {
-                    if (RotHelper.getFresh(world, mainHandStack) <= 0.0001F && RotHelper.getPackageType(name) == 1) {
-                        if (name.contains("stew") || name.contains("salad") || name.contains("soup")) {
-                            player.setStackInHand(Hand.MAIN_HAND, new ItemStack(Items.BOWL, mainHandStack.getCount()));
-                            EntityHelper.dropItem(player, Reg.ROT);
-                        }
-                        if (name.contains("bucket"))
-                            player.setStackInHand(Hand.MAIN_HAND, new ItemStack(Items.BUCKET, mainHandStack.getCount()));
-                    }
-                }
-                if (name.contains("bottle") || name.contains("juice") || mainHand == Reg.SALTWATER_BOTTLE)
-                    player.setStackInHand(Hand.MAIN_HAND, new ItemStack(Items.GLASS_BOTTLE, mainHandStack.getCount()));
-
             }
             return ActionResult.PASS;
         });

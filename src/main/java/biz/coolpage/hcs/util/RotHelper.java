@@ -185,11 +185,12 @@ public class RotHelper {
         if (world instanceof ServerWorld serverWorld) WorldHelper.currWorld = serverWorld;
         for (int i = 0; i < inv.size(); ++i) {
             ItemStack stack = inv.getStack(i);
+            if (stack == null) continue;
             Item item = stack.getItem();
             NbtCompound nbt = stack.getOrCreateNbt();
-            if (stack.isEmpty() || !canRot(item)) continue;
             if (nbt.contains(DryingRackBlockEntity.DRYING_DEADLINE) && !isInIcebox)
                 nbt.remove(DryingRackBlockEntity.DRYING_DEADLINE);
+            if (stack.isEmpty() || !canRot(item)) continue;
             if (nbt.contains(HFF)) {
                 createExp(world, stack, nbt.getFloat(HFF), isInIcebox);
                 nbt.remove(HFF);

@@ -199,6 +199,7 @@ public class Reg implements ModInitializer {
     public static final RecipeSerializer<ColdWaterBottleRecipe> COLD_WATER_BOTTLE_RECIPE = new SpecialRecipeSerializer<>(ColdWaterBottleRecipe::new);
     public static final RecipeSerializer<HotWaterBottleRecipe> HOT_WATER_BOTTLE_RECIPE = new SpecialRecipeSerializer<>(HotWaterBottleRecipe::new);
     public static final RecipeSerializer<SaplingToStickRecipe> SAPLING_TO_STICK_RECIPE = new SpecialRecipeSerializer<>(SaplingToStickRecipe::new);
+    public static final RecipeSerializer<PourOutContentRecipe> POUR_OUT_CONTENT_RECIPE = new SpecialRecipeSerializer<>(PourOutContentRecipe::new);
 
     public static final ItemGroup HCS_ITEM_GROUP = FabricItemGroup.builder(new Identifier("hcs", "main")).icon(() -> new ItemStack(FLINT_HATCHET)).build();
     public static final String HCS_DIFFICULTY_NAME = "hcsDifficulty";
@@ -439,6 +440,7 @@ public class Reg implements ModInitializer {
         RecipeSerializer.register("hcs_cold_water_bottle_recipe", COLD_WATER_BOTTLE_RECIPE);
         RecipeSerializer.register("hcs_hot_water_bottle_recipe", HOT_WATER_BOTTLE_RECIPE);
         RecipeSerializer.register("hcs_sapling_to_stick_recipe", SAPLING_TO_STICK_RECIPE);
+        RecipeSerializer.register("hcs_pour_out_content_recipe", POUR_OUT_CONTENT_RECIPE);
 
         FuelRegistry.INSTANCE.add(GRASS_FIBER, 50);
         FuelRegistry.INSTANCE.add(FIBER_STRING, 100);

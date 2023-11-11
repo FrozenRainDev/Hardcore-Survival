@@ -116,7 +116,7 @@ public abstract class LivingEntityMixin extends Entity {
 
     @Inject(method = "onDeath", at = @At("TAIL"))
     public void onDeath(@NotNull DamageSource source, CallbackInfo ci) {
-        if (source == null || source.getAttacker() instanceof HostileEntity) return;
+        if (EntityHelper.SHOULD_DROP_AFTER_DEATH.test(this, source)) return;
         Object ent = this;
         Item meat = this.getFireTicks() > 0 ? Reg.COOKED_MEAT : Reg.RAW_MEAT;
         if (ent instanceof ChickenEntity || ent instanceof CowEntity || ent instanceof PigEntity || ent instanceof SheepEntity) {
@@ -137,7 +137,7 @@ public abstract class LivingEntityMixin extends Entity {
 
     @Inject(method = "drop", at = @At("HEAD"), cancellable = true)
     protected void drop(DamageSource source, CallbackInfo ci) {
-        if (source == null || source.getAttacker() instanceof HostileEntity) ci.cancel();
+        if (EntityHelper.SHOULD_DROP_AFTER_DEATH.test(this, source)) ci.cancel();
     }
 
     @Inject(method = "applyArmorToDamage", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/DamageUtil;getDamageLeft(FFF)F"), cancellable = true)

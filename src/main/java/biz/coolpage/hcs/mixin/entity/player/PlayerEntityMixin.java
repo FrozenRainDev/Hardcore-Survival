@@ -301,7 +301,6 @@ public abstract class PlayerEntityMixin extends LivingEntity implements StatAcce
         else if (state.isIn(BlockTags.AXE_MINEABLE) || mainHand instanceof SwordItem) {
 //            System.out.println(speed);//0.00952381
             if (mainHand == Reg.FLINT_HATCHET) speed *= 6.0F;
-            else if (block == Blocks.BAMBOO || block == Blocks.SWEET_BERRY_BUSH) speed = 2.0F;
             else speed /= 2.5F;
         }
         boolean isKnife = mainHand instanceof KnifeItem;
@@ -324,6 +323,7 @@ public abstract class PlayerEntityMixin extends LivingEntity implements StatAcce
         else if (block instanceof LeavesBlock && !(mainHand instanceof SwordItem) && !(mainHand instanceof AxeItem))
             speed /= 10.0F;
         if (block instanceof TorchBlock || state.isIn(BlockTags.FLOWERS)) speed = 999999.0F;
+        if ((mainHand instanceof SwordItem && block == Blocks.BAMBOO) || block == Blocks.SWEET_BERRY_BUSH) speed = 0.5F;
         cir.setReturnValue(speed);
     }
 
@@ -460,7 +460,7 @@ public abstract class PlayerEntityMixin extends LivingEntity implements StatAcce
         this.staminaManager.pauseRestoring();
         this.addExhaustion(0.025F * rate);
         this.staminaManager.pauseRestoring(40);
-        this.staminaManager.add(-0.005F * rate, this);
+        this.staminaManager.add(-0.004F * rate, this);
         ci.cancel();
     }
 
@@ -513,7 +513,7 @@ public abstract class PlayerEntityMixin extends LivingEntity implements StatAcce
             if (!this.hasVehicle()) {
                 boolean shouldPauseRestoring = true;
                 if (this.onGround) {
-                    if (this.isSprinting()) this.staminaManager.add(-0.001, this);
+                    if (this.isSprinting()) this.staminaManager.add(-0.0007, this);
                     else if (this.isInSneakingPose()) this.staminaManager.add(-0.0001, this);
                     else if (this.staminaManager.get() < 0.7) {//walking while stamina < 0.7 will getRealPain a recovery
                         shouldPauseRestoring = false;
@@ -562,8 +562,7 @@ public abstract class PlayerEntityMixin extends LivingEntity implements StatAcce
                     }
                     this.statusManager.setInDarknessTicks(currDarkTicks + 1);
                     outOfDarkness = false;
-                } else if (blockBrightness < 3 && isInCavelike) sanDecrement = 0.00004;
-                else if (blockBrightness < 8) sanDecrement = 0.000008;
+                } else if (blockBrightness < 8) sanDecrement = 0.000008;
             }
             this.sanityManager.add(-sanDecrement * HcsDifficulty.chooseVal(toPlayer(this), 0.5, 1.0, 2.0));
         }
@@ -573,7 +572,7 @@ public abstract class PlayerEntityMixin extends LivingEntity implements StatAcce
             else if (y < 49) oxyLackLvl = 2;
             else if (y < 56) oxyLackLvl = 1;
         }
-        if (outOfDarkness && !isDarkSafe) {
+        if (outOfDarkness) {
             this.statusManager.setInDarknessTicks(0);
             if (this.statusManager.getLastInDarknessTicks() >= 60) EntityHelper.msgById(this, "hcs.tip.dark.fade");
         }
