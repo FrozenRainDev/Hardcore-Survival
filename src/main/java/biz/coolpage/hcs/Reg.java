@@ -4,6 +4,7 @@ import biz.coolpage.hcs.block.DryingRackBlock;
 import biz.coolpage.hcs.block.IceboxBlock;
 import biz.coolpage.hcs.config.HcsDifficulty;
 import biz.coolpage.hcs.entity.DryingRackBlockEntity;
+import biz.coolpage.hcs.entity.FlintProjectileEntity;
 import biz.coolpage.hcs.entity.IceboxBlockEntity;
 import biz.coolpage.hcs.entity.RockProjectileEntity;
 import biz.coolpage.hcs.event.*;
@@ -57,9 +58,9 @@ import static net.minecraft.server.command.CommandManager.literal;
 //See customized damage sources in DamageSourcesMixin
 public class Reg implements ModInitializer {
     public static final Logger LOGGER = LoggerFactory.getLogger("hcs");
-    public static final Potion IRONSKIN_POTION = new Potion("hcs_ironskin", new StatusEffectInstance(StatusEffects.RESISTANCE, 3600));
-    public static final Potion LONG_IRONSKIN_POTION = new Potion("hcs_long_ironskin", new StatusEffectInstance(StatusEffects.RESISTANCE, 9600));
-    public static final Potion STRONG_IRONSKIN_POTION = new Potion("hcs_strong_ironskin", new StatusEffectInstance(StatusEffects.RESISTANCE, 1800, 1));
+    public static final Potion IRONSKIN_POTION = new Potion("hcs_ironskin", new StatusEffectInstance(StatusEffects.RESISTANCE, 3600, 1));
+    public static final Potion LONG_IRONSKIN_POTION = new Potion("hcs_long_ironskin", new StatusEffectInstance(StatusEffects.RESISTANCE, 9600, 1));
+    public static final Potion STRONG_IRONSKIN_POTION = new Potion("hcs_strong_ironskin", new StatusEffectInstance(StatusEffects.RESISTANCE, 1800, 2));
     public static final Potion RETURN_POTION = new Potion("hcs_return", new StatusEffectInstance(HcsEffects.RETURN, 60, 0, false, false, false));
     public static final Potion MINING_POTION = new Potion("hcs_mining", new StatusEffectInstance(StatusEffects.HASTE, 3600));
     public static final Potion LONG_MINING_POTION = new Potion("hcs_long_mining", new StatusEffectInstance(StatusEffects.HASTE, 9600));
@@ -189,6 +190,7 @@ public class Reg implements ModInitializer {
     };
 
     public static final EntityType<RockProjectileEntity> ROCK_PROJECTILE_ENTITY = FabricEntityTypeBuilder.<RockProjectileEntity>create(SpawnGroup.MISC, RockProjectileEntity::new).dimensions(new EntityDimensions(0.25F, 0.25F, true)).build();
+    public static final EntityType<FlintProjectileEntity> FLINT_PROJECTILE_ENTITY = FabricEntityTypeBuilder.<FlintProjectileEntity>create(SpawnGroup.MISC, FlintProjectileEntity::new).dimensions(new EntityDimensions(0.25F, 0.25F, true)).build();
     public static final BlockEntityType<IceboxBlockEntity> ICEBOX_BLOCK_ENTITY = FabricBlockEntityTypeBuilder.create(IceboxBlockEntity::new, ICEBOX).build();
     public static final BlockEntityType<DryingRackBlockEntity> DRYING_RACK_BLOCK_ENTITY = FabricBlockEntityTypeBuilder.create(DryingRackBlockEntity::new, DRYING_RACK).build();
 
@@ -402,6 +404,7 @@ public class Reg implements ModInitializer {
 
 
         Registry.register(Registries.ENTITY_TYPE, new Identifier("hcs", "rock_projectile_entity"), ROCK_PROJECTILE_ENTITY);
+        Registry.register(Registries.ENTITY_TYPE, new Identifier("hcs", "flint_projectile_entity"), FLINT_PROJECTILE_ENTITY);
         Registry.register(Registries.BLOCK_ENTITY_TYPE, new Identifier("hcs", "icebox_block_entity"), ICEBOX_BLOCK_ENTITY);
         Registry.register(Registries.BLOCK_ENTITY_TYPE, new Identifier("hcs", "drying_rack_block_entity"), DRYING_RACK_BLOCK_ENTITY);
 

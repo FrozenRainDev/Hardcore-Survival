@@ -71,7 +71,7 @@ public class LootHelper {
                 AtomicBoolean hasFortuneEnchantment = new AtomicBoolean(false);
                 breaker.getMainHandStack().getEnchantments().forEach(nbtElement -> {
                     if (nbtElement == null) return;
-                    if (nbtElement.asString().contains("fortune")) hasFortuneEnchantment.set(true);
+                    if (nbtElement.toString().contains("fortune")) hasFortuneEnchantment.set(true);
                 });
                 if (state.isOf(ore) && !hasFortuneEnchantment.get()) {
                     Item prevDrop = cir.getReturnValue().get(0).getItem();

@@ -126,7 +126,7 @@ public abstract class ClientPlayerEntityMixin extends AbstractClientPlayerEntity
                 this.client.gameRenderer.getPostProcessor().close();
                 this.prevInsanityEffectId = -1;
             }
-        }
+        } else if (sanityManager.get() < 0.65) this.client.gameRenderer.postProcessor = null; //Disable insanity filter in non-survival-like modes
         this.prevIsThirdPerson = isThirdPerson;
     }
 }

@@ -275,12 +275,12 @@ public abstract class PlayerEntityMixin extends LivingEntity implements StatAcce
         this.statusManager.setRecentMiningTicks(200);
         this.staminaManager.add(-0.00035, this);
         this.staminaManager.pauseRestoring();
-        float speed = StatusEffectUtil.hasHaste(this) ? cir.getReturnValueF() : cir.getReturnValueF() / 3.5F;
-        boolean shovelMineable = state.isIn(BlockTags.SHOVEL_MINEABLE);
+        float speed = StatusEffectUtil.hasHaste(this) ? cir.getReturnValueF() : cir.getReturnValueF() / 3.0F;
+        boolean isShovelMineable = state.isIn(BlockTags.SHOVEL_MINEABLE);
         Item mainHand = this.getMainHandStack().getItem();
         Block block = state.getBlock();
         if (!DigRestrictHelper.canBreak(mainHand, state)) {
-            if (shovelMineable) speed /= 30.0F;
+            if (isShovelMineable) speed /= 30.0F;
             else speed = -1.0F;
             /*
             if (IS_BAREHANDED.and(IS_SURVIVAL_AND_SERVER).test(toPlayer(this))) {
@@ -296,7 +296,7 @@ public abstract class PlayerEntityMixin extends LivingEntity implements StatAcce
             }
             */
         }
-        if (shovelMineable && mainHand instanceof ShovelItem && mainHand != Reg.FLINT_CONE)
+        if (isShovelMineable && mainHand instanceof ShovelItem && mainHand != Reg.FLINT_CONE)
             speed /= 2.0F;
         else if (state.isIn(BlockTags.AXE_MINEABLE) || mainHand instanceof SwordItem) {
 //            System.out.println(speed);//0.00952381
@@ -319,11 +319,10 @@ public abstract class PlayerEntityMixin extends LivingEntity implements StatAcce
         if (DigRestrictHelper.Predicates.IS_BREAKABLE_FUNCTIONAL.test(block))
             speed *= (block instanceof AbstractFurnaceBlock || block == Blocks.ENDER_CHEST) ? 16.0F : 4.0F;
         else if (block == Blocks.OBSIDIAN || block == Blocks.CRYING_OBSIDIAN) speed *= 3.0F;
-        else if (block == Blocks.SUGAR_CANE || (block == Blocks.CLAY && !shovelMineable)) speed /= 9.0F;
+        else if (block == Blocks.SUGAR_CANE || (block == Blocks.CLAY && !isShovelMineable)) speed /= 9.0F;
         else if (block instanceof LeavesBlock && !(mainHand instanceof SwordItem) && !(mainHand instanceof AxeItem))
             speed /= 10.0F;
         if (block instanceof TorchBlock || state.isIn(BlockTags.FLOWERS)) speed = 999999.0F;
-        if ((mainHand instanceof SwordItem && block == Blocks.BAMBOO) || block == Blocks.SWEET_BERRY_BUSH) speed = 0.5F;
         cir.setReturnValue(speed);
     }
 
@@ -634,10 +633,12 @@ public abstract class PlayerEntityMixin extends LivingEntity implements StatAcce
         if (EntityHelper.IS_PHYSICAL_DAMAGE.test(source)) {
             float feelingAmount = amount;
             boolean isBurningDamage = EntityHelper.IS_BURNING_DAMAGE.test(source);
+            float reducedArmor = this.getArmor();
+            if (reducedArmor > 4) reducedArmor = Math.max(4.0F, reducedArmor * 0.75F);
             if (!source.isIn(DamageTypeTags.BYPASSES_ARMOR))
-                feelingAmount = EntityHelper.getDamageLeft(amount, this.getArmor(), (float) this.getAttributeValue(EntityAttributes.GENERIC_ARMOR_TOUGHNESS));
+                feelingAmount = EntityHelper.getDamageLeft(amount, reducedArmor, (float) this.getAttributeValue(EntityAttributes.GENERIC_ARMOR_TOUGHNESS));
             if (isBurningDamage) feelingAmount *= 2;
-            float hurtPercent = feelingAmount / 20.0F;//prev Math.max(12.0F, this.getMaxHealth())
+            float hurtPercent = feelingAmount / 20.0F; //prev Math.max(12.0F, this.getMaxHealth());
             this.injuryManager.addRawPain(hurtPercent * 4.5);
             if (!isBurningDamage && EntityHelper.IS_BLEEDING_CAUSING_DAMAGE.test(source)) {
                 this.injuryManager.addBleeding(hurtPercent * 8);
@@ -648,6 +649,6 @@ public abstract class PlayerEntityMixin extends LivingEntity implements StatAcce
 
     @Inject(method = "canFoodHeal", at = @At("RETURN"), cancellable = true)
     public void canFoodHeal(@NotNull CallbackInfoReturnable<Boolean> cir) {
-        cir.setReturnValue(cir.getReturnValueZ() && (!this.hasStatusEffect(HcsEffects.BLEEDING) || EntityHelper.getEffectAmplifier(this, HcsEffects.PARASITE_INFECTION) > 1));
+        cir.setReturnValue(cir.getReturnValueZ() && !this.hasStatusEffect(HcsEffects.BLEEDING) && EntityHelper.getEffectAmplifier(this, HcsEffects.PARASITE_INFECTION) <= 1);
     }
 }

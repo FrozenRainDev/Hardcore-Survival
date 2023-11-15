@@ -1,8 +1,7 @@
 package biz.coolpage.hcs.mixin.block;
 
 import biz.coolpage.hcs.Reg;
-import net.minecraft.block.AbstractBlock;
-import net.minecraft.block.BlockState;
+import net.minecraft.block.*;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.BlockView;
@@ -21,8 +20,14 @@ public class AbstractBlockMixin {
         if (world.getBlockState(pos.down()).isOf(Reg.DRYING_RACK)) cir.setReturnValue(false);
     }
 
-    @Inject(at = @At("HEAD"), method = "calcBlockBreakingDelta")
+    @Inject(at = @At("HEAD"), method = "calcBlockBreakingDelta", cancellable = true)
     public void calcBlockBreakingDelta(BlockState state, PlayerEntity player, BlockView world, BlockPos pos, CallbackInfoReturnable<Float> cir) {
-        if (player != null && state.getHardness(world, pos) == -1.0f) player.getBlockBreakingSpeed(state);
+        if (player != null) {
+            if (state.getHardness(world, pos) == -1.0f) player.getBlockBreakingSpeed(state);
+            Block block = state.getBlock();
+            if (block instanceof SweetBerryBushBlock)
+                cir.setReturnValue(player.getBlockBreakingSpeed(state) / 0.18F / 30);
+            else if (block == Blocks.BAMBOO_BLOCK) cir.setReturnValue(0.9F);
+        }
     }
 }

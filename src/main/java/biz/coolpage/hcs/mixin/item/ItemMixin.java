@@ -1,15 +1,20 @@
 package biz.coolpage.hcs.mixin.item;
 
+import biz.coolpage.hcs.entity.FlintProjectileEntity;
+import biz.coolpage.hcs.item.RockItem;
 import biz.coolpage.hcs.status.HcsEffects;
 import biz.coolpage.hcs.util.EntityHelper;
 import biz.coolpage.hcs.util.RotHelper;
 import net.minecraft.client.item.TooltipContext;
 import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.entity.effect.StatusEffects;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.*;
 import net.minecraft.text.MutableText;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
+import net.minecraft.util.Hand;
+import net.minecraft.util.TypedActionResult;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -24,6 +29,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import java.util.List;
 
 @Mixin(Item.class)
+@SuppressWarnings("ConstantValue")
 public class ItemMixin {
     //The saturationModifier is invalid as saturation is added as same as food level
     //e.g. Cooked chicken increases 6 food levels,and 6 saturation levels,while its saturationModifier=0.6F
@@ -116,14 +122,17 @@ public class ItemMixin {
             tooltip.add(description.formatted((descriptionContent.contains("!") || descriptionContent.contains("！")) ? Formatting.RED : Formatting.GRAY));
     }
 
-    /*
     @Inject(method = "use", at = @At("HEAD"), cancellable = true)
     public void use(World world, PlayerEntity user, Hand hand, CallbackInfoReturnable<TypedActionResult<ItemStack>> cir) {
-        //noinspection EqualsBetweenInconvertibleTypes
-        if (Objects.equals(this, Items.FLINT)) cir.setReturnValue(RockItem.throwOut(world, user, hand));
+        if (((Object) this) instanceof Item item) {
+            if (item == Items.FLINT)
+                cir.setReturnValue(RockItem.throwOut(world, user, hand, () -> new FlintProjectileEntity(user, world)));
+        }
     }
-    */
 
-
+    @Inject(method = "getMaxCount", at = @At("HEAD"), cancellable = true)
+    public final void getMaxCount(CallbackInfoReturnable<Integer> cir) {
+        if (((Object) this) instanceof PotionItem) cir.setReturnValue(16);
+    }
 }
 

@@ -50,6 +50,7 @@ public abstract class PlayerInventoryMixin {
                     state.setHasObtainedCopperPickaxe(true);
                     state.markDirty();
                 });
+            if (stack.getDamage() > stack.getMaxDamage()) stack.setDamage(stack.getMaxDamage() - 1);
         }
         statusManager.setHasHeavyLoadDebuff(IS_SURVIVAL_AND_SERVER.test(this.player) && blocksCount > 128);
     }

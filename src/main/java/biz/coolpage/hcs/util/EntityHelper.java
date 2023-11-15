@@ -260,7 +260,7 @@ public class EntityHelper {
     }
 
     public static float getReachRangeAddition(@NotNull ItemStack mainHandStack, ItemStack offHandStack) {
-        float dist = 0.0F;
+        float dist = 0.0F, distAddHoldingBlock = 0.0F;
         Item item = mainHandStack.getItem();
         String name = item.getTranslationKey();
         if (name.contains("knife") || name.contains("hatchet") || name.contains("_cone") || (item instanceof ShearsItem) || (item instanceof FlintAndSteelItem))
@@ -269,13 +269,13 @@ public class EntityHelper {
             dist += 1.0F;
         else if (item instanceof RangedWeaponItem || (item instanceof SwordItem swordItem && swordItem.getMaterial() == ToolMaterials.WOOD))
             dist += 1.5F;
-        else if (IS_HOLDING_BLOCK.test(mainHandStack, offHandStack))
-            return HOLDING_BLOCK_REACHING_RANGE_ADDITION;
         else if (item instanceof ShovelItem || item instanceof PickaxeItem || item instanceof AxeItem || item instanceof HoeItem)
             dist += 2.0F;
         else if (name.contains("spear") || item instanceof TridentItem || item instanceof SwordItem) dist += 2.5F;
         else if (mainHandStack.isEnchantable() && !(item instanceof ArmorItem)) dist += 1.5F;
-        return dist;
+        if (IS_HOLDING_BLOCK.test(mainHandStack, offHandStack))
+            distAddHoldingBlock += HOLDING_BLOCK_REACHING_RANGE_ADDITION;
+        return Math.max(dist, distAddHoldingBlock);
     }
 
     public static void addHcsDebuff(Object playerObj, StatusEffect effect) {
@@ -383,11 +383,10 @@ public class EntityHelper {
     }
 
     public static int getEffectAmplifier(@Nullable LivingEntity entity, @Nullable StatusEffect effect) {
-        // -1 indicates no such effect
         if (entity == null || effect == null) return -1;
         if (entity.hasStatusEffect(effect) && entity.getStatusEffect(effect) != null)
             return Objects.requireNonNull(entity.getStatusEffect(effect)).getAmplifier();
-        return -1;
+        return -1; //Indicates no such effect
     }
 
     public static boolean isExistent(@Nullable LivingEntity... entities) {
@@ -431,7 +430,7 @@ public class EntityHelper {
 
     public static float getDamageLeft(float damage, float protection, float toughness) {
         /* Edit damage left mechanism ( DamageUtil/getDamageLeft() ):
-            diff: 1. damage < 5.0F ? 0.0F : damage -- damage
+            diff: 1. damage <= 6.0F ? 0.0F : damage -- damage
                   2. Math.pow(0.5, g / 6)          -- 1.0f - g / 25.0f
           NOTE: DamageUtil/getInflictedDamage() ONLY be called when having protection enchantment
 
@@ -441,7 +440,7 @@ public class EntityHelper {
             2. f: armor toughness↑ → armor protection decrement↓
          */
         float f = 2.0f + toughness / 4.0f; //÷4: Every slot may have armor toughness → need avg
-        float g = MathHelper.clamp(protection - (damage < 5.0F ? 0.0F : damage) / f, protection * 0.2f, 20.0f);
+        float g = MathHelper.clamp(protection - (damage <= 6.0F ? 0.0F : damage) / f, protection * 0.2f, 20.0f);
         return damage * (float) Math.pow(0.5, g / 6);
     }
 

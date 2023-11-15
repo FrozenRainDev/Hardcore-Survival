@@ -8,6 +8,7 @@ import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.projectile.thrown.ThrownItemEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.Items;
 import net.minecraft.network.listener.ClientPlayPacketListener;
 import net.minecraft.network.packet.Packet;
 import net.minecraft.network.packet.s2c.play.EntitySpawnS2CPacket;
@@ -19,37 +20,33 @@ import net.minecraft.util.hit.HitResult;
 import net.minecraft.world.World;
 
 
-public class RockProjectileEntity extends ThrownItemEntity {
-    public RockProjectileEntity(EntityType<? extends ThrownItemEntity> entityType, World world) {
+public class FlintProjectileEntity extends ThrownItemEntity {
+
+    public FlintProjectileEntity(EntityType<? extends ThrownItemEntity> entityType, World world) {
         super(entityType, world);
     }
 
-    public RockProjectileEntity(LivingEntity owner, World world) {
-        super(Reg.ROCK_PROJECTILE_ENTITY, owner, world);
-    }
-
-    @Deprecated
-    public RockProjectileEntity(World world, double x, double y, double z) {
-        super(Reg.ROCK_PROJECTILE_ENTITY, x, y, z, world);
+    public FlintProjectileEntity(LivingEntity owner, World world) {
+        super(Reg.FLINT_PROJECTILE_ENTITY, owner, world);
     }
 
     @Override
     public Item getDefaultItem() {
-        return Reg.ROCK;
+        return Items.FLINT;
     }
 
     protected void onEntityHit(EntityHitResult entityHitResult) {
         super.onEntityHit(entityHitResult);
         Entity entity = entityHitResult.getEntity();
-        entity.damage(entity.world.getDamageSources().thrown(this, this.getOwner()), 3.0F); // deals damage
-        entity.playSound(SoundEvents.BLOCK_STONE_HIT, 2.0F, 1.0F); // plays a sound for the entity hit only
+        entity.damage(entity.world.getDamageSources().thrown(this, this.getOwner()), 4.0F);
+        entity.playSound(SoundEvents.BLOCK_STONE_HIT, 2.0F, 1.0F);
     }
 
     protected void onCollision(HitResult hitResult) {
         super.onCollision(hitResult);
         if (!this.world.isClient) {
-            if (Math.random() < 0.8) EntityHelper.dropItem(this, Reg.ROCK);
-            else EntityHelper.dropItem(this, Reg.SHARP_ROCK);
+            if (Math.random() < 0.8) EntityHelper.dropItem(this, Items.FLINT);
+            else EntityHelper.dropItem(this, Reg.SHARP_FLINT);
             this.playSound(SoundEvents.BLOCK_STONE_HIT, 2.0F, 1.0F);
             this.world.sendEntityStatus(this, (byte) 3);
             this.kill();
@@ -58,10 +55,10 @@ public class RockProjectileEntity extends ThrownItemEntity {
 
 
     @Override
-    public void handleStatus(byte id) {//Particles rendering needs client world
+    public void handleStatus(byte id) {
         if (id == 3)
             for (int i = 0; i < 8; ++i)
-                this.world.addParticle(new ItemStackParticleEffect(ParticleTypes.ITEM, new ItemStack(Reg.ROCK)), this.getX(), this.getY(), this.getZ(), 0.0D, 0.0D, 0.0D);
+                this.world.addParticle(new ItemStackParticleEffect(ParticleTypes.ITEM, new ItemStack(Items.FLINT)), this.getX(), this.getY(), this.getZ(), 0.0D, 0.0D, 0.0D);
     }
 
     @Override

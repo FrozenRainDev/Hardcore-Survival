@@ -97,6 +97,7 @@ public class ClientS2C {
                         statusManager.setEnterCurrWldTimes(bufArr[14]);
                         statusManager.setStonesSmashed(bufArr[15]);
                         statusManager.setHcsDifficulty(HcsDifficulty.HcsDifficultyEnum.values()[bufArr[16]]);
+                        statusManager.setBlockBreakingSpeed(itof(bufArr[17]));
                     }
                 }
             });

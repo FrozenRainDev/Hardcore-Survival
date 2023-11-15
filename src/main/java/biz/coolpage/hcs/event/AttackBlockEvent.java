@@ -21,8 +21,6 @@ import java.util.Objects;
 public class AttackBlockEvent {
     public static void init() {
         AttackBlockCallback.EVENT.register((player, world, hand, pos, direction) -> {
-//            player.sendMessage(Text.of(getDifficulty(WorldHelper.currWorld) + ""));
-//            player.sendMessage(Text.of(getDifficulty(player) + ""));
             BlockState state = world.getBlockState(pos);
             Block block = state.getBlock();
             BlockEntity blockEntity = world.getBlockEntity(pos);

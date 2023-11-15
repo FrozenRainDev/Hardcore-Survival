@@ -190,7 +190,10 @@ public class RotHelper {
             NbtCompound nbt = stack.getOrCreateNbt();
             if (nbt.contains(DryingRackBlockEntity.DRYING_DEADLINE) && !isInIcebox)
                 nbt.remove(DryingRackBlockEntity.DRYING_DEADLINE);
-            if (stack.isEmpty() || !canRot(item)) continue;
+            if (stack.isEmpty() || !canRot(item)) {
+                if (nbt.contains(HFE)) nbt.remove(HFE);
+                continue;
+            }
             if (nbt.contains(HFF)) {
                 createExp(world, stack, nbt.getFloat(HFF), isInIcebox);
                 nbt.remove(HFF);

@@ -2,6 +2,7 @@ accessWidener v1 named
 accessible field net/minecraft/block/AbstractBlock settings Lnet/minecraft/block/AbstractBlock$Settings;
 accessible field net/minecraft/block/AbstractBlock$Settings luminance Ljava/util/function/ToIntFunction;
 accessible method net/minecraft/block/CropBlock getSeedsItem ()Lnet/minecraft/item/ItemConvertible;
+accessible field net/minecraft/client/render/GameRenderer postProcessor Lnet/minecraft/client/gl/PostEffectProcessor;
 accessible method net/minecraft/block/FarmlandBlock isWaterNearby (Lnet/minecraft/world/WorldView;Lnet/minecraft/util/math/BlockPos;)Z
 accessible field net/minecraft/block/StemBlock pickBlockItem Ljava/util/function/Supplier;
 accessible method net/minecraft/client/render/GameRenderer loadPostProcessor (Lnet/minecraft/util/Identifier;)V
@@ -10,6 +11,7 @@ accessible method net/minecraft/entity/Entity isBeingRainedOn ()Z
 accessible method net/minecraft/entity/LivingEntity computeFallDamage (FF)I
 accessible field net/minecraft/item/ArmorMaterials BASE_DURABILITY Ljava/util/EnumMap;
 accessible method net/minecraft/item/AxeItem getStrippedState (Lnet/minecraft/block/BlockState;)Ljava/util/Optional;
+accessible method net/minecraft/item/Items register (Lnet/minecraft/util/Identifier;Lnet/minecraft/item/Item;)Lnet/minecraft/item/Item;
 accessible method net/minecraft/server/command/LocateCommand getStructureListForPredicate (Lnet/minecraft/command/argument/RegistryPredicateArgumentType$RegistryPredicate;Lnet/minecraft/registry/Registry;)Ljava/util/Optional;
 accessible field net/minecraft/server/command/LocateCommand STRUCTURE_NOT_FOUND_EXCEPTION Lcom/mojang/brigadier/exceptions/DynamicCommandExceptionType;
 accessible field net/minecraft/server/command/LocateCommand STRUCTURE_INVALID_EXCEPTION Lcom/mojang/brigadier/exceptions/DynamicCommandExceptionType;

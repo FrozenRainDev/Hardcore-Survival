@@ -35,6 +35,7 @@ public class StatusManager {
     private boolean hasDarknessEnvelopedDebuff = false; //Server side only -- add all debuffs in ServerPlayerEntityMixin/tick() so the order of hcs debuffs won't change randomly
     private boolean hasHeavyLoadDebuff = false; //Server side only
     private int bandageWorkTicks = 0; //Server side only
+    private float blockBreakingSpeed = 1.0F;
 
     public static int getMaxSoulImpaired(@Nullable LivingEntity entity) {
         return HcsDifficulty.chooseVal(toPlayer(entity), 0, 4, 7);
@@ -291,6 +292,14 @@ public class StatusManager {
         int result = getBandageWorkTicks() + increment;
         if (result < 0) result = 0;
         setBandageWorkTicks(result);
+    }
+
+    public float getBlockBreakingSpeed() {
+        return blockBreakingSpeed;
+    }
+
+    public void setBlockBreakingSpeed(float blockBreakingSpeed) {
+        this.blockBreakingSpeed = blockBreakingSpeed;
     }
 
 }

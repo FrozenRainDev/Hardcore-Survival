@@ -45,10 +45,10 @@ public class PourOutContentRecipe extends SpecialCraftingRecipe {
             Item item = stack.getItem();
             String name = item.getName().toString();
             if (name.contains("stew") || name.contains("salad") || name.contains("soup"))
-                return new ItemStack(Items.BOWL, stack.getCount());
-            if (name.contains("bucket")) return new ItemStack(Items.BUCKET, stack.getCount());
+                return new ItemStack(Items.BOWL);
+            if (name.contains("bucket")) return new ItemStack(Items.BUCKET);
             if (name.contains("bottle") || name.contains("juice"))
-                return new ItemStack(Items.GLASS_BOTTLE, stack.getCount());
+                return new ItemStack(Items.GLASS_BOTTLE);
         }
         return new ItemStack(Items.GLASS_BOTTLE);
     }
