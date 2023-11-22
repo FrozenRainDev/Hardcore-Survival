@@ -50,11 +50,9 @@ public class BottleItem extends PotionItem {
                             livingEntity.addStatusEffect(livingEntity.hasStatusEffect(HcsEffects.THIRST) ? new StatusEffectInstance(HcsEffects.THIRST, Math.min(Objects.requireNonNull(livingEntity.getStatusEffect(HcsEffects.THIRST)).getDuration() + 1200, 9600), 0, false, false, true) : new StatusEffectInstance(this.effectInstance));
                         } else serverPlayer.addStatusEffect(new StatusEffectInstance(this.effectInstance));
                     }
-                    //Must new() an effect in case of invalid repeat adding
+                    //Must new() to duplicate an effect to clone in case of invalid repeat adding
                     stack.decrement(1);
-                    if (!serverPlayer.getInventory().insertStack(new ItemStack(Items.GLASS_BOTTLE))) {
-                        serverPlayer.dropItem(stack, false);
-                    }
+                    EntityHelper.dropItem(serverPlayer, Items.GLASS_BOTTLE);
                 }
             }
             player.incrementStat(Stats.USED.getOrCreateStat(this));

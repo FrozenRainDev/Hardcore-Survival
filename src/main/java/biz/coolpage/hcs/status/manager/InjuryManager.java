@@ -13,6 +13,20 @@ public class InjuryManager {
     private double bleeding = 0.0; //range: [0, 5]; note that [0, 1] won't result in bleeding debuff
     private double fracture = 0.0;
 
+    public void tick() {
+        addRawPain(pain < 1.0 ? -0.0004 : (pain > 3.0 ? -0.0012 : -0.0008)); //Panic self-recovery
+        if (bleeding < 3.0) addBleeding(bleeding < 1.0 ? -0.005 : -0.001); //Bleeding self-stopping
+        if (painkillerApplied > 0) --painkillerApplied;
+        addFracture(-0.000007);
+    }
+
+    public void reset() {
+        pain = alleviationCache = 0.0;
+        painkillerApplied = painkillerUpdateInterval = 0;
+        bleeding = 0.0;
+        fracture = 0.0;
+    }
+
     public double getPainkillerAlle() {
         if (painkillerUpdateInterval > 0) {
             // Refresh alleviation every 60 ticks to avoid too much calculation
@@ -122,19 +136,4 @@ public class InjuryManager {
     public void addFracture(double val) {
         setFracture(getFracture() + val);
     }
-
-    public void tick() {
-        addRawPain(pain < 1.0 ? -0.0004 : (pain > 3.0 ? -0.0012 : -0.0008)); //panic self-recovery
-        if (bleeding < 3.0) addBleeding(bleeding < 1.0 ? -0.005 : -0.001); //bleeding self-stopping
-        if (painkillerApplied > 0) --painkillerApplied;
-        addFracture(-0.000007);
-    }
-
-    public void reset() {
-        pain = alleviationCache = 0.0;
-        painkillerApplied = painkillerUpdateInterval = 0;
-        bleeding = 0.0;
-        fracture = 0.0;
-    }
-
 }

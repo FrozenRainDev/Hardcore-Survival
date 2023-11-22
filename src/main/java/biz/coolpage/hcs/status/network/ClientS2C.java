@@ -98,6 +98,9 @@ public class ClientS2C {
                         statusManager.setStonesSmashed(bufArr[15]);
                         statusManager.setHcsDifficulty(HcsDifficulty.HcsDifficultyEnum.values()[bufArr[16]]);
                         statusManager.setBlockBreakingSpeed(itof(bufArr[17]));
+                        statusManager.setRealProtection(itof(bufArr[18]));
+                        statusManager.setRecentHurtTicks(bufArr[19]);
+                        statusManager.setRecentFeelingDamage(itof(bufArr[20]));
                     }
                 }
             });

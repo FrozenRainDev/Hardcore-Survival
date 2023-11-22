@@ -23,11 +23,12 @@ public class AbstractBlockMixin {
     @Inject(at = @At("HEAD"), method = "calcBlockBreakingDelta", cancellable = true)
     public void calcBlockBreakingDelta(BlockState state, PlayerEntity player, BlockView world, BlockPos pos, CallbackInfoReturnable<Float> cir) {
         if (player != null) {
-            if (state.getHardness(world, pos) == -1.0f) player.getBlockBreakingSpeed(state);
+            if (state.getHardness(world, pos) == -1.0F) player.getBlockBreakingSpeed(state);
             Block block = state.getBlock();
+            //See BambooBlockMixin/calcBlockBreakingDelta()
             if (block instanceof SweetBerryBushBlock)
                 cir.setReturnValue(player.getBlockBreakingSpeed(state) / 0.18F / 30);
-            else if (block == Blocks.BAMBOO_BLOCK) cir.setReturnValue(0.9F);
+            else if (block instanceof SugarCaneBlock) cir.setReturnValue(0.05F);
         }
     }
 }

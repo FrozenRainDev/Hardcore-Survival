@@ -1,9 +1,9 @@
 package biz.coolpage.hcs.item;
 
-import biz.coolpage.hcs.status.manager.StatusManager;
-import biz.coolpage.hcs.entity.IceboxBlockEntity;
 import biz.coolpage.hcs.Reg;
+import biz.coolpage.hcs.entity.IceboxBlockEntity;
 import biz.coolpage.hcs.status.accessor.StatAccessor;
+import biz.coolpage.hcs.status.manager.StatusManager;
 import biz.coolpage.hcs.util.WorldHelper;
 import net.minecraft.client.item.TooltipContext;
 import net.minecraft.entity.Entity;
@@ -230,6 +230,7 @@ public class HotWaterBottleItem extends Item {
                 })));
         tooltip.add(Text.translatable("item.hcs.hot_water_bottle.description1").formatted(Formatting.DARK_GRAY));
         tooltip.add(Text.translatable("item.hcs.hot_water_bottle.description2").formatted(Formatting.DARK_GRAY));
+        tooltip.add(Text.of(String.valueOf(stack.getNbt())));
     }
 
     @Override

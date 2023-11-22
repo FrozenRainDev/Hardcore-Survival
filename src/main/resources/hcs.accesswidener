@@ -6,9 +6,12 @@ accessible field net/minecraft/client/render/GameRenderer postProcessor Lnet/min
 accessible method net/minecraft/block/FarmlandBlock isWaterNearby (Lnet/minecraft/world/WorldView;Lnet/minecraft/util/math/BlockPos;)Z
 accessible field net/minecraft/block/StemBlock pickBlockItem Ljava/util/function/Supplier;
 accessible method net/minecraft/client/render/GameRenderer loadPostProcessor (Lnet/minecraft/util/Identifier;)V
+accessible field net/minecraft/entity/ai/goal/AvoidSunlightGoal mob Lnet/minecraft/entity/mob/PathAwareEntity;
 accessible method net/minecraft/entity/damage/DamageSources create (Lnet/minecraft/registry/RegistryKey;)Lnet/minecraft/entity/damage/DamageSource;
+accessible method net/minecraft/entity/mob/MobEntity isAffectedByDaylight ()Z
 accessible method net/minecraft/entity/Entity isBeingRainedOn ()Z
 accessible method net/minecraft/entity/LivingEntity computeFallDamage (FF)I
+accessible method net/minecraft/entity/mob/ZombieEntity burnsInDaylight ()Z
 accessible field net/minecraft/item/ArmorMaterials BASE_DURABILITY Ljava/util/EnumMap;
 accessible method net/minecraft/item/AxeItem getStrippedState (Lnet/minecraft/block/BlockState;)Ljava/util/Optional;
 accessible method net/minecraft/item/Items register (Lnet/minecraft/util/Identifier;Lnet/minecraft/item/Item;)Lnet/minecraft/item/Item;

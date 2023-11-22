@@ -14,6 +14,7 @@ import biz.coolpage.hcs.status.HcsEffects;
 import biz.coolpage.hcs.status.accessor.StatAccessor;
 import biz.coolpage.hcs.status.manager.TemperatureManager;
 import biz.coolpage.hcs.status.network.ServerC2S;
+import biz.coolpage.hcs.util.EntityHelper;
 import biz.coolpage.hcs.util.WorldHelper;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
@@ -35,6 +36,8 @@ import net.minecraft.entity.effect.StatusEffects;
 import net.minecraft.item.*;
 import net.minecraft.potion.Potion;
 import net.minecraft.potion.PotionUtil;
+import net.minecraft.potion.Potions;
+import net.minecraft.recipe.BrewingRecipeRegistry;
 import net.minecraft.recipe.RecipeSerializer;
 import net.minecraft.recipe.SpecialRecipeSerializer;
 import net.minecraft.registry.Registries;
@@ -61,12 +64,14 @@ public class Reg implements ModInitializer {
     public static final Potion IRONSKIN_POTION = new Potion("hcs_ironskin", new StatusEffectInstance(StatusEffects.RESISTANCE, 3600, 1));
     public static final Potion LONG_IRONSKIN_POTION = new Potion("hcs_long_ironskin", new StatusEffectInstance(StatusEffects.RESISTANCE, 9600, 1));
     public static final Potion STRONG_IRONSKIN_POTION = new Potion("hcs_strong_ironskin", new StatusEffectInstance(StatusEffects.RESISTANCE, 1800, 2));
-    public static final Potion RETURN_POTION = new Potion("hcs_return", new StatusEffectInstance(HcsEffects.RETURN, 60, 0, false, false, false));
+    public static final Potion RETURN_POTION = new Potion("hcs_return", new StatusEffectInstance(HcsEffects.RETURN, 120, 0, false, false, false));
     public static final Potion MINING_POTION = new Potion("hcs_mining", new StatusEffectInstance(StatusEffects.HASTE, 3600));
     public static final Potion LONG_MINING_POTION = new Potion("hcs_long_mining", new StatusEffectInstance(StatusEffects.HASTE, 9600));
     public static final Potion STRONG_MINING_POTION = new Potion("hcs_strong_mining", new StatusEffectInstance(StatusEffects.HASTE, 1800, 1));
     public static final Potion CONSTANT_TEMPERATURE_POTION = new Potion("hcs_constant_temperature", new StatusEffectInstance(HcsEffects.CONSTANT_TEMPERATURE, 3600));
     public static final Potion LONG_CONSTANT_TEMPERATURE_POTION = new Potion("hcs_long_constant_temperature", new StatusEffectInstance(HcsEffects.CONSTANT_TEMPERATURE, 9600));
+    public static final Potion PAIN_KILLING_POTION = new Potion("hcs_pain_killing", new StatusEffectInstance(HcsEffects.PAIN_KILLING, 3600));
+    public static final Potion LONG_PAIN_KILLING_POTION = new Potion("hcs_long_pain_killing", new StatusEffectInstance(HcsEffects.PAIN_KILLING, 9600));
     public static final Item FIBER_STRING = new Item(new Item.Settings());
     public static final Item GRASS_FIBER = new Item(new Item.Settings());
     public static final Item ROASTED_SEEDS = new Item(new Item.Settings().food(new FoodComponent.Builder().hunger(0).saturationModifier(0f).snack().build()));
@@ -98,8 +103,17 @@ public class Reg implements ModInitializer {
     public static final Item COPPER_CHESTPLATE = new ArmorItem(HcsArmorMaterials.COPPER, ArmorItem.Type.CHESTPLATE, new Item.Settings());
     public static final Item COPPER_LEGGINGS = new ArmorItem(HcsArmorMaterials.COPPER, ArmorItem.Type.LEGGINGS, new Item.Settings());
     public static final Item COPPER_BOOTS = new ArmorItem(HcsArmorMaterials.COPPER, ArmorItem.Type.BOOTS, new Item.Settings());
-    public static final Item SPIDER_GLAND = new SpiderGlandItem(8, 0.5);
-    public static final Item SELAGINELLA = new SpiderGlandItem(20, 1.5);
+    public static final Item SPIDER_GLAND = new SalveItem(8, 0.5);
+    public static final Item SELAGINELLA = new SalveItem(20, 1.5) {
+        @Override
+        public ItemStack finishUsing(ItemStack stack, World world, LivingEntity user) {
+            if (user instanceof ServerPlayerEntity player) {
+                ((StatAccessor) player).getStatusManager().setSoulImpairedStat(0);
+                ((StatAccessor) player).getInjuryManager().applyPainkiller();
+            }
+            return super.finishUsing(stack, world, user);
+        }
+    };
     public static final Item RAW_MEAT = new Item(new Item.Settings().food(new FoodComponent.Builder().hunger(2).saturationModifier(1f).meat().build()));
     public static final Item COOKED_MEAT = new Item(new Item.Settings().food(new FoodComponent.Builder().hunger(5).saturationModifier(3f).meat().build()));
     public static final Item CACTUS_FLESH = new Item(new Item.Settings().food(new FoodComponent.Builder().hunger(1).saturationModifier(1f).statusEffect(new StatusEffectInstance(StatusEffects.POISON, 160), 1).statusEffect(new StatusEffectInstance(HcsEffects.DIARRHEA, 300), 1).build()));
@@ -188,6 +202,16 @@ public class Reg implements ModInitializer {
             return "item.hcs.improvised_shield";
         }
     };
+    public static final Item BAT_WINGS = new EffectiveFoodItem(new Item.Settings().food(new FoodComponent.Builder().hunger(1).saturationModifier(1.0f).statusEffect(new StatusEffectInstance(StatusEffects.NAUSEA, 200), 1).statusEffect(new StatusEffectInstance(HcsEffects.DIARRHEA, 200), 0.7F).build()), 0.0F, -0.06);
+    public static final Item ROASTED_BAT_WINGS = new EffectiveFoodItem(new Item.Settings().food(new FoodComponent.Builder().hunger(1).saturationModifier(1.0f).statusEffect(new StatusEffectInstance(StatusEffects.NAUSEA, 60), 1).build()), 0.0F, -0.01);
+    public static final Item HEALING_SALVE = new SalveItem(14, 1.5, 20) {
+        @Override
+        public ItemStack finishUsing(ItemStack stack, World world, LivingEntity user) {
+            if (user instanceof ServerPlayerEntity player) EntityHelper.dropItem(player, Items.BOWL);
+            return super.finishUsing(stack, world, user);
+        }
+    };
+    public static final Item ASHES = new Item(new Item.Settings());
 
     public static final EntityType<RockProjectileEntity> ROCK_PROJECTILE_ENTITY = FabricEntityTypeBuilder.<RockProjectileEntity>create(SpawnGroup.MISC, RockProjectileEntity::new).dimensions(new EntityDimensions(0.25F, 0.25F, true)).build();
     public static final EntityType<FlintProjectileEntity> FLINT_PROJECTILE_ENTITY = FabricEntityTypeBuilder.<FlintProjectileEntity>create(SpawnGroup.MISC, FlintProjectileEntity::new).dimensions(new EntityDimensions(0.25F, 0.25F, true)).build();
@@ -227,6 +251,7 @@ public class Reg implements ModInitializer {
             content.add(new ItemStack(FIREWOOD));
             content.add(new ItemStack(FIRE_BOW));
             content.add(new ItemStack(EXTINGUISHED_CAMPFIRE));
+            content.add(new ItemStack(ASHES));
             content.add(new ItemStack(ROCK));
             content.add(new ItemStack(SHARP_ROCK));
             content.add(new ItemStack(SHARP_FLINT));
@@ -262,6 +287,9 @@ public class Reg implements ModInitializer {
             content.add(HOT_WATER_BOTTLE.getDefaultStack());
             content.add(new ItemStack(WORM));
             content.add(new ItemStack(ROASTED_WORM));
+            content.add(new ItemStack(BAT_WINGS));
+            content.add(new ItemStack(ROASTED_BAT_WINGS));
+            content.add(new ItemStack(ROASTED_WORM));
             content.add(new ItemStack(RAW_MEAT));
             content.add(new ItemStack(COOKED_MEAT));
             content.add(new ItemStack(ANIMAL_VISCERA));
@@ -294,8 +322,9 @@ public class Reg implements ModInitializer {
             content.add(new ItemStack(FEARLESSNESS_HERB));
             content.add(new ItemStack(BANDAGE));
             content.add(new ItemStack(IMPROVISED_BANDAGE));
+            content.add(new ItemStack(HEALING_SALVE));
             content.add(new ItemStack(SPLINT));
-            content.add(new ItemStack(PURIFIED_WATER_BOTTLE));//.getDefaultStack()
+            content.add(new ItemStack(PURIFIED_WATER_BOTTLE)); //prev: .getDefaultStack()
             content.add(new ItemStack(SALTWATER_BOTTLE));
             content.add(new ItemStack(COLD_WATER_BOTTLE));
             content.add(new ItemStack(CACTUS_JUICE));
@@ -303,6 +332,7 @@ public class Reg implements ModInitializer {
             content.add(PotionUtil.setPotion(new ItemStack(Items.POTION), RETURN_POTION));
             content.add(PotionUtil.setPotion(new ItemStack(Items.POTION), MINING_POTION));
             content.add(PotionUtil.setPotion(new ItemStack(Items.POTION), CONSTANT_TEMPERATURE_POTION));
+            content.add(PotionUtil.setPotion(new ItemStack(Items.POTION), PAIN_KILLING_POTION));
             content.add(new ItemStack(ICEBOX_ITEM));
             content.add(new ItemStack(DRYING_RACK_ITEM));
         });
@@ -385,7 +415,10 @@ public class Reg implements ModInitializer {
         Registry.register(Registries.ITEM, new Identifier("hcs", "wooden_leggings"), WOODEN_LEGGINGS);
         Registry.register(Registries.ITEM, new Identifier("hcs", "wooden_boots"), WOODEN_BOOTS);
         Registry.register(Registries.ITEM, new Identifier("hcs", "improvised_shield"), IMPROVISED_SHIELD);
-
+        Registry.register(Registries.ITEM, new Identifier("hcs", "bat_wings"), BAT_WINGS);
+        Registry.register(Registries.ITEM, new Identifier("hcs", "roasted_bat_wings"), ROASTED_BAT_WINGS);
+        Registry.register(Registries.ITEM, new Identifier("hcs", "healing_salve"), HEALING_SALVE);
+        Registry.register(Registries.ITEM, new Identifier("hcs", "ashes"), ASHES);
 
         Registry.register(Registries.BLOCK, new Identifier("hcs", "icebox"), ICEBOX);
         Registry.register(Registries.ITEM, new Identifier("hcs", "icebox"), ICEBOX_ITEM);
@@ -401,7 +434,8 @@ public class Reg implements ModInitializer {
         Registry.register(Registries.POTION, "hcs_strong_mining", STRONG_MINING_POTION);
         Registry.register(Registries.POTION, "hcs_constant_temperature", CONSTANT_TEMPERATURE_POTION);
         Registry.register(Registries.POTION, "hcs_long_constant_temperature", LONG_CONSTANT_TEMPERATURE_POTION);
-
+        Registry.register(Registries.POTION, "hcs_pain_killing", PAIN_KILLING_POTION);
+        Registry.register(Registries.POTION, "hcs_long_pain_killing", LONG_PAIN_KILLING_POTION);
 
         Registry.register(Registries.ENTITY_TYPE, new Identifier("hcs", "rock_projectile_entity"), ROCK_PROJECTILE_ENTITY);
         Registry.register(Registries.ENTITY_TYPE, new Identifier("hcs", "flint_projectile_entity"), FLINT_PROJECTILE_ENTITY);
@@ -434,7 +468,7 @@ public class Reg implements ModInitializer {
         Registry.register(Registries.STATUS_EFFECT, new Identifier("hcs", "unhappy"), HcsEffects.UNHAPPY);
         Registry.register(Registries.STATUS_EFFECT, new Identifier("hcs", "cold"), HcsEffects.COLD);
         Registry.register(Registries.STATUS_EFFECT, new Identifier("hcs", "heavy_load"), HcsEffects.HEAVY_LOAD);
-
+        Registry.register(Registries.STATUS_EFFECT, new Identifier("hcs", "pain_killing"), HcsEffects.PAIN_KILLING);
 
         RecipeSerializer.register("hcs_extract_water_from_bamboo", EXTRACT_WATER_FROM_BAMBOO_RECIPE);
         RecipeSerializer.register("hcs_extract_water_from_snow", EXTRACT_WATER_FROM_SNOW_RECIPE);
@@ -444,6 +478,17 @@ public class Reg implements ModInitializer {
         RecipeSerializer.register("hcs_hot_water_bottle_recipe", HOT_WATER_BOTTLE_RECIPE);
         RecipeSerializer.register("hcs_sapling_to_stick_recipe", SAPLING_TO_STICK_RECIPE);
         RecipeSerializer.register("hcs_pour_out_content_recipe", POUR_OUT_CONTENT_RECIPE);
+
+        BrewingRecipeRegistry.registerPotionRecipe(Potions.AWKWARD, Items.IRON_NUGGET, Reg.IRONSKIN_POTION);
+        BrewingRecipeRegistry.registerPotionRecipe(Potions.AWKWARD, Items.SALMON, Reg.RETURN_POTION);
+        BrewingRecipeRegistry.registerPotionRecipe(Potions.AWKWARD, Items.MANGROVE_PROPAGULE, Reg.MINING_POTION);
+        BrewingRecipeRegistry.registerPotionRecipe(Potions.AWKWARD, Items.QUARTZ, Reg.CONSTANT_TEMPERATURE_POTION);
+        BrewingRecipeRegistry.registerPotionRecipe(Potions.AWKWARD, WILLOW_BARK, Reg.PAIN_KILLING_POTION);
+        BrewingRecipeRegistry.registerPotionRecipe(Reg.IRONSKIN_POTION, Items.GLOWSTONE_DUST, Reg.STRONG_IRONSKIN_POTION);
+        BrewingRecipeRegistry.registerPotionRecipe(Reg.IRONSKIN_POTION, Items.REDSTONE, Reg.LONG_IRONSKIN_POTION);
+        BrewingRecipeRegistry.registerPotionRecipe(Reg.MINING_POTION, Items.GLOWSTONE_DUST, Reg.STRONG_MINING_POTION);
+        BrewingRecipeRegistry.registerPotionRecipe(Reg.CONSTANT_TEMPERATURE_POTION, Items.REDSTONE, Reg.LONG_CONSTANT_TEMPERATURE_POTION);
+        BrewingRecipeRegistry.registerPotionRecipe(Reg.PAIN_KILLING_POTION, Items.REDSTONE, Reg.LONG_PAIN_KILLING_POTION);
 
         FuelRegistry.INSTANCE.add(GRASS_FIBER, 50);
         FuelRegistry.INSTANCE.add(FIBER_STRING, 100);

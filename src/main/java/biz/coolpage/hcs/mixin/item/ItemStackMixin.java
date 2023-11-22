@@ -21,6 +21,7 @@ public abstract class ItemStackMixin {
 
     @Inject(at = @At("HEAD"), method = "canCombine", cancellable = true)
     private static void canCombine(@NotNull ItemStack stack, ItemStack otherStack, CallbackInfoReturnable<Boolean> cir) {
+        //Combine same kinds of food stacks with different freshness
         NbtCompound nbt1 = stack.getOrCreateNbt().copy();//DO NOT FORGET!
         if (nbt1.contains(RotHelper.HFE)) nbt1.remove(RotHelper.HFE);
         if (nbt1.contains(RotHelper.HFI)) nbt1.remove(RotHelper.HFI);

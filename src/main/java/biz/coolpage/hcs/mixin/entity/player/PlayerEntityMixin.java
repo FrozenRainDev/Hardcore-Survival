@@ -7,6 +7,7 @@ import biz.coolpage.hcs.status.HcsEffects;
 import biz.coolpage.hcs.status.accessor.DamageSourcesAccessor;
 import biz.coolpage.hcs.status.accessor.StatAccessor;
 import biz.coolpage.hcs.status.manager.*;
+import biz.coolpage.hcs.util.ArmorHelper;
 import biz.coolpage.hcs.util.DigRestrictHelper;
 import biz.coolpage.hcs.util.EntityHelper;
 import biz.coolpage.hcs.util.RotHelper;
@@ -32,6 +33,7 @@ import net.minecraft.registry.tag.DamageTypeTags;
 import net.minecraft.registry.tag.ItemTags;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.sound.SoundCategory;
+import net.minecraft.sound.SoundEvent;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.stat.Stats;
 import net.minecraft.text.Text;
@@ -41,6 +43,7 @@ import net.minecraft.world.GameRules;
 import net.minecraft.world.LightType;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
@@ -146,6 +149,15 @@ public abstract class PlayerEntityMixin extends LivingEntity implements StatAcce
     @SuppressWarnings("CanBeFinal")
     @Unique
     protected DiseaseManager diseaseManager = new DiseaseManager();
+
+    @Unique
+    private static void quitReturnTeleport(@Nullable Entity entity) {
+        if (toPlayer(entity) instanceof ServerPlayerEntity player && player.hasStatusEffect(HcsEffects.RETURN)) {
+            StatusManager statusManager1 = ((StatAccessor) player).getStatusManager();
+            if (statusManager1.getReturnEffectAwaitTicks() > 0) EntityHelper.msgById(player, "hcs.tip.return_failed");
+            statusManager1.setReturnEffectAwaitTicks(0);
+        }
+    }
 
     @Unique
     @SuppressWarnings("AddedMixinMembersNamePattern")
@@ -276,14 +288,15 @@ public abstract class PlayerEntityMixin extends LivingEntity implements StatAcce
         this.staminaManager.add(-0.00035, this);
         this.staminaManager.pauseRestoring();
         float speed = StatusEffectUtil.hasHaste(this) ? cir.getReturnValueF() : cir.getReturnValueF() / 3.0F;
-        boolean isShovelMineable = state.isIn(BlockTags.SHOVEL_MINEABLE);
         Item mainHand = this.getMainHandStack().getItem();
+        final boolean isShovelMineable = state.isIn(BlockTags.SHOVEL_MINEABLE);
+        final boolean isKnife = mainHand instanceof KnifeItem, isSword = mainHand instanceof SwordItem, isAxe = mainHand instanceof AxeItem;
         Block block = state.getBlock();
         if (!DigRestrictHelper.canBreak(mainHand, state)) {
             if (isShovelMineable) speed /= 30.0F;
             else speed = -1.0F;
             /*
-            if (IS_BAREHANDED.and(IS_SURVIVAL_AND_SERVER).test(toPlayer(this))) {
+            if (IS_BAREHANDED.and(IS_SURVIVAL_AND_SERVER).test(player)) {
                 this.statusManager.addBareDiggingTicks();
                 if (this.statusManager.getBareDiggingTicks() == 30)
                     EntityHelper.msgById(this, "hcs.tip.hurt_hand_dig");
@@ -298,16 +311,15 @@ public abstract class PlayerEntityMixin extends LivingEntity implements StatAcce
         }
         if (isShovelMineable && mainHand instanceof ShovelItem && mainHand != Reg.FLINT_CONE)
             speed /= 2.0F;
-        else if (state.isIn(BlockTags.AXE_MINEABLE) || mainHand instanceof SwordItem) {
+        else if (state.isIn(BlockTags.AXE_MINEABLE) || isSword) {
 //            System.out.println(speed);//0.00952381
             if (mainHand == Reg.FLINT_HATCHET) speed *= 6.0F;
             else speed /= 2.5F;
         }
-        boolean isKnife = mainHand instanceof KnifeItem;
         if ((mainHand instanceof HoeItem || isKnife) && (block instanceof CropBlock || block instanceof StemBlock || state.isIn(BlockTags.REPLACEABLE_PLANTS)))
             speed *= 2.0F;
         else if (isKnife) {
-            if (IS_PLANT.test(block) || block instanceof CobwebBlock || block == Blocks.SUGAR_CANE) speed *= 3.0F;
+            if (IS_PLANT.test(block) || block instanceof CobwebBlock) speed *= 3.0F;
             else speed /= 10.0F;
         }
         if (this.hasStatusEffect(HcsEffects.DEHYDRATED)) speed /= 2.0F;
@@ -319,9 +331,13 @@ public abstract class PlayerEntityMixin extends LivingEntity implements StatAcce
         if (DigRestrictHelper.Predicates.IS_BREAKABLE_FUNCTIONAL.test(block))
             speed *= (block instanceof AbstractFurnaceBlock || block == Blocks.ENDER_CHEST) ? 16.0F : 4.0F;
         else if (block == Blocks.OBSIDIAN || block == Blocks.CRYING_OBSIDIAN) speed *= 3.0F;
-        else if (block == Blocks.SUGAR_CANE || (block == Blocks.CLAY && !isShovelMineable)) speed /= 9.0F;
-        else if (block instanceof LeavesBlock && !(mainHand instanceof SwordItem) && !(mainHand instanceof AxeItem))
+        else if ((block == Blocks.CLAY && !isShovelMineable)) speed /= 9.0F;
+        else if (block instanceof LeavesBlock && !isSword && !isAxe)
             speed /= 10.0F;
+        else if (block == Blocks.SUGAR_CANE) {
+            if (isKnife || isSword || isAxe) speed *= 3.0F;
+            else speed /= 5.0F;
+        }
         if (block instanceof TorchBlock || state.isIn(BlockTags.FLOWERS)) speed = 999999.0F;
         cir.setReturnValue(speed);
     }
@@ -380,7 +396,7 @@ public abstract class PlayerEntityMixin extends LivingEntity implements StatAcce
                 else if (item == Items.RED_MUSHROOM || item == Items.CRIMSON_FUNGUS || item == Items.WARPED_FUNGUS)
                     this.sanityManager.add(-1.0);
                 else if (freshLevel > 2) {
-                    if (item == Items.PUMPKIN_PIE || item == Items.RABBIT_STEW || item == Items.GOLDEN_CARROT)
+                    if (item == Items.PUMPKIN_PIE || item == Items.RABBIT_STEW || item == Items.GOLDEN_CARROT || item == Items.GLISTERING_MELON_SLICE)
                         this.sanityManager.add(0.15);
                     else if (item == Items.MUSHROOM_STEW || item == Reg.COOKED_CACTUS_FLESH || item == Items.BEETROOT_SOUP)
                         this.sanityManager.add(0.07);
@@ -455,11 +471,11 @@ public abstract class PlayerEntityMixin extends LivingEntity implements StatAcce
     @Inject(method = "jump", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/player/PlayerEntity;incrementStat(Lnet/minecraft/util/Identifier;)V", shift = At.Shift.AFTER), cancellable = true)
     public void jump2(@NotNull CallbackInfo ci) {
         double currRealPain = this.injuryManager.getRealPain();
-        float rate = (this.isSprinting() ? 3.0F : 1.0F) * (currRealPain > 2.0 ? (float) (currRealPain * 1.5) : 1.0F) * (this.hasStatusEffect(HcsEffects.FRACTURE) ? 1.5F : 1.0F);
+        float rate = (this.isSprinting() ? 2.5F : 1.0F) * (currRealPain > 2.0 ? (float) (currRealPain * 1.5) : 1.0F) * (this.hasStatusEffect(HcsEffects.FRACTURE) ? 1.5F : 1.0F);
         this.staminaManager.pauseRestoring();
         this.addExhaustion(0.025F * rate);
         this.staminaManager.pauseRestoring(40);
-        this.staminaManager.add(-0.004F * rate, this);
+        this.staminaManager.add(-0.0025F * rate, this);
         ci.cancel();
     }
 
@@ -472,7 +488,10 @@ public abstract class PlayerEntityMixin extends LivingEntity implements StatAcce
 
     @Inject(method = "tick", at = @At("HEAD"))
     public void tick(CallbackInfo ci) {
-        if (!IS_SURVIVAL_AND_SERVER.test(toPlayer(this))) return;
+        @Nullable PlayerEntity player = toPlayer(this);
+        if (!IS_SURVIVAL_AND_SERVER.test(player)) return;
+        //noinspection ResultOfMethodCallIgnored
+        ArmorHelper.getFinalProtection(player); //Refresh player armor protection
         // Painful sound effect
         final double currPain = ((StatAccessor) this).getInjuryManager().getRealPain();
         boolean outOfDarkness = true, hasDarkDebuff = false;
@@ -489,6 +508,7 @@ public abstract class PlayerEntityMixin extends LivingEntity implements StatAcce
         this.statusManager.setRecentHasHotWaterBagTicks(Math.max(0, this.statusManager.getRecentHasHotWaterBagTicks() - 1));
         this.statusManager.setRecentLittleOvereatenTicks(this.hungerManager.getFoodLevel() < 20 ? 0 : Math.max(0, this.statusManager.getRecentLittleOvereatenTicks() - 1));
         this.statusManager.setRecentSleepTicks(Math.max(0, this.statusManager.getRecentSleepTicks() - 1));
+        this.statusManager.setRecentHurtTicks(this.statusManager.getRecentHurtTicks() - 1);
         if (this.statusManager.getBandageWorkTicks() > 0) statusManager.addBandageWorkTicks(-1);
         if (this.isWet()) this.statusManager.setRecentWetTicks(20);
         else this.statusManager.setRecentWetTicks(Math.max(0, this.statusManager.getRecentWetTicks() - 1));
@@ -499,8 +519,8 @@ public abstract class PlayerEntityMixin extends LivingEntity implements StatAcce
         int maxLvlReached = this.statusManager.getMaxExpLevelReached();
         EntityAttributeInstance instance = this.getAttributeInstance(EntityAttributes.GENERIC_MAX_HEALTH);
         if (instance != null) {
-            final int limitedMaxHealth = HcsDifficulty.isOf(toPlayer(this), HcsDifficulty.HcsDifficultyEnum.relaxing) ? 20 : Math.min(20, (int) Math.floor(maxLvlReached / 4.0) + 12);//Cut down max health when in low exp lvl
-            //HcsDifficulty.chooseVal(toPlayer(this), Math.min(30, (int) Math.floor(maxLvlReached / 3.0) + 20), Math.min(30, (int) Math.floor(maxLvlReached / 2.0) + 12), Math.min(20, (int) Math.floor(maxLvlReached / 3.0) + 12));
+            final int limitedMaxHealth = HcsDifficulty.isOf(player, HcsDifficulty.HcsDifficultyEnum.relaxing) ? 20 : Math.min(20, (int) Math.floor(maxLvlReached / 4.0) + 12);//Cut down max health when in low exp lvl
+            //HcsDifficulty.chooseVal(player, Math.min(30, (int) Math.floor(maxLvlReached / 3.0) + 20), Math.min(30, (int) Math.floor(maxLvlReached / 2.0) + 12), Math.min(20, (int) Math.floor(maxLvlReached / 3.0) + 12));
             final double currMaxHealth = instance.getBaseValue();
             if (limitedMaxHealth > currMaxHealth || (limitedMaxHealth < currMaxHealth && maxLvlReached < 36)) {
                 instance.setBaseValue(limitedMaxHealth);
@@ -509,12 +529,13 @@ public abstract class PlayerEntityMixin extends LivingEntity implements StatAcce
         }
         if (this.getPos().distanceTo(this.staminaManager.getLastVecPos()) > 0.0001) {
             //Player is moving this.getVelocity() and this.speed are useless
+            quitReturnTeleport(this);
             if (!this.hasVehicle()) {
                 boolean shouldPauseRestoring = true;
                 if (this.onGround) {
-                    if (this.isSprinting()) this.staminaManager.add(-0.0007, this);
+                    if (this.isSprinting()) this.staminaManager.add(-0.0004, this);
                     else if (this.isInSneakingPose()) this.staminaManager.add(-0.0001, this);
-                    else if (this.staminaManager.get() < 0.7) {//walking while stamina < 0.7 will getRealPain a recovery
+                    else if (this.staminaManager.get() < 0.7) { //walking while stamina < 0.7 will getRealPain a recovery
                         shouldPauseRestoring = false;
                         this.staminaManager.add(this.staminaManager.get() < 0.3 ? 0.0001 : 0.001, this);
                     }
@@ -524,7 +545,7 @@ public abstract class PlayerEntityMixin extends LivingEntity implements StatAcce
                 if (shouldPauseRestoring) this.staminaManager.pauseRestoring();
             }
         } else {
-            if (this.getThirstManager().get() > 0.6 && this.getHungerManager().getFoodLevel() > 12 && !this.hasStatusEffect(HcsEffects.COLD))
+            if (this.getThirstManager().get() > 0.5 && this.getHungerManager().getFoodLevel() > 10 && !this.hasStatusEffect(HcsEffects.COLD))
                 this.staminaManager.add(0.007, this);
             else if (this.getThirstManager().get() > 0.3 && this.getHungerManager().getFoodLevel() > 6)
                 this.staminaManager.add(0.003, this);
@@ -563,7 +584,7 @@ public abstract class PlayerEntityMixin extends LivingEntity implements StatAcce
                     outOfDarkness = false;
                 } else if (blockBrightness < 8) sanDecrement = 0.000008;
             }
-            this.sanityManager.add(-sanDecrement * HcsDifficulty.chooseVal(toPlayer(this), 0.5, 1.0, 2.0));
+            this.sanityManager.add(-sanDecrement * HcsDifficulty.chooseVal(player, 0.5, 1.0, 2.0));
         }
         if (isInCavelike) {
             //Lose oxygen in deep cave
@@ -605,6 +626,10 @@ public abstract class PlayerEntityMixin extends LivingEntity implements StatAcce
         if (this.statusManager.getSoulImpairedStat() > maxSoulImpaired)
             this.statusManager.setSoulImpairedStat(maxSoulImpaired);
         this.statusManager.setHasDarknessEnvelopedDebuff(hasDarkDebuff);
+        //Handle buff of return
+        if (this.hasStatusEffect(HcsEffects.RETURN))
+            this.statusManager.setReturnEffectAwaitTicks(this.statusManager.getReturnEffectAwaitTicks() + 1);
+        else this.statusManager.setReturnEffectAwaitTicks(0);
     }
 
     @Inject(method = "getXpToDrop", at = @At("HEAD"), cancellable = true)
@@ -630,16 +655,17 @@ public abstract class PlayerEntityMixin extends LivingEntity implements StatAcce
     @Inject(method = "applyDamage", at = @At("TAIL"))
     public void applyDamage(DamageSource source, float amount, CallbackInfo ci) {
         //Do not add pain in ServerPlayerEntity as it adds with redundant repeat
+        quitReturnTeleport(this);
+        float feelingAmount = amount;
+        boolean isBurningDamage = EntityHelper.IS_BURNING_DAMAGE.test(source);
+        if (!source.isIn(DamageTypeTags.BYPASSES_ARMOR))
+            feelingAmount = ArmorHelper.getDamageLeftWithReducedArmor(toPlayer(this), amount);
+        feelingAmount = this.modifyAppliedDamage(source, feelingAmount);
+        if (isBurningDamage) feelingAmount *= 2;
+        float hurtPercent = feelingAmount / 20.0F; //prev Math.max(12.0F, this.getMaxHealth());
+        this.statusManager.setRecentFeelingDamage(feelingAmount);
         if (EntityHelper.IS_PHYSICAL_DAMAGE.test(source)) {
-            float feelingAmount = amount;
-            boolean isBurningDamage = EntityHelper.IS_BURNING_DAMAGE.test(source);
-            float reducedArmor = this.getArmor();
-            if (reducedArmor > 4) reducedArmor = Math.max(4.0F, reducedArmor * 0.75F);
-            if (!source.isIn(DamageTypeTags.BYPASSES_ARMOR))
-                feelingAmount = EntityHelper.getDamageLeft(amount, reducedArmor, (float) this.getAttributeValue(EntityAttributes.GENERIC_ARMOR_TOUGHNESS));
-            if (isBurningDamage) feelingAmount *= 2;
-            float hurtPercent = feelingAmount / 20.0F; //prev Math.max(12.0F, this.getMaxHealth());
-            this.injuryManager.addRawPain(hurtPercent * 4.5);
+            if (!this.hasStatusEffect(HcsEffects.PAIN_KILLING)) this.injuryManager.addRawPain(hurtPercent * 4.5);
             if (!isBurningDamage && EntityHelper.IS_BLEEDING_CAUSING_DAMAGE.test(source)) {
                 this.injuryManager.addBleeding(hurtPercent * 8);
                 this.statusManager.setBandageWorkTicks(0);
@@ -650,5 +676,10 @@ public abstract class PlayerEntityMixin extends LivingEntity implements StatAcce
     @Inject(method = "canFoodHeal", at = @At("RETURN"), cancellable = true)
     public void canFoodHeal(@NotNull CallbackInfoReturnable<Boolean> cir) {
         cir.setReturnValue(cir.getReturnValueZ() && !this.hasStatusEffect(HcsEffects.BLEEDING) && EntityHelper.getEffectAmplifier(this, HcsEffects.PARASITE_INFECTION) <= 1);
+    }
+
+    @Inject(method = "getHurtSound", at = @At("HEAD"))
+    protected void getHurtSound(DamageSource source, CallbackInfoReturnable<SoundEvent> cir) {
+        this.statusManager.setRecentHurtTicks(20);
     }
 }

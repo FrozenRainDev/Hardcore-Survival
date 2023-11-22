@@ -70,7 +70,6 @@
     "loot.SurvivesExplosionLootConditionMixin",
     "potion.PotionUtilMixin",
     "recipe.AbstractCookingRecipeMixin",
-    "recipe.BrewingRecipeRegistryMixin",
     "recipe.ShapedRecipeMixin",
     "recipe.ShapelessRecipeMixin",
     "server.PlayerManagerMixin",

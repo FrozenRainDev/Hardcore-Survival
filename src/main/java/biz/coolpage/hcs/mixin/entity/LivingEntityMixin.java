@@ -3,12 +3,11 @@ package biz.coolpage.hcs.mixin.entity;
 import biz.coolpage.hcs.Reg;
 import biz.coolpage.hcs.status.HcsEffects;
 import biz.coolpage.hcs.status.accessor.StatAccessor;
+import biz.coolpage.hcs.util.ArmorHelper;
 import biz.coolpage.hcs.util.EntityHelper;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.attribute.EntityAttribute;
-import net.minecraft.entity.attribute.EntityAttributes;
 import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.entity.effect.StatusEffects;
@@ -41,12 +40,6 @@ public abstract class LivingEntityMixin extends Entity {
 
     @Shadow
     public abstract boolean isBaby();
-
-    @Shadow
-    public abstract int getArmor();
-
-    @Shadow
-    public abstract double getAttributeValue(EntityAttribute attribute);
 
     public LivingEntityMixin(EntityType<?> type, World world) {
         super(type, world);
@@ -142,8 +135,8 @@ public abstract class LivingEntityMixin extends Entity {
 
     @Inject(method = "applyArmorToDamage", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/DamageUtil;getDamageLeft(FFF)F"), cancellable = true)
     protected void applyArmorToDamage(DamageSource source, float amount, @NotNull CallbackInfoReturnable<Float> cir) {
-        if (((Object) this) instanceof PlayerEntity)
-            cir.setReturnValue(EntityHelper.getDamageLeft(amount, this.getArmor(), (float) this.getAttributeValue(EntityAttributes.GENERIC_ARMOR_TOUGHNESS)));
+        if (((Object) this) instanceof PlayerEntity player)
+            cir.setReturnValue(ArmorHelper.getDamageLeft(player, amount));
     }
 
 }

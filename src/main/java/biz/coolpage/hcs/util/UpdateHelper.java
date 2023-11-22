@@ -14,7 +14,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class UpdateHelper {
-    public static final String MOD_VER = "0.15.5";
+    public static final String MOD_VER = "0.15.6";
 
     @Contract(pure = true)
     public static String fetchLatestVersion() {

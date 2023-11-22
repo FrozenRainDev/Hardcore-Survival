@@ -36,6 +36,10 @@ public class StatusManager {
     private boolean hasHeavyLoadDebuff = false; //Server side only
     private int bandageWorkTicks = 0; //Server side only
     private float blockBreakingSpeed = 1.0F;
+    private int recentHurtTicks = 0;
+    private float realProtection = 0.0F;
+    private float recentFeelingDamage = 0.0F;
+    private int returnEffectAwaitTicks = 0; //Server side only
 
     public static int getMaxSoulImpaired(@Nullable LivingEntity entity) {
         return HcsDifficulty.chooseVal(toPlayer(entity), 0, 4, 7);
@@ -66,6 +70,10 @@ public class StatusManager {
         hasHeavyLoadDebuff = false;
         bandageWorkTicks = 0;
         this.enterCurrWldTimes = enterCurrWldTimes;
+        recentHurtTicks = 0;
+        realProtection = 0.0F;
+        recentFeelingDamage = 0.0F;
+        returnEffectAwaitTicks = 0;
     }
 
     public float getExhaustion() {
@@ -300,6 +308,40 @@ public class StatusManager {
 
     public void setBlockBreakingSpeed(float blockBreakingSpeed) {
         this.blockBreakingSpeed = blockBreakingSpeed;
+    }
+
+    public int getRecentHurtTicks() {
+        return recentHurtTicks;
+    }
+
+    public void setRecentHurtTicks(int recentHurtTicks) {
+        if (recentHurtTicks < 0) recentHurtTicks = 0;
+        else if (recentHurtTicks > 20) recentHurtTicks = 20;
+        this.recentHurtTicks = recentHurtTicks;
+    }
+
+    public float getRealProtection() {
+        return realProtection;
+    }
+
+    public void setRealProtection(float realProtection) {
+        this.realProtection = realProtection;
+    }
+
+    public float getRecentFeelingDamage() {
+        return recentFeelingDamage;
+    }
+
+    public void setRecentFeelingDamage(float recentFeelingDamage) {
+        this.recentFeelingDamage = recentFeelingDamage;
+    }
+
+    public int getReturnEffectAwaitTicks() {
+        return returnEffectAwaitTicks;
+    }
+
+    public void setReturnEffectAwaitTicks(int returnEffectAwaitTicks) {
+        this.returnEffectAwaitTicks = returnEffectAwaitTicks;
     }
 
 }

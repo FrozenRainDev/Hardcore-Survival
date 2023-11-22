@@ -6,7 +6,9 @@ import biz.coolpage.hcs.status.accessor.StatAccessor;
 import biz.coolpage.hcs.status.manager.SanityManager;
 import biz.coolpage.hcs.status.manager.StatusManager;
 import biz.coolpage.hcs.status.manager.TemperatureManager;
+import biz.coolpage.hcs.util.ArmorHelper;
 import biz.coolpage.hcs.util.CommUtil;
+import biz.coolpage.hcs.util.EntityHelper;
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.font.TextRenderer;
@@ -37,6 +39,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import java.util.HashMap;
 import java.util.Map;
 
+import static biz.coolpage.hcs.util.CommUtil.applyNullable;
 import static biz.coolpage.hcs.util.CommUtil.numFormat;
 
 
@@ -68,6 +71,10 @@ public abstract class InGameHudMixin extends DrawableHelper {
     @Shadow
     @Final
     private static Identifier POWDER_SNOW_OUTLINE;
+
+    @Shadow
+    public abstract void render(MatrixStack matrices, float tickDelta);
+
     @Unique
     private float heaLast = 0.0F;
     @Unique
@@ -90,6 +97,10 @@ public abstract class InGameHudMixin extends DrawableHelper {
     private static final Identifier DARKNESS = new Identifier("hcs", "textures/misc/darkness.png");
     @Unique
     private static final Identifier DARKNESS_JUMP_SCARE = new Identifier("hcs", "textures/misc/darkness_jump_scare.png");
+    @Unique
+    private static final Identifier HURT_BLUR = new Identifier("hcs", "textures/misc/hurt_blur.png");
+    @Unique
+    private static final Identifier FAINT_BLUR = new Identifier("hcs", "textures/misc/panic_blur.png");
 
     @Unique
     public void drawHCSTexture(MatrixStack matrices, int x, int y, int u, int v, int width, int height) {
@@ -170,22 +181,39 @@ public abstract class InGameHudMixin extends DrawableHelper {
 
     @Inject(method = "render", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/network/ClientPlayerEntity;getFrozenTicks()I"))
     public void render(MatrixStack matrices, float tickDelta, CallbackInfo ci) {
-        if (this.client.player != null) {
-            double san = ((StatAccessor) this.client.player).getSanityManager().get();
-            if (this.client.player.hasStatusEffect(HcsEffects.INSANITY))
+        if (this.client != null && this.client.player != null && this.client.world != null) {
+            double panic = ((StatAccessor) this.client.player).getMoodManager().getRealPanic();
+            StatusManager statusManager = ((StatAccessor) this.client.player).getStatusManager();
+            if (this.client.player.hasStatusEffect(HcsEffects.INSANITY)) {
+                double san = ((StatAccessor) this.client.player).getSanityManager().get();
                 this.renderOverlay(matrices, INSANITY_OUTLINE, Math.min(1.0F, Math.max(0.3F, 1.0F - (float) san / 0.3F + 0.3F * (1.0F - (float) san / 0.6F) * MathHelper.sin((float) this.ticks * (float) Math.PI / 15.0f))));
+            }
             TemperatureManager temperatureManager = ((StatAccessor) this.client.player).getTemperatureManager();
             double temp = temperatureManager.get();
-            float opacity = Math.min(1.0F, 0.2F + temperatureManager.getSaturationPercentage());
+            float tempOpacity = Math.min(1.0F, 0.2F + temperatureManager.getSaturationPercentage());
             if (temp >= 1.0F && this.client.player.hasStatusEffect(HcsEffects.HEATSTROKE))
-                this.renderOverlay(matrices, HEATSTROKE_BLUR, opacity);
+                this.renderOverlay(matrices, HEATSTROKE_BLUR, tempOpacity);
             else if (temp <= 0.0F && this.client.player.getFrozenTicks() <= 0 && this.client.player.hasStatusEffect(HcsEffects.HYPOTHERMIA))
-                this.renderOverlay(matrices, POWDER_SNOW_OUTLINE, opacity);
-            int inDarkTicks = ((StatAccessor) this.client.player).getStatusManager().getInDarknessTicks();
+                this.renderOverlay(matrices, POWDER_SNOW_OUTLINE, tempOpacity);
+            int inDarkTicks = statusManager.getInDarknessTicks();
             if (inDarkTicks > 720 && inDarkTicks < 740 && HcsDifficulty.isOf(this.client.player, HcsDifficulty.HcsDifficultyEnum.challenging))
                 this.renderOverlay(matrices, DARKNESS_JUMP_SCARE, 0.9F);
             else if (inDarkTicks > 60)
-                this.renderOverlay(matrices, DARKNESS, MathHelper.clamp((inDarkTicks - 60) / 800.0F, 0.0F, 1.0F));
+                this.renderOverlay(matrices, DARKNESS, MathHelper.clamp((inDarkTicks - 60) / 550.0F, 0.0F, 1.0F));
+            if (statusManager.getRecentHurtTicks() > 0) {
+                int x = MathHelper.clamp(20 - statusManager.getRecentHurtTicks(), 0, 20);
+                float opa = MathHelper.clamp((float) (x < 5 ? Math.sin(Math.PI / 10 * x) : Math.sin(Math.PI / 30 * (x + 10))), 0.0F, 1.0F);
+                opa *= MathHelper.clamp(statusManager.getRecentFeelingDamage() / 10.0F, 0.0F, 1.0F);
+                this.renderOverlay(matrices, HURT_BLUR, opa);
+            }
+            if (EntityHelper.getEffectAmplifier(this.client.player, HcsEffects.DEHYDRATED) >= 0 || EntityHelper.getEffectAmplifier(this.client.player, HcsEffects.STARVING) >= 0 || EntityHelper.getEffectAmplifier(this.client.player, HcsEffects.PAIN) >= 1) {
+                float opacity = (float) (0.5 * (MathHelper.sin((float) Math.PI / 40 * this.ticks) + 1));
+                double hunger = applyNullable(this.client.player.getHungerManager(), hm -> hm.getFoodLevel() / 20.0, 1.0), thirst = ((StatAccessor) this.client.player).getThirstManager().get(), pain = ((StatAccessor) this.client.player).getInjuryManager().getRealPain();
+                float multiplier = (float) MathHelper.clamp((0.3 - MathHelper.clamp(Math.min(hunger, thirst), 0.0, 0.3)) / 0.3 + (pain - 1.0) / 7, 0.0, 0.5);
+                this.renderOverlay(matrices, DARKNESS, opacity * multiplier);
+            }
+            if (EntityHelper.getEffectAmplifier(this.client.player, HcsEffects.PANIC) >= 1)
+                this.renderOverlay(matrices, FAINT_BLUR, MathHelper.clamp((float) ((panic - 2.0) / 5.0), 0.0F, 1.0F));
         }
     }
 
@@ -248,14 +276,14 @@ public abstract class InGameHudMixin extends DrawableHelper {
         }
         //ARMOR
         //this.client.getProfiler().push("armor");
-        int arm = player.getArmor();
-        float armPercentage = (float) arm / 20;//NOTE: Math.round(int/int)==0
+        float arm = ArmorHelper.getFinalProtection(player);
+        float armPercentage = arm / 20; //NOTE: Math.round(int/int)==0
         if (arm > 0) {
             displacement.put("arm", true);
             int armHeight = this.getDrawIconHeight(armPercentage);
             this.drawHCSTexture(matrices, xx, yy, 0, 32, 16, 16);
             this.drawHCSTexture(matrices, xx, yy + 16 - armHeight, 16, 48 - armHeight, 16, armHeight);
-            this.drawTextWithThickShadow(matrices, arm < 10 ? " " + arm : String.valueOf(arm), xx + 4, yyy + 11, getColorByPercentage(armPercentage), 0.75F);
+            this.drawTextWithThickShadow(matrices, String.format("%.1f", arm), xx + 4, yyy + 11, getColorByPercentage(armPercentage), 0.75F);
             xx += 20;
         } else displacement.put("arm", false);
         //HEALTH

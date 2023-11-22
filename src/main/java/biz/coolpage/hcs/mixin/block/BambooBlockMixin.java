@@ -4,6 +4,7 @@ import net.minecraft.block.BambooBlock;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.item.SwordItem;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.BlockView;
 import org.jetbrains.annotations.NotNull;
@@ -18,9 +19,8 @@ public abstract class BambooBlockMixin extends Block {
         super(settings);
     }
 
-    @SuppressWarnings("deprecation")
     @Inject(at = @At("HEAD"), method = "calcBlockBreakingDelta", cancellable = true)
-    public void calcBlockBreakingDelta(BlockState state, PlayerEntity player, BlockView world, BlockPos pos, @NotNull CallbackInfoReturnable<Float> cir) {
-        cir.setReturnValue(super.calcBlockBreakingDelta(state, player, world, pos));
+    public void calcBlockBreakingDelta(BlockState state, @NotNull PlayerEntity player, BlockView world, BlockPos pos, @NotNull CallbackInfoReturnable<Float> cir) {
+        if (player.getMainHandStack().getItem() instanceof SwordItem) cir.setReturnValue(0.04F);
     }
 }

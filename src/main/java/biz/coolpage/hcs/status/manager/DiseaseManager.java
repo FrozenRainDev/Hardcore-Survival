@@ -19,8 +19,8 @@ public class DiseaseManager {
             return 0.04;
         }
         if (item == Items.ROTTEN_FLESH) return 0.25;
-        else if (item == Reg.ROT) return 0.1;
-        return -1.0;//impossible
+        else if (item == Reg.ROT || item == Reg.BAT_WINGS) return 0.1;
+        return -1.0; //Impossible
     }
 
     public double getParasite() {

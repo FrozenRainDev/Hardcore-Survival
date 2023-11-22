@@ -68,7 +68,7 @@ public class ItemMixin {
     @Unique
     private static final FoodComponent SWEET_BERRIES = new FoodComponent.Builder().hunger(1).saturationModifier(1.0f).build();
     @Unique
-    private static final FoodComponent RABBIT_FOOT = new FoodComponent.Builder().hunger(2).saturationModifier(1.0f).build();
+    private static final FoodComponent RABBIT_FOOT = new FoodComponent.Builder().hunger(2).saturationModifier(2.0f).build();
 
 
     @SuppressWarnings("SameReturnValue")
@@ -99,6 +99,8 @@ public class ItemMixin {
         else if (item == Items.NETHER_WART) cir.setReturnValue(NETHER_WART);
         else if (item == Items.SWEET_BERRIES || item == Items.GLOW_BERRIES) cir.setReturnValue(SWEET_BERRIES);
         else if (item == Items.RABBIT_FOOT) cir.setReturnValue(RABBIT_FOOT);
+        else if (item == Items.MELON_SLICE) cir.setReturnValue(BROWN_MUSHROOM);
+        else if (item == Items.GLISTERING_MELON_SLICE) cir.setReturnValue(HONEYCOMB);
     }
 
 

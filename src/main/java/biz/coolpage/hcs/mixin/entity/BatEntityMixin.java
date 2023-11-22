@@ -21,6 +21,6 @@ public abstract class BatEntityMixin extends AmbientEntity {
     @Inject(method = "getDeathSound", at = @At("HEAD"))
     protected void getDeathSound(CallbackInfoReturnable<SoundEvent> cir) {
         //On death
-        EntityHelper.dropItem(this, this.getFireTicks() > 0 ? Reg.COOKED_MEAT : Reg.RAW_MEAT);
+        EntityHelper.dropItem(this, this.getFireTicks() > 0 ? Reg.ROASTED_BAT_WINGS : Reg.BAT_WINGS);
     }
 }

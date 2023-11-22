@@ -4,6 +4,7 @@ import biz.coolpage.hcs.config.HcsDifficulty;
 import biz.coolpage.hcs.status.accessor.DamageSourcesAccessor;
 import biz.coolpage.hcs.status.accessor.StatAccessor;
 import biz.coolpage.hcs.status.manager.InjuryManager;
+import biz.coolpage.hcs.status.manager.StatusManager;
 import biz.coolpage.hcs.util.EntityHelper;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Multimap;
@@ -36,7 +37,22 @@ public class HcsEffects {
         @Override
         public void onApplied(LivingEntity entity, AttributeContainer attributes, int amplifier) {
             if (entity instanceof ServerPlayerEntity player && !entity.isSpectator())
-                EntityHelper.teleportPlayerToSpawn(player.getWorld(), player, true);
+                EntityHelper.msgById(player, "hcs.tip.return_wait");
+        }
+
+        @Override
+        public void applyUpdateEffect(LivingEntity entity, int amplifier) {
+            if (entity instanceof ServerPlayerEntity player && !entity.isSpectator()) {
+                StatusManager statusManager = ((StatAccessor) player).getStatusManager();
+                if (statusManager.getReturnEffectAwaitTicks() > 100) {
+                    EntityHelper.teleportPlayerToSpawn(player.getWorld(), player, true);
+                    statusManager.setReturnEffectAwaitTicks(-2);
+                    player.getHungerManager().add(-6, 0.0F);
+                    ((StatAccessor) player).getSanityManager().add(-0.3);
+                    ((StatAccessor) player).getThirstManager().add(-0.3);
+                    player.damage(player.getDamageSources().fall(), 5.0f);
+                }
+            }
         }
     };
 
@@ -370,6 +386,18 @@ public class HcsEffects {
     };
 
     public static final StatusEffect HEAVY_LOAD = new StatusEffect(StatusEffectCategory.HARMFUL, 0xfed93f) {
+    };
+
+    public static final StatusEffect PAIN_KILLING = new StatusEffect(StatusEffectCategory.BENEFICIAL, 0x00d900) {
+        @Override
+        public boolean canApplyUpdateEffect(int duration, int amplifier) {
+            return true;
+        }
+
+        @Override
+        public void applyUpdateEffect(LivingEntity entity, int amplifier) {
+            if (entity instanceof ServerPlayerEntity player) ((StatAccessor) player).getInjuryManager().setRawPain(0.0);
+        }
     };
 
     public static final Predicate<StatusEffect> IS_EFFECT_NAME_VARIABLE = effect -> effect == PAIN || effect == INJURY || effect == PANIC || effect == BLEEDING || effect == WET; // A predicate determines whether an effect should be appended by Roman numerals to express level

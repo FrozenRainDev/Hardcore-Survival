@@ -24,7 +24,7 @@ public class StaringRevengeGoal extends ActiveTargetGoal<PlayerEntity> {
     private final Predicate<LivingEntity> angerPredicate;
 
     public StaringRevengeGoal(MobEntity mob, @Nullable Predicate<LivingEntity> targetPredicate) {
-        super(mob, PlayerEntity.class, 10, false, false, targetPredicate);
+        super(mob, PlayerEntity.class, 10, true, false, targetPredicate);
         if (!(mob instanceof Angerable))
             throw new RuntimeException(this.getClass().getSimpleName() + ": mob is not Angerable!");
         this.mob = mob;
@@ -47,15 +47,15 @@ public class StaringRevengeGoal extends ActiveTargetGoal<PlayerEntity> {
 
     @Override
     public void start() {
-        this.lookAtPlayerWarmup = this.getTickCount(5);
+        this.lookAtPlayerWarmup = this.getTickCount(15);
         this.mob.setTarget(this.targetPlayer);
     }
 
     @Override
     public void stop() {
+        super.stop();
         this.provokeWarmup = 0;
         this.targetPlayer = null;
-        super.stop();
     }
 
     @Override
@@ -76,11 +76,13 @@ public class StaringRevengeGoal extends ActiveTargetGoal<PlayerEntity> {
     public void tick() {
         if (this.mob.getTarget() == null) super.setTargetEntity(null);
         if (this.targetPlayer != null) {
-            if (--this.lookAtPlayerWarmup <= 0) {
-                this.targetEntity = this.targetPlayer;
-                this.targetPlayer = null;
-                super.start();
-            }
+            if (this.targetPlayer.isAlive()) {
+                if (--this.lookAtPlayerWarmup <= 0) {
+                    this.targetEntity = this.targetPlayer;
+                    this.targetPlayer = null;
+                    super.start();
+                }
+            } else this.stop();
         } else super.tick();
     }
 }

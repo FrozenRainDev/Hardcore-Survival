@@ -50,11 +50,11 @@ public class RotHelper {
     //To optimize performance, do not use stack.isOf
     public static boolean canRot(Item item) {
         if (item == null) return false;
+        if (item == Reg.ROT || item == Reg.WORM || item == Items.ROTTEN_FLESH || item == Items.GOLDEN_APPLE || item == Items.ENCHANTED_GOLDEN_APPLE || item == Items.GOLDEN_CARROT || item == Items.GLISTERING_MELON_SLICE || Reg.IS_BARK.test(item))
+            return false;
         String name = item.getTranslationKey();
         if (item == Reg.SELAGINELLA || item == Items.SUGAR || item == Items.EGG || item == Items.TURTLE_EGG || item == Items.MILK_BUCKET || item == Items.FERMENTED_SPIDER_EYE || item == Reg.CACTUS_JUICE || item == Items.CAKE || item == Items.RABBIT_FOOT || item.getTranslationKey().contains("seeds") || name.contains("pumpkin") || name.contains("melon"))
             return true;
-        if (item == Reg.ROT || item == Reg.WORM || item == Items.ROTTEN_FLESH || item == Items.GOLDEN_APPLE || item == Items.ENCHANTED_GOLDEN_APPLE || item == Items.GOLDEN_CARROT || item == Items.GLISTERING_MELON_SLICE || Reg.IS_BARK.test(item))
-            return false;
         return item.isFood() && item.getFoodComponent() != null && !item.getDefaultStack().isIn(ItemTags.FLOWERS);
     }
 
@@ -95,7 +95,7 @@ public class RotHelper {
         if (item == Items.COCOA_BEANS || item == Items.NETHER_WART || name.contains("pumpkin") || item == Reg.SELAGINELLA)
             return 80;
         if (!item.isFood() || item.getFoodComponent() == null) return 7;
-        if (item.getFoodComponent().isMeat() || item == Items.RABBIT_FOOT) return 5;
+        if (item.getFoodComponent().isMeat() || item == Items.RABBIT_FOOT || item == Reg.BAT_WINGS) return 5;
         return 7;
     }
 

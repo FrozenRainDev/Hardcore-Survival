@@ -3,6 +3,7 @@ package biz.coolpage.hcs.event;
 import biz.coolpage.hcs.Reg;
 import biz.coolpage.hcs.status.HcsEffects;
 import biz.coolpage.hcs.status.accessor.StatAccessor;
+import biz.coolpage.hcs.status.manager.StaminaManager;
 import biz.coolpage.hcs.status.manager.TemperatureManager;
 import biz.coolpage.hcs.util.EntityHelper;
 import biz.coolpage.hcs.util.WorldHelper;
@@ -16,8 +17,11 @@ import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.hit.HitResult;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.dimension.DimensionType;
 
 import java.util.Objects;
+
+import static biz.coolpage.hcs.util.CommUtil.applyNullable;
 
 public class UseBlockEvent {
     // For more use block events, view mixin/item
@@ -26,6 +30,8 @@ public class UseBlockEvent {
     public static void init() {
         UseBlockCallback.EVENT.register((player, world, hand, hitResult) -> {
             if (player != null && !player.isSpectator() && player instanceof ServerPlayerEntity serverPlayer) {
+                StaminaManager staminaManager = ((StatAccessor) serverPlayer).getStaminaManager();
+                if (staminaManager.get() <= 0.005F) return ActionResult.FAIL;
                 BlockPos pos = hitResult.getBlockPos();
                 BlockState state = world.getBlockState(pos);
                 Block block = state.getBlock();
@@ -47,7 +53,7 @@ public class UseBlockEvent {
                     world.setBlockState(posUp, Blocks.POTATOES.getDefaultState());
                     if (!player.isCreative()) mainHandStack.decrement(1);
                 }
-                if (block instanceof BedBlock) {
+                if (block instanceof BedBlock && applyNullable(world.getDimension(), DimensionType::bedWorks, false)) {
                     //HCS sleeping failure reasons
                     boolean b1 = EntityHelper.getEffectAmplifier(player, HcsEffects.PAIN) > 0;
                     boolean b2 = ((StatAccessor) player).getSanityManager().get() < 0.15;

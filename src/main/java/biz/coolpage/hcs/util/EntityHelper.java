@@ -53,6 +53,8 @@ import java.util.function.BiPredicate;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
+import static biz.coolpage.hcs.util.CommUtil.applyNullable;
+
 public class EntityHelper {
     public static final double[][] FIND_NEAREST_BLOCKS = {{0, -1, 0}, {0, 1, 0}, {0, 2, 0}, {-1, 0, 0}, {-1, 1, 0}, {1, 0, 0}, {1, 1, 0}, {0, 0, 1}, {0, 1, 1}, {0, 0, -1}, {0, 1, -1}};
     public static double ZOMBIE_SENSING_RANGE = 40.0;
@@ -92,14 +94,6 @@ public class EntityHelper {
         \end{cases}
         */
     public static final Function<Integer, Double> PLASMA_CONCENTRATION = x -> x <= 600 ? (-2.5 * Math.pow((x - 600) / 600.0, 2) + 2.5) : (-2.72 / (1 + Math.pow(Math.E, (2000 - x) / 600.0)) + 2.74);
-
-    @Deprecated
-    public static PlayerEntity thePlayer;
-    @Deprecated
-    public static String theNameOfClientPlayer = null;
-    @Deprecated
-    public static boolean canShowMoreStat = false;
-
 
     public static void dropItem(@NotNull Entity entity, double x, double y, double z, Item item, int count) {
         if (entity.world instanceof ServerWorld) {
@@ -148,8 +142,8 @@ public class EntityHelper {
         if (entity instanceof PlayerEntity player) msgById(player, id, true);
     }
 
-    public static void msgById(@NotNull PlayerEntity player, String id, Boolean isTipMessage) {
-        player.sendMessage(Text.translatable(id), isTipMessage);
+    public static void msgById(@Nullable PlayerEntity player, String id, Boolean isTipMessage) {
+        applyNullable(player, p -> p.sendMessage(Text.translatable(id), isTipMessage));
     }
 
     public static BlockHitResult rayCast(@NotNull World world, @NotNull Entity entity, RaycastContext.FluidHandling fluidHandling, double maxDistance) {
@@ -170,7 +164,7 @@ public class EntityHelper {
     Teleport methods come from Bountiful Baubles mod by CursedFlames
     https://github.com/CursedFlames/BountifulBaubles/blob/MC_1.16_rewrite/common/src/main/java/cursedflames/bountifulbaubles/common/util/Teleport.java
     I can't getOutput in touch with the author.
-    In case of infringement, please contact me to delete: mc1mc@qq.com
+    In case of infringement, please contact me to delete: raindev@163.com
     */
 
     public static boolean canDoTeleport(@NotNull World world, PlayerEntity player, boolean allowInterdimensional) {
@@ -427,21 +421,4 @@ public class EntityHelper {
         }
         return false;
     }
-
-    public static float getDamageLeft(float damage, float protection, float toughness) {
-        /* Edit damage left mechanism ( DamageUtil/getDamageLeft() ):
-            diff: 1. damage <= 6.0F ? 0.0F : damage -- damage
-                  2. Math.pow(0.5, g / 6)          -- 1.0f - g / 25.0f
-          NOTE: DamageUtil/getInflictedDamage() ONLY be called when having protection enchantment
-
-          Explanation of armor - damage / f:
-            See https://www.mcmod.cn/item/577939.html
-            1. damage / f: armor protection decrement -- damage↑ → protection↓
-            2. f: armor toughness↑ → armor protection decrement↓
-         */
-        float f = 2.0f + toughness / 4.0f; //÷4: Every slot may have armor toughness → need avg
-        float g = MathHelper.clamp(protection - (damage <= 6.0F ? 0.0F : damage) / f, protection * 0.2f, 20.0f);
-        return damage * (float) Math.pow(0.5, g / 6);
-    }
-
 }

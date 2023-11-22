@@ -16,7 +16,6 @@ import net.minecraft.util.Hand;
 import net.minecraft.util.TypedActionResult;
 import net.minecraft.util.UseAction;
 import net.minecraft.world.World;
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
@@ -51,9 +50,11 @@ public class BandageItem extends Item {
     }
 
     @Override
-    public TypedActionResult<ItemStack> use(@NotNull World world, @NotNull PlayerEntity user, Hand hand) {
-        user.setCurrentHand(hand); //Indispensable! It will update this.activeItemStack in Entity which will check before calling usageTick()
-        user.playSound(SoundEvents.BLOCK_SAND_PLACE, SoundCategory.PLAYERS, 0.5F, 0.5F);
+    public TypedActionResult<ItemStack> use(World world, PlayerEntity user, Hand hand) {
+        if (world != null && user != null) {
+            user.setCurrentHand(hand); //Indispensable! It will update this.activeItemStack in Entity which will check before calling usageTick()
+            user.playSound(SoundEvents.BLOCK_SAND_PLACE, SoundCategory.PLAYERS, 0.5F, 0.5F);
+        }
         return super.use(world, user, hand);
     }
 
