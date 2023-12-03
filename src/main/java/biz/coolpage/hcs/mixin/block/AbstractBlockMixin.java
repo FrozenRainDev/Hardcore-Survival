@@ -3,6 +3,8 @@ package biz.coolpage.hcs.mixin.block;
 import biz.coolpage.hcs.Reg;
 import net.minecraft.block.*;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.item.AxeItem;
+import net.minecraft.item.SwordItem;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.BlockView;
 import net.minecraft.world.WorldView;
@@ -28,7 +30,11 @@ public class AbstractBlockMixin {
             //See BambooBlockMixin/calcBlockBreakingDelta()
             if (block instanceof SweetBerryBushBlock)
                 cir.setReturnValue(player.getBlockBreakingSpeed(state) / 0.18F / 30);
-            else if (block instanceof SugarCaneBlock) cir.setReturnValue(0.05F);
+            else if (block instanceof SugarCaneBlock) {
+                var mainHandItem = player.getMainHandStack().getItem();
+                final boolean isUsingSuitableTool = mainHandItem instanceof SwordItem/*Knives included*/ || mainHandItem instanceof AxeItem;
+                cir.setReturnValue(isUsingSuitableTool ? 0.15F : 0.01F);
+            }
         }
     }
 }

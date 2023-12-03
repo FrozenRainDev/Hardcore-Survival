@@ -203,14 +203,15 @@ public abstract class InGameHudMixin extends DrawableHelper {
             if (statusManager.getRecentHurtTicks() > 0) {
                 int x = MathHelper.clamp(20 - statusManager.getRecentHurtTicks(), 0, 20);
                 float opa = MathHelper.clamp((float) (x < 5 ? Math.sin(Math.PI / 10 * x) : Math.sin(Math.PI / 30 * (x + 10))), 0.0F, 1.0F);
-                opa *= MathHelper.clamp(statusManager.getRecentFeelingDamage() / 10.0F, 0.0F, 1.0F);
+                opa *= MathHelper.clamp(statusManager.getRecentFeelingDamage() / 12.0F, 0.0F, 0.8F);
                 this.renderOverlay(matrices, HURT_BLUR, opa);
             }
-            if (EntityHelper.getEffectAmplifier(this.client.player, HcsEffects.DEHYDRATED) >= 0 || EntityHelper.getEffectAmplifier(this.client.player, HcsEffects.STARVING) >= 0 || EntityHelper.getEffectAmplifier(this.client.player, HcsEffects.PAIN) >= 1) {
+            if (EntityHelper.getEffectAmplifier(this.client.player, HcsEffects.DEHYDRATED) >= 0 || EntityHelper.getEffectAmplifier(this.client.player, HcsEffects.STARVING) >= 0 || EntityHelper.getEffectAmplifier(this.client.player, HcsEffects.PAIN) > 1) {
                 float opacity = (float) (0.5 * (MathHelper.sin((float) Math.PI / 40 * this.ticks) + 1));
                 double hunger = applyNullable(this.client.player.getHungerManager(), hm -> hm.getFoodLevel() / 20.0, 1.0), thirst = ((StatAccessor) this.client.player).getThirstManager().get(), pain = ((StatAccessor) this.client.player).getInjuryManager().getRealPain();
                 float multiplier = (float) MathHelper.clamp((0.3 - MathHelper.clamp(Math.min(hunger, thirst), 0.0, 0.3)) / 0.3 + (pain - 1.0) / 7, 0.0, 0.5);
-                this.renderOverlay(matrices, DARKNESS, opacity * multiplier);
+                if (thirst < 0.2 || hunger < 0.2 || pain > 2.0)
+                    this.renderOverlay(matrices, DARKNESS, opacity * multiplier);
             }
             if (EntityHelper.getEffectAmplifier(this.client.player, HcsEffects.PANIC) >= 1)
                 this.renderOverlay(matrices, FAINT_BLUR, MathHelper.clamp((float) ((panic - 2.0) / 5.0), 0.0F, 1.0F));
@@ -283,7 +284,7 @@ public abstract class InGameHudMixin extends DrawableHelper {
             int armHeight = this.getDrawIconHeight(armPercentage);
             this.drawHCSTexture(matrices, xx, yy, 0, 32, 16, 16);
             this.drawHCSTexture(matrices, xx, yy + 16 - armHeight, 16, 48 - armHeight, 16, armHeight);
-            this.drawTextWithThickShadow(matrices, String.format("%.1f", arm), xx + 4, yyy + 11, getColorByPercentage(armPercentage), 0.75F);
+            this.drawTextWithThickShadow(matrices, String.format("%.1f", arm), arm < 10.0F ? (xx + 4) : (xx + 1), yyy + 11, getColorByPercentage(armPercentage), 0.75F);
             xx += 20;
         } else displacement.put("arm", false);
         //HEALTH
@@ -313,7 +314,7 @@ public abstract class InGameHudMixin extends DrawableHelper {
         this.drawHCSTexture(matrices, xx, yy + (16 - heaHeight) + heaShake, 32 + heaDeviation, 16 - heaHeight, 16, heaHeight);//layer 2
         if (player.world.getLevelProperties().isHardcore())
             this.drawHCSTexture(matrices, xx, yy + (16 - heaHeight) + heaShake, heaDeviation > 0 ? 144 : 128, 16 - heaHeight, 16, heaHeight);
-        this.drawTextWithThickShadow(matrices, String.format("%.1f", hea > 0 ? Math.max(hea, 0.1F) : Math.max(hea, 0.0F)), xx, yyy + 11, getColorByPercentage(heaPercentage), 0.75F);//\n is invalid
+        this.drawTextWithThickShadow(matrices, String.format("%.1f", hea > 0 ? Math.max(hea, 0.1F) : Math.max(hea, 0.0F)), hea < 10.0F ? xx + 2 : xx, yyy + 11, getColorByPercentage(heaPercentage), 0.75F);//\n is invalid
         this.drawTextWithThickShadow(matrices, (heaAbsorption >= 1.0F ? "+" + String.format("%.1f", heaAbsorption) : "") + "/" + String.format("%.1f", heaMax), xx, yyy + 17, getColorByPercentage(heaPercentage), 0.5F);
         //STAMINA
         double str = ((StatAccessor) player).getStaminaManager().get();
@@ -337,7 +338,7 @@ public abstract class InGameHudMixin extends DrawableHelper {
         //Note that int % 0 will throw java.lang.ArithmeticException: / by zero
         if (this.ticks % (Math.round(thi * 20) * 3 + 1) == 0 && thi < 0.3F)
             thiShake = Math.round((float) Math.random() * 2) - 1;
-        if (player.hasStatusEffect(HcsEffects.THIRST) || player.hasStatusEffect(HcsEffects.DIARRHEA) || player.hasStatusEffect(HcsEffects.PARASITE_INFECTION))
+        if (player.hasStatusEffect(HcsEffects.THIRST) || player.hasStatusEffect(HcsEffects.DIARRHEA) || player.hasStatusEffect(HcsEffects.PARASITE_INFECTION) || player.hasStatusEffect(HcsEffects.FOOD_POISONING))
             thiDeviation = 16;
         this.drawHCSTexture(matrices, xx, yy + thiShake, 0, 48, 16, 16);
         this.drawHCSTexture(matrices, xx, yy + (16 - thiHeight) + thiShake, 16 + thiDeviation, 64 - thiHeight, 16, thiHeight);
@@ -357,7 +358,7 @@ public abstract class InGameHudMixin extends DrawableHelper {
         int hunDeviation = 0, hunShake = 0;
         if (hunSaturation <= 0.0F && this.ticks % (hun * 3 + 1) == 0)
             hunShake = Math.round((float) Math.random() * 2) - 1;
-        if (player.hasStatusEffect(StatusEffects.HUNGER) || player.hasStatusEffect(HcsEffects.DIARRHEA) || player.hasStatusEffect(HcsEffects.PARASITE_INFECTION))
+        if (player.hasStatusEffect(StatusEffects.HUNGER) || player.hasStatusEffect(HcsEffects.DIARRHEA) || player.hasStatusEffect(HcsEffects.PARASITE_INFECTION) || player.hasStatusEffect(HcsEffects.FOOD_POISONING))
             hunDeviation = 16;
         this.drawHCSTexture(matrices, xx, yy + hunShake, 0, 16, 16, 16);
         this.drawHCSTexture(matrices, xx, yy + (16 - hunHeight) + hunShake, 16 + hunDeviation, 32 - hunHeight, 16, hunHeight);

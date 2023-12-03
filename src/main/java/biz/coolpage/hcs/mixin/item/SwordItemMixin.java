@@ -1,6 +1,6 @@
 package biz.coolpage.hcs.mixin.item;
 
-import biz.coolpage.hcs.util.EntityHelper;
+import biz.coolpage.hcs.util.LootHelper;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.item.ItemStack;
@@ -16,6 +16,6 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 public class SwordItemMixin {
     @Inject(method = "postMine", at = @At(value = "INVOKE", target = "Lnet/minecraft/item/ItemStack;damage(ILnet/minecraft/entity/LivingEntity;Ljava/util/function/Consumer;)V"), cancellable = true)
     public void postMineInjected(ItemStack stack, World world, BlockState state, BlockPos pos, LivingEntity miner, CallbackInfoReturnable<Boolean> cir) {
-        EntityHelper.mixinToolsPostMine(stack, state, miner, cir);
+        LootHelper.mixinToolsPostMine(stack, state, miner, cir);
     }
 }

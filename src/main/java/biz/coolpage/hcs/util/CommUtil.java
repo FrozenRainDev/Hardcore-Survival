@@ -59,6 +59,13 @@ public class CommUtil {
     }
 
     @Contract(pure = true)
+    public static boolean hasNull(@Nullable Object... objects) {
+        if (objects == null || objects.length == 0) return false;
+        for (Object object : objects) if (object == null) return false;
+        return true;
+    }
+
+    @Contract(pure = true)
     public static boolean regEntryContains(@NotNull RegistryEntry<?> entry, String pattern) {
         Optional<? extends RegistryKey<?>> key = entry.getKey();
         if (key != null && key.isPresent()) return key.get().getValue().getPath().contains(pattern);

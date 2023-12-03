@@ -23,6 +23,8 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import java.util.List;
 
+import static biz.coolpage.hcs.util.EntityHelper.IS_SURVIVAL_LIKE;
+
 @Mixin(PotionItem.class)
 public abstract class PotionItemMixin extends Item {
     public PotionItemMixin(Settings settings) {
@@ -31,21 +33,21 @@ public abstract class PotionItemMixin extends Item {
 
     @Inject(method = "finishUsing", at = @At(value = "HEAD"))
     public void finishUsingMixin(ItemStack stack, World world, LivingEntity user, CallbackInfoReturnable<ItemStack> cir) {
-        if (user instanceof ServerPlayerEntity player) {
+        if (user instanceof ServerPlayerEntity player && IS_SURVIVAL_LIKE.test(player)) {
             Potion potion = PotionUtil.getPotion(stack);
-            if (!world.isClient && potion.getEffects().isEmpty()) {
-                ((StatAccessor) player).getThirstManager().addDirectly(0.3);
+            if (potion.getEffects().isEmpty()) {
                 player.addStatusEffect(new StatusEffectInstance(HcsEffects.DIARRHEA, 600, 0, false, false, true));
                 if (Math.random() < 0.003) ((StatAccessor) player).getDiseaseManager().addParasite(0.12);
-                TemperatureManager temperatureManager = ((StatAccessor) player).getTemperatureManager();
-                if (temperatureManager.get() > 0.7) temperatureManager.add(-0.1);
             }
+            ((StatAccessor) player).getThirstManager().addDirectly(0.3);
+            TemperatureManager temperatureManager = ((StatAccessor) player).getTemperatureManager();
+            if (temperatureManager.get() > 0.7) temperatureManager.add(-0.15);
         }
     }
 
     @Inject(method = "appendTooltip", at = @At(value = "HEAD"))
     public void appendTooltip(ItemStack stack, @Nullable World world, List<Text> tooltip, TooltipContext context, CallbackInfo ci) {
-        super.appendTooltip(stack, world, tooltip, context);
+        super.appendTooltip(stack, world, tooltip, context); // Show freshness info
     }
 }
 

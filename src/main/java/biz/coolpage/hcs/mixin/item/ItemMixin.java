@@ -6,10 +6,14 @@ import biz.coolpage.hcs.status.HcsEffects;
 import biz.coolpage.hcs.util.EntityHelper;
 import biz.coolpage.hcs.util.RotHelper;
 import net.minecraft.client.item.TooltipContext;
+import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.entity.effect.StatusEffects;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.*;
+import net.minecraft.screen.ScreenTexts;
+import net.minecraft.sound.SoundCategory;
+import net.minecraft.sound.SoundEvents;
 import net.minecraft.text.MutableText;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
@@ -27,6 +31,9 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import java.util.List;
+
+import static biz.coolpage.hcs.util.CommUtil.applyNullable;
+import static biz.coolpage.hcs.util.EntityHelper.IS_SURVIVAL_LIKE;
 
 @Mixin(Item.class)
 @SuppressWarnings("ConstantValue")
@@ -60,7 +67,7 @@ public class ItemMixin {
     @Unique
     private static final FoodComponent SEA_PICKLE = new FoodComponent.Builder().hunger(0).saturationModifier(1.0f).build();
     @Unique
-    private static final FoodComponent ROTTEN_FLESH = new FoodComponent.Builder().hunger(1).saturationModifier(1.0f).statusEffect(new StatusEffectInstance(StatusEffects.NAUSEA, 200), 1).statusEffect(new StatusEffectInstance(StatusEffects.POISON, 300), 1).statusEffect(new StatusEffectInstance(StatusEffects.HUNGER, 600), 1).statusEffect(new StatusEffectInstance(HcsEffects.DIARRHEA, 600, 1), 1).build();
+    private static final FoodComponent ROTTEN_FLESH = new FoodComponent.Builder().hunger(1).saturationModifier(1.0f).statusEffect(new StatusEffectInstance(StatusEffects.NAUSEA, 200), 1).statusEffect(new StatusEffectInstance(StatusEffects.POISON, 300), 1).statusEffect(new StatusEffectInstance(StatusEffects.HUNGER, 600), 1).statusEffect(new StatusEffectInstance(HcsEffects.DIARRHEA, 600, 1), 1).statusEffect(new StatusEffectInstance(HcsEffects.FOOD_POISONING, 1200), 1).build();
     @Unique
     private static final FoodComponent COOKED_BEEF = new FoodComponent.Builder().hunger(10).saturationModifier(0.8f).meat().build();
     @Unique
@@ -111,12 +118,17 @@ public class ItemMixin {
 
 
     @Inject(method = "appendTooltip", at = @At("TAIL"))
-    public void appendTooltip(@NotNull ItemStack stack, @Nullable World world, List<Text> tooltip, TooltipContext context, CallbackInfo ci) {
+    public void appendTooltip(ItemStack stack, @Nullable World world, List<Text> tooltip, TooltipContext context, CallbackInfo ci) {
+        if (stack == null) return;
         Item item = stack.getItem();
-        if (RotHelper.canRot(stack.getItem()) && world != null) RotHelper.appendInfo(world, stack, tooltip);
         float reachRangeAddition = EntityHelper.getReachRangeAddition(stack);
-        if (reachRangeAddition > 0.0F && !(item instanceof BlockItem))
-            tooltip.add(Text.translatable(Text.translatable("hcs.tip.reach_range_addition").getString() + reachRangeAddition).formatted(Formatting.GRAY));
+        if (reachRangeAddition > 0.0F && !(stack.getItem() instanceof BlockItem)
+                && applyNullable(stack, s -> s.getAttributeModifiers(EquipmentSlot.MAINHAND).isEmpty(), false)) {
+            tooltip.add(ScreenTexts.EMPTY);
+            tooltip.add(Text.translatable("item.modifiers.mainhand").formatted(Formatting.GRAY));
+            //See end of ItemStackMixin/getTooltip1()V
+        }
+        if (RotHelper.canRot(item) && world != null) RotHelper.appendInfo(world, stack, tooltip);
         String descriptionKey = item.getTranslationKey() + ".description";
         MutableText description = Text.translatable(descriptionKey);
         String descriptionContent = description.getString();
@@ -127,7 +139,11 @@ public class ItemMixin {
     @Inject(method = "use", at = @At("HEAD"), cancellable = true)
     public void use(World world, PlayerEntity user, Hand hand, CallbackInfoReturnable<TypedActionResult<ItemStack>> cir) {
         if (((Object) this) instanceof Item item) {
-            if (item == Items.FLINT)
+            if (item.isFood() && IS_SURVIVAL_LIKE.test(user)/*Both S C sides needed*/ && user.hasStatusEffect(HcsEffects.FOOD_POISONING)) {
+                world.playSound(null, user.getX(), user.getY(), user.getZ(), SoundEvents.ENTITY_PLAYER_BURP, SoundCategory.PLAYERS, 0.5f, world.random.nextFloat() * 0.1f + 0.9f);
+                user.getItemCooldownManager().set(item, 60);
+                cir.setReturnValue(TypedActionResult.fail(user.getStackInHand(hand)));
+            } else if (item == Items.FLINT)
                 cir.setReturnValue(RockItem.throwOut(world, user, hand, () -> new FlintProjectileEntity(user, world)));
         }
     }

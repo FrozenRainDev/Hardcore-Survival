@@ -5,6 +5,7 @@ import biz.coolpage.hcs.status.accessor.DamageSourcesAccessor;
 import biz.coolpage.hcs.status.accessor.StatAccessor;
 import biz.coolpage.hcs.status.manager.InjuryManager;
 import biz.coolpage.hcs.status.manager.StatusManager;
+import biz.coolpage.hcs.status.manager.ThirstManager;
 import biz.coolpage.hcs.util.EntityHelper;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Multimap;
@@ -20,6 +21,7 @@ import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.math.MathHelper;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 import java.util.function.Predicate;
@@ -42,15 +44,17 @@ public class HcsEffects {
 
         @Override
         public void applyUpdateEffect(LivingEntity entity, int amplifier) {
-            if (entity instanceof ServerPlayerEntity player && !entity.isSpectator()) {
+            if (entity instanceof ServerPlayerEntity player && !player.isSpectator()) {
                 StatusManager statusManager = ((StatAccessor) player).getStatusManager();
                 if (statusManager.getReturnEffectAwaitTicks() > 100) {
-                    EntityHelper.teleportPlayerToSpawn(player.getWorld(), player, true);
-                    statusManager.setReturnEffectAwaitTicks(-2);
+                    statusManager.setReturnEffectAwaitTicks(0);
                     player.getHungerManager().add(-6, 0.0F);
                     ((StatAccessor) player).getSanityManager().add(-0.3);
-                    ((StatAccessor) player).getThirstManager().add(-0.3);
+                    ThirstManager thirstManager = ((StatAccessor) player).getThirstManager();
+                    thirstManager.setSaturation(0.0F);
+                    thirstManager.add(-0.3);
                     player.damage(player.getDamageSources().fall(), 5.0f);
+                    EntityHelper.teleportPlayerToSpawn(player.getWorld(), player, false);
                 }
             }
         }
@@ -388,7 +392,7 @@ public class HcsEffects {
     public static final StatusEffect HEAVY_LOAD = new StatusEffect(StatusEffectCategory.HARMFUL, 0xfed93f) {
     };
 
-    public static final StatusEffect PAIN_KILLING = new StatusEffect(StatusEffectCategory.BENEFICIAL, 0x00d900) {
+    public static final StatusEffect PAIN_KILLING = new StatusEffect(StatusEffectCategory.BENEFICIAL, 0x858585) {
         @Override
         public boolean canApplyUpdateEffect(int duration, int amplifier) {
             return true;
@@ -400,7 +404,35 @@ public class HcsEffects {
         }
     };
 
-    public static final Predicate<StatusEffect> IS_EFFECT_NAME_VARIABLE = effect -> effect == PAIN || effect == INJURY || effect == PANIC || effect == BLEEDING || effect == WET; // A predicate determines whether an effect should be appended by Roman numerals to express level
+    public static final StatusEffect IRONSKIN = new StatusEffect(StatusEffectCategory.BENEFICIAL, 0xe6de0a) {
+    };
+
+    public static final StatusEffect FOOD_POISONING = new StatusEffect(StatusEffectCategory.HARMFUL, 0xb3c17b) {
+        @Override
+        public boolean canApplyUpdateEffect(int duration, int amplifier) {
+            return true;
+        }
+
+        @Override
+        public void applyUpdateEffect(LivingEntity entity, int amplifier) {
+            if (entity instanceof ServerPlayerEntity player && IS_SURVIVAL_LIKE.test(player)) {
+                ((StatAccessor) player).getThirstManager().add(-0.00015 * (amplifier + 1));
+                player.getHungerManager().addExhaustion(0.02F * (amplifier + 1));
+                ((StatAccessor) player).getSanityManager().add(-0.00001 * (amplifier + 1));
+                player.getHungerManager().setSaturationLevel(0.0F);
+            }
+        }
+    };
+
+    private static final HashMap<StatusEffect, ?> VARIABLE_EFFECTS = new HashMap<>() {{
+        this.put(PAIN, null);
+        this.put(INJURY, null);
+        this.put(PANIC, null);
+        this.put(BLEEDING, null);
+        this.put(WET, null);
+    }};
+
+    public static final Predicate<StatusEffect> IS_EFFECT_NAME_VARIABLE = VARIABLE_EFFECTS::containsKey; // A predicate determines whether an effect should be appended by Roman numerals to express level
 
     public static String getEffectVarName(String key, int amplifier) {
         return switch (amplifier) {

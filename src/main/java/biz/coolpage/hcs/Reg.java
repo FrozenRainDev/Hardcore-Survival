@@ -61,9 +61,9 @@ import static net.minecraft.server.command.CommandManager.literal;
 //See customized damage sources in DamageSourcesMixin
 public class Reg implements ModInitializer {
     public static final Logger LOGGER = LoggerFactory.getLogger("hcs");
-    public static final Potion IRONSKIN_POTION = new Potion("hcs_ironskin", new StatusEffectInstance(StatusEffects.RESISTANCE, 3600, 1));
-    public static final Potion LONG_IRONSKIN_POTION = new Potion("hcs_long_ironskin", new StatusEffectInstance(StatusEffects.RESISTANCE, 9600, 1));
-    public static final Potion STRONG_IRONSKIN_POTION = new Potion("hcs_strong_ironskin", new StatusEffectInstance(StatusEffects.RESISTANCE, 1800, 2));
+    public static final Potion IRONSKIN_POTION = new Potion("hcs_ironskin", new StatusEffectInstance(HcsEffects.IRONSKIN, 3600, 0));
+    public static final Potion LONG_IRONSKIN_POTION = new Potion("hcs_long_ironskin", new StatusEffectInstance(HcsEffects.IRONSKIN, 9600, 0));
+    public static final Potion STRONG_IRONSKIN_POTION = new Potion("hcs_strong_ironskin", new StatusEffectInstance(HcsEffects.IRONSKIN, 1800, 1));
     public static final Potion RETURN_POTION = new Potion("hcs_return", new StatusEffectInstance(HcsEffects.RETURN, 120, 0, false, false, false));
     public static final Potion MINING_POTION = new Potion("hcs_mining", new StatusEffectInstance(StatusEffects.HASTE, 3600));
     public static final Potion LONG_MINING_POTION = new Potion("hcs_long_mining", new StatusEffectInstance(StatusEffects.HASTE, 9600));
@@ -469,6 +469,8 @@ public class Reg implements ModInitializer {
         Registry.register(Registries.STATUS_EFFECT, new Identifier("hcs", "cold"), HcsEffects.COLD);
         Registry.register(Registries.STATUS_EFFECT, new Identifier("hcs", "heavy_load"), HcsEffects.HEAVY_LOAD);
         Registry.register(Registries.STATUS_EFFECT, new Identifier("hcs", "pain_killing"), HcsEffects.PAIN_KILLING);
+        Registry.register(Registries.STATUS_EFFECT, new Identifier("hcs", "ironskin"), HcsEffects.IRONSKIN);
+        Registry.register(Registries.STATUS_EFFECT, new Identifier("hcs", "food_poisoning"), HcsEffects.FOOD_POISONING);
 
         RecipeSerializer.register("hcs_extract_water_from_bamboo", EXTRACT_WATER_FROM_BAMBOO_RECIPE);
         RecipeSerializer.register("hcs_extract_water_from_snow", EXTRACT_WATER_FROM_SNOW_RECIPE);

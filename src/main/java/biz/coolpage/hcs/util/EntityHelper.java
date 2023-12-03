@@ -6,7 +6,10 @@ import biz.coolpage.hcs.status.HcsEffects;
 import biz.coolpage.hcs.status.accessor.StatAccessor;
 import biz.coolpage.hcs.status.manager.StatusManager;
 import net.minecraft.advancement.criterion.Criteria;
-import net.minecraft.block.*;
+import net.minecraft.block.Block;
+import net.minecraft.block.BlockState;
+import net.minecraft.block.Blocks;
+import net.minecraft.block.TorchBlock;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.ItemEntity;
@@ -23,7 +26,6 @@ import net.minecraft.entity.player.HungerManager;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.*;
 import net.minecraft.registry.RegistryKey;
-import net.minecraft.registry.tag.BlockTags;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ChunkTicketType;
 import net.minecraft.server.world.ServerChunkManager;
@@ -45,7 +47,6 @@ import net.minecraft.world.World;
 import net.minecraft.world.event.GameEvent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import java.util.Objects;
 import java.util.Optional;
@@ -174,11 +175,15 @@ public class EntityHelper {
         return world.getRegistryKey() == spawnDim || allowInterdimensional;
     }
 
-    public static void teleportPlayerToSpawn(@NotNull World currentWorld, PlayerEntity player, boolean allowInterdimensional) {
-        if (currentWorld.isClient) return;
-        if (!canDoTeleport(currentWorld, player, allowInterdimensional)) return;
+    public static void teleportPlayerToSpawn(@NotNull World world, PlayerEntity player, boolean allowInterdimensional) {
+        if (world.isClient) return;
+        if (!canDoTeleport(world, player, allowInterdimensional)) {
+            EntityHelper.msgById(player, "hcs.tip.return_failed_interdimention");
+            return;
+        }
+        player.removeStatusEffect(HcsEffects.RETURN);
         RegistryKey<World> spawnPointDimension = ((ServerPlayerEntity) player).getSpawnPointDimension();
-        World targetWorld = currentWorld;
+        World targetWorld = world;
         if (targetWorld.getRegistryKey() != spawnPointDimension) {
             targetWorld = Objects.requireNonNull(targetWorld.getServer()).getWorld(spawnPointDimension);
         }
@@ -195,14 +200,14 @@ public class EntityHelper {
                                 ((ServerPlayerEntity) player).getSpawnAngle(), force, true);
                 if (optional.isPresent()) {
                     Vec3d pos = optional.get();
-                    doTeleport(player, currentWorld, targetWorld, pos.getX(), pos.getY(), pos.getZ());
+                    doTeleport(player, world, targetWorld, pos.getX(), pos.getY(), pos.getZ());
                     return;
                 }
             }
             spawnPoint = targetWorld.getSpawnPos();
 
             if (spawnPoint != null) {
-                doTeleport(player, currentWorld, targetWorld, spawnPoint.getX() + 0.5, spawnPoint.getY(),
+                doTeleport(player, world, targetWorld, spawnPoint.getX() + 0.5, spawnPoint.getY(),
                         spawnPoint.getZ() + 0.5);
             }
         }
@@ -228,13 +233,14 @@ public class EntityHelper {
                 SoundEvents.ENTITY_ENDERMAN_TELEPORT, SoundCategory.PLAYERS, 1f, 1f);
     }
 
-    public static BlockPos getPosBackward(Entity entity) {
+    public static BlockPos getPosFacing(Entity entity, boolean isBackward) {
         if (entity == null) {
-            Reg.LOGGER.error("EntityHelper/getPosBackward;entity==null");
+            Reg.LOGGER.error("EntityHelper/getPosFacing;entity==null");
             return BlockPos.ORIGIN;
         }
-        BlockPos entityPos = entity.getBlockPos();
-        return switch (entity.getHorizontalFacing().getOpposite()) {
+        var entityPos = entity.getBlockPos();
+        var facing = entity.getHorizontalFacing();
+        return switch (isBackward ? facing.getOpposite() : facing) {
             case EAST -> entityPos.east();
             case SOUTH -> entityPos.south();
             case WEST -> entityPos.west();
@@ -287,13 +293,6 @@ public class EntityHelper {
                 }
             });
         }
-    }
-
-    public static void mixinToolsPostMine(ItemStack stack, BlockState state, LivingEntity miner, CallbackInfoReturnable<Boolean> cir) {
-        if (stack == null || state == null || miner == null || cir == null) return;
-        Block block = state.getBlock();
-        if (state.isIn(BlockTags.FLOWERS) || block instanceof TorchBlock || (stack.getItem() instanceof SwordItem swordItem && swordItem.getMaterial() == ToolMaterials.WOOD && (block instanceof FernBlock || block instanceof TallPlantBlock)))
-            cir.setReturnValue(true);
     }
 
     public static void addDecimalFoodLevel(ServerPlayerEntity player, float foodLevel, boolean hasSaturation) {

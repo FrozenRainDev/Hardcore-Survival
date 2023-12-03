@@ -1,8 +1,12 @@
 package biz.coolpage.hcs.status.manager;
 
 import biz.coolpage.hcs.Reg;
+import biz.coolpage.hcs.status.HcsEffects;
+import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.item.Item;
 import net.minecraft.item.Items;
+import net.minecraft.server.network.ServerPlayerEntity;
 
 import static biz.coolpage.hcs.recipe.CustomDryingRackRecipe.IS_RAW_MEAT;
 
@@ -12,15 +16,17 @@ public class DiseaseManager {
     private double parasite = 0.0; //[0,3] 0~1 early stage 1~2 medium term 2~3 later period
     private double cold = 0.0; //[0,2] 0~1 pre 1~2 symptom appearing
 
-    public static double getParasitePossibility(Item item) {
-        if (item == Reg.WORM) return 0.08;
-        if (IS_RAW_MEAT.test(item)) {
-            if (item == Items.PORKCHOP || item == Reg.ANIMAL_VISCERA) return 0.08;
-            return 0.04;
-        }
-        if (item == Items.ROTTEN_FLESH) return 0.25;
-        else if (item == Reg.ROT || item == Reg.BAT_WINGS) return 0.1;
-        return -1.0; //Impossible
+    public static double getParasitePossibilityAndCheckFoodPoisoning(Item item, LivingEntity entity) {
+        double poss = -1.0;
+        if (item == Reg.WORM) poss = 0.08;
+        else if (IS_RAW_MEAT.test(item)) {
+            if (item == Items.PORKCHOP || item == Reg.ANIMAL_VISCERA) poss = 0.16;
+            else poss = 0.08;
+        } else if (item == Items.ROTTEN_FLESH) return 0.3;
+        else if (item == Reg.ROT || item == Reg.BAT_WINGS) poss = 0.1;
+        if (Math.random() < (poss * 3) && entity instanceof ServerPlayerEntity player)
+            player.addStatusEffect(new StatusEffectInstance(HcsEffects.FOOD_POISONING, 1200, 0, false, false, true));
+        return poss; //Impossible
     }
 
     public double getParasite() {

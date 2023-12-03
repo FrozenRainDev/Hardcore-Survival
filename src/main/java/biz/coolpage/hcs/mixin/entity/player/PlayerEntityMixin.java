@@ -33,7 +33,6 @@ import net.minecraft.registry.tag.DamageTypeTags;
 import net.minecraft.registry.tag.ItemTags;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.sound.SoundCategory;
-import net.minecraft.sound.SoundEvent;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.stat.Stats;
 import net.minecraft.text.Text;
@@ -56,13 +55,14 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import java.util.Objects;
 
 import static biz.coolpage.hcs.recipe.CustomDryingRackRecipe.HAS_COOKED;
-import static biz.coolpage.hcs.status.manager.DiseaseManager.getParasitePossibility;
+import static biz.coolpage.hcs.status.manager.DiseaseManager.getParasitePossibilityAndCheckFoodPoisoning;
 import static biz.coolpage.hcs.util.DigRestrictHelper.Predicates.IS_PLANT;
 import static biz.coolpage.hcs.util.EntityHelper.IS_SURVIVAL_AND_SERVER;
 import static biz.coolpage.hcs.util.EntityHelper.toPlayer;
 
 
 @Mixin(PlayerEntity.class)
+@SuppressWarnings({"CanBeFinal", "AddedMixinMembersNamePattern"})
 public abstract class PlayerEntityMixin extends LivingEntity implements StatAccessor {
 
     protected PlayerEntityMixin(EntityType<? extends LivingEntity> entityType, World world) {
@@ -112,41 +112,30 @@ public abstract class PlayerEntityMixin extends LivingEntity implements StatAcce
     public int experienceLevel;
     @Shadow
     protected HungerManager hungerManager;
-
     @Shadow
     protected boolean isSubmergedInWater;
 
     @Shadow
     public abstract void setFireTicks(int fireTicks);
 
-    @SuppressWarnings("CanBeFinal")
     @Unique
     protected ThirstManager thirstManager = new ThirstManager();
-    @SuppressWarnings("CanBeFinal")
     @Unique
     protected StaminaManager staminaManager = new StaminaManager();
-    @SuppressWarnings("CanBeFinal")
     @Unique
     protected TemperatureManager temperatureManager = new TemperatureManager();
-    @SuppressWarnings("CanBeFinal")
     @Unique
     protected StatusManager statusManager = new StatusManager();
-    @SuppressWarnings("CanBeFinal")
     @Unique
     protected SanityManager sanityManager = new SanityManager();
-    @SuppressWarnings("CanBeFinal")
     @Unique
     protected NutritionManager nutritionManager = new NutritionManager();
-    @SuppressWarnings("CanBeFinal")
     @Unique
     protected WetnessManager wetnessManager = new WetnessManager();
-    @SuppressWarnings("CanBeFinal")
     @Unique
     protected InjuryManager injuryManager = new InjuryManager();
-    @SuppressWarnings("CanBeFinal")
     @Unique
     protected MoodManager moodManager = new MoodManager();
-    @SuppressWarnings("CanBeFinal")
     @Unique
     protected DiseaseManager diseaseManager = new DiseaseManager();
 
@@ -160,70 +149,60 @@ public abstract class PlayerEntityMixin extends LivingEntity implements StatAcce
     }
 
     @Unique
-    @SuppressWarnings("AddedMixinMembersNamePattern")
     @Override
     public ThirstManager getThirstManager() {
         return this.thirstManager;
     }
 
     @Unique
-    @SuppressWarnings("AddedMixinMembersNamePattern")
     @Override
     public StaminaManager getStaminaManager() {
         return this.staminaManager;
     }
 
     @Unique
-    @SuppressWarnings("AddedMixinMembersNamePattern")
     @Override
     public TemperatureManager getTemperatureManager() {
         return this.temperatureManager;
     }
 
     @Unique
-    @SuppressWarnings("AddedMixinMembersNamePattern")
     @Override
     public StatusManager getStatusManager() {
         return this.statusManager;
     }
 
     @Unique
-    @SuppressWarnings("AddedMixinMembersNamePattern")
     @Override
     public SanityManager getSanityManager() {
         return this.sanityManager;
     }
 
     @Unique
-    @SuppressWarnings("AddedMixinMembersNamePattern")
     @Override
     public NutritionManager getNutritionManager() {
         return this.nutritionManager;
     }
 
     @Unique
-    @SuppressWarnings("AddedMixinMembersNamePattern")
     @Override
     public WetnessManager getWetnessManager() {
         return this.wetnessManager;
     }
 
     @Unique
-    @SuppressWarnings("AddedMixinMembersNamePattern")
     @Override
     public InjuryManager getInjuryManager() {
         return this.injuryManager;
     }
 
     @Unique
-    @SuppressWarnings("AddedMixinMembersNamePattern")
     @Override
     public MoodManager getMoodManager() {
         return this.moodManager;
     }
 
     @Unique
-    @SuppressWarnings("AddedMixinMembersNamePattern")
     @Override
     public DiseaseManager getDiseaseManager() {
         return this.diseaseManager;
@@ -309,8 +288,7 @@ public abstract class PlayerEntityMixin extends LivingEntity implements StatAcce
             }
             */
         }
-        if (isShovelMineable && mainHand instanceof ShovelItem && mainHand != Reg.FLINT_CONE)
-            speed /= 2.0F;
+        if (isShovelMineable && mainHand instanceof ShovelItem && mainHand != Reg.FLINT_CONE) speed /= 2.0F;
         else if (state.isIn(BlockTags.AXE_MINEABLE) || isSword) {
 //            System.out.println(speed);//0.00952381
             if (mainHand == Reg.FLINT_HATCHET) speed *= 6.0F;
@@ -332,32 +310,15 @@ public abstract class PlayerEntityMixin extends LivingEntity implements StatAcce
             speed *= (block instanceof AbstractFurnaceBlock || block == Blocks.ENDER_CHEST) ? 16.0F : 4.0F;
         else if (block == Blocks.OBSIDIAN || block == Blocks.CRYING_OBSIDIAN) speed *= 3.0F;
         else if ((block == Blocks.CLAY && !isShovelMineable)) speed /= 9.0F;
-        else if (block instanceof LeavesBlock && !isSword && !isAxe)
-            speed /= 10.0F;
-        else if (block == Blocks.SUGAR_CANE) {
-            if (isKnife || isSword || isAxe) speed *= 3.0F;
-            else speed /= 5.0F;
-        }
+        else if (block instanceof LeavesBlock && !isSword && !isAxe) speed /= 10.0F;
         if (block instanceof TorchBlock || state.isIn(BlockTags.FLOWERS)) speed = 999999.0F;
         cir.setReturnValue(speed);
     }
 
     @Inject(method = "damage", at = @At("HEAD"))
     public void damage(DamageSource source, float amount, CallbackInfoReturnable<Boolean> cir) {
-        if (!world.isClient()) {
-            this.staminaManager.pauseRestoring();
-            if (this.getAttacker() instanceof SpiderEntity && !(Objects.equals(source.getName(), world.getDamageSources().magic().getName()))) {
-                //trigger when being attacked by (cave)spider and not by poison
-                BlockState state = this.world.getBlockState(this.getBlockPos());
-                Block block = state.getBlock();
-                Material material = state.getMaterial();
-                if (material == Material.REPLACEABLE_PLANT || block == Blocks.AIR)
-                    this.world.setBlockState(this.getBlockPos(), Blocks.COBWEB.getDefaultState());
-                this.addStatusEffect(new StatusEffectInstance(StatusEffects.POISON, 3 * 20, 0));
-            }
-        }
+        if (!world.isClient) this.staminaManager.pauseRestoring();
     }
-
 
     @SuppressWarnings("ConstantValue")
     @Inject(method = "eatFood", at = @At("HEAD"))
@@ -368,11 +329,10 @@ public abstract class PlayerEntityMixin extends LivingEntity implements StatAcce
             FoodComponent food = item.getFoodComponent();
             EntityHelper.checkOvereaten(player, false);
             if (food != null) {
-                if (Math.random() < getParasitePossibility(item)) this.diseaseManager.addParasite(0.12);
-                if (food.isMeat() || name.contains("egg"))
-                    this.nutritionManager.addVegetable(-0.1);
-                else if (name.contains("kelp") || name.contains("sugar_cane"))
-                    this.nutritionManager.addVegetable(0.19);
+                if (Math.random() < getParasitePossibilityAndCheckFoodPoisoning(item, this))
+                    this.diseaseManager.addParasite(0.12);
+                if (food.isMeat() || name.contains("egg")) this.nutritionManager.addVegetable(-0.1);
+                else if (name.contains("kelp") || name.contains("sugar_cane")) this.nutritionManager.addVegetable(0.19);
                 else if (name.contains("berries") || name.contains("berry")) this.nutritionManager.addVegetable(0.21);
                 else if (name.contains("apple") || name.contains("orange") || name.contains("carrot") || name.contains("cactus") || name.contains("melon") || name.contains("potherb") || name.contains("shoot") || name.contains("salad") || name.contains("fruit"))
                     this.nutritionManager.addVegetable(0.35);
@@ -406,9 +366,12 @@ public abstract class PlayerEntityMixin extends LivingEntity implements StatAcce
                     else if ((HAS_COOKED.test(name) && item != Reg.ROASTED_WORM) || item == Items.BREAD)
                         this.sanityManager.add(food.isSnack() ? 0.005 : 0.01);
                 }
-                if (item == Items.WHEAT || item == Items.SUGAR || item == Items.SUGAR_CANE || item == Reg.POTHERB)
-                    this.hungerManager.setFoodLevel(Math.min(this.hungerManager.getFoodLevel() + 1, 20));
-                else if (((name.contains("seeds") || Reg.IS_BARK.test(item)) && food.getHunger() == 0) || item == Reg.COOKED_SWEET_BERRIES || item == Reg.ROT || item == Items.KELP || item == Reg.PETALS_SALAD) {
+                if (item == Items.WHEAT || item == Items.SUGAR || item == Items.SUGAR_CANE || item == Reg.POTHERB) {
+                    final int increasedFoodLevel = this.hungerManager.getFoodLevel() + 1;
+                    if (increasedFoodLevel > 20) this.hungerManager.setExhaustion(0.0F);
+                    else this.hungerManager.setFoodLevel(increasedFoodLevel);
+
+                } else if (((name.contains("seeds") || Reg.IS_BARK.test(item)) && food.getHunger() == 0) || item == Reg.COOKED_SWEET_BERRIES || item == Reg.ROT || item == Items.KELP || item == Reg.PETALS_SALAD) {
                     EntityHelper.addDecimalFoodLevel(player, 0.4F, false);
                     if (item == Items.PUMPKIN_SEEDS) this.diseaseManager.addParasite(-1.0);
                 }
@@ -471,7 +434,7 @@ public abstract class PlayerEntityMixin extends LivingEntity implements StatAcce
     @Inject(method = "jump", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/player/PlayerEntity;incrementStat(Lnet/minecraft/util/Identifier;)V", shift = At.Shift.AFTER), cancellable = true)
     public void jump2(@NotNull CallbackInfo ci) {
         double currRealPain = this.injuryManager.getRealPain();
-        float rate = (this.isSprinting() ? 2.5F : 1.0F) * (currRealPain > 2.0 ? (float) (currRealPain * 1.5) : 1.0F) * (this.hasStatusEffect(HcsEffects.FRACTURE) ? 1.5F : 1.0F);
+        float rate = (this.isSprinting() ? 3.0F : 1.0F) * (currRealPain > 2.0 ? (float) (currRealPain * 1.5) : 1.0F) * (this.hasStatusEffect(HcsEffects.FRACTURE) ? 1.5F : 1.0F);
         this.staminaManager.pauseRestoring();
         this.addExhaustion(0.025F * rate);
         this.staminaManager.pauseRestoring(40);
@@ -630,6 +593,8 @@ public abstract class PlayerEntityMixin extends LivingEntity implements StatAcce
         if (this.hasStatusEffect(HcsEffects.RETURN))
             this.statusManager.setReturnEffectAwaitTicks(this.statusManager.getReturnEffectAwaitTicks() + 1);
         else this.statusManager.setReturnEffectAwaitTicks(0);
+        //Player will not pain in relaxing mode (Also see `applyDamage()`)
+        if (isRelaxingMode) this.injuryManager.setRawPain(0.0);
     }
 
     @Inject(method = "getXpToDrop", at = @At("HEAD"), cancellable = true)
@@ -653,33 +618,39 @@ public abstract class PlayerEntityMixin extends LivingEntity implements StatAcce
     }
 
     @Inject(method = "applyDamage", at = @At("TAIL"))
-    public void applyDamage(DamageSource source, float amount, CallbackInfo ci) {
+    public void applyDamage(DamageSource source, float amount, CallbackInfo ci) { //This method won't be called when the damage is taken by a shield
         //Do not add pain in ServerPlayerEntity as it adds with redundant repeat
         quitReturnTeleport(this);
+        //Calc "feeling" damage amount
         float feelingAmount = amount;
         boolean isBurningDamage = EntityHelper.IS_BURNING_DAMAGE.test(source);
         if (!source.isIn(DamageTypeTags.BYPASSES_ARMOR))
             feelingAmount = ArmorHelper.getDamageLeftWithReducedArmor(toPlayer(this), amount);
         feelingAmount = this.modifyAppliedDamage(source, feelingAmount);
         if (isBurningDamage) feelingAmount *= 2;
-        float hurtPercent = feelingAmount / 20.0F; //prev Math.max(12.0F, this.getMaxHealth());
+        float hurtPercent = feelingAmount / 20.0F;
+        //Update status manager data
         this.statusManager.setRecentFeelingDamage(feelingAmount);
-        if (EntityHelper.IS_PHYSICAL_DAMAGE.test(source)) {
-            if (!this.hasStatusEffect(HcsEffects.PAIN_KILLING)) this.injuryManager.addRawPain(hurtPercent * 4.5);
+        this.statusManager.setRecentHurtTicks(20);
+        //Add damage-leading debuffs
+        if (EntityHelper.IS_PHYSICAL_DAMAGE.test(source) && this.getAbsorptionAmount() < 2.0F) {
+            if (!this.hasStatusEffect(HcsEffects.PAIN_KILLING) && !HcsDifficulty.isOf(toPlayer(this), HcsDifficulty.HcsDifficultyEnum.relaxing))
+                this.injuryManager.addRawPain(hurtPercent * 4.5);
             if (!isBurningDamage && EntityHelper.IS_BLEEDING_CAUSING_DAMAGE.test(source)) {
                 this.injuryManager.addBleeding(hurtPercent * 8);
                 this.statusManager.setBandageWorkTicks(0);
             }
+        }
+        //Enable poisoning abilities for vanilla spiders
+        if (this.getAttacker() instanceof SpiderEntity && !(Objects.equals(source.getName(), world.getDamageSources().magic().getName()))) {
+            //trigger when being attacked by (cave)spider and not by poison
+            //Also see SpiderEntityMixin for spiders' webbing
+            this.addStatusEffect(new StatusEffectInstance(StatusEffects.POISON, 3 * 20, 0));
         }
     }
 
     @Inject(method = "canFoodHeal", at = @At("RETURN"), cancellable = true)
     public void canFoodHeal(@NotNull CallbackInfoReturnable<Boolean> cir) {
         cir.setReturnValue(cir.getReturnValueZ() && !this.hasStatusEffect(HcsEffects.BLEEDING) && EntityHelper.getEffectAmplifier(this, HcsEffects.PARASITE_INFECTION) <= 1);
-    }
-
-    @Inject(method = "getHurtSound", at = @At("HEAD"))
-    protected void getHurtSound(DamageSource source, CallbackInfoReturnable<SoundEvent> cir) {
-        this.statusManager.setRecentHurtTicks(20);
     }
 }

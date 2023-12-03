@@ -11,6 +11,7 @@ import net.minecraft.recipe.SpecialCraftingRecipe;
 import net.minecraft.recipe.book.CraftingRecipeCategory;
 import net.minecraft.registry.DynamicRegistryManager;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.collection.DefaultedList;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
 
@@ -57,6 +58,11 @@ public class PourOutContentRecipe extends SpecialCraftingRecipe {
     @Override
     public boolean fits(int width, int height) {
         return width >= 2 && height >= 2;
+    }
+
+    @Override
+    public DefaultedList<ItemStack> getRemainder(@NotNull CraftingInventory inventory) {
+        return DefaultedList.ofSize(inventory.size(), ItemStack.EMPTY);
     }
 
     @Override

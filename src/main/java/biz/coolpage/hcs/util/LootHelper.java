@@ -6,11 +6,10 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.TntEntity;
 import net.minecraft.entity.mob.CreeperEntity;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
+import net.minecraft.item.*;
 import net.minecraft.loot.context.LootContext;
 import net.minecraft.loot.context.LootContextParameters;
+import net.minecraft.registry.tag.BlockTags;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.state.property.IntProperty;
 import net.minecraft.state.property.Properties;
@@ -99,4 +98,10 @@ public class LootHelper {
             cir.setReturnValue(cancelVal);
     }
 
+    public static void mixinToolsPostMine(ItemStack stack, BlockState state, LivingEntity miner, CallbackInfoReturnable<Boolean> cir) {
+        if (stack == null || state == null || miner == null || cir == null) return;
+        Block block = state.getBlock();
+        if (state.isIn(BlockTags.FLOWERS) || block instanceof TorchBlock || (stack.getItem() instanceof SwordItem swordItem && swordItem.getMaterial() == ToolMaterials.WOOD && (block instanceof FernBlock || block instanceof TallPlantBlock)))
+            cir.setReturnValue(true);
+    }
 }

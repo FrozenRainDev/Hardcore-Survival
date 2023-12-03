@@ -45,7 +45,7 @@ public class BreakBlockGoal extends Goal {
             //Choose a pos to break
             BlockPos pendingBreakPos = new BlockPos((int) (this.mob.getX() + findPos[0]), (int) (this.mob.getY() + findPos[1]), (int) (this.mob.getZ() + findPos[2]));
             //Should not break the block behind itself
-            BlockPos backPos = EntityHelper.getPosBackward(this.mob);
+            BlockPos backPos = EntityHelper.getPosFacing(this.mob, true);
             if (pendingBreakPos.getX() == backPos.getX() && pendingBreakPos.getZ() == backPos.getZ()) continue;
             BlockState pendingBreakState = this.mob.world.getBlockState(pendingBreakPos);
             Material material = pendingBreakState.getMaterial();
