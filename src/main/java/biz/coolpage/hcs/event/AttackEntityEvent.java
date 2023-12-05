@@ -42,7 +42,7 @@ public class AttackEntityEvent {
                 }
                 if (EntityHelper.IS_BAREHANDED.and(IS_SURVIVAL_AND_SERVER).test(player) && rand < 0.3) {
                     EntityHelper.msgById(player, "hcs.tip.hurt_hand_attack");
-                    player.damage(player.world.getDamageSources().cactus(), 1.0F);
+                    player.damage(player.world.getDamageSources().cactus(), 0.3F);
                 }
             }
             return ActionResult.PASS;

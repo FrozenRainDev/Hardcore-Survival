@@ -2,35 +2,38 @@ package biz.coolpage.hcs.entity.goal;
 
 import net.minecraft.entity.ai.goal.EscapeDangerGoal;
 import net.minecraft.entity.mob.PathAwareEntity;
+import org.jetbrains.annotations.NotNull;
 
 public class SpiderEscapeDangerGoal extends EscapeDangerGoal {
 
-    public SpiderEscapeDangerGoal(PathAwareEntity mob) {
-        super(mob, 1.0);
+    public SpiderEscapeDangerGoal(@NotNull PathAwareEntity mob) {
+        super(mob, 1.15);
     }
 
-    private int escapeCountdown = 200; //(0, 200]: can escape; [-200, 0]: revenge again temporary after escaping
+    private int escapeCountdown = 150; //(0, 150]: can escape; [-150, 0]: revenge again temporary after escaping
 
     @Override
     public boolean canStart() {
-//        System.out.println(escapeCountdown);
         if (this.escapeCountdown <= 0) ++this.escapeCountdown;
         return super.canStart();
     }
 
     @Override
     protected boolean isInDanger() {
-        return super.isInDanger() && (this.mob.getHealth() / this.mob.getMaxHealth()) < 0.5 && this.escapeCountdown > 0;
+        return super.isInDanger() && (this.mob.getHealth() / this.mob.getMaxHealth()) < 0.6 && this.escapeCountdown > 0;
     }
 
     @Override
     public boolean shouldContinue() {
-        return super.shouldContinue() && this.escapeCountdown > 0;
+        if (this.mob.getNavigation().isIdle()) {
+            this.findTarget();
+            this.mob.getNavigation().startMovingTo(this.targetX, this.targetY, this.targetZ, this.speed);
+        }
+        return this.escapeCountdown > 0;
     }
 
     @Override
     public void tick() {
-//        System.out.println(escapeCountdown);
         super.tick();
         if (this.escapeCountdown > 0) --this.escapeCountdown;
     }
@@ -38,6 +41,7 @@ public class SpiderEscapeDangerGoal extends EscapeDangerGoal {
     @Override
     public void stop() {
         super.stop();
-        this.escapeCountdown = -200;
+        this.escapeCountdown = -150;
+        this.mob.setTarget(this.mob.getAttacker());
     }
 }

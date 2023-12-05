@@ -60,9 +60,9 @@ public class CommUtil {
 
     @Contract(pure = true)
     public static boolean hasNull(@Nullable Object... objects) {
-        if (objects == null || objects.length == 0) return false;
-        for (Object object : objects) if (object == null) return false;
-        return true;
+        if (objects == null || objects.length == 0) return true;
+        for (Object object : objects) if (object == null) return true;
+        return false;
     }
 
     @Contract(pure = true)

@@ -12,6 +12,7 @@ accessible method net/minecraft/entity/mob/MobEntity isAffectedByDaylight ()Z
 accessible method net/minecraft/entity/Entity isBeingRainedOn ()Z
 accessible method net/minecraft/entity/LivingEntity computeFallDamage (FF)I
 accessible method net/minecraft/entity/mob/ZombieEntity burnsInDaylight ()Z
+accessible field net/minecraft/entity/LivingEntity lastAttackedTicks I
 accessible field net/minecraft/item/ArmorMaterials BASE_DURABILITY Ljava/util/EnumMap;
 accessible method net/minecraft/item/AxeItem getStrippedState (Lnet/minecraft/block/BlockState;)Ljava/util/Optional;
 accessible method net/minecraft/item/Items register (Lnet/minecraft/util/Identifier;Lnet/minecraft/item/Item;)Lnet/minecraft/item/Item;

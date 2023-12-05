@@ -11,18 +11,25 @@ import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.effect.StatusEffects;
 import net.minecraft.entity.mob.EndermanEntity;
 import net.minecraft.entity.mob.HostileEntity;
+import net.minecraft.entity.mob.MobEntity;
+import net.minecraft.entity.mob.SpiderEntity;
 import net.minecraft.entity.passive.*;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.Items;
+import net.minecraft.predicate.entity.EntityPredicates;
+import net.minecraft.util.math.Box;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
+
+import java.util.List;
 
 @Mixin(LivingEntity.class)
 @SuppressWarnings("ConstantValue")
@@ -37,10 +44,17 @@ public abstract class LivingEntityMixin extends Entity {
         super(type, world);
     }
 
+    @Unique
+    private List<? extends MobEntity> getOthersAnimalsInRange(@NotNull AnimalEntity animal) {
+        //From UniversalAngerGoal/getOthersInRange()
+        Box box = Box.from(animal.getPos()).expand(EntityHelper.ZOMBIE_SENSING_RANGE, 10.0, EntityHelper.ZOMBIE_SENSING_RANGE);
+        return animal.world.getEntitiesByClass(AnimalEntity.class, box, EntityPredicates.EXCEPT_SPECTATOR);
+    }
+
     @Inject(method = "baseTick", at = @At("HEAD"))
     public void baseTick(CallbackInfo cir) {
         //Enable prolonged panic caused by being attacked
-        if (this.age % 20 != 10) ++lastAttackedTime;
+        if ((Object) this instanceof AnimalEntity && this.age % 20 != 10) ++lastAttackedTime;
     }
 
     @Inject(method = "getNextAirOnLand", at = @At("RETURN"), cancellable = true)
@@ -56,12 +70,23 @@ public abstract class LivingEntityMixin extends Entity {
         }
     }
 
-    @Inject(method = "damage", at = @At("HEAD"))
+    @Inject(method = "damage", at = @At("TAIL"))
     public void damage(DamageSource source, float amount, CallbackInfoReturnable<Integer> cir) {
         Object victim = this;
         if (source != null && source.getAttacker() instanceof LivingEntity attacker) {
             if (victim instanceof PlayerEntity player && attacker instanceof HostileEntity)
                 ((StatAccessor) player).getSanityManager().add((Object) this instanceof EndermanEntity ? -0.08 : -0.005);
+            if (victim instanceof AnimalEntity animal) {
+                getOthersAnimalsInRange(animal).stream()
+                        .filter(entity -> entity != null && entity != animal)
+                        .forEach(entity -> {
+                            entity.setAttacker(animal.getAttacker());
+                            entity.lastAttackedTicks = entity.age;
+                        });
+                if (victim instanceof AnimalEntity) {
+                    if (victim instanceof ChickenEntity) EntityHelper.dropItem(this, Items.FEATHER, 1);
+                }
+            }
         }
     }
 
@@ -83,7 +108,9 @@ public abstract class LivingEntityMixin extends Entity {
             EntityHelper.dropItem(this, meat, (int) (Math.random() * 3) + 1);
             //EntityHelper.dropItem(this, Items.BONE, 2);
             EntityHelper.dropItem(this, Reg.ANIMAL_VISCERA);
-        }
+        } else if (ent instanceof SpiderEntity && Math.random() < 0.33) EntityHelper.dropItem(this, Reg.SPIDER_GLAND);
+        else if (ent instanceof BatEntity)
+            EntityHelper.dropItem(this, this.getFireTicks() > 0 ? Reg.ROASTED_BAT_WINGS : Reg.BAT_WINGS);
     }
 
     @Inject(method = "drop", at = @At("HEAD"), cancellable = true)

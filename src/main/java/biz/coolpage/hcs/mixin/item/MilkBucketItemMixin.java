@@ -1,9 +1,9 @@
 package biz.coolpage.hcs.mixin.item;
 
 import biz.coolpage.hcs.Reg;
+import biz.coolpage.hcs.status.accessor.StatAccessor;
 import biz.coolpage.hcs.util.EntityHelper;
 import biz.coolpage.hcs.util.RotHelper;
-import biz.coolpage.hcs.status.accessor.StatAccessor;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.HungerManager;
 import net.minecraft.entity.player.PlayerEntity;

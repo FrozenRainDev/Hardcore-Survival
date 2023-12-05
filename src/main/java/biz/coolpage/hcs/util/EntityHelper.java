@@ -323,15 +323,21 @@ public class EntityHelper {
     }
 
     public static void checkOvereaten(@NotNull ServerPlayerEntity player, boolean isDrink) {
+        // Also see ItemMixin/use()V
         int hunger = player.getHungerManager().getFoodLevel();
         double thirst = ((StatAccessor) player).getThirstManager().get();
         if ((isDrink && (hunger >= 20 || thirst > 0.99)) || (!isDrink && hunger >= 20)) {
             StatusManager statusManager = ((StatAccessor) player).getStatusManager();
             statusManager.setHasDecimalFoodLevel(false);
             if (statusManager.getRecentLittleOvereatenTicks() > 0) {
-                if (player.hasStatusEffect(HcsEffects.OVEREATEN))
-                    ((StatAccessor) player).getInjuryManager().addRawPain(0.5);
-                player.addStatusEffect(new StatusEffectInstance(HcsEffects.OVEREATEN, 600, 0, false, false, true));
+                boolean hasOvereatenEffect = player.hasStatusEffect(HcsEffects.OVEREATEN);
+                int duration = 600;
+                var overeatenEffect = player.getStatusEffect(HcsEffects.OVEREATEN);
+                if (overeatenEffect != null) {
+                    int sumDur = duration + overeatenEffect.getDuration();
+                    duration = Math.min(sumDur, 1200);
+                }
+                player.addStatusEffect(new StatusEffectInstance(HcsEffects.OVEREATEN, duration, hasOvereatenEffect ? 1 : 0, false, false, true));
             } else statusManager.setRecentLittleOvereatenTicks(1200);
         }
     }

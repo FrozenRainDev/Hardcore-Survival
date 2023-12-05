@@ -20,7 +20,6 @@
     "command.LocateCommandMixin",
     "entity.AbstractSkeletonEntityMixin",
     "entity.AnimalEntityMixin",
-    "entity.BatEntityMixin",
     "entity.CampfireBlockEntityMixin",
     "entity.ChickenEntityMixin",
     "entity.CowEntityMixin",

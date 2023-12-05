@@ -1,6 +1,5 @@
 package biz.coolpage.hcs.mixin.item;
 
-import biz.coolpage.hcs.entity.FlintProjectileEntity;
 import biz.coolpage.hcs.item.RockItem;
 import biz.coolpage.hcs.status.HcsEffects;
 import biz.coolpage.hcs.util.EntityHelper;
@@ -139,12 +138,11 @@ public class ItemMixin {
     @Inject(method = "use", at = @At("HEAD"), cancellable = true)
     public void use(World world, PlayerEntity user, Hand hand, CallbackInfoReturnable<TypedActionResult<ItemStack>> cir) {
         if (((Object) this) instanceof Item item) {
-            if (item.isFood() && IS_SURVIVAL_LIKE.test(user)/*Both S C sides needed*/ && user.hasStatusEffect(HcsEffects.FOOD_POISONING)) {
+            if (item.isFood() && IS_SURVIVAL_LIKE.test(user)/*Both S C sides needed*/ && (user.hasStatusEffect(HcsEffects.FOOD_POISONING) || EntityHelper.getEffectAmplifier(user, HcsEffects.OVEREATEN) > 0)) {
                 world.playSound(null, user.getX(), user.getY(), user.getZ(), SoundEvents.ENTITY_PLAYER_BURP, SoundCategory.PLAYERS, 0.5f, world.random.nextFloat() * 0.1f + 0.9f);
                 user.getItemCooldownManager().set(item, 60);
                 cir.setReturnValue(TypedActionResult.fail(user.getStackInHand(hand)));
-            } else if (item == Items.FLINT)
-                cir.setReturnValue(RockItem.throwOut(world, user, hand, () -> new FlintProjectileEntity(user, world)));
+            } else if (item == Items.FLINT) cir.setReturnValue(RockItem.throwOut(world, user, hand));
         }
     }
 
