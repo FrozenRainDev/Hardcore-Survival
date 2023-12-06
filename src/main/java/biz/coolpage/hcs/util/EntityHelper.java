@@ -22,6 +22,7 @@ import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.entity.mob.HostileEntity;
 import net.minecraft.entity.mob.SkeletonEntity;
 import net.minecraft.entity.passive.AnimalEntity;
+import net.minecraft.entity.passive.CowEntity;
 import net.minecraft.entity.player.HungerManager;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.*;
@@ -63,7 +64,7 @@ public class EntityHelper {
 
     public static final Predicate<DamageSource> IS_PHYSICAL_DAMAGE = damageSource -> !damageSource.isOf(DamageTypes.DROWN) && !damageSource.isOf(DamageTypes.STARVE) && !damageSource.isOf(DamageTypes.OUT_OF_WORLD) && !damageSource.isOf(DamageTypes.MAGIC) && !damageSource.isOf(DamageTypes.INDIRECT_MAGIC) && !damageSource.isOf(DamageTypes.WITHER);
     public static final Predicate<DamageSource> IS_BURNING_DAMAGE = damageSource -> damageSource.getType().effects().equals(DamageEffects.BURNING);
-    public static final Predicate<DamageSource> IS_BLEEDING_CAUSING_DAMAGE = IS_PHYSICAL_DAMAGE.and(damageSource -> !damageSource.isOf(DamageTypes.FALL)).and(IS_BURNING_DAMAGE.negate());
+    public static final Predicate<DamageSource> IS_BLEEDING_CAUSING_DAMAGE = IS_PHYSICAL_DAMAGE.and(damageSource -> !damageSource.isOf(DamageTypes.FALL)).and(IS_BURNING_DAMAGE.negate()).and(source -> !(source.getAttacker() instanceof CowEntity)/*Exclude CowKickRevengeGoal*/);
     public static final Predicate<PlayerEntity> IS_SURVIVAL_LIKE = player -> player != null && !player.isCreative() && !player.isSpectator();
     public static final Predicate<PlayerEntity> IS_SURVIVAL_AND_SERVER = IS_SURVIVAL_LIKE.and(player -> player.world != null && !player.world.isClient);
     public static final Predicate<PlayerEntity> IS_BAREHANDED = player -> {

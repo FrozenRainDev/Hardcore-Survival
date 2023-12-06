@@ -54,7 +54,7 @@ public abstract class LivingEntityMixin extends Entity {
     @Inject(method = "baseTick", at = @At("HEAD"))
     public void baseTick(CallbackInfo cir) {
         //Enable prolonged panic caused by being attacked
-        if ((Object) this instanceof AnimalEntity && this.age % 20 != 10) ++lastAttackedTime;
+        if ((Object) this instanceof AnimalEntity /*&& this.age % 20 != 10 FIXME this statement can cause mob frozen without any movement*/) ++lastAttackedTime;
     }
 
     @Inject(method = "getNextAirOnLand", at = @At("RETURN"), cancellable = true)
