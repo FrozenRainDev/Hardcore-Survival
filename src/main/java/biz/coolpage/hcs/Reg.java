@@ -211,7 +211,7 @@ public class Reg implements ModInitializer {
             return super.finishUsing(stack, world, user);
         }
     };
-    public static final Item ASHES = new Item(new Item.Settings());
+    public static final Item ASHES = new SalveItem(0, 0.5, 40);
 
     public static final EntityType<RockProjectileEntity> ROCK_PROJECTILE_ENTITY = FabricEntityTypeBuilder.<RockProjectileEntity>create(SpawnGroup.MISC, RockProjectileEntity::new).dimensions(new EntityDimensions(0.25F, 0.25F, true)).build();
     public static final EntityType<FlintProjectileEntity> FLINT_PROJECTILE_ENTITY = FabricEntityTypeBuilder.<FlintProjectileEntity>create(SpawnGroup.MISC, FlintProjectileEntity::new).dimensions(new EntityDimensions(0.25F, 0.25F, true)).build();

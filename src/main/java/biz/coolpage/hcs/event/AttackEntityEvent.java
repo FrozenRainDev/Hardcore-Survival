@@ -22,7 +22,6 @@ public class AttackEntityEvent {
                 final double rand = Math.random();
                 ItemStack mainHandStack = player.getMainHandStack();
                 if (mainHandStack.isOf(Reg.ROCK) && rand < 0.02) {
-                    // FIXME victim.damage(player.world.getDamageSources().playerAttack(player), 1.0F); drop a viscera before death
                     player.getMainHandStack().decrement(1);
                     player.sendToolBreakStatus(Hand.MAIN_HAND);
                     EntityHelper.dropItem(player, Reg.SHARP_ROCK);
@@ -42,7 +41,7 @@ public class AttackEntityEvent {
                 }
                 if (EntityHelper.IS_BAREHANDED.and(IS_SURVIVAL_AND_SERVER).test(player) && rand < 0.3) {
                     EntityHelper.msgById(player, "hcs.tip.hurt_hand_attack");
-                    player.damage(player.world.getDamageSources().cactus(), 0.3F);
+                    player.damage(player.world.getDamageSources().generic(), 0.3F);
                 }
             }
             return ActionResult.PASS;

@@ -10,22 +10,26 @@ import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.block.TorchBlock;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityType;
-import net.minecraft.entity.ItemEntity;
-import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.*;
+import net.minecraft.entity.boss.dragon.EnderDragonEntity;
+import net.minecraft.entity.boss.dragon.phase.PhaseType;
 import net.minecraft.entity.damage.DamageEffects;
 import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.damage.DamageTypes;
+import net.minecraft.entity.data.DataTracker;
+import net.minecraft.entity.data.TrackedData;
+import net.minecraft.entity.data.TrackedDataHandlerRegistry;
 import net.minecraft.entity.effect.StatusEffect;
 import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.entity.mob.HostileEntity;
+import net.minecraft.entity.mob.MobEntity;
 import net.minecraft.entity.mob.SkeletonEntity;
 import net.minecraft.entity.passive.AnimalEntity;
 import net.minecraft.entity.passive.CowEntity;
 import net.minecraft.entity.player.HungerManager;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.*;
+import net.minecraft.predicate.entity.EntityPredicates;
 import net.minecraft.registry.RegistryKey;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ChunkTicketType;
@@ -39,16 +43,14 @@ import net.minecraft.text.Text;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
 import net.minecraft.util.hit.BlockHitResult;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.ChunkPos;
-import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.math.*;
 import net.minecraft.world.RaycastContext;
 import net.minecraft.world.World;
 import net.minecraft.world.event.GameEvent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.function.BiPredicate;
@@ -96,6 +98,8 @@ public class EntityHelper {
         \end{cases}
         */
     public static final Function<Integer, Double> PLASMA_CONCENTRATION = x -> x <= 600 ? (-2.5 * Math.pow((x - 600) / 600.0, 2) + 2.5) : (-2.72 / (1 + Math.pow(Math.E, (2000 - x) / 600.0)) + 2.74);
+
+    public static final TrackedData<Long> MILKED_TIME = DataTracker.registerData(CowEntity.class, TrackedDataHandlerRegistry.LONG);
 
     public static void dropItem(@NotNull Entity entity, double x, double y, double z, Item item, int count) {
         if (entity.world instanceof ServerWorld) {
@@ -426,5 +430,35 @@ public class EntityHelper {
             }
         }
         return false;
+    }
+
+    public static List<? extends MobEntity> getOthersEntitiesInRange(@NotNull LivingEntity entity, Class<? extends MobEntity> targetEntClass) {
+        //From UniversalAngerGoal/getOthersInRange()
+        Box box = Box.from(entity.getPos()).expand(ZOMBIE_SENSING_RANGE, 10.0, ZOMBIE_SENSING_RANGE);
+        return entity.world.getEntitiesByClass(targetEntClass, box, EntityPredicates.EXCEPT_SPECTATOR);
+    }
+
+    public static void letEnderDragonChargeAtTheClosestPlayer(LivingEntity entity) {
+        if (entity instanceof EnderDragonEntity dragon) {
+            PlayerEntity player = dragon.world.getClosestPlayer(dragon, 150);
+            System.out.println("prepare for charge at the player");
+            if (player != null) {
+                System.out.println("CHARGE at the player!");
+                dragon.getPhaseManager().setPhase(PhaseType.CHARGING_PLAYER);
+                dragon.getPhaseManager().create(PhaseType.CHARGING_PLAYER).setPathTarget(new Vec3d(player.getX(), player.getY(), player.getZ()));
+            }
+        }
+    }
+
+    public static void lightningStrike(LivingEntity entity) {
+        if(entity instanceof ServerPlayerEntity player) {
+            if (entity.world == null) return;
+            LightningEntity lightningEntity = EntityType.LIGHTNING_BOLT.create(player.world);
+            if (lightningEntity != null) {
+                lightningEntity.refreshPositionAfterTeleport(player.getPos());
+                lightningEntity.setChanneler(player);
+                player.world.spawnEntity(lightningEntity);
+            }
+        }
     }
 }

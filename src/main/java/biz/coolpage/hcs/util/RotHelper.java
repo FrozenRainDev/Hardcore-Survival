@@ -279,7 +279,6 @@ public class RotHelper {
                     if (food != null) hungerManager.setFoodLevel(hungerManager.getFoodLevel() - food.getHunger() + 1);
                     player.addStatusEffect(new StatusEffectInstance(StatusEffects.NAUSEA, 200));
                     player.addStatusEffect(new StatusEffectInstance(StatusEffects.POISON, 100));
-                    player.addStatusEffect(new StatusEffectInstance(StatusEffects.HUNGER, 600));
                     player.addStatusEffect(new StatusEffectInstance(HcsEffects.FOOD_POISONING, 1200));
                     player.addStatusEffect(new StatusEffectInstance(HcsEffects.DIARRHEA, 600));
                 }

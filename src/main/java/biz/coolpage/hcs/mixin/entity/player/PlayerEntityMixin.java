@@ -4,7 +4,7 @@ import biz.coolpage.hcs.Reg;
 import biz.coolpage.hcs.config.HcsDifficulty;
 import biz.coolpage.hcs.item.KnifeItem;
 import biz.coolpage.hcs.status.HcsEffects;
-import biz.coolpage.hcs.status.accessor.DamageSourcesAccessor;
+import biz.coolpage.hcs.status.accessor.IDamageSources;
 import biz.coolpage.hcs.status.accessor.StatAccessor;
 import biz.coolpage.hcs.status.manager.*;
 import biz.coolpage.hcs.util.ArmorHelper;
@@ -436,7 +436,7 @@ public abstract class PlayerEntityMixin extends LivingEntity implements StatAcce
         double currRealPain = this.injuryManager.getRealPain();
         float rate = (this.isSprinting() ? 3.0F : 1.0F) * (currRealPain > 2.0 ? (float) (currRealPain * 1.5) : 1.0F) * (this.hasStatusEffect(HcsEffects.FRACTURE) ? 1.5F : 1.0F);
         this.staminaManager.pauseRestoring();
-        this.addExhaustion(0.025F * rate);
+        this.addExhaustion(0.035F * rate);
         this.staminaManager.pauseRestoring(40);
         this.staminaManager.add(-0.0025F * rate, this);
         ci.cancel();
@@ -496,7 +496,7 @@ public abstract class PlayerEntityMixin extends LivingEntity implements StatAcce
             if (!this.hasVehicle()) {
                 boolean shouldPauseRestoring = true;
                 if (this.onGround) {
-                    if (this.isSprinting()) this.staminaManager.add(-0.0004, this);
+                    if (this.isSprinting()) this.staminaManager.add(-0.0006, this);
                     else if (this.isInSneakingPose()) this.staminaManager.add(-0.0001, this);
                     else if (this.staminaManager.get() < 0.7) { //walking while stamina < 0.7 will getRealPain a recovery
                         shouldPauseRestoring = false;
@@ -540,7 +540,7 @@ public abstract class PlayerEntityMixin extends LivingEntity implements StatAcce
                         else if (currDarkTicks > 720) {
                             sanDecrement = 0.1;
                             if (currDarkTicks > 800 && currDarkTicks % 10 == 0)
-                                this.damage(((DamageSourcesAccessor) this.world.getDamageSources()).darkness(), 2.0F);
+                                this.damage(((IDamageSources) this.world.getDamageSources()).darkness(), 2.0F);
                         }
                     }
                     this.statusManager.setInDarknessTicks(currDarkTicks + 1);
@@ -566,7 +566,7 @@ public abstract class PlayerEntityMixin extends LivingEntity implements StatAcce
         if (this.statusManager.getFinalOxygenLackLevel() >= 3 && (this.world.getTime() % 20 == 0 || this.getAir() < 0))
             this.setAir(this.getNextAirUnderwater(this.getAir()));
         if (this.getAir() < -20 && this.world.getTime() % 15 == 0)
-            this.damage(((DamageSourcesAccessor) this.world.getDamageSources()).oxygenDeficiency(), 1.0F);
+            this.damage(((IDamageSources) this.world.getDamageSources()).oxygenDeficiency(), 1.0F);
         //Wetness
         if (this.isSubmergedInWater) this.wetnessManager.add(0.03);
         else if (this.isTouchingWater() && this.wetnessManager.get() < 0.7) this.wetnessManager.add(0.01);
@@ -594,7 +594,11 @@ public abstract class PlayerEntityMixin extends LivingEntity implements StatAcce
             this.statusManager.setReturnEffectAwaitTicks(this.statusManager.getReturnEffectAwaitTicks() + 1);
         else this.statusManager.setReturnEffectAwaitTicks(0);
         //Player will not pain in relaxing mode (Also see `applyDamage()`)
-        if (isRelaxingMode) this.injuryManager.setRawPain(0.0);
+        if (isRelaxingMode) {
+            this.injuryManager.setRawPain(0.0);
+            this.injuryManager.setBleeding(0.0);
+            this.injuryManager.setFracture(0.0);
+        }
     }
 
     @Inject(method = "getXpToDrop", at = @At("HEAD"), cancellable = true)
@@ -633,9 +637,8 @@ public abstract class PlayerEntityMixin extends LivingEntity implements StatAcce
         this.statusManager.setRecentFeelingDamage(feelingAmount);
         this.statusManager.setRecentHurtTicks(20);
         //Add damage-leading debuffs
-        if (EntityHelper.IS_PHYSICAL_DAMAGE.test(source) && this.getAbsorptionAmount() < 2.0F) {
-            if (!this.hasStatusEffect(HcsEffects.PAIN_KILLING) && !HcsDifficulty.isOf(toPlayer(this), HcsDifficulty.HcsDifficultyEnum.relaxing))
-                this.injuryManager.addRawPain(hurtPercent * 4.5);
+        if (EntityHelper.IS_PHYSICAL_DAMAGE.test(source) && this.getAbsorptionAmount() < 2.0F && !HcsDifficulty.isOf(toPlayer(this), HcsDifficulty.HcsDifficultyEnum.relaxing)) {
+            if (!this.hasStatusEffect(HcsEffects.PAIN_KILLING)) this.injuryManager.addRawPain(hurtPercent * 4.5);
             if (!isBurningDamage && EntityHelper.IS_BLEEDING_CAUSING_DAMAGE.test(source)) {
                 this.injuryManager.addBleeding(hurtPercent * 8);
                 this.statusManager.setBandageWorkTicks(0);

@@ -2,7 +2,7 @@ package biz.coolpage.hcs.status.accessor;
 
 import net.minecraft.entity.damage.DamageSource;
 
-public interface DamageSourcesAccessor {
+public interface IDamageSources {
     DamageSource dehydrate();
 
     DamageSource heatstroke();

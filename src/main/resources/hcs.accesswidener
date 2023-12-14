@@ -7,6 +7,8 @@ accessible method net/minecraft/block/FarmlandBlock isWaterNearby (Lnet/minecraf
 accessible field net/minecraft/block/StemBlock pickBlockItem Ljava/util/function/Supplier;
 accessible method net/minecraft/client/render/GameRenderer loadPostProcessor (Lnet/minecraft/util/Identifier;)V
 accessible field net/minecraft/entity/ai/goal/AvoidSunlightGoal mob Lnet/minecraft/entity/mob/PathAwareEntity;
+accessible field net/minecraft/entity/boss/dragon/phase/PhaseType name Ljava/lang/String;
+accessible field net/minecraft/entity/boss/dragon/phase/SittingScanningPhase PLAYER_WITHIN_RANGE_PREDICATE Lnet/minecraft/entity/ai/TargetPredicate;
 accessible method net/minecraft/entity/damage/DamageSources create (Lnet/minecraft/registry/RegistryKey;)Lnet/minecraft/entity/damage/DamageSource;
 accessible method net/minecraft/entity/mob/MobEntity isAffectedByDaylight ()Z
 accessible method net/minecraft/entity/Entity isBeingRainedOn ()Z

@@ -1,7 +1,7 @@
 package biz.coolpage.hcs.status;
 
 import biz.coolpage.hcs.config.HcsDifficulty;
-import biz.coolpage.hcs.status.accessor.DamageSourcesAccessor;
+import biz.coolpage.hcs.status.accessor.IDamageSources;
 import biz.coolpage.hcs.status.accessor.StatAccessor;
 import biz.coolpage.hcs.status.manager.InjuryManager;
 import biz.coolpage.hcs.status.manager.StatusManager;
@@ -101,7 +101,6 @@ public class HcsEffects {
                 ((StatAccessor) player).getSanityManager().add(-0.00001 * (amplifier + 1));
             }
         }
-        //UUID.randomUUID() was used to generate different uuids
     }.addAttributeModifier(EntityAttributes.GENERIC_MOVEMENT_SPEED, "DFAE009E-7F40-4EC2-BF1F-D6F0B5CA77B5", -0.15f, EntityAttributeModifier.Operation.MULTIPLY_TOTAL)
             .addAttributeModifier(EntityAttributes.GENERIC_ATTACK_SPEED, "726C2159-5D61-4656-8B1E-A594BC7C3E84", -0.1f, EntityAttributeModifier.Operation.MULTIPLY_TOTAL)
             .addAttributeModifier(EntityAttributes.GENERIC_ATTACK_KNOCKBACK, "F03F53E5-DC9E-4716-8248-7B13FCAFE753", -0.1f, EntityAttributeModifier.Operation.MULTIPLY_TOTAL);
@@ -173,7 +172,7 @@ public class HcsEffects {
                 if (amplifier > 0) {
                     player.setSprinting(false);
                     if (player.world != null && player.world.getTime() % 60 == 0) {
-                        DamageSource damageSource = ((DamageSourcesAccessor) player.world.getDamageSources()).heatstroke();
+                        DamageSource damageSource = ((IDamageSources) player.world.getDamageSources()).heatstroke();
                         if (damageSource != null) player.damage(damageSource, 1.0F);
                     }
                 }
@@ -334,7 +333,7 @@ public class HcsEffects {
                     case 2 -> 150;
                     default -> 40;
                 } * HcsDifficulty.chooseVal(toPlayer(entity), 2.0F, 1.0F, 0.5F)) == 0)
-                    entity.damage(((DamageSourcesAccessor) entity.world.getDamageSources()).bleeding(), 1.0F);
+                    entity.damage(((IDamageSources) entity.world.getDamageSources()).bleeding(), 1.0F);
         }
     };
 
@@ -374,7 +373,7 @@ public class HcsEffects {
                     if (amplifier > 1) {
                         ((StatAccessor) player).getSanityManager().add(-0.00005);
                         if (player.world.getTime() % 100 == 0) {
-                            player.damage(((DamageSourcesAccessor) player.world.getDamageSources()).parasiteInfection(), 1.0F);
+                            player.damage(((IDamageSources) player.world.getDamageSources()).parasiteInfection(), 1.0F);
                             player.addStatusEffect(new StatusEffectInstance(StatusEffects.BLINDNESS, 50, 0, false, false, false));
                         }
                     }
@@ -417,7 +416,7 @@ public class HcsEffects {
         public void applyUpdateEffect(LivingEntity entity, int amplifier) {
             if (entity instanceof ServerPlayerEntity player && IS_SURVIVAL_LIKE.test(player)) {
                 ((StatAccessor) player).getThirstManager().add(-0.00015 * (amplifier + 1));
-                player.getHungerManager().addExhaustion(0.02F * (amplifier + 1));
+                player.getHungerManager().addExhaustion(0.015F * (amplifier + 1));
                 ((StatAccessor) player).getSanityManager().add(-0.00001 * (amplifier + 1));
                 player.getHungerManager().setSaturationLevel(0.0F);
             }

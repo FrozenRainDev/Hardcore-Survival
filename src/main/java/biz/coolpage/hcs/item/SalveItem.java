@@ -21,7 +21,7 @@ public class SalveItem extends BandageItem {
 
     @Override
     public ItemStack finishUsing(ItemStack stack, World world, LivingEntity user) {
-        if (user instanceof ServerPlayerEntity player)
+        if (user instanceof ServerPlayerEntity player && regenSec > 0)
             player.addStatusEffect(new StatusEffectInstance(StatusEffects.REGENERATION, regenSec * 20, 0));
         return super.finishUsing(stack, world, user);
     }

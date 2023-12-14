@@ -3,7 +3,7 @@ package biz.coolpage.hcs.mixin.entity.player;
 import biz.coolpage.hcs.config.HcsDifficulty;
 import biz.coolpage.hcs.event.ClientPlayConnectionEvent;
 import biz.coolpage.hcs.status.HcsEffects;
-import biz.coolpage.hcs.status.accessor.DamageSourcesAccessor;
+import biz.coolpage.hcs.status.accessor.IDamageSources;
 import biz.coolpage.hcs.status.accessor.StatAccessor;
 import biz.coolpage.hcs.status.manager.*;
 import biz.coolpage.hcs.status.network.ServerS2C;
@@ -122,7 +122,7 @@ public abstract class ServerPlayerEntityMixin extends PlayerEntity {
         //Debuff of poor condition & heat for doing sport
         final double currStamina = staminaManager.get();
         if (ServerS2C.dtoi(thirstManager.get()) <= 10 && currTime % 400 == 0) {// ticks will cause different players Cannot be hurt at the same time
-            DamageSource damageSource = ((DamageSourcesAccessor) this.world.getDamageSources()).dehydrate();
+            DamageSource damageSource = ((IDamageSources) this.world.getDamageSources()).dehydrate();
             if (damageSource != null) this.damage(damageSource, 1.0F);
         }
         thirstManager.updateThirstRateAffectedByTemp(envTemp, (float) playerTemp);

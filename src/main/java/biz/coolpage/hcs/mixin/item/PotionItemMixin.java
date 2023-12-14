@@ -36,7 +36,10 @@ public abstract class PotionItemMixin extends Item {
         if (user instanceof ServerPlayerEntity player && IS_SURVIVAL_LIKE.test(player)) {
             Potion potion = PotionUtil.getPotion(stack);
             if (potion.getEffects().isEmpty()) {
-                player.addStatusEffect(new StatusEffectInstance(HcsEffects.DIARRHEA, 600, 0, false, false, true));
+                double rand = Math.random();
+                if (rand < 0.08)
+                    player.addStatusEffect(new StatusEffectInstance(HcsEffects.FOOD_POISONING, 1200, 0, false, false, true));
+                else player.addStatusEffect(new StatusEffectInstance(HcsEffects.DIARRHEA, 600, 0, false, false, true));
                 if (Math.random() < 0.003) ((StatAccessor) player).getDiseaseManager().addParasite(0.12);
             }
             ((StatAccessor) player).getThirstManager().addDirectly(0.3);

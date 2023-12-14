@@ -11,25 +11,19 @@ import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.effect.StatusEffects;
 import net.minecraft.entity.mob.EndermanEntity;
 import net.minecraft.entity.mob.HostileEntity;
-import net.minecraft.entity.mob.MobEntity;
 import net.minecraft.entity.mob.SpiderEntity;
 import net.minecraft.entity.passive.*;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.Items;
-import net.minecraft.predicate.entity.EntityPredicates;
-import net.minecraft.util.math.Box;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
-import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
-
-import java.util.List;
 
 @Mixin(LivingEntity.class)
 @SuppressWarnings("ConstantValue")
@@ -44,17 +38,10 @@ public abstract class LivingEntityMixin extends Entity {
         super(type, world);
     }
 
-    @Unique
-    private List<? extends MobEntity> getOthersAnimalsInRange(@NotNull AnimalEntity animal) {
-        //From UniversalAngerGoal/getOthersInRange()
-        Box box = Box.from(animal.getPos()).expand(EntityHelper.ZOMBIE_SENSING_RANGE, 10.0, EntityHelper.ZOMBIE_SENSING_RANGE);
-        return animal.world.getEntitiesByClass(AnimalEntity.class, box, EntityPredicates.EXCEPT_SPECTATOR);
-    }
-
     @Inject(method = "baseTick", at = @At("HEAD"))
     public void baseTick(CallbackInfo cir) {
         //Enable prolonged panic caused by being attacked
-        if ((Object) this instanceof AnimalEntity /*&& this.age % 20 != 10 FIXME this statement can cause mob frozen without any movement*/) ++lastAttackedTime;
+        if ((Object) this instanceof AnimalEntity && this.age % 6 != 0) ++this.lastAttackedTime;
     }
 
     @Inject(method = "getNextAirOnLand", at = @At("RETURN"), cancellable = true)
@@ -75,9 +62,9 @@ public abstract class LivingEntityMixin extends Entity {
         Object victim = this;
         if (source != null && source.getAttacker() instanceof LivingEntity attacker) {
             if (victim instanceof PlayerEntity player && attacker instanceof HostileEntity)
-                ((StatAccessor) player).getSanityManager().add((Object) this instanceof EndermanEntity ? -0.08 : -0.005);
+                ((StatAccessor) player).getSanityManager().add(attacker instanceof EndermanEntity ? -0.08 : -0.005);
             if (victim instanceof AnimalEntity animal) {
-                getOthersAnimalsInRange(animal).stream()
+                EntityHelper.getOthersEntitiesInRange(animal, AnimalEntity.class).stream()
                         .filter(entity -> entity != null && entity != animal)
                         .forEach(entity -> {
                             entity.setAttacker(animal.getAttacker());
@@ -99,7 +86,7 @@ public abstract class LivingEntityMixin extends Entity {
             if (!(ent instanceof ChickenEntity)) {
                 //EntityHelper.dropItem(this, Items.BONE, 2);
                 EntityHelper.dropItem(this, Reg.ANIMAL_VISCERA);
-                if (ent instanceof SheepEntity && Math.random() < 0.6) EntityHelper.dropItem(this, Items.LEATHER);
+                if (ent instanceof SheepEntity && Math.random() < 0.3) EntityHelper.dropItem(this, Items.LEATHER);
             }
             if (this.isBaby()) EntityHelper.dropItem(this, meat);
         } else if (ent instanceof AxolotlEntity || ent instanceof CatEntity || ent instanceof FrogEntity || ent instanceof ParrotEntity || ent instanceof SquidEntity)

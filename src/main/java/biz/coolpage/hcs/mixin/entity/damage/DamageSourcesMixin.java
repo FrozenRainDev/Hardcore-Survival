@@ -1,6 +1,6 @@
 package biz.coolpage.hcs.mixin.entity.damage;
 
-import biz.coolpage.hcs.status.accessor.DamageSourcesAccessor;
+import biz.coolpage.hcs.status.accessor.IDamageSources;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.damage.DamageSources;
@@ -18,7 +18,7 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(DamageSources.class)
-public abstract class DamageSourcesMixin implements DamageSourcesAccessor {
+public abstract class DamageSourcesMixin implements IDamageSources {
     @Shadow
     @Final
     public Registry<DamageType> registry;

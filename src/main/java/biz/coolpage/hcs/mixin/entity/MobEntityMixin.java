@@ -5,6 +5,7 @@ import biz.coolpage.hcs.status.manager.SanityManager;
 import biz.coolpage.hcs.util.EntityHelper;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.boss.WitherEntity;
 import net.minecraft.entity.mob.MobEntity;
 import net.minecraft.entity.mob.Monster;
 import net.minecraft.entity.mob.SlimeEntity;
@@ -22,6 +23,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(MobEntity.class)
+@SuppressWarnings("ConstantValue")
 public abstract class MobEntityMixin extends LivingEntity {
     @Shadow
     public abstract @Nullable LivingEntity getTarget();
@@ -43,9 +45,11 @@ public abstract class MobEntityMixin extends LivingEntity {
     @Inject(method = "tick", at = @At("HEAD"))
     public void tick(CallbackInfo ci) {
         Object ent = this;
-        //noinspection ConstantValue
-        if (ent instanceof Monster && this.getTarget() instanceof PlayerEntity player && SanityManager.CAN_CLOSELY_SEE.test(player, this) && !(ent instanceof SlimeEntity slime && slime.isSmall()))
-            ((StatAccessor) player).getSanityManager().addEnemy(this);
+        if (ent instanceof Monster && this.getTarget() instanceof PlayerEntity player && SanityManager.CAN_CLOSELY_SEE.test(player, this)) {
+            if (ent instanceof WitherEntity) ((StatAccessor) player).getMoodManager().addPanic(0.5);
+            else if (!(ent instanceof SlimeEntity slime && slime.isSmall()))
+                ((StatAccessor) player).getSanityManager().addEnemy(this);
+        }
     }
 
     @ModifyArg(method = "tryAttack", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/Entity;damage(Lnet/minecraft/entity/damage/DamageSource;F)Z"), index = 1)

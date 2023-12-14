@@ -2,7 +2,7 @@
 
 Links:
 
-- <a href="https://modrinth.com/mod/hardcore-survival" target="_blank">**Modrinth** <mark>(Download releases)</mark></a>
+- <a href="https://modrinth.com/mod/hardcore-survival" target="_blank">**Modrinth** <mark>(Download Releases)</mark></a>
 - <a href="http://hcs.coolpage.biz/en" target="_blank">Official Website</a>
 - <a href="https://www.mcmod.cn/class/12595.html" target="_blank">McMod (Chinese Description & Wiki)</a>
 

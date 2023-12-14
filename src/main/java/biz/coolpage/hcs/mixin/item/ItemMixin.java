@@ -39,6 +39,7 @@ import static biz.coolpage.hcs.util.EntityHelper.IS_SURVIVAL_LIKE;
 public class ItemMixin {
     //The saturationModifier is invalid as saturation is added as same as food level
     //e.g. Cooked chicken increases 6 food levels,and 6 saturation levels,while its saturationModifier=0.6F
+    //CANNOT USE `HashMap<Item, FoodComponent>` AS CLASS CAST MAKE THE MAP NOT CONTAIN THE SAME KEY (`Items`)
     @Unique
     private static final FoodComponent SEEDS = new FoodComponent.Builder().hunger(0).saturationModifier(1.0f).alwaysEdible().build();
     @Unique
@@ -75,6 +76,8 @@ public class ItemMixin {
     private static final FoodComponent SWEET_BERRIES = new FoodComponent.Builder().hunger(1).saturationModifier(1.0f).build();
     @Unique
     private static final FoodComponent RABBIT_FOOT = new FoodComponent.Builder().hunger(2).saturationModifier(2.0f).build();
+    @Unique
+    private static final FoodComponent CHICKEN = new FoodComponent.Builder().hunger(2).saturationModifier(0.3f).meat().build(); //Deleted hunger debuff; Use food poisoning instead (See `DiseaseManager/getParasitePossibilityAndCheckFoodPoisoning()D`)
 
 
     @SuppressWarnings("SameReturnValue")
@@ -107,6 +110,7 @@ public class ItemMixin {
         else if (item == Items.RABBIT_FOOT) cir.setReturnValue(RABBIT_FOOT);
         else if (item == Items.MELON_SLICE) cir.setReturnValue(BROWN_MUSHROOM);
         else if (item == Items.GLISTERING_MELON_SLICE) cir.setReturnValue(HONEYCOMB);
+        else if (item == Items.CHICKEN) cir.setReturnValue(CHICKEN);
     }
 
 

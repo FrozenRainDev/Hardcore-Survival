@@ -1,14 +1,21 @@
 package biz.coolpage.hcs.mixin.entity.goal;
 
+import net.minecraft.entity.ai.NoPenaltyTargeting;
 import net.minecraft.entity.ai.goal.EscapeDangerGoal;
 import net.minecraft.entity.mob.PathAwareEntity;
 import net.minecraft.entity.passive.ChickenEntity;
 import net.minecraft.entity.passive.CowEntity;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Vec3d;
+import org.jetbrains.annotations.NotNull;
 import org.spongepowered.asm.mixin.*;
 import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.ModifyArg;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
-//import static biz.coolpage.hcs.util.CommUtil.applyNullable;
+import static biz.coolpage.hcs.util.CommUtil.applyNullable;
+import static biz.coolpage.hcs.util.CommUtil.hasNull;
 
 @Mixin(EscapeDangerGoal.class)
 public abstract class EscapeDangerGoalMixin {
@@ -21,9 +28,9 @@ public abstract class EscapeDangerGoalMixin {
     @Final
     @Mutable
     protected final PathAwareEntity mob;
-//    @Shadow
-//    protected double targetX, targetY, targetZ;
-//
+    @Shadow
+    protected double targetX, targetY, targetZ;
+
 //    @Shadow
 //    public abstract void stop();
 //
@@ -35,19 +42,15 @@ public abstract class EscapeDangerGoalMixin {
         this.mob = mob;
     }
 
-//    @Unique
-//    private boolean isAttackerAfar() {
-//        return applyNullable(this.mob.getAttacker(), attacker -> this.mob.distanceTo(attacker) > 32, true);
-//    }
+    @Unique
+    private boolean isAttackerAfar() {
+        return applyNullable(this.mob.getAttacker(), attacker -> this.mob.distanceTo(attacker) > 48, true);
+    }
 
-//    @Inject(method = "canStart", at = @At("RETURN"), cancellable = true)
-//    protected void canStart(CallbackInfoReturnable<Boolean> cir) {
-//        if (isAttackerAfar()) {
-//            cir.setReturnValue(false);
-////            this.mob.lastAttackedTicks = 0;
-////            this.mob.setAttacker(null);
-//        }
-//    }
+    @Inject(method = "canStart", at = @At("RETURN"), cancellable = true)
+    protected void canStart(CallbackInfoReturnable<Boolean> cir) {
+        if (isAttackerAfar()) cir.setReturnValue(false);
+    }
 
     @ModifyArg(method = "start", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/ai/pathing/EntityNavigation;startMovingTo(DDDD)Z"), index = 3)
     public double startMixin(double speed) {
@@ -57,7 +60,6 @@ public abstract class EscapeDangerGoalMixin {
         return speed;
     }
 
-    /*
     @Inject(method = "findTarget", at = @At("HEAD"), cancellable = true)
     protected void findTarget(@NotNull CallbackInfoReturnable<Boolean> cir) {
         var attacker = this.mob.getAttacker();
@@ -85,14 +87,11 @@ public abstract class EscapeDangerGoalMixin {
     public void shouldContinue(@NotNull CallbackInfoReturnable<Boolean> cir) {
         //The method stop() won't be called when the return value is false, so I called it manually
         if (isAttackerAfar()) {
-            this.stop();
-            this.active = false;
-            cir.setReturnValue(true);
-            this.mob.lastAttackedTicks = 0;
-            this.mob.setAttacker(null);
+//            this.stop();
+//            this.active = false;
+            cir.setReturnValue(false);
         }
     }
-    */
 
 
 }

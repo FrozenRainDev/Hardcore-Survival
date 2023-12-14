@@ -21,9 +21,10 @@ public class CowKickRevengeGoal extends Goal {
         this.setControls(EnumSet.of(Goal.Control.JUMP, Goal.Control.MOVE));
     }
 
-    private boolean isAttackerInLeather() {
+    public static boolean isInLeather(LivingEntity entity) {
+        if (entity == null) return false;
         AtomicBoolean b = new AtomicBoolean(false);
-        this.attacker.getArmorItems().forEach(stack -> {
+        entity.getArmorItems().forEach(stack -> {
             if (stack.getItem() instanceof ArmorItem armor && armor.getMaterial() == ArmorMaterials.LEATHER)
                 b.set(true);
         });
@@ -34,7 +35,7 @@ public class CowKickRevengeGoal extends Goal {
     public boolean canStart() {
         if (this.kickCooldown > 0) --this.kickCooldown;
         this.attacker = this.mob.getAttacker();
-        return this.attacker != null && !isAttackerInLeather() && this.mob.distanceTo(this.attacker) < 3.0;
+        return this.attacker != null && !isInLeather(this.attacker) && this.mob.distanceTo(this.attacker) < 3.0 && !this.mob.isBaby();
     }
 
     @Override
@@ -52,8 +53,8 @@ public class CowKickRevengeGoal extends Goal {
         Vec3d vec1 = this.attacker.getVelocity();
         Vec3d vec2 = new Vec3d(this.attacker.getX() - this.mob.getX(), 0.0, this.attacker.getZ() - this.mob.getZ());
         if (vec2.lengthSquared() > 1.0E-7) vec2 = vec2.normalize().add(vec1.multiply(0.2));
-        this.attacker.damage(this.attacker.world.getDamageSources().mobAttack(this.mob), 5.0F);
+        this.attacker.damage(this.attacker.world.getDamageSources().mobAttack(this.mob), 6.0F);
         this.attacker.setVelocity(vec2.x, 0.5, vec2.z);
-        this.kickCooldown = 140;
+        this.kickCooldown = 100;
     }
 }
