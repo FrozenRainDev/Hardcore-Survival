@@ -5,7 +5,6 @@ import biz.coolpage.hcs.status.manager.SanityManager;
 import biz.coolpage.hcs.util.EntityHelper;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.boss.WitherEntity;
 import net.minecraft.entity.mob.MobEntity;
 import net.minecraft.entity.mob.Monster;
 import net.minecraft.entity.mob.SlimeEntity;
@@ -46,8 +45,7 @@ public abstract class MobEntityMixin extends LivingEntity {
     public void tick(CallbackInfo ci) {
         Object ent = this;
         if (ent instanceof Monster && this.getTarget() instanceof PlayerEntity player && SanityManager.CAN_CLOSELY_SEE.test(player, this)) {
-            if (ent instanceof WitherEntity) ((StatAccessor) player).getMoodManager().addPanic(0.5);
-            else if (!(ent instanceof SlimeEntity slime && slime.isSmall()))
+            if (!(ent instanceof SlimeEntity slime && slime.isSmall()))
                 ((StatAccessor) player).getSanityManager().addEnemy(this);
         }
     }

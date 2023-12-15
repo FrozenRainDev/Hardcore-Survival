@@ -6,6 +6,7 @@ import net.minecraft.entity.mob.MobEntity;
 import net.minecraft.item.ArmorItem;
 import net.minecraft.item.ArmorMaterials;
 import net.minecraft.util.math.Vec3d;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.EnumSet;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -31,6 +32,14 @@ public class CowKickRevengeGoal extends Goal {
         return b.get();
     }
 
+    public static void flyOut(@NotNull MobEntity attacker, @NotNull LivingEntity victim, float damage) {
+        Vec3d vec1 = victim.getVelocity();
+        Vec3d vec2 = new Vec3d(victim.getX() - attacker.getX(), 0.0, victim.getZ() - attacker.getZ());
+        if (vec2.lengthSquared() > 1.0E-7) vec2 = vec2.normalize().add(vec1.multiply(0.2));
+        victim.damage(victim.world.getDamageSources().mobAttack(attacker), damage);
+        victim.setVelocity(vec2.x, 0.5, vec2.z);
+    }
+
     @Override
     public boolean canStart() {
         if (this.kickCooldown > 0) --this.kickCooldown;
@@ -50,11 +59,7 @@ public class CowKickRevengeGoal extends Goal {
             --this.kickCooldown;
             return;
         }
-        Vec3d vec1 = this.attacker.getVelocity();
-        Vec3d vec2 = new Vec3d(this.attacker.getX() - this.mob.getX(), 0.0, this.attacker.getZ() - this.mob.getZ());
-        if (vec2.lengthSquared() > 1.0E-7) vec2 = vec2.normalize().add(vec1.multiply(0.2));
-        this.attacker.damage(this.attacker.world.getDamageSources().mobAttack(this.mob), 6.0F);
-        this.attacker.setVelocity(vec2.x, 0.5, vec2.z);
+        flyOut(this.mob, this.attacker, 6.0F);
         this.kickCooldown = 100;
     }
 }

@@ -23,6 +23,7 @@
     "entity.CampfireBlockEntityMixin",
     "entity.ChickenEntityMixin",
     "entity.CowEntityMixin",
+    "entity.EntityMixin",
     "entity.FireballEntityMixin",
     "entity.JukeboxBlockEntityMixin",
     "entity.LivingEntityMixin",

@@ -640,7 +640,7 @@ public abstract class PlayerEntityMixin extends LivingEntity implements StatAcce
         if (EntityHelper.IS_PHYSICAL_DAMAGE.test(source) && this.getAbsorptionAmount() < 2.0F && !HcsDifficulty.isOf(toPlayer(this), HcsDifficulty.HcsDifficultyEnum.relaxing)) {
             if (!this.hasStatusEffect(HcsEffects.PAIN_KILLING)) this.injuryManager.addRawPain(hurtPercent * 4.5);
             if (!isBurningDamage && EntityHelper.IS_BLEEDING_CAUSING_DAMAGE.test(source)) {
-                this.injuryManager.addBleeding(hurtPercent * 8);
+                this.injuryManager.addBleeding(hurtPercent * 9);
                 this.statusManager.setBandageWorkTicks(0);
             }
         }

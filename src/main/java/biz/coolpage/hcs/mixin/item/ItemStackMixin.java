@@ -77,7 +77,7 @@ public abstract class ItemStackMixin {
             var texts = cir.getReturnValue();
             AtomicBoolean noArmorPlusModifier = new AtomicBoolean(true);
             boolean shouldAppendToolInfo = false;
-            if (this.getItem() instanceof ArmorItem) {
+            if (this.getItem() instanceof ArmorItem armor) {
                 texts.replaceAll(text -> {
                     if (text.getContent() instanceof TranslatableTextContent translatable) {
                         // No such expression in non-protection armor such as wool boots, See noArmorPlusModifier
@@ -90,6 +90,8 @@ public abstract class ItemStackMixin {
                     }
                     return text;
                 });
+                if (armor.getMaterial() == ArmorMaterials.LEATHER)
+                    texts.add(Text.translatable("hcs.tip.when_in_leather").formatted(Formatting.GRAY));
             }
             float reachRangeAddition = EntityHelper.getReachRangeAddition(stack);
             if (reachRangeAddition > 0.0F && !(stack.getItem() instanceof BlockItem)) shouldAppendToolInfo = true;

@@ -20,6 +20,6 @@ public abstract class DragonFireballEntityMixin extends ExplosiveProjectileEntit
     @Inject(method = "onCollision", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/projectile/DragonFireballEntity;discard()V"))
     protected void onCollision(HitResult hitResult, CallbackInfo ci) {
         if (this.getOwner() instanceof LivingEntity owner)
-            this.world.createExplosion(this, this.world.getDamageSources().mobProjectile(this, owner), null, this.getPos(), 2.0F, false, World.ExplosionSourceType.MOB);
+            this.world.createExplosion(this, this.world.getDamageSources().mobProjectile(this, owner), null, this.getPos(), 3.5F, false, World.ExplosionSourceType.MOB);
     }
 }

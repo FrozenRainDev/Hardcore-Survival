@@ -11,6 +11,7 @@ import biz.coolpage.hcs.util.EntityHelper;
 import biz.coolpage.hcs.util.TemperatureHelper;
 import biz.coolpage.hcs.util.WorldHelper;
 import com.mojang.authlib.GameProfile;
+import net.minecraft.entity.boss.WitherEntity;
 import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.entity.effect.StatusEffects;
@@ -35,6 +36,8 @@ import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+
+import java.util.concurrent.atomic.AtomicBoolean;
 
 @Mixin(ServerPlayerEntity.class)
 public abstract class ServerPlayerEntityMixin extends PlayerEntity {
@@ -189,11 +192,20 @@ public abstract class ServerPlayerEntityMixin extends PlayerEntity {
 
             //Panic; also view PlayerEntityMixin/tick()
             final boolean isDarkEnv = this.hasStatusEffect(HcsEffects.DARKNESS_ENVELOPED);
-            final double currRawPanic = moodManager.getRawPanic(), currRealPanic = moodManager.getRealPanic(), expectedRawPanic = isDarkEnv ? 4 : MathHelper.clamp(sanityManager.countEnemies() * 0.5, 0.0, 4), panicDiff = Math.abs(currRawPanic - expectedRawPanic);
+            AtomicBoolean canSeeWither = new AtomicBoolean(false);
+            EntityHelper.getOthersEntitiesInRange(this, WitherEntity.class, 3.0).forEach(wither -> canSeeWither.set(this.canSee(wither)));
+            final boolean shouldInExtremePanic = isDarkEnv || canSeeWither.get();
+            final double currRawPanic = moodManager.getRawPanic();
+            final double currRealPanic = moodManager.getRealPanic();
+            final double expectedRawPanic;
+            if (this.hasStatusEffect(HcsEffects.FEARLESSNESS)) expectedRawPanic = 0.0;
+            else
+                expectedRawPanic = shouldInExtremePanic ? 4 : MathHelper.clamp(sanityManager.countEnemies() * 0.5, 0.0, 4);
+            final double panicDiff = Math.abs(currRawPanic - expectedRawPanic);
             moodManager.tick(currRawPanic, expectedRawPanic, panicDiff, currSan);
             if (currRealPanic > 0.0) {
                 double finalPanic = currRealPanic;
-                if (!isDarkEnv) {
+                if (!shouldInExtremePanic) {
                     finalPanic -= 0.06 * MathHelper.clamp(statusManager.getMaxExpLevelReached() + this.statHandler.getStat(Stats.CUSTOM.getOrCreateStat(Stats.MOB_KILLS)) / 5.0, 0.0, 30.0); //Reduce panic when player reaches higher exp level
                     if (expectedRawPanic > 0.0)
                         sanityManager.add(-MathHelper.clamp(0.00003 * finalPanic, 0.000008, 0.0001));

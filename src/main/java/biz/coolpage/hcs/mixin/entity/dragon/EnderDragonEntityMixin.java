@@ -6,14 +6,13 @@ import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.ai.TargetPredicate;
 import net.minecraft.entity.boss.dragon.EnderDragonEntity;
-import net.minecraft.entity.boss.dragon.phase.PhaseManager;
-import net.minecraft.entity.boss.dragon.phase.PhaseType;
 import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.decoration.EndCrystalEntity;
 import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.entity.effect.StatusEffects;
 import net.minecraft.entity.mob.EndermanEntity;
 import net.minecraft.entity.mob.MobEntity;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Items;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.math.BlockPos;
@@ -45,7 +44,7 @@ public abstract class EnderDragonEntityMixin extends MobEntity {
 
     @Unique
     private static boolean isDragonInSecondStage(LivingEntity entity) {
-        if (entity instanceof EnderDragonEntity dragon) return dragon.getHealth() / dragon.getMaxHealth() < 0.25F;
+        if (entity instanceof EnderDragonEntity dragon) return dragon.getHealth() / dragon.getMaxHealth() < 0.3F;
         return false;
     }
 
@@ -54,13 +53,7 @@ public abstract class EnderDragonEntityMixin extends MobEntity {
 
     @Shadow
     @Final
-    private PhaseManager phaseManager;
-
-    @Shadow
-    @Final
     private static TargetPredicate CLOSE_PLAYER_PREDICATE;
-    @Unique
-    private PhaseType<?> lastType = null;
 
     @Unique
     public void addBuffWithoutChecking(StatusEffectInstance effect) {
@@ -97,29 +90,22 @@ public abstract class EnderDragonEntityMixin extends MobEntity {
 
     @Inject(method = "tickMovement", at = @At("HEAD"))
     public void tickMovement(CallbackInfo ci) {
-        var type = this.phaseManager.getCurrent().getType();
-        if (type != this.lastType) {
-            this.lastType = type;
-            System.out.println("dragon tasks phase updated: " + this.phaseManager.getCurrent().getType());
-        }
         if (this.connectedCrystal == null) {
             boolean isInSecondStage = isDragonInSecondStage(this);
             int ampl = isInSecondStage ? 2 : 1;
-            this.addBuffWithoutChecking(new StatusEffectInstance(StatusEffects.SPEED, 5, ampl, false, false, false));
+            this.addBuffWithoutChecking(new StatusEffectInstance(StatusEffects.SPEED, 5, ampl , false, false, false));
             this.addBuffWithoutChecking(new StatusEffectInstance(StatusEffects.RESISTANCE, 5, ampl, false, false, false));
             if (isInSecondStage) {
-                this.world.syncWorldEvent(WorldEvents.ELECTRICITY_SPARKS, this.getBlockPos(), 0);
-                this.world.syncWorldEvent(WorldEvents.ELECTRICITY_SPARKS, this.getBlockPos().up(), 0);
-                applyNullable(EntityHelper.getOthersEntitiesInRange(this, EndermanEntity.class),
+                for (int i = 0; i < 4; ++i)
+                    this.world.syncWorldEvent(WorldEvents.ELECTRICITY_SPARKS, this.getBlockPos().up(i), 0);
+                applyNullable(EntityHelper.getOthersEntitiesInRange(this, EndermanEntity.class, 8.0),
                         entities -> {
                             var targetPlayer = this.world.getClosestPlayer(CLOSE_PLAYER_PREDICATE, this.getX(), this.getY(), this.getZ());
                             if (targetPlayer != null) {
                                 entities.forEach(entity -> {
-                                    if (Math.random() < 0.2) {
-                                        this.world.syncWorldEvent(WorldEvents.ELECTRICITY_SPARKS, entity.getBlockPos(), 0);
-                                        this.world.syncWorldEvent(WorldEvents.ELECTRICITY_SPARKS, entity.getBlockPos().up(), 0);
-                                        entity.setTarget(targetPlayer);
-                                    }
+                                    if (entity.distanceTo(this) < 16) entity.setTarget(targetPlayer);
+                                    if (entity.getTarget() instanceof PlayerEntity)
+                                        this.world.syncWorldEvent(WorldEvents.ELECTRICITY_SPARKS, entity.getBlockPos().up(1), 0);
                                 });
                             }
                         });

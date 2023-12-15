@@ -432,18 +432,16 @@ public class EntityHelper {
         return false;
     }
 
-    public static List<? extends MobEntity> getOthersEntitiesInRange(@NotNull LivingEntity entity, Class<? extends MobEntity> targetEntClass) {
+    public static List<? extends MobEntity> getOthersEntitiesInRange(@NotNull LivingEntity entity, Class<? extends MobEntity> targetEntClass, double rangeMultiplier) {
         //From UniversalAngerGoal/getOthersInRange()
-        Box box = Box.from(entity.getPos()).expand(ZOMBIE_SENSING_RANGE, 10.0, ZOMBIE_SENSING_RANGE);
+        Box box = Box.from(entity.getPos()).expand(ZOMBIE_SENSING_RANGE * rangeMultiplier, 10.0 * rangeMultiplier, ZOMBIE_SENSING_RANGE * rangeMultiplier);
         return entity.world.getEntitiesByClass(targetEntClass, box, EntityPredicates.EXCEPT_SPECTATOR);
     }
 
     public static void letEnderDragonChargeAtTheClosestPlayer(LivingEntity entity) {
         if (entity instanceof EnderDragonEntity dragon) {
             PlayerEntity player = dragon.world.getClosestPlayer(dragon, 150);
-            System.out.println("prepare for charge at the player");
             if (player != null) {
-                System.out.println("CHARGE at the player!");
                 dragon.getPhaseManager().setPhase(PhaseType.CHARGING_PLAYER);
                 dragon.getPhaseManager().create(PhaseType.CHARGING_PLAYER).setPathTarget(new Vec3d(player.getX(), player.getY(), player.getZ()));
             }
@@ -451,7 +449,7 @@ public class EntityHelper {
     }
 
     public static void lightningStrike(LivingEntity entity) {
-        if(entity instanceof ServerPlayerEntity player) {
+        if (entity instanceof ServerPlayerEntity player) {
             if (entity.world == null) return;
             LightningEntity lightningEntity = EntityType.LIGHTNING_BOLT.create(player.world);
             if (lightningEntity != null) {

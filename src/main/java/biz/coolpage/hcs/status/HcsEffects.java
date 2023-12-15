@@ -423,6 +423,18 @@ public class HcsEffects {
         }
     };
 
+    public static final StatusEffect FEARLESSNESS = new StatusEffect(StatusEffectCategory.BENEFICIAL, 0x7e7e7e) {
+        @Override
+        public boolean canApplyUpdateEffect(int duration, int amplifier) {
+            return true;
+        }
+
+        @Override
+        public void applyUpdateEffect(LivingEntity entity, int amplifier) {
+            if (entity instanceof ServerPlayerEntity player) ((StatAccessor) player).getMoodManager().setPanic(0.0);
+        }
+    };
+
     private static final HashMap<StatusEffect, ?> VARIABLE_EFFECTS = new HashMap<>() {{
         this.put(PAIN, null);
         this.put(INJURY, null);

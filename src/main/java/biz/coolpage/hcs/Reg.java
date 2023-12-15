@@ -64,7 +64,7 @@ public class Reg implements ModInitializer {
     public static final Potion IRONSKIN_POTION = new Potion("hcs_ironskin", new StatusEffectInstance(HcsEffects.IRONSKIN, 3600, 0));
     public static final Potion LONG_IRONSKIN_POTION = new Potion("hcs_long_ironskin", new StatusEffectInstance(HcsEffects.IRONSKIN, 9600, 0));
     public static final Potion STRONG_IRONSKIN_POTION = new Potion("hcs_strong_ironskin", new StatusEffectInstance(HcsEffects.IRONSKIN, 1800, 1));
-    public static final Potion RETURN_POTION = new Potion("hcs_return", new StatusEffectInstance(HcsEffects.RETURN, 120, 0, false, false, false));
+    public static final Potion RETURN_POTION = new Potion("hcs_return", new StatusEffectInstance(HcsEffects.RETURN, 120, 0, false, true, false));
     public static final Potion MINING_POTION = new Potion("hcs_mining", new StatusEffectInstance(StatusEffects.HASTE, 3600));
     public static final Potion LONG_MINING_POTION = new Potion("hcs_long_mining", new StatusEffectInstance(StatusEffects.HASTE, 9600));
     public static final Potion STRONG_MINING_POTION = new Potion("hcs_strong_mining", new StatusEffectInstance(StatusEffects.HASTE, 1800, 1));
@@ -72,6 +72,8 @@ public class Reg implements ModInitializer {
     public static final Potion LONG_CONSTANT_TEMPERATURE_POTION = new Potion("hcs_long_constant_temperature", new StatusEffectInstance(HcsEffects.CONSTANT_TEMPERATURE, 9600));
     public static final Potion PAIN_KILLING_POTION = new Potion("hcs_pain_killing", new StatusEffectInstance(HcsEffects.PAIN_KILLING, 3600));
     public static final Potion LONG_PAIN_KILLING_POTION = new Potion("hcs_long_pain_killing", new StatusEffectInstance(HcsEffects.PAIN_KILLING, 9600));
+    public static final Potion FEARLESSNESS_POTION = new Potion("hcs_fearlessness", new StatusEffectInstance(HcsEffects.FEARLESSNESS, 3600));
+    public static final Potion LONG_FEARLESSNESS_POTION = new Potion("hcs_long_fearlessness", new StatusEffectInstance(HcsEffects.FEARLESSNESS, 9600));
     public static final Item FIBER_STRING = new Item(new Item.Settings());
     public static final Item GRASS_FIBER = new Item(new Item.Settings());
     public static final Item ROASTED_SEEDS = new Item(new Item.Settings().food(new FoodComponent.Builder().hunger(0).saturationModifier(0f).snack().build()));
@@ -211,7 +213,7 @@ public class Reg implements ModInitializer {
             return super.finishUsing(stack, world, user);
         }
     };
-    public static final Item ASHES = new SalveItem(0, 0.5, 40);
+    public static final Item ASHES = new SalveItem(0, 0.35, 50);
 
     public static final EntityType<RockProjectileEntity> ROCK_PROJECTILE_ENTITY = FabricEntityTypeBuilder.<RockProjectileEntity>create(SpawnGroup.MISC, RockProjectileEntity::new).dimensions(new EntityDimensions(0.25F, 0.25F, true)).build();
     public static final EntityType<FlintProjectileEntity> FLINT_PROJECTILE_ENTITY = FabricEntityTypeBuilder.<FlintProjectileEntity>create(SpawnGroup.MISC, FlintProjectileEntity::new).dimensions(new EntityDimensions(0.25F, 0.25F, true)).build();
@@ -333,6 +335,7 @@ public class Reg implements ModInitializer {
             content.add(PotionUtil.setPotion(new ItemStack(Items.POTION), MINING_POTION));
             content.add(PotionUtil.setPotion(new ItemStack(Items.POTION), CONSTANT_TEMPERATURE_POTION));
             content.add(PotionUtil.setPotion(new ItemStack(Items.POTION), PAIN_KILLING_POTION));
+            content.add(PotionUtil.setPotion(new ItemStack(Items.POTION), FEARLESSNESS_POTION));
             content.add(new ItemStack(ICEBOX_ITEM));
             content.add(new ItemStack(DRYING_RACK_ITEM));
         });
@@ -436,6 +439,8 @@ public class Reg implements ModInitializer {
         Registry.register(Registries.POTION, "hcs_long_constant_temperature", LONG_CONSTANT_TEMPERATURE_POTION);
         Registry.register(Registries.POTION, "hcs_pain_killing", PAIN_KILLING_POTION);
         Registry.register(Registries.POTION, "hcs_long_pain_killing", LONG_PAIN_KILLING_POTION);
+        Registry.register(Registries.POTION, "hcs_fearlessness", FEARLESSNESS_POTION);
+        Registry.register(Registries.POTION, "hcs_long_fearlessness", LONG_FEARLESSNESS_POTION);
 
         Registry.register(Registries.ENTITY_TYPE, new Identifier("hcs", "rock_projectile_entity"), ROCK_PROJECTILE_ENTITY);
         Registry.register(Registries.ENTITY_TYPE, new Identifier("hcs", "flint_projectile_entity"), FLINT_PROJECTILE_ENTITY);
@@ -471,6 +476,7 @@ public class Reg implements ModInitializer {
         Registry.register(Registries.STATUS_EFFECT, new Identifier("hcs", "pain_killing"), HcsEffects.PAIN_KILLING);
         Registry.register(Registries.STATUS_EFFECT, new Identifier("hcs", "ironskin"), HcsEffects.IRONSKIN);
         Registry.register(Registries.STATUS_EFFECT, new Identifier("hcs", "food_poisoning"), HcsEffects.FOOD_POISONING);
+        Registry.register(Registries.STATUS_EFFECT, new Identifier("hcs", "fearlessness"), HcsEffects.FEARLESSNESS);
 
         RecipeSerializer.register("hcs_extract_water_from_bamboo", EXTRACT_WATER_FROM_BAMBOO_RECIPE);
         RecipeSerializer.register("hcs_extract_water_from_snow", EXTRACT_WATER_FROM_SNOW_RECIPE);
@@ -486,11 +492,13 @@ public class Reg implements ModInitializer {
         BrewingRecipeRegistry.registerPotionRecipe(Potions.AWKWARD, Items.MANGROVE_PROPAGULE, Reg.MINING_POTION);
         BrewingRecipeRegistry.registerPotionRecipe(Potions.AWKWARD, Items.QUARTZ, Reg.CONSTANT_TEMPERATURE_POTION);
         BrewingRecipeRegistry.registerPotionRecipe(Potions.AWKWARD, WILLOW_BARK, Reg.PAIN_KILLING_POTION);
+        BrewingRecipeRegistry.registerPotionRecipe(Potions.AWKWARD, FEARLESSNESS_HERB, Reg.FEARLESSNESS_POTION);
         BrewingRecipeRegistry.registerPotionRecipe(Reg.IRONSKIN_POTION, Items.GLOWSTONE_DUST, Reg.STRONG_IRONSKIN_POTION);
         BrewingRecipeRegistry.registerPotionRecipe(Reg.IRONSKIN_POTION, Items.REDSTONE, Reg.LONG_IRONSKIN_POTION);
         BrewingRecipeRegistry.registerPotionRecipe(Reg.MINING_POTION, Items.GLOWSTONE_DUST, Reg.STRONG_MINING_POTION);
         BrewingRecipeRegistry.registerPotionRecipe(Reg.CONSTANT_TEMPERATURE_POTION, Items.REDSTONE, Reg.LONG_CONSTANT_TEMPERATURE_POTION);
         BrewingRecipeRegistry.registerPotionRecipe(Reg.PAIN_KILLING_POTION, Items.REDSTONE, Reg.LONG_PAIN_KILLING_POTION);
+        BrewingRecipeRegistry.registerPotionRecipe(Reg.FEARLESSNESS_POTION, Items.REDSTONE, Reg.LONG_FEARLESSNESS_POTION);
 
         FuelRegistry.INSTANCE.add(GRASS_FIBER, 50);
         FuelRegistry.INSTANCE.add(FIBER_STRING, 100);

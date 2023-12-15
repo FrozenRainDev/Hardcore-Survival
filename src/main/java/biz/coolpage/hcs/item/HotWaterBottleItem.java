@@ -230,7 +230,7 @@ public class HotWaterBottleItem extends Item {
                 })));
         tooltip.add(Text.translatable("item.hcs.hot_water_bottle.description1").formatted(Formatting.DARK_GRAY));
         tooltip.add(Text.translatable("item.hcs.hot_water_bottle.description2").formatted(Formatting.DARK_GRAY));
-        tooltip.add(Text.of(String.valueOf(stack.getNbt())));
+//        tooltip.add(Text.of(String.valueOf(stack.getNbt())));
     }
 
     @Override

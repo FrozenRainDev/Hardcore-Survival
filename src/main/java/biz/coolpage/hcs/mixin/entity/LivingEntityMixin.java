@@ -7,6 +7,8 @@ import biz.coolpage.hcs.util.EntityHelper;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.boss.WitherEntity;
+import net.minecraft.entity.boss.dragon.EnderDragonEntity;
 import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.effect.StatusEffects;
 import net.minecraft.entity.mob.EndermanEntity;
@@ -64,7 +66,7 @@ public abstract class LivingEntityMixin extends Entity {
             if (victim instanceof PlayerEntity player && attacker instanceof HostileEntity)
                 ((StatAccessor) player).getSanityManager().add(attacker instanceof EndermanEntity ? -0.08 : -0.005);
             if (victim instanceof AnimalEntity animal) {
-                EntityHelper.getOthersEntitiesInRange(animal, AnimalEntity.class).stream()
+                EntityHelper.getOthersEntitiesInRange(animal, AnimalEntity.class, 1.0).stream()
                         .filter(entity -> entity != null && entity != animal)
                         .forEach(entity -> {
                             entity.setAttacker(animal.getAttacker());
@@ -98,6 +100,14 @@ public abstract class LivingEntityMixin extends Entity {
         } else if (ent instanceof SpiderEntity && Math.random() < 0.33) EntityHelper.dropItem(this, Reg.SPIDER_GLAND);
         else if (ent instanceof BatEntity)
             EntityHelper.dropItem(this, this.getFireTicks() > 0 ? Reg.ROASTED_BAT_WINGS : Reg.BAT_WINGS);
+        else if (ent instanceof WitherEntity) {
+            EntityHelper.dropItem(this, Items.NETHERITE_INGOT, 2 + (int) (Math.random() * 2));
+            EntityHelper.dropItem(this, Items.DIAMOND, 12 + (int) (Math.random() * 6));
+        } else if (ent instanceof EnderDragonEntity) {
+            EntityHelper.dropItem(this, Items.NETHERITE_INGOT, 6 + (int) (Math.random() * 6));
+            EntityHelper.dropItem(this, Items.DIAMOND, 32 + (int) (Math.random() * 32));
+            EntityHelper.dropItem(this, Items.ENCHANTED_GOLDEN_APPLE, 20 + (int) (Math.random() * 20));
+        }
     }
 
     @Inject(method = "drop", at = @At("HEAD"), cancellable = true)
