@@ -27,7 +27,7 @@ public abstract class AreaEffectCloudEntityMixin {
     public void tick(CallbackInfo ci) {
         this.affectedEntities.forEach((entity, integer) -> {
             if (entity instanceof ServerPlayerEntity && this.getOwner() instanceof EnderDragonEntity dragon)
-                dragon.heal(3.0F);
+                dragon.heal(1.0F);
         });
     }
 }

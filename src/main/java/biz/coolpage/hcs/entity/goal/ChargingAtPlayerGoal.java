@@ -34,7 +34,7 @@ public class ChargingAtPlayerGoal<T extends MobEntity> extends Goal {
         var target = this.mob.getTarget();
         if (target != null) {
             if (this.mob.distanceTo(this.mob.getTarget()) < 3) {
-                CowKickRevengeGoal.flyOut(this.mob, target, 10.0F);
+                CowKickRevengeGoal.flyOut(this.mob, target, 9.0F);
             } else this.mob.setVelocity(target.getPos().subtract(this.mob.getPos()).normalize().multiply(0.5));
         }
     }

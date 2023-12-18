@@ -44,7 +44,7 @@ public abstract class EnderDragonEntityMixin extends MobEntity {
 
     @Unique
     private static boolean isDragonInSecondStage(LivingEntity entity) {
-        if (entity instanceof EnderDragonEntity dragon) return dragon.getHealth() / dragon.getMaxHealth() < 0.3F;
+        if (entity instanceof EnderDragonEntity dragon) return dragon.getHealth() / dragon.getMaxHealth() < 0.2F;
         return false;
     }
 
@@ -92,9 +92,8 @@ public abstract class EnderDragonEntityMixin extends MobEntity {
     public void tickMovement(CallbackInfo ci) {
         if (this.connectedCrystal == null) {
             boolean isInSecondStage = isDragonInSecondStage(this);
-            int ampl = isInSecondStage ? 2 : 1;
-            this.addBuffWithoutChecking(new StatusEffectInstance(StatusEffects.SPEED, 5, ampl , false, false, false));
-            this.addBuffWithoutChecking(new StatusEffectInstance(StatusEffects.RESISTANCE, 5, ampl, false, false, false));
+            this.addBuffWithoutChecking(new StatusEffectInstance(StatusEffects.SPEED, 5, isInSecondStage ? 2 : 1, false, false, false));
+            this.addBuffWithoutChecking(new StatusEffectInstance(StatusEffects.RESISTANCE, 5, 1, false, false, false));
             if (isInSecondStage) {
                 for (int i = 0; i < 4; ++i)
                     this.world.syncWorldEvent(WorldEvents.ELECTRICITY_SPARKS, this.getBlockPos().up(i), 0);
@@ -103,7 +102,7 @@ public abstract class EnderDragonEntityMixin extends MobEntity {
                             var targetPlayer = this.world.getClosestPlayer(CLOSE_PLAYER_PREDICATE, this.getX(), this.getY(), this.getZ());
                             if (targetPlayer != null) {
                                 entities.forEach(entity -> {
-                                    if (entity.distanceTo(this) < 16) entity.setTarget(targetPlayer);
+                                    if (entity.distanceTo(this) < 10) entity.setTarget(targetPlayer);
                                     if (entity.getTarget() instanceof PlayerEntity)
                                         this.world.syncWorldEvent(WorldEvents.ELECTRICITY_SPARKS, entity.getBlockPos().up(1), 0);
                                 });
