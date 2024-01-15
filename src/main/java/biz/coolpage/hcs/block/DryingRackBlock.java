@@ -33,6 +33,7 @@ import net.minecraft.world.biome.Biome;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+@SuppressWarnings("deprecation")
 public class DryingRackBlock extends BlockWithEntity implements Waterloggable {
     private static final VoxelShape SHAPE_1 = Block.createCuboidShape(1.0F, 0.0F, 7.0F, 15.0F, 24.0F, 9.0F);
     private static final VoxelShape SHAPE_2 = Block.createCuboidShape(7.0F, 0.0F, 1.0F, 9.0F, 24.0F, 15.0F);
@@ -56,13 +57,11 @@ public class DryingRackBlock extends BlockWithEntity implements Waterloggable {
         builder.add(Properties.HORIZONTAL_FACING, Properties.WATERLOGGED);
     }
 
-    @SuppressWarnings("deprecation")
     @Override
     public VoxelShape getCollisionShape(BlockState state, BlockView world, BlockPos pos, ShapeContext context) {
         return getVoxShape(state, false);
     }
 
-    @SuppressWarnings("deprecation")
     @Override
     public VoxelShape getOutlineShape(BlockState state, BlockView world, BlockPos pos, ShapeContext context) {
         return getVoxShape(state, true);
@@ -85,19 +84,19 @@ public class DryingRackBlock extends BlockWithEntity implements Waterloggable {
                 .with(Properties.WATERLOGGED, ctx.getWorld().getFluidState(ctx.getBlockPos()).getFluid() == Fluids.WATER);
     }
 
-    @SuppressWarnings("deprecation")
+
     @Override
     public boolean canPlaceAt(BlockState state, @NotNull WorldView world, @NotNull BlockPos pos) {
         return world.getBlockState(pos.up()).isAir();
     }
 
-    @SuppressWarnings("deprecation")
+
     @Override
     public FluidState getFluidState(@NotNull BlockState state) {
         return state.get(Properties.WATERLOGGED) ? Fluids.WATER.getStill(false) : super.getFluidState(state);
     }
 
-    @SuppressWarnings("deprecation")
+
     @Override
     public BlockState getStateForNeighborUpdate(@NotNull BlockState state, Direction direction, BlockState neighborState, WorldAccess world, BlockPos pos, BlockPos neighborPos) {
         if (state.get(Properties.WATERLOGGED))
@@ -133,10 +132,7 @@ public class DryingRackBlock extends BlockWithEntity implements Waterloggable {
                     }
                 }
             }
-            if (!world1.isClient()) {
-                ServerWorld serverWorld = (ServerWorld) world1;
-                serverWorld.getChunkManager().markForUpdate(pos1);
-            }
+            if (world1 instanceof ServerWorld serverWorld) serverWorld.getChunkManager().markForUpdate(pos1);
         };
     }
 
@@ -147,19 +143,16 @@ public class DryingRackBlock extends BlockWithEntity implements Waterloggable {
         }
     }
 
-    @SuppressWarnings("deprecation")
     @Override
     public ActionResult onUse(BlockState state, @NotNull World world, BlockPos pos, PlayerEntity player, Hand hand, BlockHitResult hit) {
-//        if(world.isClient())return ActionResult.SUCCESS; do not use
+//        if(world.isClient())return ActionResult.SUCCESS; do not onInteract
         BlockEntity blockEntity = world.getBlockEntity(pos);
         if (blockEntity instanceof DryingRackBlockEntity) {
-            if (((DryingRackBlockEntity) blockEntity).use(player)) return ActionResult.SUCCESS;
+            if (((DryingRackBlockEntity) blockEntity).onInteract(player)) return ActionResult.SUCCESS;
         }
         return ActionResult.CONSUME;
     }
 
-
-    @SuppressWarnings("deprecation")
     @Override
     public void onStateReplaced(BlockState state, @NotNull World world, BlockPos pos, BlockState newState, boolean moved) {
         if (world.isClient() || state.isOf(newState.getBlock())) return;
@@ -171,13 +164,13 @@ public class DryingRackBlock extends BlockWithEntity implements Waterloggable {
         super.onStateReplaced(state, world, pos, newState, moved);
     }
 
-    @SuppressWarnings("deprecation")
+
     @Override
     public boolean hasComparatorOutput(BlockState state) {
         return true;
     }
 
-    @SuppressWarnings("deprecation")
+
     @Override
     public boolean canPathfindThrough(BlockState state, BlockView world, BlockPos pos, NavigationType type) {
         return false;

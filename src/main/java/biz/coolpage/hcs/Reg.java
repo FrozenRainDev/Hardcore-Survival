@@ -1,12 +1,11 @@
 package biz.coolpage.hcs;
 
+import biz.coolpage.hcs.block.BurningCrudeTorchBlock;
+import biz.coolpage.hcs.block.CrudeTorchBlock;
 import biz.coolpage.hcs.block.DryingRackBlock;
 import biz.coolpage.hcs.block.IceboxBlock;
 import biz.coolpage.hcs.config.HcsDifficulty;
-import biz.coolpage.hcs.entity.DryingRackBlockEntity;
-import biz.coolpage.hcs.entity.FlintProjectileEntity;
-import biz.coolpage.hcs.entity.IceboxBlockEntity;
-import biz.coolpage.hcs.entity.RockProjectileEntity;
+import biz.coolpage.hcs.entity.*;
 import biz.coolpage.hcs.event.*;
 import biz.coolpage.hcs.item.*;
 import biz.coolpage.hcs.recipe.*;
@@ -214,11 +213,16 @@ public class Reg implements ModInitializer {
         }
     };
     public static final Item ASHES = new SalveItem(0, 0.35, 50);
+    public static final CrudeTorchBlock CRUDE_TORCH_BLOCK = new CrudeTorchBlock();
+    public static final Item CRUDE_TORCH_ITEM = new BlockItem(CRUDE_TORCH_BLOCK, new Item.Settings());
+    public static final BurningCrudeTorchBlock BURNING_CRUDE_TORCH_BLOCK = new BurningCrudeTorchBlock();
+    public static final Item BURNING_CRUDE_TORCH_ITEM = new BlockItem(BURNING_CRUDE_TORCH_BLOCK, new Item.Settings());
 
     public static final EntityType<RockProjectileEntity> ROCK_PROJECTILE_ENTITY = FabricEntityTypeBuilder.<RockProjectileEntity>create(SpawnGroup.MISC, RockProjectileEntity::new).dimensions(new EntityDimensions(0.25F, 0.25F, true)).build();
     public static final EntityType<FlintProjectileEntity> FLINT_PROJECTILE_ENTITY = FabricEntityTypeBuilder.<FlintProjectileEntity>create(SpawnGroup.MISC, FlintProjectileEntity::new).dimensions(new EntityDimensions(0.25F, 0.25F, true)).build();
     public static final BlockEntityType<IceboxBlockEntity> ICEBOX_BLOCK_ENTITY = FabricBlockEntityTypeBuilder.create(IceboxBlockEntity::new, ICEBOX).build();
     public static final BlockEntityType<DryingRackBlockEntity> DRYING_RACK_BLOCK_ENTITY = FabricBlockEntityTypeBuilder.create(DryingRackBlockEntity::new, DRYING_RACK).build();
+    public static final BlockEntityType<CrudeTorchBlockEntity> BURNING_CRUDE_TORCH_BLOCK_ENTITY = FabricBlockEntityTypeBuilder.create(CrudeTorchBlockEntity::new, BURNING_CRUDE_TORCH_BLOCK).build();
 
     public static final RecipeSerializer<ExtractWaterFromBambooRecipe> EXTRACT_WATER_FROM_BAMBOO_RECIPE = new SpecialRecipeSerializer<>(ExtractWaterFromBambooRecipe::new);
     public static final RecipeSerializer<ExtractWaterFromSnowRecipe> EXTRACT_WATER_FROM_SNOW_RECIPE = new SpecialRecipeSerializer<>(ExtractWaterFromSnowRecipe::new);
@@ -338,6 +342,8 @@ public class Reg implements ModInitializer {
             content.add(PotionUtil.setPotion(new ItemStack(Items.POTION), FEARLESSNESS_POTION));
             content.add(new ItemStack(ICEBOX_ITEM));
             content.add(new ItemStack(DRYING_RACK_ITEM));
+            content.add(new ItemStack(CRUDE_TORCH_ITEM));
+            content.add(new ItemStack(BURNING_CRUDE_TORCH_ITEM));
         });
 
         Registry.register(Registries.ITEM, new Identifier("hcs", "grass_fiber"), GRASS_FIBER);
@@ -427,6 +433,10 @@ public class Reg implements ModInitializer {
         Registry.register(Registries.ITEM, new Identifier("hcs", "icebox"), ICEBOX_ITEM);
         Registry.register(Registries.BLOCK, new Identifier("hcs", "drying_rack"), DRYING_RACK);
         Registry.register(Registries.ITEM, new Identifier("hcs", "drying_rack"), DRYING_RACK_ITEM);
+        Registry.register(Registries.BLOCK, new Identifier("hcs", "crude_torch"), CRUDE_TORCH_BLOCK);
+        Registry.register(Registries.ITEM, new Identifier("hcs", "crude_torch"), CRUDE_TORCH_ITEM);
+        Registry.register(Registries.BLOCK, new Identifier("hcs", "burning_crude_torch"), BURNING_CRUDE_TORCH_BLOCK);
+        Registry.register(Registries.ITEM, new Identifier("hcs", "burning_crude_torch"), BURNING_CRUDE_TORCH_ITEM);
 
         Registry.register(Registries.POTION, "hcs_ironskin", IRONSKIN_POTION);
         Registry.register(Registries.POTION, "hcs_long_ironskin", LONG_IRONSKIN_POTION);
@@ -444,8 +454,10 @@ public class Reg implements ModInitializer {
 
         Registry.register(Registries.ENTITY_TYPE, new Identifier("hcs", "rock_projectile_entity"), ROCK_PROJECTILE_ENTITY);
         Registry.register(Registries.ENTITY_TYPE, new Identifier("hcs", "flint_projectile_entity"), FLINT_PROJECTILE_ENTITY);
+
         Registry.register(Registries.BLOCK_ENTITY_TYPE, new Identifier("hcs", "icebox_block_entity"), ICEBOX_BLOCK_ENTITY);
         Registry.register(Registries.BLOCK_ENTITY_TYPE, new Identifier("hcs", "drying_rack_block_entity"), DRYING_RACK_BLOCK_ENTITY);
+        Registry.register(Registries.BLOCK_ENTITY_TYPE, new Identifier("hcs", "burning_crude_torch"), BURNING_CRUDE_TORCH_BLOCK_ENTITY);
 
         Registry.register(Registries.STATUS_EFFECT, new Identifier("hcs", "thirst"), HcsEffects.THIRST);
         Registry.register(Registries.STATUS_EFFECT, new Identifier("hcs", "diarrhea"), HcsEffects.DIARRHEA);
@@ -543,7 +555,7 @@ public class Reg implements ModInitializer {
         CommandRegistrationCallback.EVENT.register((dispatcher, registryAccess, environment) -> dispatcher.register(literal("village")
                 .executes(context -> {
                     context.getSource().sendMessage(Text.translatable(WorldHelper.shouldGenerateVillages() ? "hcs.tip.can_gen_village" : "hcs.tip.cant_gen_village"));
-                    // For versions since 1.20, please use the following, which is intended to avoid creating Text objects if no feedback is needed.
+                    // For versions since 1.20, please onInteract the following, which is intended to avoid creating Text objects if no feedback is needed.
 //                    context.getSource().sendMessage(() -> Text.literal("Called /foo with no arguments"));
                     return 1;
                 })));

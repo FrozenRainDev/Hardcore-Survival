@@ -67,7 +67,7 @@ public abstract class DamageSourcesMixin implements IDamageSources {
         if (this.registry == null) return;
         if (key == DamageTypes.STARVE) {
             /* Registering new damage types is frustratingly tough, which needs mixin of a static method called bootstrap in an interface "DamageTypes" as Registry.register cannot register that and there's no relevant API
-            However, interfaces cannot be mixed in, so I have to abandon that way and use anonymous inner class.
+            However, interfaces cannot be mixed in, so I have to abandon that way and onInteract anonymous inner class.
             View VanillaDamageTypeTagProvider.class to check the attributes of different damage types */
             this.dehydrate = new DamageSource(this.registry.entryOf(key)) {
                 @Override

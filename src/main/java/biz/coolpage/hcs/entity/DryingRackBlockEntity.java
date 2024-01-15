@@ -1,9 +1,10 @@
 package biz.coolpage.hcs.entity;
 
 import biz.coolpage.hcs.Reg;
+import biz.coolpage.hcs.recipe.CustomDryingRackRecipe;
+import biz.coolpage.hcs.status.accessor.ICustomInteractable;
 import biz.coolpage.hcs.util.EntityHelper;
 import biz.coolpage.hcs.util.RotHelper;
-import biz.coolpage.hcs.recipe.CustomDryingRackRecipe;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockEntityProvider;
 import net.minecraft.block.BlockState;
@@ -20,7 +21,7 @@ import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.Nullable;
 
 
-public class DryingRackBlockEntity extends BlockEntity implements BlockEntityProvider {
+public class DryingRackBlockEntity extends BlockEntity implements BlockEntityProvider, ICustomInteractable {
     public static final String DRYING_DEADLINE = "hcs_drying_deadline";
     public static final long DRYING_LENGTH = 24000 * 2; // 2 days
 
@@ -46,9 +47,9 @@ public class DryingRackBlockEntity extends BlockEntity implements BlockEntityPro
         this.markDirty();
     }
 
-    public boolean use(PlayerEntity player) {
-        if (player == null || this.getWorld() == null) return false;
-        if (player.isSneaking()) return false;
+    @Override
+    public boolean onInteract(PlayerEntity player) {
+        if (player == null || this.getWorld() == null || player.isSneaking()) return false;
         ItemStack stack = player.getMainHandStack();
         if (getInventoryStack().isEmpty()) {
             if (CustomDryingRackRecipe.getOutput(stack.getItem()) == Items.AIR) return false;

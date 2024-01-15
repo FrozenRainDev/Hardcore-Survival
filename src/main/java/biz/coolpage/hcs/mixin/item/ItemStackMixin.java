@@ -97,7 +97,7 @@ public abstract class ItemStackMixin {
             if (reachRangeAddition > 0.0F && !(stack.getItem() instanceof BlockItem)) shouldAppendToolInfo = true;
             if (noArmorPlusModifier.get() || shouldAppendToolInfo) {
                 for (int i = 0; i < texts.size(); ++i) {
-                    //Do not use for each -- Avoid ConcurrentModificationException
+                    //Do not onInteract for each -- Avoid ConcurrentModificationException
                     var text = texts.get(i);
                     if (text != null && text.getContent() instanceof TranslatableTextContent translatable) {
                         String key = translatable.getKey();

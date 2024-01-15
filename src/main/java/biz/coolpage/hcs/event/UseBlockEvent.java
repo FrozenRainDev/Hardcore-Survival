@@ -24,7 +24,7 @@ import java.util.Objects;
 import static biz.coolpage.hcs.util.CommUtil.applyNullable;
 
 public class UseBlockEvent {
-    // For more use block events, view mixin/item
+    // For more onInteract block events, view mixin/item
     private static HitResult debugger;
 
     public static void init() {

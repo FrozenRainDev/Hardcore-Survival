@@ -47,7 +47,7 @@ public class RotHelper {
             createExp(WorldHelper.currWorld, stackB, avgFresh, nbtB.contains(HFI));
     }
 
-    //To optimize performance, do not use stack.isOf
+    //To optimize performance, do not onInteract stack.isOf
     public static boolean canRot(Item item) {
         if (item == null) return false;
         if (item == Reg.ROT || item == Reg.WORM || item == Items.ROTTEN_FLESH || item == Items.GOLDEN_APPLE || item == Items.ENCHANTED_GOLDEN_APPLE || item == Items.GOLDEN_CARROT || item == Items.GLISTERING_MELON_SLICE || Reg.IS_BARK.test(item))

@@ -34,7 +34,7 @@ public class BoneMealItemMixin {
                     The case of abusing bone meals
                     Also see:
                         WorldHelper.FERTILIZER_FREE     - A block property indicates whether a crop was fertilized
-                        FarmlandBlockMixin              - Farmland blocks stores the FERTILIZER_FREE property (Give up to use CropBlock, as it has more frequent block tick and sophisticated links, and it also has many subclasses(include other mods) that override too many methods)
+                        FarmlandBlockMixin              - Farmland blocks stores the FERTILIZER_FREE property (Give up to onInteract CropBlock, as it has more frequent block tick and sophisticated links, and it also has many subclasses(include other mods) that override too many methods)
                         CropBlockMixin/applyGrowth()    - Prevent block tick when the crop needs to wither (If not, world.breakBlock becomes invalid as updating will regenerate that block)
                     */
                     world.breakBlock(pos, false);

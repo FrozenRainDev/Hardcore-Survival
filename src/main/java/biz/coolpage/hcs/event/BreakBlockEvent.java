@@ -34,7 +34,7 @@ public class BreakBlockEvent {
                 int x = pos.getX();
                 int y = pos.getY();
                 int z = pos.getZ();
-                if (mainHand != Items.SHEARS) { //This type CANNOT use switch(){}
+                if (mainHand != Items.SHEARS) { //This type CANNOT onInteract switch(){}
                     if (block == Blocks.GRASS) {
                         if (rand < 0.007) EntityHelper.dropItem(player, x, y, z, Reg.FEARLESSNESS_HERB, 1);
                         else if (rand < 0.012) EntityHelper.dropItem(player, x, y, z, Reg.WORM, 1);

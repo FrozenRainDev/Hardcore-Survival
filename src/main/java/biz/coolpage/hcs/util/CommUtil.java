@@ -38,7 +38,7 @@ public class CommUtil {
         buffer.vertex(x + width, y + height, 0.0).color(red, green, blue, alpha).next();
         buffer.vertex(x + width, y, 0.0).color(red, green, blue, alpha).next();
         if (needShader) BufferRenderer.drawWithGlobalProgram(buffer.end());
-        else BufferRenderer.drawWithGlobalProgram(buffer.end()); //never use it !!
+        else BufferRenderer.drawWithGlobalProgram(buffer.end()); //never onInteract it !!
     }
 
     @Contract(pure = true)

@@ -71,7 +71,7 @@ public class EntityHelper {
     public static final Predicate<PlayerEntity> IS_SURVIVAL_AND_SERVER = IS_SURVIVAL_LIKE.and(player -> player.world != null && !player.world.isClient);
     public static final Predicate<PlayerEntity> IS_BAREHANDED = player -> {
         if (player == null) return false;
-        ItemStack stack = player.getMainHandStack(); //Do not use getActiveItem
+        ItemStack stack = player.getMainHandStack(); //Do not onInteract getActiveItem
 //        return stack.isEmpty();
         if (stack == null) return false;
         return !(stack.getItem() instanceof ToolItem) && !stack.isOf(Items.STICK) && !stack.isOf(Items.BONE) && !stack.isOf(Reg.ROCK) && !stack.isOf(Items.FLINT);
@@ -328,7 +328,7 @@ public class EntityHelper {
     }
 
     public static void checkOvereaten(@NotNull ServerPlayerEntity player, boolean isDrink) {
-        // Also see ItemMixin/use()V
+        // Also see ItemMixin/onInteract()V
         int hunger = player.getHungerManager().getFoodLevel();
         double thirst = ((StatAccessor) player).getThirstManager().get();
         if ((isDrink && (hunger >= 20 || thirst > 0.99)) || (!isDrink && hunger >= 20)) {

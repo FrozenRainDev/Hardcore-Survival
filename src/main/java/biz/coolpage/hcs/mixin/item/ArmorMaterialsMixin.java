@@ -14,7 +14,7 @@ public class ArmorMaterialsMixin {
     /*
      NOTES:
      Cannot edit finals
-     getName() is not invoked spontaneously, so must use getDurability()
+     getName() is not invoked spontaneously, so must onInteract getDurability()
      overwriting is both tricky and dangerous
      */
     @Unique
