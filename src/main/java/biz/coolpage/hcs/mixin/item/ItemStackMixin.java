@@ -13,6 +13,7 @@ import net.minecraft.text.MutableText;
 import net.minecraft.text.Text;
 import net.minecraft.text.TranslatableTextContent;
 import net.minecraft.util.Formatting;
+import org.apache.commons.lang3.mutable.MutableFloat;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;
@@ -24,7 +25,6 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.concurrent.atomic.AtomicReference;
 
 @Mixin(ItemStack.class)
 @SuppressWarnings("ConstantValue")
@@ -40,9 +40,9 @@ public abstract class ItemStackMixin {
             var material = armor.getMaterial();
             boolean b = ArmorHelper.CustomDecimalProtection.contains(material);
             protectionAmount = b ? ArmorHelper.CustomDecimalProtection.get(material, armor.getSlotType()) : armor.getProtection();
-            AtomicReference<Float> delta = new AtomicReference<>(0.0F);
+            MutableFloat delta = new MutableFloat(0.0F);
             ArmorHelper.eachArmorDeltaProcess(stack, delta);
-            protectionAmount += delta.get();
+            protectionAmount += delta.getValue();
 
         }
         return String.format("%.2f", protectionAmount);

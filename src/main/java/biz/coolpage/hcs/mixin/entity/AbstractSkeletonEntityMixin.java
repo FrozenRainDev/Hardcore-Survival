@@ -20,6 +20,6 @@ public class AbstractSkeletonEntityMixin {
 
     @ModifyArg(method = "attack", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/mob/AbstractSkeletonEntity;createArrowProjectile(Lnet/minecraft/item/ItemStack;F)Lnet/minecraft/entity/projectile/PersistentProjectileEntity;"), index = 1)
     private float injected(float damageModifier) {
-        return damageModifier * 0.7F;
+        return damageModifier * 0.8F;
     }
 }

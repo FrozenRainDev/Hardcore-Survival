@@ -8,6 +8,7 @@ import net.minecraft.block.entity.BlockEntityTicker;
 import net.minecraft.block.entity.BlockEntityType;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
+import net.minecraft.particle.DefaultParticleType;
 import net.minecraft.particle.ParticleTypes;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.BlockSoundGroup;
@@ -31,9 +32,10 @@ import static biz.coolpage.hcs.block.CrudeTorchBlock.onLit;
 public class BurningCrudeTorchBlock extends BlockWithEntity {
     //TODO register lang & img
     protected static final VoxelShape BOUNDING_SHAPE = Block.createCuboidShape(6.0, 0.0, 6.0, 10.0, 10.0, 10.0);
+    protected final DefaultParticleType particle = ParticleTypes.SMOKE;
 
     public BurningCrudeTorchBlock() {
-        super(AbstractBlock.Settings.of(Material.DECORATION).noCollision().breakInstantly().sounds(BlockSoundGroup.WOOD));
+        super(AbstractBlock.Settings.of(Material.DECORATION).noCollision().breakInstantly().luminance(state -> 14).sounds(BlockSoundGroup.WOOD));
     }
 
     @Override
@@ -77,7 +79,7 @@ public class BurningCrudeTorchBlock extends BlockWithEntity {
                     world1.setBlockState(pos1, Reg.CRUDE_TORCH_BLOCK.getDefaultState());
                     world1.playSound(null, pos1, SoundEvents.BLOCK_FIRE_EXTINGUISH, SoundCategory.BLOCKS);
                     for (int i = 0; i < 4; ++i)
-                        world1.addParticle(ParticleTypes.SMOKE, pos1.getX(), pos1.getY(), pos1.getZ(), 0.0, 5.0E-4, 0.0);
+                        world1.addParticle(this.particle, pos1.getX(), pos1.getY(), pos1.getZ(), 0.0, 5.0E-4, 0.0);
                     if (world1 instanceof ServerWorld serverWorld) serverWorld.getChunkManager().markForUpdate(pos1);
                 }
             }

@@ -1,6 +1,7 @@
 accessWidener v1 named
 accessible field net/minecraft/block/AbstractBlock settings Lnet/minecraft/block/AbstractBlock$Settings;
 accessible field net/minecraft/block/AbstractBlock$Settings luminance Ljava/util/function/ToIntFunction;
+accessible method net/minecraft/block/Blocks createLightLevelFromLitBlockState (I)Ljava/util/function/ToIntFunction;
 accessible method net/minecraft/block/CropBlock getSeedsItem ()Lnet/minecraft/item/ItemConvertible;
 accessible field net/minecraft/client/render/GameRenderer postProcessor Lnet/minecraft/client/gl/PostEffectProcessor;
 accessible method net/minecraft/block/FarmlandBlock isWaterNearby (Lnet/minecraft/world/WorldView;Lnet/minecraft/util/math/BlockPos;)Z

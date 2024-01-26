@@ -18,10 +18,11 @@ import net.minecraft.entity.effect.StatusEffectCategory;
 import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.entity.effect.StatusEffects;
 import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.util.Util;
 import net.minecraft.util.math.MathHelper;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.UUID;
 import java.util.function.Predicate;
@@ -328,12 +329,12 @@ public class HcsEffects {
         @Override
         public void applyUpdateEffect(LivingEntity entity, int amplifier) {
             if (entity != null && entity.world != null && !entity.isInvulnerable() && amplifier > 0)
-                if (entity.world.getTime() % (long) (switch (amplifier) {
-                    case 1 -> 600;
-                    case 2 -> 150;
-                    default -> 40;
+                if (entity.world.getTime() % (switch (amplifier) {
+                    case 1 -> 300L;
+                    case 2 -> 75L;
+                    default -> 20L;
                 } * HcsDifficulty.chooseVal(toPlayer(entity), 2.0F, 1.0F, 0.5F)) == 0)
-                    entity.damage(((IDamageSources) entity.world.getDamageSources()).bleeding(), 1.0F);
+                    entity.damage(((IDamageSources) entity.world.getDamageSources()).bleeding(), 0.5F);
         }
     };
 
@@ -415,9 +416,9 @@ public class HcsEffects {
         @Override
         public void applyUpdateEffect(LivingEntity entity, int amplifier) {
             if (entity instanceof ServerPlayerEntity player && IS_SURVIVAL_LIKE.test(player)) {
-                ((StatAccessor) player).getThirstManager().add(-0.00015 * (amplifier + 1));
-                player.getHungerManager().addExhaustion(0.015F * (amplifier + 1));
-                ((StatAccessor) player).getSanityManager().add(-0.00001 * (amplifier + 1));
+                ((StatAccessor) player).getThirstManager().add(-0.0003 * (amplifier + 1));
+                player.getHungerManager().addExhaustion(0.025F * (amplifier + 1));
+                ((StatAccessor) player).getSanityManager().add(-0.00002 * (amplifier + 1));
                 player.getHungerManager().setSaturationLevel(0.0F);
             }
         }
@@ -435,15 +436,15 @@ public class HcsEffects {
         }
     };
 
-    private static final HashMap<StatusEffect, ?> VARIABLE_EFFECTS = new HashMap<>() {{
-        this.put(PAIN, null);
-        this.put(INJURY, null);
-        this.put(PANIC, null);
-        this.put(BLEEDING, null);
-        this.put(WET, null);
-    }};
+    private static final HashSet<StatusEffect> VARIABLE_EFFECTS = Util.make(new HashSet<>(), set -> {
+        set.add(PAIN);
+        set.add(INJURY);
+        set.add(PANIC);
+        set.add(BLEEDING);
+        set.add(WET);
+    });
 
-    public static final Predicate<StatusEffect> IS_EFFECT_NAME_VARIABLE = VARIABLE_EFFECTS::containsKey; // A predicate determines whether an effect should be appended by Roman numerals to express level
+    public static final Predicate<StatusEffect> IS_EFFECT_NAME_VARIABLE = VARIABLE_EFFECTS::contains; // A predicate determines whether an effect should be appended by Roman numerals to express level
 
     public static String getEffectVarName(String key, int amplifier) {
         return switch (amplifier) {

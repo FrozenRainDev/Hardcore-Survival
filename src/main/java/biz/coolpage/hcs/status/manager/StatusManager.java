@@ -42,7 +42,7 @@ public class StatusManager {
     private int returnEffectAwaitTicks = 0; //Server side only
 
     public static int getMaxSoulImpaired(@Nullable LivingEntity entity) {
-        return HcsDifficulty.chooseVal(toPlayer(entity), 0, 4, 7);
+        return HcsDifficulty.chooseVal(toPlayer(entity), 0, 6, 8);
     }
 
     public void reset(int lvlReached, int soulImpaired, int smashed, Enum<HcsDifficulty.HcsDifficultyEnum> hcsDifficulty, boolean hasCheckInitTips, int enterCurrWldTimes) {

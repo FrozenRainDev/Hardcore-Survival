@@ -23,7 +23,7 @@ import org.jetbrains.annotations.NotNull;
 public class CrudeTorchBlock extends TorchBlock {
     // Extinguished crude torch block
     public CrudeTorchBlock() {
-        super(AbstractBlock.Settings.of(Material.DECORATION).noCollision().breakInstantly().luminance(state -> 11).sounds(BlockSoundGroup.WOOD), ParticleTypes.FLAME);
+        super(AbstractBlock.Settings.of(Material.DECORATION).noCollision().breakInstantly().sounds(BlockSoundGroup.WOOD), ParticleTypes.FLAME);
     }
 
     public static boolean onLit(@NotNull World world, BlockPos pos, @NotNull PlayerEntity player, Hand hand) {

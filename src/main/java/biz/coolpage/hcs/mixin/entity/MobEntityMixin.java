@@ -53,7 +53,7 @@ public abstract class MobEntityMixin extends LivingEntity {
     @ModifyArg(method = "tryAttack", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/Entity;damage(Lnet/minecraft/entity/damage/DamageSource;F)Z"), index = 1)
     public float tryAttack(float amount) {
         //noinspection ConstantValue
-        if ((Object) this instanceof ZombieEntity zombie && zombie.isBaby()) return amount / 2.5F;
+        if ((Object) this instanceof ZombieEntity zombie && zombie.isBaby()) return amount / 2.0F;
         return amount;
     }
 }

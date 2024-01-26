@@ -30,12 +30,12 @@ public class HcsDifficulty {
     public static boolean isOf(World world, Enum<HcsDifficultyEnum> difficulty) {
         Enum<HcsDifficultyEnum> worldDiff = getDifficulty(world);
         if (worldDiff == null) return false;
-        return worldDiff.ordinal() == difficulty.ordinal();
+        return worldDiff == difficulty;
     }
 
     public static boolean isOf(PlayerEntity player, Enum<HcsDifficultyEnum> difficulty) {
         if (player == null || difficulty == null) return false;
-        return ((StatAccessor) player).getStatusManager().getHcsDifficulty().ordinal() == difficulty.ordinal();
+        return ((StatAccessor) player).getStatusManager().getHcsDifficulty() == difficulty;
     }
 
     public static <T> T chooseVal(@Nullable PlayerEntity player, T relax, T standard, T challenge) {
@@ -55,8 +55,8 @@ public class HcsDifficulty {
 
     private static <T> T chooseVal(@Nullable Enum<HcsDifficultyEnum> difficulty, T relax, T standard, T challenge) {
         if (difficulty != null) {
-            if (difficulty.ordinal() == HcsDifficulty.HcsDifficultyEnum.relaxing.ordinal()) return relax;
-            if (difficulty.ordinal() == HcsDifficulty.HcsDifficultyEnum.challenging.ordinal()) return challenge;
+            if (difficulty == HcsDifficulty.HcsDifficultyEnum.relaxing) return relax;
+            if (difficulty == HcsDifficulty.HcsDifficultyEnum.challenging) return challenge;
         }
         return standard;
     }

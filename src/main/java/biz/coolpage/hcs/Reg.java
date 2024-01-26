@@ -1,9 +1,6 @@
 package biz.coolpage.hcs;
 
-import biz.coolpage.hcs.block.BurningCrudeTorchBlock;
-import biz.coolpage.hcs.block.CrudeTorchBlock;
-import biz.coolpage.hcs.block.DryingRackBlock;
-import biz.coolpage.hcs.block.IceboxBlock;
+import biz.coolpage.hcs.block.*;
 import biz.coolpage.hcs.config.HcsDifficulty;
 import biz.coolpage.hcs.entity.*;
 import biz.coolpage.hcs.event.*;
@@ -45,6 +42,7 @@ import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.Text;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.math.Direction;
 import net.minecraft.world.GameRules;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.Contract;
@@ -214,9 +212,11 @@ public class Reg implements ModInitializer {
     };
     public static final Item ASHES = new SalveItem(0, 0.35, 50);
     public static final CrudeTorchBlock CRUDE_TORCH_BLOCK = new CrudeTorchBlock();
-    public static final Item CRUDE_TORCH_ITEM = new BlockItem(CRUDE_TORCH_BLOCK, new Item.Settings());
+    public static final WallCrudeTorchBlock WALL_CRUDE_TORCH_BLOCK = new WallCrudeTorchBlock();
+    public static final Item CRUDE_TORCH_ITEM = new VerticallyAttachableBlockItem(CRUDE_TORCH_BLOCK, WALL_CRUDE_TORCH_BLOCK, new Item.Settings(), Direction.DOWN);
     public static final BurningCrudeTorchBlock BURNING_CRUDE_TORCH_BLOCK = new BurningCrudeTorchBlock();
-    public static final Item BURNING_CRUDE_TORCH_ITEM = new BlockItem(BURNING_CRUDE_TORCH_BLOCK, new Item.Settings());
+    public static final WallBurningCrudeTorchBlock WALL_BURNING_CRUDE_TORCH_BLOCK = new WallBurningCrudeTorchBlock();
+    public static final Item BURNING_CRUDE_TORCH_ITEM = new VerticallyAttachableBlockItem(BURNING_CRUDE_TORCH_BLOCK, WALL_BURNING_CRUDE_TORCH_BLOCK, new Item.Settings(), Direction.DOWN);
 
     public static final EntityType<RockProjectileEntity> ROCK_PROJECTILE_ENTITY = FabricEntityTypeBuilder.<RockProjectileEntity>create(SpawnGroup.MISC, RockProjectileEntity::new).dimensions(new EntityDimensions(0.25F, 0.25F, true)).build();
     public static final EntityType<FlintProjectileEntity> FLINT_PROJECTILE_ENTITY = FabricEntityTypeBuilder.<FlintProjectileEntity>create(SpawnGroup.MISC, FlintProjectileEntity::new).dimensions(new EntityDimensions(0.25F, 0.25F, true)).build();
@@ -433,10 +433,14 @@ public class Reg implements ModInitializer {
         Registry.register(Registries.ITEM, new Identifier("hcs", "icebox"), ICEBOX_ITEM);
         Registry.register(Registries.BLOCK, new Identifier("hcs", "drying_rack"), DRYING_RACK);
         Registry.register(Registries.ITEM, new Identifier("hcs", "drying_rack"), DRYING_RACK_ITEM);
-        Registry.register(Registries.BLOCK, new Identifier("hcs", "crude_torch"), CRUDE_TORCH_BLOCK);
+        // Extinguished crude torch
         Registry.register(Registries.ITEM, new Identifier("hcs", "crude_torch"), CRUDE_TORCH_ITEM);
-        Registry.register(Registries.BLOCK, new Identifier("hcs", "burning_crude_torch"), BURNING_CRUDE_TORCH_BLOCK);
+        Registry.register(Registries.BLOCK, new Identifier("hcs", "crude_torch"), CRUDE_TORCH_BLOCK);
+        Registry.register(Registries.BLOCK, new Identifier("hcs", "wall_crude_torch"), WALL_CRUDE_TORCH_BLOCK);
+        // Burning crude torch
         Registry.register(Registries.ITEM, new Identifier("hcs", "burning_crude_torch"), BURNING_CRUDE_TORCH_ITEM);
+        Registry.register(Registries.BLOCK, new Identifier("hcs", "burning_crude_torch"), BURNING_CRUDE_TORCH_BLOCK);
+        Registry.register(Registries.BLOCK, new Identifier("hcs", "wall_burning_crude_torch"), WALL_BURNING_CRUDE_TORCH_BLOCK);
 
         Registry.register(Registries.POTION, "hcs_ironskin", IRONSKIN_POTION);
         Registry.register(Registries.POTION, "hcs_long_ironskin", LONG_IRONSKIN_POTION);

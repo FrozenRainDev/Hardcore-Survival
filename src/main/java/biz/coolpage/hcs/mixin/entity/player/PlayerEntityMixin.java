@@ -479,6 +479,7 @@ public abstract class PlayerEntityMixin extends LivingEntity implements StatAcce
         //Set max health according to max exp level reached
         if (this.experienceLevel > this.statusManager.getMaxExpLevelReached())
             this.statusManager.setMaxExpLevelReached(this.experienceLevel);
+        /*
         int maxLvlReached = this.statusManager.getMaxExpLevelReached();
         EntityAttributeInstance instance = this.getAttributeInstance(EntityAttributes.GENERIC_MAX_HEALTH);
         if (instance != null) {
@@ -490,8 +491,9 @@ public abstract class PlayerEntityMixin extends LivingEntity implements StatAcce
                 if (limitedMaxHealth < this.getHealth()) this.setHealth((float) limitedMaxHealth);
             } else if (maxLvlReached >= 36 && currMaxHealth < 20) instance.setBaseValue(20);
         }
+        */
         if (this.getPos().distanceTo(this.staminaManager.getLastVecPos()) > 0.0001) {
-            //Player is moving this.getVelocity() and this.speed are useless
+            //Player is moving; `this.getVelocity()` and `this.speed` are useless
             quitReturnTeleport(this);
             if (!this.hasVehicle()) {
                 boolean shouldPauseRestoring = true;

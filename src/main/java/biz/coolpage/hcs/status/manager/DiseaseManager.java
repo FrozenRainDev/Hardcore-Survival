@@ -5,14 +5,12 @@ import biz.coolpage.hcs.status.HcsEffects;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.entity.effect.StatusEffects;
+import net.minecraft.item.FoodComponent;
 import net.minecraft.item.Item;
 import net.minecraft.item.Items;
 import net.minecraft.server.network.ServerPlayerEntity;
 
-import java.util.concurrent.atomic.AtomicBoolean;
-
 import static biz.coolpage.hcs.recipe.CustomDryingRackRecipe.IS_RAW_MEAT;
-import static biz.coolpage.hcs.util.CommUtil.applyNullable;
 import static biz.coolpage.hcs.util.CommUtil.hasNull;
 
 public class DiseaseManager {
@@ -24,24 +22,28 @@ public class DiseaseManager {
     public static double getParasitePossibilityAndCheckFoodPoisoning(Item item, LivingEntity entity) {
         double poss = -1.0;
         if (hasNull(item, entity)) return poss;
-        AtomicBoolean isFoodPoisonous = new AtomicBoolean(false);
-        var component = item.getFoodComponent();
-        if (component != null) {
-            var effects = component.getStatusEffects();
-            if (effects != null) effects.forEach(effectFloatPair -> {
-                if (applyNullable(effectFloatPair.getFirst(), effect -> effect.getEffectType() == StatusEffects.POISON, false))
-                    isFoodPoisonous.set(true);
-            });
-        }
         if (item == Reg.WORM) poss = 0.08;
         else if (IS_RAW_MEAT.test(item)) {
             if (item == Items.PORKCHOP || item == Reg.ANIMAL_VISCERA) poss = 0.16;
             else poss = 0.08;
         } else if (item == Items.ROTTEN_FLESH) return 0.3;
         else if (item == Reg.ROT || item == Reg.BAT_WINGS) poss = 0.1;
-        if ((Math.random() < (poss * 3) || isFoodPoisonous.get()) && entity instanceof ServerPlayerEntity player)
+        if ((Math.random() < (poss * 3.5) || isFoodPoisonous(item.getFoodComponent())) && entity instanceof ServerPlayerEntity player)
             player.addStatusEffect(new StatusEffectInstance(HcsEffects.FOOD_POISONING, 1200, 0, false, false, true));
         return poss; // -1.0: Impossible
+    }
+
+    public static boolean isFoodPoisonous(FoodComponent component) {
+        if (component != null) {
+            var effects = component.getStatusEffects();
+            if (effects != null) {
+                for (var effectFloatPair : effects) {
+                    var first = effectFloatPair.getFirst();
+                    if (first != null && first.getEffectType() == StatusEffects.POISON) return true;
+                }
+            }
+        }
+        return false;
     }
 
     public double getParasite() {

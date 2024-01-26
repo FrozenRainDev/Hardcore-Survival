@@ -5,6 +5,7 @@ import biz.coolpage.hcs.item.HcsArmorMaterials;
 import biz.coolpage.hcs.status.HcsEffects;
 import biz.coolpage.hcs.status.accessor.StatAccessor;
 import biz.coolpage.hcs.status.manager.StatusManager;
+import com.google.common.collect.ImmutableMap;
 import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.attribute.EntityAttributes;
@@ -15,32 +16,30 @@ import net.minecraft.item.ArmorMaterials;
 import net.minecraft.item.ItemStack;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.math.MathHelper;
+import org.apache.commons.lang3.mutable.MutableFloat;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
-import java.util.HashMap;
-import java.util.concurrent.atomic.AtomicReference;
 
 import static biz.coolpage.hcs.util.CommUtil.applyNullable;
 import static biz.coolpage.hcs.util.CommUtil.optElse;
 
 public class ArmorHelper {
     public static class CustomDecimalProtection {
-        private static final HashMap<ArmorMaterial, HashMap<Enum<EquipmentSlot>, Float>> PROTECTIONS = new HashMap<>() {{
-            this.put(HcsArmorMaterials.WOOL, ofProtection(0.6F, 0.8F, 0.4F, 0.2F));
-            this.put(ArmorMaterials.LEATHER, ofProtection(0.3F, 0.4F, 0.2F, 0.1F));
-            this.put(HcsArmorMaterials.WOOD, ofProtection(1.2F, 1.6F, 0.8F, 0.4F));
-        }};
+        private static final ImmutableMap<ArmorMaterial, ImmutableMap<Enum<EquipmentSlot>, Float>> PROTECTIONS = new ImmutableMap.Builder<ArmorMaterial, ImmutableMap<Enum<EquipmentSlot>, Float>>()
+                .put(HcsArmorMaterials.WOOL, ofProtection(0.6F, 0.8F, 0.4F, 0.2F))
+                .put(ArmorMaterials.LEATHER, ofProtection(0.3F, 0.4F, 0.2F, 0.1F))
+                .put(HcsArmorMaterials.WOOD, ofProtection(1.2F, 1.6F, 0.8F, 0.4F))
+                .buildOrThrow();
 
         @Contract("_, _, _, _ -> new")
-        private static @NotNull HashMap<Enum<EquipmentSlot>, Float> ofProtection(float head, float chest, float legs, float feet) {
-            return new HashMap<>() {{
-                this.put(EquipmentSlot.HEAD, head);
-                this.put(EquipmentSlot.CHEST, chest);
-                this.put(EquipmentSlot.LEGS, legs);
-                this.put(EquipmentSlot.FEET, feet);
-            }};
+        private static @NotNull ImmutableMap<Enum<EquipmentSlot>, Float> ofProtection(float head, float chest, float legs, float feet) {
+            return new ImmutableMap.Builder<Enum<EquipmentSlot>, Float>()
+                    .put(EquipmentSlot.HEAD, head)
+                    .put(EquipmentSlot.CHEST, chest)
+                    .put(EquipmentSlot.LEGS, legs)
+                    .put(EquipmentSlot.FEET, feet)
+                    .buildOrThrow();
         }
 
         public static boolean contains(ArmorMaterial material) {
@@ -52,16 +51,18 @@ public class ArmorHelper {
                 Reg.LOGGER.error(ArmorHelper.class + "/" + CustomDecimalProtection.class + "/get()F: !contains(" + material + ")");
                 return 0.0F;
             }
-            return optElse(PROTECTIONS.get(material).get(slot), 0.0F);
+            var protections = PROTECTIONS.get(material);
+            if (protections == null) return 0.0F;
+            return optElse(protections.get(slot), 0.0F);
         }
     }
 
-    public static void eachArmorDeltaProcess(ItemStack stack, AtomicReference<Float> delta) {
+    public static void eachArmorDeltaProcess(ItemStack stack, MutableFloat delta) {
         if (stack != null && stack.getItem() instanceof ArmorItem armor) {
             int maxDamage = armor.getMaxDamage(), durability = maxDamage - stack.getDamage();
             float durPercent = durability / (float) maxDamage;
-            if (durPercent < 0.5F)
-                delta.set(delta.get() - armor.getProtection() * MathHelper.clamp(1 - durPercent * 2, 0.0F, 1.0F));
+            if (durPercent < 0.5F) // Protection decrement for low durability
+                delta.subtract(armor.getProtection() * MathHelper.clamp(1 - durPercent * 2, 0.0F, 1.0F));
         }
     }
 
@@ -98,28 +99,28 @@ public class ArmorHelper {
     }
 
     public static float getAdjustedProtectionDelta(@Nullable PlayerEntity player) {
-        AtomicReference<Float> delta = new AtomicReference<>(0.0F);
+        MutableFloat delta = new MutableFloat(0.0F);//new AtomicReference<>(0.0F);
         if (player != null) {
             var armors = player.getArmorItems();
             if (armors != null) armors.forEach(stack -> eachArmorDeltaProcess(stack, delta));
             int ironskin = EntityHelper.getEffectAmplifier(player, HcsEffects.IRONSKIN);
-            if (ironskin > -1) delta.set(delta.get() + ironskin > 0 ? 1.6F : 1.2F);
+            if (ironskin > -1) delta.add(ironskin > 0 ? 1.6F : 1.2F);
         }
-        return delta.get();
+        return delta.getValue();
     }
 
     public static float getProtectionWithCustomDecimals(@Nullable PlayerEntity player) {
         if (player instanceof ServerPlayerEntity serverPlayer) {
-            AtomicReference<Float> protection = new AtomicReference<>(0.0F);
+            MutableFloat protection = new MutableFloat(0.0F);//new AtomicReference<>(0.0F);
             applyNullable(serverPlayer.getArmorItems(), stacks -> stacks.forEach(stack -> {
                 if (stack.getItem() instanceof ArmorItem armor) {
                     var material = armor.getMaterial();
                     if (CustomDecimalProtection.contains(material))
-                        protection.updateAndGet(val -> val + CustomDecimalProtection.get(material, armor.getSlotType()));
-                    else protection.updateAndGet(val -> val + armor.getProtection());
+                        protection.add(CustomDecimalProtection.get(material, armor.getSlotType()));
+                    else protection.add(armor.getProtection());
                 }
             }));
-            return protection.get();
+            return protection.getValue();
         }
         Reg.LOGGER.error(ArmorHelper.class + "/getProtectionWithCustomDecimals(): !(player instanceof ServerPlayerEntity)");
         return (float) applyNullable(player, LivingEntity::getArmor, 0);
