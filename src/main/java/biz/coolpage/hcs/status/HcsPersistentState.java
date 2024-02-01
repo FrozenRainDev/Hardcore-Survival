@@ -34,7 +34,6 @@ public class HcsPersistentState extends PersistentState {
     }
 
     public static @Nullable HcsPersistentState getServerState(@Nullable ServerWorld world) {
-//        ServerWorld world = server.getWorld(World.OVERWORLD);
         if (world == null || world.getRegistryKey() != World.OVERWORLD) return null;
         PersistentStateManager persistentStateManager = world.getPersistentStateManager();
         HcsPersistentState state = persistentStateManager.getOrCreate(HcsPersistentState::createFromNbt, HcsPersistentState::new, "hcs");

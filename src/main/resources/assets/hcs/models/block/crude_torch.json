@@ -1,7 +1,6 @@
 {
   "parent": "minecraft:block/template_torch",
   "textures": {
-    "0": "hcs:block/crude_torch",
-    "particle": "minecraft:block/crude_torch"
+    "torch": "hcs:block/crude_torch"
   }
 }

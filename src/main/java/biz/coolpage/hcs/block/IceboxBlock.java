@@ -1,8 +1,6 @@
 package biz.coolpage.hcs.block;
 
 import biz.coolpage.hcs.Reg;
-import biz.coolpage.hcs.item.HotWaterBottleItem;
-import biz.coolpage.hcs.util.RotHelper;
 import biz.coolpage.hcs.entity.IceboxBlockEntity;
 import net.minecraft.block.*;
 import net.minecraft.block.entity.BlockEntity;
@@ -84,11 +82,13 @@ public class IceboxBlock extends BlockWithEntity implements Waterloggable {
                 .with(Properties.HORIZONTAL_FACING, ctx.getHorizontalPlayerFacing().getOpposite())
                 .with(Properties.WATERLOGGED, ctx.getWorld().getFluidState(ctx.getBlockPos()).getFluid() == Fluids.WATER);
     }
+
     @SuppressWarnings("deprecation")
     @Override
     public FluidState getFluidState(@NotNull BlockState state) {
         return state.get(Properties.WATERLOGGED) ? Fluids.WATER.getStill(false) : super.getFluidState(state);
     }
+
     @SuppressWarnings("deprecation")
     @Override
     public BlockState getStateForNeighborUpdate(@NotNull BlockState state, Direction direction, BlockState neighborState, WorldAccess world, BlockPos pos, BlockPos neighborPos) {
@@ -111,10 +111,7 @@ public class IceboxBlock extends BlockWithEntity implements Waterloggable {
     @Nullable
     @Override
     public <T extends BlockEntity> BlockEntityTicker<T> getTicker(World world, BlockState state, BlockEntityType<T> type) {
-        return (world1, pos1, state1, blockEntity) -> {
-            RotHelper.update(world1, (Inventory) blockEntity, true);
-            HotWaterBottleItem.update(world1, (Inventory) blockEntity, -1);
-        };
+        return checkType(type, Reg.ICEBOX_BLOCK_ENTITY, IceboxBlockEntity::tick);
     }
 
     @Override

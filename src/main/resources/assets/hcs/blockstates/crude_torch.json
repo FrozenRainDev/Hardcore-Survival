@@ -1,7 +1,7 @@
 {
   "variants": {
     "": {
-      "model": "minecraft:block/torch"
+      "model": "hcs:block/crude_torch"
     }
   }
 }

@@ -1,12 +1,15 @@
 package biz.coolpage.hcs.entity;
 
 import biz.coolpage.hcs.Reg;
+import biz.coolpage.hcs.item.HotWaterBottleItem;
+import biz.coolpage.hcs.util.RotHelper;
 import net.minecraft.block.BlockEntityProvider;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.block.entity.LootableContainerBlockEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.Inventories;
+import net.minecraft.inventory.Inventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.screen.GenericContainerScreenHandler;
@@ -16,6 +19,7 @@ import net.minecraft.server.world.ServerWorld;
 import net.minecraft.text.Text;
 import net.minecraft.util.collection.DefaultedList;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.World;
 import net.minecraft.world.event.listener.GameEventListener;
 import org.jetbrains.annotations.Nullable;
 
@@ -28,6 +32,11 @@ public class IceboxBlockEntity extends LootableContainerBlockEntity implements B
     public static final int INV_SIZE = 18;
     private DefaultedList<ItemStack> inventory = DefaultedList.ofSize(INV_SIZE, ItemStack.EMPTY);
 
+    @SuppressWarnings("unused")
+    public static void tick(World world, BlockPos pos, BlockState state, BlockEntity entity) {
+        RotHelper.update(world, (Inventory) entity, true);
+        HotWaterBottleItem.update(world, (Inventory) entity, -1);
+    }
 
     @Override
     protected DefaultedList<ItemStack> getInvStackList() {

@@ -1,7 +1,6 @@
 {
   "parent": "minecraft:block/template_torch_wall",
   "textures": {
-    "0": "minecraft:block/burning_crude_torch",
-    "particle": "minecraft:block/burning_crude_torch"
+    "torch": "hcs:block/burning_crude_torch"
   }
 }
