@@ -1,9 +1,10 @@
 package biz.coolpage.hcs.util;
 
-import biz.coolpage.hcs.status.HcsEffects;
-import biz.coolpage.hcs.status.manager.StatusManager;
 import biz.coolpage.hcs.Reg;
+import biz.coolpage.hcs.block.BurningCrudeTorchBlock;
+import biz.coolpage.hcs.status.HcsEffects;
 import biz.coolpage.hcs.status.accessor.StatAccessor;
+import biz.coolpage.hcs.status.manager.StatusManager;
 import biz.coolpage.hcs.status.manager.TemperatureManager;
 import net.minecraft.block.*;
 import net.minecraft.entity.Entity;
@@ -234,7 +235,8 @@ public abstract class TemperatureHelper implements WorldView {
                     temperatureManager.addAmbient(0.3F);
                 else if (block == Blocks.MAGMA_BLOCK) temperatureManager.addAmbient(0.5F);
                 else if (block == Blocks.LAVA || block == Blocks.LAVA_CAULDRON) temperatureManager.addAmbient(2.0F);
-                else if (block == Blocks.TORCH) temperatureManager.addAmbient(0.01F);
+                else if (block == Blocks.TORCH || block instanceof BurningCrudeTorchBlock)
+                    temperatureManager.addAmbient(0.03F);
                 //Addition: check oxygen generation
                 if ((block instanceof LeavesBlock || (block instanceof PlantBlock && !(block instanceof RootsBlock) && block != Blocks.DEAD_BUSH) || block == Blocks.GRASS_BLOCK)/* && player.world.raycast(new RaycastContext(player.getPos(), new Vec3d(checkPos.getX(), checkPos.getY(), checkPos.getZ()), RaycastContext.ShapeType.COLLIDER, RaycastContext.FluidHandling.NONE, player)).getType() != HitResult.Type.MISS*/) {
                     for (BlockPos immediatePos : new BlockPos[]{checkPos.up(), checkPos.down(), checkPos.east(), checkPos.south(), checkPos.west(), checkPos.north()}) {

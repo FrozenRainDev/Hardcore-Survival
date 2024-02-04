@@ -74,7 +74,7 @@
   "effect.hcs.panic.3": "Strong Panic",
   "effect.hcs.panic.3.description": "Hitting accuracy severely reduced",
   "effect.hcs.panic.4": "Terrified",
-  "effect.hcs.panic.4.description": "You find you cannot control yourself",
+  "effect.hcs.panic.4.description": "You cannot control yourself",
   "effect.hcs.bleeding": "Bleeding",
   "effect.hcs.bleeding.description": "Bandaging required",
   "effect.hcs.bleeding.1": "Minor Bleeding",

@@ -21,11 +21,20 @@ public class Client implements ClientModInitializer {
     public void onInitializeClient() {
         ClientS2C.init();
         ClientPlayConnectionEvent.init();
-        BlockRenderLayerMap.INSTANCE.putBlock(Reg.ICEBOX, RenderLayer.getCutout());
-        BlockRenderLayerMap.INSTANCE.putBlock(Reg.DRYING_RACK, RenderLayer.getCutout());
+        initBlockRenderLayerMap();
         EntityRendererRegistry.register(Reg.ROCK_PROJECTILE_ENTITY, FlyingItemEntityRenderer::new);
         EntityRendererRegistry.register(Reg.FLINT_PROJECTILE_ENTITY, FlyingItemEntityRenderer::new);
         BlockEntityRendererFactories.register(Reg.DRYING_RACK_BLOCK_ENTITY, DryingRackBlockEntityRenderer::new);
         ModelPredicateProviderRegistry.register(Reg.IMPROVISED_SHIELD, new Identifier("blocking"), (stack, world, entity, seed) -> entity != null && entity.isUsingItem() && entity.getActiveItem() == stack ? 1.0F : 0.0F);
+    }
+
+    // That's so sad :( , u always need to call me, lol
+    private static void initBlockRenderLayerMap() {
+        BlockRenderLayerMap.INSTANCE.putBlock(Reg.ICEBOX, RenderLayer.getCutout());
+        BlockRenderLayerMap.INSTANCE.putBlock(Reg.DRYING_RACK, RenderLayer.getCutout());
+        BlockRenderLayerMap.INSTANCE.putBlock(Reg.CRUDE_TORCH_BLOCK, RenderLayer.getCutout());
+        BlockRenderLayerMap.INSTANCE.putBlock(Reg.WALL_CRUDE_TORCH_BLOCK, RenderLayer.getCutout());
+        BlockRenderLayerMap.INSTANCE.putBlock(Reg.BURNING_CRUDE_TORCH_BLOCK, RenderLayer.getCutout());
+        BlockRenderLayerMap.INSTANCE.putBlock(Reg.WALL_BURNING_CRUDE_TORCH_BLOCK, RenderLayer.getCutout());
     }
 }

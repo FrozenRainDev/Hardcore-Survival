@@ -147,8 +147,8 @@ public class DryingRackBlock extends BlockWithEntity implements Waterloggable {
     public ActionResult onUse(BlockState state, @NotNull World world, BlockPos pos, PlayerEntity player, Hand hand, BlockHitResult hit) {
 //        if(world.isClient())return ActionResult.SUCCESS; do not onInteract
         BlockEntity blockEntity = world.getBlockEntity(pos);
-        if (blockEntity instanceof DryingRackBlockEntity) {
-            if (((DryingRackBlockEntity) blockEntity).onInteract(player)) return ActionResult.SUCCESS;
+        if (blockEntity instanceof DryingRackBlockEntity rack) {
+            if (rack.onInteract(player)) return ActionResult.SUCCESS;
         }
         return ActionResult.CONSUME;
     }

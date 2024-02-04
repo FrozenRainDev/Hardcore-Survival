@@ -5,9 +5,10 @@
   "compatibilityLevel": "JAVA_17",
   "mixins": [
     "block.AbstractBlockMixin",
+    "block.AbstractBlockSettingsMixin",
     "block.BambooBlockMixin",
     "block.BlockMixin",
-    "block.BlockSettingsMixin",
+    "block.BlocksMixin",
     "block.ChestBlockMixin",
     "block.CropBlockMixin",
     "block.ExperienceDroppingBlockMixin",

@@ -1,9 +1,6 @@
 package biz.coolpage.hcs;
 
-import biz.coolpage.hcs.block.CrudeTorchBlock;
-import biz.coolpage.hcs.block.DryingRackBlock;
-import biz.coolpage.hcs.block.IceboxBlock;
-import biz.coolpage.hcs.block.WallCrudeTorchBlock;
+import biz.coolpage.hcs.block.*;
 import biz.coolpage.hcs.config.HcsDifficulty;
 import biz.coolpage.hcs.entity.*;
 import biz.coolpage.hcs.event.*;
@@ -58,8 +55,8 @@ import java.util.function.Predicate;
 
 import static net.minecraft.server.command.CommandManager.literal;
 
-// DO NOT implement ModInitializer to abstract classes as it will crash
-// See custom damage sources in DamageSourcesMixin
+//DO NOT implement ModInitializer to abstract classes as it will crash
+//See customized damage sources in DamageSourcesMixin
 public class Reg implements ModInitializer {
     public static final Logger LOGGER = LoggerFactory.getLogger("hcs");
     public static final Potion IRONSKIN_POTION = new Potion("hcs_ironskin", new StatusEffectInstance(HcsEffects.IRONSKIN, 3600, 0));
@@ -215,17 +212,20 @@ public class Reg implements ModInitializer {
         }
     };
     public static final Item ASHES = new SalveItem(0, 0.35, 50);
-    private static final AbstractBlock.Settings CRUDE_TORCH_BLOCK_SETTINGS = AbstractBlock.Settings.of(Material.DECORATION).noCollision().breakInstantly().luminance(Blocks.createLightLevelFromLitBlockState(14)).sounds(BlockSoundGroup.WOOD);
-    public static final CrudeTorchBlock CRUDE_TORCH_BLOCK = new CrudeTorchBlock(CRUDE_TORCH_BLOCK_SETTINGS);
-    public static final WallCrudeTorchBlock WALL_CRUDE_TORCH_BLOCK = new WallCrudeTorchBlock(CRUDE_TORCH_BLOCK_SETTINGS);
+
+    // WARNING: ALWAYS DO DO DO CALL FUCKING `BlockRenderLayerMap()` WHEN YOU REGISTER A BLOCK WHICH SIZE IS NOT FULLY 16px×16px ON CLIENT SIDE!!!! OTHERWISE, YOUR BLOCK WILL DISPLAY PERPLEXING WHITE MARGINS!!!!!
+    public static final CrudeTorchBlock CRUDE_TORCH_BLOCK = new CrudeTorchBlock(AbstractBlock.Settings.of(Material.DECORATION).noCollision().breakInstantly().luminance(state -> 0).sounds(BlockSoundGroup.WOOD));
+    public static final WallCrudeTorchBlock WALL_CRUDE_TORCH_BLOCK = new WallCrudeTorchBlock(AbstractBlock.Settings.of(Material.DECORATION).noCollision().breakInstantly().luminance(state -> 0).sounds(BlockSoundGroup.WOOD).dropsLike(Blocks.TORCH));
     public static final Item CRUDE_TORCH_ITEM = new VerticallyAttachableBlockItem(CRUDE_TORCH_BLOCK, WALL_CRUDE_TORCH_BLOCK, new Item.Settings(), Direction.DOWN);
-    public static final Item BURNING_CRUDE_TORCH_ITEM = new VerticallyAttachableBlockItem(CRUDE_TORCH_BLOCK, WALL_CRUDE_TORCH_BLOCK, new Item.Settings(), Direction.DOWN);
+    public static final BurningCrudeTorchBlock BURNING_CRUDE_TORCH_BLOCK = new BurningCrudeTorchBlock(AbstractBlock.Settings.of(Material.DECORATION).noCollision().breakInstantly().luminance(state -> 12).sounds(BlockSoundGroup.WOOD));
+    public static final WallBurningCrudeTorchBlock WALL_BURNING_CRUDE_TORCH_BLOCK = new WallBurningCrudeTorchBlock(AbstractBlock.Settings.of(Material.DECORATION).noCollision().breakInstantly().luminance(state -> 12).sounds(BlockSoundGroup.WOOD).dropsLike(Blocks.TORCH));
+    public static final Item BURNING_CRUDE_TORCH_ITEM = new VerticallyAttachableBlockItem(BURNING_CRUDE_TORCH_BLOCK, WALL_BURNING_CRUDE_TORCH_BLOCK, new Item.Settings(), Direction.DOWN);
 
     public static final EntityType<RockProjectileEntity> ROCK_PROJECTILE_ENTITY = FabricEntityTypeBuilder.<RockProjectileEntity>create(SpawnGroup.MISC, RockProjectileEntity::new).dimensions(new EntityDimensions(0.25F, 0.25F, true)).build();
     public static final EntityType<FlintProjectileEntity> FLINT_PROJECTILE_ENTITY = FabricEntityTypeBuilder.<FlintProjectileEntity>create(SpawnGroup.MISC, FlintProjectileEntity::new).dimensions(new EntityDimensions(0.25F, 0.25F, true)).build();
     public static final BlockEntityType<IceboxBlockEntity> ICEBOX_BLOCK_ENTITY = FabricBlockEntityTypeBuilder.create(IceboxBlockEntity::new, ICEBOX).build();
     public static final BlockEntityType<DryingRackBlockEntity> DRYING_RACK_BLOCK_ENTITY = FabricBlockEntityTypeBuilder.create(DryingRackBlockEntity::new, DRYING_RACK).build();
-    public static final BlockEntityType<CrudeTorchBlockEntity> CRUDE_TORCH_BLOCK_ENTITY = FabricBlockEntityTypeBuilder.create(CrudeTorchBlockEntity::new, CRUDE_TORCH_BLOCK).build();
+    public static final BlockEntityType<BurningCrudeTorchBlockEntity> BURNING_CRUDE_TORCH_BLOCK_ENTITY = FabricBlockEntityTypeBuilder.create(BurningCrudeTorchBlockEntity::new, BURNING_CRUDE_TORCH_BLOCK).build();
 
     public static final RecipeSerializer<ExtractWaterFromBambooRecipe> EXTRACT_WATER_FROM_BAMBOO_RECIPE = new SpecialRecipeSerializer<>(ExtractWaterFromBambooRecipe::new);
     public static final RecipeSerializer<ExtractWaterFromSnowRecipe> EXTRACT_WATER_FROM_SNOW_RECIPE = new SpecialRecipeSerializer<>(ExtractWaterFromSnowRecipe::new);
@@ -438,9 +438,12 @@ public class Reg implements ModInitializer {
         Registry.register(Registries.ITEM, new Identifier("hcs", "drying_rack"), DRYING_RACK_ITEM);
         // Extinguished crude torch
         Registry.register(Registries.ITEM, new Identifier("hcs", "crude_torch"), CRUDE_TORCH_ITEM);
-        Registry.register(Registries.ITEM, new Identifier("hcs", "burning_crude_torch"), BURNING_CRUDE_TORCH_ITEM);
         Registry.register(Registries.BLOCK, new Identifier("hcs", "crude_torch"), CRUDE_TORCH_BLOCK);
         Registry.register(Registries.BLOCK, new Identifier("hcs", "wall_crude_torch"), WALL_CRUDE_TORCH_BLOCK);
+        // Burning crude torch
+        Registry.register(Registries.ITEM, new Identifier("hcs", "burning_crude_torch"), BURNING_CRUDE_TORCH_ITEM);
+        Registry.register(Registries.BLOCK, new Identifier("hcs", "burning_crude_torch"), BURNING_CRUDE_TORCH_BLOCK);
+        Registry.register(Registries.BLOCK, new Identifier("hcs", "wall_burning_crude_torch"), WALL_BURNING_CRUDE_TORCH_BLOCK);
 
         Registry.register(Registries.POTION, "hcs_ironskin", IRONSKIN_POTION);
         Registry.register(Registries.POTION, "hcs_long_ironskin", LONG_IRONSKIN_POTION);
@@ -461,7 +464,7 @@ public class Reg implements ModInitializer {
 
         Registry.register(Registries.BLOCK_ENTITY_TYPE, new Identifier("hcs", "icebox_block_entity"), ICEBOX_BLOCK_ENTITY);
         Registry.register(Registries.BLOCK_ENTITY_TYPE, new Identifier("hcs", "drying_rack_block_entity"), DRYING_RACK_BLOCK_ENTITY);
-        Registry.register(Registries.BLOCK_ENTITY_TYPE, new Identifier("hcs", "burning_crude_torch"), CRUDE_TORCH_BLOCK_ENTITY);
+        Registry.register(Registries.BLOCK_ENTITY_TYPE, new Identifier("hcs", "burning_crude_torch"), BURNING_CRUDE_TORCH_BLOCK_ENTITY);
 
         Registry.register(Registries.STATUS_EFFECT, new Identifier("hcs", "thirst"), HcsEffects.THIRST);
         Registry.register(Registries.STATUS_EFFECT, new Identifier("hcs", "diarrhea"), HcsEffects.DIARRHEA);
