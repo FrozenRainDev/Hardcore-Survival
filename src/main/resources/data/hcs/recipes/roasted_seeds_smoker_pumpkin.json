@@ -1,5 +1,7 @@
 {
   "type": "minecraft:smoking",
+  "category": "misc",
+  "show_notification": true,
   "ingredient": [
     {
       "item": "minecraft:pumpkin_seeds"

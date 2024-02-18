@@ -1,6 +1,13 @@
 {
   "type": "minecraft:crafting_shapeless",
   "category": "misc",
-  "ingredients": [{"item": "minecraft:cactus"}],
-  "result": {"item": "hcs:cactus_flesh"}
+  "show_notification": true,
+  "ingredients": [
+    {
+      "item": "minecraft:cactus"
+    }
+  ],
+  "result": {
+    "item": "hcs:cactus_flesh"
+  }
 }

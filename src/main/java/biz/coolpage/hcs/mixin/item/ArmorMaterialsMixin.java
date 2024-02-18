@@ -18,12 +18,11 @@ public class ArmorMaterialsMixin {
      overwriting is both tricky and dangerous
      */
     @Unique
-    int dur;
+    private int accessibleArmorDurability;
 
-    @SuppressWarnings("SpellCheckingInspection")
     @Inject(method = "getProtection", at = @At("HEAD"), cancellable = true)
     public void getProtection(ArmorItem.Type type, CallbackInfoReturnable<Integer> cir) {
-        switch (dur) {
+        switch (accessibleArmorDurability) {
             case 55 -> cir.setReturnValue(0);//leather helmet
             case 80 -> cir.setReturnValue(1);//leather chestplate
             case 75 -> cir.setReturnValue(0);//leather leggings
@@ -49,6 +48,6 @@ public class ArmorMaterialsMixin {
 
     @Inject(method = "getDurability", at = @At("RETURN"))
     public void getDurability(ArmorItem.Type type, @NotNull CallbackInfoReturnable<Integer> cir) {
-        dur = cir.getReturnValue();
+        this.accessibleArmorDurability = cir.getReturnValue();
     }
 }

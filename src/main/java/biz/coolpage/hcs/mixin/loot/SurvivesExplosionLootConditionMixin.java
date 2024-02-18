@@ -13,6 +13,6 @@ public class SurvivesExplosionLootConditionMixin {
     // @See ExplosionDecayLootFunctionMixin NOTES: ExperienceDroppingBlock won't trigger
     @Inject(at = @At("HEAD"), method = "test(Lnet/minecraft/loot/context/LootContext;)Z", cancellable = true)
     public void test(LootContext lootContext, CallbackInfoReturnable<Boolean> cir) {
-        LootHelper.delSpecificExplosionLoot(lootContext, cir, false);
+        LootHelper.delSpecificLoot(lootContext, cir, false);
     }
 }

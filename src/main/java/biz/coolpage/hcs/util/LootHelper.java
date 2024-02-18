@@ -6,6 +6,8 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.TntEntity;
 import net.minecraft.entity.mob.CreeperEntity;
+import net.minecraft.entity.projectile.DragonFireballEntity;
+import net.minecraft.entity.projectile.FireballEntity;
 import net.minecraft.item.*;
 import net.minecraft.loot.context.LootContext;
 import net.minecraft.loot.context.LootContextParameters;
@@ -34,33 +36,33 @@ public class LootHelper {
         return 0;
     }
 
-    public static void modifyDroppedStacks(Block crop, Item seed, @NotNull BlockState state, ServerWorld world, CallbackInfoReturnable<List<ItemStack>> cir) {
+    public static void modifyDroppedStacksForCrops(Block crop, Item seed, @NotNull BlockState state, ServerWorld world, CallbackInfoReturnable<List<ItemStack>> cir) {
         if (state.isOf(crop)) {
             int age = getCropAge(state);
             if (age == 0) WorldHelper.loseFreshness(seed, world, cir);
         }
     }
 
-    public static boolean modifyDroppedStacks(@NotNull BlockState state, ServerWorld world, BlockPos pos, CallbackInfoReturnable<List<ItemStack>> cir) {
-        // modifyDroppedStacks for all CropBlocks and StemBlocks
-        boolean isEligible = false;
+    public static boolean modifyDroppedStacksForCrops(@NotNull BlockState state, ServerWorld world, BlockPos pos, CallbackInfoReturnable<List<ItemStack>> cir) {
+        // modifyDroppedStacksForCrops for all CropBlocks and StemBlocks
+        boolean hasModified = false;
         Item seedItem = Items.AIR;
         Block block = state.getBlock();
         Block crop = Blocks.AIR;
         if (block instanceof CropBlock cropBlock) {
             crop = cropBlock;
             seedItem = cropBlock.getSeedsItem().asItem();
-            isEligible = true;
+            hasModified = true;
         } else if (block instanceof StemBlock stemBlock) {
             crop = stemBlock;
             seedItem = stemBlock.pickBlockItem.get();
-            isEligible = true;
+            hasModified = true;
         }
-        if (isEligible) {
+        if (hasModified) {
             if (cir == null) WorldHelper.loseFreshness(seedItem, world, pos);
-            else modifyDroppedStacks(crop, seedItem, state, world, cir);
+            else modifyDroppedStacksForCrops(crop, seedItem, state, world, cir);
         }
-        return isEligible;
+        return hasModified;
     }
 
     @Contract(pure = true)
@@ -85,17 +87,23 @@ public class LootHelper {
     }
 
     @Contract(pure = true)
-    public static <T> void delSpecificExplosionLoot(@Nullable LootContext context, @Nullable CallbackInfoReturnable<T> cir, @Nullable T cancelVal) {
+    public static <T> void delSpecificLoot(@Nullable LootContext context, @Nullable CallbackInfoReturnable<T> cir, @Nullable T cancelVal) {
         if (context == null || cir == null || cancelVal == null) return;
         BlockState state = context.get(LootContextParameters.BLOCK_STATE);
-        Entity explodedEnt = context.get(LootContextParameters.THIS_ENTITY);
-        if (state == null || explodedEnt == null) return;
-        final boolean isLog = state.getBlock() instanceof PillarBlock && (state.getMaterial() == Material.WOOD || state.getMaterial() == Material.NETHER_WOOD);
-        final boolean isOreOrMetal = state.getMaterial() == Material.METAL || (state.getBlock() instanceof ExperienceDroppingBlock && state.getMaterial() == Material.STONE);
-        final boolean isCreeper = explodedEnt instanceof CreeperEntity;
-        final boolean isTnt = explodedEnt instanceof TntEntity;
-        if ((isCreeper && (isLog || state.getBlock() == Blocks.STONE || isOreOrMetal)) || (isTnt && isOreOrMetal))
+        Entity exploder = context.get(LootContextParameters.THIS_ENTITY);
+        if (state == null || exploder == null) return;
+        Block block = state.getBlock();
+        final boolean isLog = block instanceof PillarBlock && (state.getMaterial() == Material.WOOD || state.getMaterial() == Material.NETHER_WOOD);
+        final boolean isOreOrMetal = state.getMaterial() == Material.METAL || (block instanceof ExperienceDroppingBlock && state.getMaterial() == Material.STONE);
+        final boolean isCreeper = exploder instanceof CreeperEntity;
+        final boolean isTnt = exploder instanceof TntEntity;
+        final boolean isTorch = block.getTranslationKey().contains("torch");
+        final boolean isFireball = exploder instanceof FireballEntity || exploder instanceof DragonFireballEntity;
+        if ((isTorch && (isTnt || isFireball || isCreeper))
+                || ((isLog || block == Blocks.STONE || isOreOrMetal) && isCreeper)
+                || (isOreOrMetal && isTnt)) {
             cir.setReturnValue(cancelVal);
+        }
     }
 
     public static void mixinToolsPostMine(ItemStack stack, BlockState state, LivingEntity miner, CallbackInfoReturnable<Boolean> cir) {

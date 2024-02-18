@@ -1,0 +1,32 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "show_notification": true,
+  "key": {
+    "#": {
+      "item": "minecraft:stick"
+    },
+    "X": [
+      {
+        "item": "minecraft:coal"
+      },
+      {
+        "item": "minecraft:charcoal"
+      }
+    ],
+    "N": [
+      {
+        "item": "minecraft:netherrack"
+      }
+    ]
+  },
+  "pattern": [
+    "X",
+    "#",
+    "N"
+  ],
+  "result": {
+    "count": 4,
+    "item": "hcs:unlit_torch"
+  }
+}

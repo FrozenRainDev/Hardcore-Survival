@@ -1,4 +1,4 @@
-package biz.coolpage.hcs.block;
+package biz.coolpage.hcs.block.torches;
 
 import net.minecraft.block.*;
 import net.minecraft.item.ItemPlacementContext;
@@ -18,9 +18,9 @@ import org.jetbrains.annotations.Nullable;
 
 import static net.minecraft.block.HorizontalFacingBlock.FACING;
 
-@SuppressWarnings({"deprecation", "unused"})
-public class WallCrudeTorchBlock extends CrudeTorchBlock {
-    public WallCrudeTorchBlock(AbstractBlock.Settings settings) {
+@SuppressWarnings("deprecation")
+public class WallBurningCrudeTorchBlock extends BurningCrudeTorchBlock {
+    public WallBurningCrudeTorchBlock(Settings settings) {
         super(settings);
     }
 
@@ -29,6 +29,7 @@ public class WallCrudeTorchBlock extends CrudeTorchBlock {
         return Blocks.WALL_TORCH.getOutlineShape(state, world, pos, context);
     }
 
+    @SuppressWarnings("unused")
     public static VoxelShape getBoundingShape(BlockState state) {
         return WallTorchBlock.getBoundingShape(state);
     }
@@ -71,7 +72,8 @@ public class WallCrudeTorchBlock extends CrudeTorchBlock {
     }
 
     @Override
-    public void randomDisplayTick(BlockState state, World world, BlockPos pos, Random random) {
+    public void randomDisplayTick(BlockState state, @NotNull World world, BlockPos pos, Random random) {
+        if (world.getTime() % 3L == 2L) return;
         Blocks.WALL_TORCH.randomDisplayTick(state, world, pos, random);
     }
 }

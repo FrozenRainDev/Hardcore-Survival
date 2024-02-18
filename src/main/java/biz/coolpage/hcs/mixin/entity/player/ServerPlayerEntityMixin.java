@@ -6,7 +6,7 @@ import biz.coolpage.hcs.status.HcsEffects;
 import biz.coolpage.hcs.status.accessor.IDamageSources;
 import biz.coolpage.hcs.status.accessor.StatAccessor;
 import biz.coolpage.hcs.status.manager.*;
-import biz.coolpage.hcs.status.network.ServerS2C;
+import biz.coolpage.hcs.network.ServerS2C;
 import biz.coolpage.hcs.util.EntityHelper;
 import biz.coolpage.hcs.util.TemperatureHelper;
 import biz.coolpage.hcs.util.WorldHelper;

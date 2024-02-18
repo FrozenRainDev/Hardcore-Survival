@@ -1,6 +1,7 @@
 {
   "type": "minecraft:crafting_shaped",
   "category": "misc",
+  "show_notification": true,
   "key": {
     "A": {
       "item": "minecraft:stick"
@@ -15,6 +16,5 @@
   ],
   "result": {
     "item": "hcs:splint"
-  },
-  "show_notification": true
+  }
 }

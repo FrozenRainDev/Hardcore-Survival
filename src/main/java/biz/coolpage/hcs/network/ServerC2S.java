@@ -1,4 +1,4 @@
-package biz.coolpage.hcs.status.network;
+package biz.coolpage.hcs.network;
 
 import biz.coolpage.hcs.event.UseBlockEvent;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;

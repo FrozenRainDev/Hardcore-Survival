@@ -1,4 +1,4 @@
-package biz.coolpage.hcs.status.network;
+package biz.coolpage.hcs.network;
 
 import biz.coolpage.hcs.config.HcsDifficulty;
 import biz.coolpage.hcs.status.accessor.StatAccessor;
@@ -8,7 +8,7 @@ import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.minecraft.entity.player.PlayerEntity;
 
-import static biz.coolpage.hcs.status.network.ServerS2C.*;
+import static biz.coolpage.hcs.network.ServerS2C.*;
 
 
 @Environment(EnvType.CLIENT)

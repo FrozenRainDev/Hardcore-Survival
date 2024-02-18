@@ -1,11 +1,22 @@
 {
   "type": "minecraft:crafting_shapeless",
   "category": "misc",
+  "show_notification": true,
   "ingredients": [
-    {"item": "hcs:extinguished_campfire"},
-    {"item": "hcs:fire_bow"},
-    {"item": "hcs:tinder"},
-    {"item": "minecraft:stick"}
+    {
+      "item": "hcs:extinguished_campfire"
+    },
+    {
+      "item": "hcs:fire_bow"
+    },
+    {
+      "item": "hcs:tinder"
+    },
+    {
+      "item": "minecraft:stick"
+    }
   ],
-  "result": {"item": "minecraft:campfire"}
+  "result": {
+    "item": "minecraft:campfire"
+  }
 }

@@ -1,4 +1,4 @@
-package biz.coolpage.hcs.status.network;
+package biz.coolpage.hcs.network;
 
 import io.netty.buffer.Unpooled;
 import net.fabricmc.api.EnvType;

@@ -1,5 +1,7 @@
 {
   "type": "minecraft:campfire_cooking",
+  "category": "misc",
+  "show_notification": true,
   "ingredient": [
     {
       "item": "hcs:raw_meat"

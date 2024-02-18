@@ -1,4 +1,4 @@
-package biz.coolpage.hcs.status.network;
+package biz.coolpage.hcs.network;
 
 import biz.coolpage.hcs.status.accessor.StatAccessor;
 import biz.coolpage.hcs.status.manager.*;

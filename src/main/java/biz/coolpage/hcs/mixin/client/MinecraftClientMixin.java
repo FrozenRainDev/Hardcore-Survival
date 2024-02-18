@@ -1,7 +1,7 @@
 package biz.coolpage.hcs.mixin.client;
 
 import biz.coolpage.hcs.status.accessor.StatAccessor;
-import biz.coolpage.hcs.status.network.ClientC2S;
+import biz.coolpage.hcs.network.ClientC2S;
 import biz.coolpage.hcs.util.EntityHelper;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;

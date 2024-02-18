@@ -1,6 +1,7 @@
 {
   "type": "minecraft:crafting_shapeless",
-  "category": "equipment",
+  "category": "misc",
+  "show_notification": true,
   "ingredients": [
     {
       "item": "hcs:grass_fiber"

@@ -1,6 +1,7 @@
 {
   "type": "minecraft:crafting_shaped",
   "category": "misc",
+  "show_notification": true,
   "key": {
     "W": {
       "tag": "minecraft:wool"
@@ -15,6 +16,5 @@
   "result": {
     "item": "hcs:bandage",
     "count": 8
-  },
-  "show_notification": true
+  }
 }

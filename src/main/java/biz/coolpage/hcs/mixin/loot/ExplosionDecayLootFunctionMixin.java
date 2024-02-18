@@ -15,6 +15,6 @@ public class ExplosionDecayLootFunctionMixin {
     //@See SurvivesExplosionLootCondition
     @Inject(at = @At("HEAD"), method = "process", cancellable = true)
     public void process(ItemStack stack, LootContext context, @NotNull CallbackInfoReturnable<ItemStack> cir) {
-        LootHelper.delSpecificExplosionLoot(context, cir, ItemStack.EMPTY);
+        LootHelper.delSpecificLoot(context, cir, ItemStack.EMPTY);
     }
 }

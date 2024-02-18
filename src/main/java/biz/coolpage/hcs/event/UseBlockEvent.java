@@ -1,6 +1,7 @@
 package biz.coolpage.hcs.event;
 
 import biz.coolpage.hcs.Reg;
+import biz.coolpage.hcs.block.torches.CrudeTorchBlock;
 import biz.coolpage.hcs.status.HcsEffects;
 import biz.coolpage.hcs.status.accessor.StatAccessor;
 import biz.coolpage.hcs.status.manager.StaminaManager;
@@ -13,7 +14,11 @@ import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
+import net.minecraft.registry.tag.BlockTags;
 import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.sound.SoundCategory;
+import net.minecraft.sound.SoundEvents;
+import net.minecraft.state.property.Properties;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.hit.HitResult;
 import net.minecraft.util.math.BlockPos;
@@ -52,6 +57,15 @@ public class UseBlockEvent {
                 if (mainHand == Items.POISONOUS_POTATO && block == Blocks.FARMLAND) {
                     world.setBlockState(posUp, Blocks.POTATOES.getDefaultState());
                     if (!player.isCreative()) mainHandStack.decrement(1);
+                } else if ((mainHand == Reg.CRUDE_TORCH_ITEM || mainHand == Reg.UNLIT_TORCH_ITEM)
+                        && (state.isIn(BlockTags.FIRE) || state.isIn(BlockTags.CAMPFIRES)
+                        || block instanceof TorchBlock || CrudeTorchBlock.isFlammableTorch(block.asItem()))
+                        || block == Blocks.LAVA || block == Blocks.MAGMA_BLOCK
+                        || (block instanceof AbstractFurnaceBlock && state.get(Properties.LIT))) {
+                    mainHandStack.decrement(1);
+                    EntityHelper.dropItem(player, mainHand == Reg.CRUDE_TORCH_ITEM ? Reg.BURNING_CRUDE_TORCH_ITEM : Items.TORCH);
+                    world.playSound(null, pos, SoundEvents.ITEM_FIRECHARGE_USE, SoundCategory.BLOCKS);
+                    return ActionResult.FAIL;
                 }
                 if (block instanceof BedBlock && applyNullable(world.getDimension(), DimensionType::bedWorks, false)) {
                     //HCS sleeping failure reasons

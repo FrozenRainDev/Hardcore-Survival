@@ -1,4 +1,4 @@
-package biz.coolpage.hcs.client.render;
+package biz.coolpage.hcs.client;
 
 import biz.coolpage.hcs.Reg;
 import biz.coolpage.hcs.entity.DryingRackBlockEntity;

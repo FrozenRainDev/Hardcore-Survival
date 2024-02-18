@@ -1,6 +1,7 @@
 package biz.coolpage.hcs.mixin.entity.player;
 
 import biz.coolpage.hcs.Reg;
+import biz.coolpage.hcs.block.torches.BurningCrudeTorchBlock;
 import biz.coolpage.hcs.config.HcsDifficulty;
 import biz.coolpage.hcs.item.KnifeItem;
 import biz.coolpage.hcs.status.HcsEffects;
@@ -15,8 +16,6 @@ import net.minecraft.block.*;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.attribute.EntityAttributeInstance;
-import net.minecraft.entity.attribute.EntityAttributes;
 import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.entity.effect.StatusEffectUtil;
@@ -311,7 +310,8 @@ public abstract class PlayerEntityMixin extends LivingEntity implements StatAcce
         else if (block == Blocks.OBSIDIAN || block == Blocks.CRYING_OBSIDIAN) speed *= 3.0F;
         else if ((block == Blocks.CLAY && !isShovelMineable)) speed /= 9.0F;
         else if (block instanceof LeavesBlock && !isSword && !isAxe) speed /= 10.0F;
-        if (block instanceof TorchBlock || state.isIn(BlockTags.FLOWERS)) speed = 999999.0F;
+        if (block instanceof TorchBlock || block instanceof BurningCrudeTorchBlock || state.isIn(BlockTags.FLOWERS))
+            speed = 999999.0F;
         cir.setReturnValue(speed);
     }
 

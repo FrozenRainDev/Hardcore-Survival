@@ -39,7 +39,7 @@ public class BoneMealItemMixin {
                     */
                     world.breakBlock(pos, false);
                     if (world instanceof ServerWorld serverWorld)
-                        LootHelper.modifyDroppedStacks(state, serverWorld, pos, null);
+                        LootHelper.modifyDroppedStacksForCrops(state, serverWorld, pos, null);
                     world.syncWorldEvent(WorldEvents.LAVA_EXTINGUISHED, pos, 0);
                 }
             }

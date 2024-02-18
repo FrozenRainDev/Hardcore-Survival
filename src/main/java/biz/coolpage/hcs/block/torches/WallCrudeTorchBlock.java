@@ -1,8 +1,8 @@
-package biz.coolpage.hcs.block;
+package biz.coolpage.hcs.block.torches;
 
+import biz.coolpage.hcs.Reg;
 import net.minecraft.block.*;
 import net.minecraft.item.ItemPlacementContext;
-import net.minecraft.sound.BlockSoundGroup;
 import net.minecraft.state.StateManager;
 import net.minecraft.util.BlockMirror;
 import net.minecraft.util.BlockRotation;
@@ -17,10 +17,15 @@ import org.jetbrains.annotations.Nullable;
 
 import static net.minecraft.block.HorizontalFacingBlock.FACING;
 
-@SuppressWarnings({"deprecation", "unused"})
-public class WallBurningCrudeTorchBlock extends BurningCrudeTorchBlock {
-    public WallBurningCrudeTorchBlock(AbstractBlock.Settings settings){
+@SuppressWarnings("deprecation")
+public class WallCrudeTorchBlock extends CrudeTorchBlock {
+    public WallCrudeTorchBlock(Settings settings) {
         super(settings);
+    }
+
+    @Override
+    protected BlockState getLitBlockStateForUpdate(@NotNull BlockState prevStat) {
+        return Reg.WALL_BURNING_CRUDE_TORCH_BLOCK.getDefaultState().with(FACING, prevStat.get(FACING));
     }
 
     @Override
@@ -28,6 +33,8 @@ public class WallBurningCrudeTorchBlock extends BurningCrudeTorchBlock {
         return Blocks.WALL_TORCH.getOutlineShape(state, world, pos, context);
     }
 
+
+    @SuppressWarnings("unused")
     public static VoxelShape getBoundingShape(BlockState state) {
         return WallTorchBlock.getBoundingShape(state);
     }

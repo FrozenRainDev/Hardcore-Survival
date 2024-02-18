@@ -63,9 +63,9 @@ public class BlockMixin {
     @Inject(at = @At("RETURN"), method = "getDroppedStacks(Lnet/minecraft/block/BlockState;Lnet/minecraft/server/world/ServerWorld;Lnet/minecraft/util/math/BlockPos;Lnet/minecraft/block/entity/BlockEntity;Lnet/minecraft/entity/Entity;Lnet/minecraft/item/ItemStack;)Ljava/util/List;", cancellable = true)
     private static void getDroppedStacks(BlockState state, ServerWorld world, BlockPos pos, @Nullable BlockEntity blockEntity, @Nullable Entity entity, ItemStack stack, CallbackInfoReturnable<List<ItemStack>> cir) {
         //DO NOT addRawPain sugar cane as its age always 0 (game ver 1.19)
-        if (LootHelper.modifyDroppedStacks(state, world, pos, cir)) return;
-        LootHelper.modifyDroppedStacks(Blocks.MELON_STEM, Items.MELON_SEEDS, state, world, cir);
-        LootHelper.modifyDroppedStacks(Blocks.PUMPKIN_STEM, Items.PUMPKIN_SEEDS, state, world, cir);
+        if (LootHelper.modifyDroppedStacksForCrops(state, world, pos, cir)) return;
+        LootHelper.modifyDroppedStacksForCrops(Blocks.MELON_STEM, Items.MELON_SEEDS, state, world, cir);
+        LootHelper.modifyDroppedStacksForCrops(Blocks.PUMPKIN_STEM, Items.PUMPKIN_SEEDS, state, world, cir);
         LootHelper.decreaseOreHarvest(new Block[]{Blocks.COPPER_ORE, Blocks.DEEPSLATE_COPPER_ORE}, Items.RAW_COPPER, state, entity, cir);
         LootHelper.decreaseOreHarvest(new Block[]{Blocks.IRON_ORE, Blocks.DEEPSLATE_IRON_ORE}, Items.RAW_IRON, state, entity, cir);
     }

@@ -1,0 +1,16 @@
+{
+  "type": "hcs:torch_ignite",
+  "category": "misc",
+  "show_notification": true,
+  "ingredients": [
+    {
+      "item": "minecraft:flint_and_steel"
+    },
+    {
+      "item": "hcs:crude_torch"
+    }
+  ],
+  "result": {
+    "item": "minecraft:torch"
+  }
+}

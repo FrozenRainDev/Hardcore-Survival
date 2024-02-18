@@ -1,6 +1,6 @@
 package biz.coolpage.hcs.event;
 
-import biz.coolpage.hcs.status.network.ClientC2S;
+import biz.coolpage.hcs.network.ClientC2S;
 import biz.coolpage.hcs.util.UpdateHelper;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;

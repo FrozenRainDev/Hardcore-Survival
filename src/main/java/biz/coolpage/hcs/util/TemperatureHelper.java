@@ -1,7 +1,7 @@
 package biz.coolpage.hcs.util;
 
 import biz.coolpage.hcs.Reg;
-import biz.coolpage.hcs.block.BurningCrudeTorchBlock;
+import biz.coolpage.hcs.block.torches.BurningCrudeTorchBlock;
 import biz.coolpage.hcs.status.HcsEffects;
 import biz.coolpage.hcs.status.accessor.StatAccessor;
 import biz.coolpage.hcs.status.manager.StatusManager;

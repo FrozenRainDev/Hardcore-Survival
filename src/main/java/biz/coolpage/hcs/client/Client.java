@@ -1,9 +1,8 @@
 package biz.coolpage.hcs.client;
 
 import biz.coolpage.hcs.Reg;
-import biz.coolpage.hcs.client.render.DryingRackBlockEntityRenderer;
 import biz.coolpage.hcs.event.ClientPlayConnectionEvent;
-import biz.coolpage.hcs.status.network.ClientS2C;
+import biz.coolpage.hcs.network.ClientS2C;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
@@ -36,5 +35,7 @@ public class Client implements ClientModInitializer {
         BlockRenderLayerMap.INSTANCE.putBlock(Reg.WALL_CRUDE_TORCH_BLOCK, RenderLayer.getCutout());
         BlockRenderLayerMap.INSTANCE.putBlock(Reg.BURNING_CRUDE_TORCH_BLOCK, RenderLayer.getCutout());
         BlockRenderLayerMap.INSTANCE.putBlock(Reg.WALL_BURNING_CRUDE_TORCH_BLOCK, RenderLayer.getCutout());
+        BlockRenderLayerMap.INSTANCE.putBlock(Reg.UNLIT_TORCH_BLOCK, RenderLayer.getCutout());
+        BlockRenderLayerMap.INSTANCE.putBlock(Reg.WALL_UNLIT_TORCH_BLOCK, RenderLayer.getCutout());
     }
 }
