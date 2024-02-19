@@ -1,7 +1,9 @@
 package biz.coolpage.hcs.mixin.client;
 
-import biz.coolpage.hcs.status.accessor.StatAccessor;
+import biz.coolpage.hcs.Reg;
+import biz.coolpage.hcs.block.torches.CrudeTorchBlock;
 import biz.coolpage.hcs.network.ClientC2S;
+import biz.coolpage.hcs.status.accessor.StatAccessor;
 import biz.coolpage.hcs.util.EntityHelper;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
@@ -12,6 +14,8 @@ import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.client.network.ClientPlayerInteractionManager;
 import net.minecraft.client.world.ClientWorld;
+import net.minecraft.fluid.FluidState;
+import net.minecraft.item.ItemStack;
 import net.minecraft.registry.tag.FluidTags;
 import net.minecraft.util.Hand;
 import net.minecraft.util.hit.BlockHitResult;
@@ -79,10 +83,16 @@ public abstract class MinecraftClientMixin extends ReentrantThreadExecutor<Runna
     @Inject(method = "doItemUse", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/network/ClientPlayerInteractionManager;isBreakingBlock()Z", shift = At.Shift.AFTER))
 //@At(value = "INVOKE", target = "Lnet/minecraft/client/network/ClientPlayerInteractionManager;interactBlock(Lnet/minecraft/client/network/ClientPlayerEntity;Lnet/minecraft/util/Hand;Lnet/minecraft/util/hit/BlockHitResult;)Lnet/minecraft/util/ActionResult;", shift = At.Shift.AFTER))
     private void doItemUse(CallbackInfo ci) {
-        if (world == null) return;
+        if (world == null || player == null) return;
         BlockHitResult customHitResult = EntityHelper.rayCast(world, player, RaycastContext.FluidHandling.SOURCE_ONLY, 2.5);
         BlockPos pos = customHitResult.getBlockPos();
-        if (player != null && world.getFluidState(pos).isIn(FluidTags.WATER))
+        FluidState state = world.getFluidState(pos);
+        ItemStack stack = player.getActiveItem();
+        if (state.isIn(FluidTags.WATER))
             ClientC2S.writeC2SPacketOnDrinkWater(player, pos.getX(), pos.getY(), pos.getZ());
+        else if (state.isIn(FluidTags.LAVA) && (stack.isOf(Reg.UNLIT_TORCH_ITEM) || stack.isOf(Reg.CRUDE_TORCH_ITEM))) {
+            ClientC2S.writeC2SPacketOnLitHoldingTorch(player);
+            CrudeTorchBlock.litHoldingTorch(player, world, stack);
+        }
     }
 }

@@ -218,19 +218,31 @@ public class Reg implements ModInitializer {
     // WARNING: ALWAYS DO DO DO CALL FUCKING `BlockRenderLayerMap()` WHEN YOU REGISTER A BLOCK WHICH SIZE IS NOT FULLY 16px×16px ON CLIENT SIDE!!!! OTHERWISE, YOUR BLOCK WILL DISPLAY PERPLEXING WHITE MARGINS!!!!!
     public static final CrudeTorchBlock CRUDE_TORCH_BLOCK = new CrudeTorchBlock(AbstractBlock.Settings.of(Material.DECORATION).noCollision().breakInstantly().luminance(state -> 0).sounds(BlockSoundGroup.WOOD));
     public static final WallCrudeTorchBlock WALL_CRUDE_TORCH_BLOCK = new WallCrudeTorchBlock(AbstractBlock.Settings.of(Material.DECORATION).noCollision().breakInstantly().luminance(state -> 0).sounds(BlockSoundGroup.WOOD).dropsLike(CRUDE_TORCH_BLOCK));
-    public static final Item CRUDE_TORCH_ITEM = new VerticallyAttachableBlockItem(CRUDE_TORCH_BLOCK, WALL_CRUDE_TORCH_BLOCK, new Item.Settings(), Direction.DOWN);
+    public static final Item CRUDE_TORCH_ITEM = new VerticallyAttachableBlockItem(CRUDE_TORCH_BLOCK, WALL_CRUDE_TORCH_BLOCK, new Item.Settings(), Direction.DOWN) {
+        @Override
+        public ActionResult useOnBlock(@NotNull ItemUsageContext context) {
+            ActionResult performed = CrudeTorchBlock.preLitHoldingTorch(context);
+            return performed == null ? super.useOnBlock(context) : performed;
+        }
+    };
     public static final BurningCrudeTorchBlock BURNING_CRUDE_TORCH_BLOCK = new BurningCrudeTorchBlock(AbstractBlock.Settings.of(Material.DECORATION).noCollision().breakInstantly().luminance(state -> 12).sounds(BlockSoundGroup.WOOD));
     public static final WallBurningCrudeTorchBlock WALL_BURNING_CRUDE_TORCH_BLOCK = new WallBurningCrudeTorchBlock(AbstractBlock.Settings.of(Material.DECORATION).noCollision().breakInstantly().luminance(state -> 12).sounds(BlockSoundGroup.WOOD).dropsLike(BURNING_CRUDE_TORCH_BLOCK));
     public static final Item BURNING_CRUDE_TORCH_ITEM = new VerticallyAttachableBlockItem(BURNING_CRUDE_TORCH_BLOCK, WALL_BURNING_CRUDE_TORCH_BLOCK, new Item.Settings(), Direction.DOWN);
     public static final UnlitTorchBlock UNLIT_TORCH_BLOCK = new UnlitTorchBlock(AbstractBlock.Settings.of(Material.DECORATION).noCollision().breakInstantly().luminance(state -> 0).sounds(BlockSoundGroup.WOOD));
     public static final WallUnlitTorchBlock WALL_UNLIT_TORCH_BLOCK = new WallUnlitTorchBlock(AbstractBlock.Settings.of(Material.DECORATION).noCollision().breakInstantly().luminance(state -> 0).sounds(BlockSoundGroup.WOOD).dropsLike(UNLIT_TORCH_BLOCK));
-    public static final Item UNLIT_TORCH_ITEM = new VerticallyAttachableBlockItem(UNLIT_TORCH_BLOCK, WALL_UNLIT_TORCH_BLOCK, new Item.Settings(), Direction.DOWN);
+    public static final Item UNLIT_TORCH_ITEM = new VerticallyAttachableBlockItem(UNLIT_TORCH_BLOCK, WALL_UNLIT_TORCH_BLOCK, new Item.Settings(), Direction.DOWN) {
+        @Override
+        public ActionResult useOnBlock(@NotNull ItemUsageContext context) {
+            ActionResult performed = CrudeTorchBlock.preLitHoldingTorch(context);
+            return performed == null ? super.useOnBlock(context) : performed;
+        }
+    };
 
     public static final EntityType<RockProjectileEntity> ROCK_PROJECTILE_ENTITY = FabricEntityTypeBuilder.<RockProjectileEntity>create(SpawnGroup.MISC, RockProjectileEntity::new).dimensions(new EntityDimensions(0.25F, 0.25F, true)).build();
     public static final EntityType<FlintProjectileEntity> FLINT_PROJECTILE_ENTITY = FabricEntityTypeBuilder.<FlintProjectileEntity>create(SpawnGroup.MISC, FlintProjectileEntity::new).dimensions(new EntityDimensions(0.25F, 0.25F, true)).build();
     public static final BlockEntityType<IceboxBlockEntity> ICEBOX_BLOCK_ENTITY = FabricBlockEntityTypeBuilder.create(IceboxBlockEntity::new, ICEBOX).build();
     public static final BlockEntityType<DryingRackBlockEntity> DRYING_RACK_BLOCK_ENTITY = FabricBlockEntityTypeBuilder.create(DryingRackBlockEntity::new, DRYING_RACK).build();
-    public static final BlockEntityType<BurningCrudeTorchBlockEntity> BURNING_CRUDE_TORCH_BLOCK_ENTITY = FabricBlockEntityTypeBuilder.create(BurningCrudeTorchBlockEntity::new, BURNING_CRUDE_TORCH_BLOCK).build();
+    public static final BlockEntityType<BurningCrudeTorchBlockEntity> BURNING_CRUDE_TORCH_BLOCK_ENTITY = FabricBlockEntityTypeBuilder.create(BurningCrudeTorchBlockEntity::new, BURNING_CRUDE_TORCH_BLOCK, WALL_BURNING_CRUDE_TORCH_BLOCK).build();
 
     public static final RecipeSerializer<ExtractWaterFromBambooRecipe> EXTRACT_WATER_FROM_BAMBOO_RECIPE = new SpecialRecipeSerializer<>(ExtractWaterFromBambooRecipe::new);
     public static final RecipeSerializer<ExtractWaterFromSnowRecipe> EXTRACT_WATER_FROM_SNOW_RECIPE = new SpecialRecipeSerializer<>(ExtractWaterFromSnowRecipe::new);

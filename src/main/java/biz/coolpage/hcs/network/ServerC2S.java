@@ -1,5 +1,6 @@
 package biz.coolpage.hcs.network;
 
+import biz.coolpage.hcs.block.torches.CrudeTorchBlock;
 import biz.coolpage.hcs.event.UseBlockEvent;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.entity.Entity;
@@ -18,6 +19,7 @@ import java.util.List;
 public class ServerC2S {
     public static final Identifier DRINK_WATER_WITH_BARE_HAND = new Identifier("hcs", "c2s_drink_water_with_bare_hand");
     public static final Identifier ON_PLAYER_ENTER = new Identifier("hcs", "c2s_on_player_enter");
+    public static final Identifier LIT_HOLDING_TORCH = new Identifier("hcs", "c2s_lit_holding_torch");
 
     public static void init() {
         ServerPlayNetworking.registerGlobalReceiver(DRINK_WATER_WITH_BARE_HAND, (server, player, handler, buf, responseSender) -> {
@@ -45,6 +47,17 @@ public class ServerC2S {
                             serverPlayerEntity.removeStatusEffect(next);
                         }
                     }
+                }
+            });
+        });
+
+        ServerPlayNetworking.registerGlobalReceiver(LIT_HOLDING_TORCH, (server, player, handler, buf, responseSender) -> {
+            int[] bufArr = buf.readIntArray();
+            server.execute(() -> {
+                if (player != null && player.world != null && player.world.getEntityById(bufArr[0]) != null) {
+                    Entity targetPlayer = player.world.getEntityById(bufArr[0]);
+                    if (targetPlayer instanceof ServerPlayerEntity serverPlayerEntity)
+                        CrudeTorchBlock.litHoldingTorch(serverPlayerEntity, serverPlayerEntity.getWorld(), serverPlayerEntity.getActiveItem());
                 }
             });
         });

@@ -13,6 +13,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
 
+@SuppressWarnings("unused")
 public class UnlitTorchBlock extends CrudeTorchBlock {
     public UnlitTorchBlock(Settings settings) {
         super(settings);

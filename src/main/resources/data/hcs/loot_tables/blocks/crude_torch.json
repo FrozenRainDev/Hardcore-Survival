@@ -6,7 +6,7 @@
       "entries": [
         {
           "type": "minecraft:item",
-          "name": "hcs:crude_torch"
+          "name": "minecraft:air"
         }
       ],
       "conditions": [

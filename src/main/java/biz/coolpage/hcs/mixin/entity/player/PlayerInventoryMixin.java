@@ -15,6 +15,8 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.server.world.ServerWorld;
+import net.minecraft.sound.SoundCategory;
+import net.minecraft.sound.SoundEvents;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -39,6 +41,7 @@ public abstract class PlayerInventoryMixin {
         TemperatureManager temperatureManager = ((StatAccessor) player).getTemperatureManager();
         StatusManager statusManager = ((StatAccessor) player).getStatusManager();
         HotWaterBottleItem.update(this.player.world, inv, temperatureManager.getTrendType());
+        boolean isSubmerged = player.isSubmergedInWater(), soundHasNotPlayedYet = true;
         int blocksCount = 0;
         for (int i = 0; i < inv.size(); ++i) {
             ItemStack stack = inv.getStack(i);
@@ -51,6 +54,15 @@ public abstract class PlayerInventoryMixin {
                     state.markDirty();
                 });
             if (stack.getDamage() > stack.getMaxDamage()) stack.setDamage(stack.getMaxDamage() - 1);
+            // Torches in players' inventories will extinguish when they submerge in water
+            boolean isTorch = item == Items.TORCH, isBurningCrudeTorch = item == Reg.BURNING_CRUDE_TORCH_ITEM;
+            if (isSubmerged && (isTorch || isBurningCrudeTorch)) {
+                inv.setStack(i, new ItemStack(isTorch ? Reg.UNLIT_TORCH_ITEM : Reg.CRUDE_TORCH_ITEM, stack.getCount()));
+                if (soundHasNotPlayedYet) {
+                    player.getWorld().playSound(null, player.getBlockPos(), SoundEvents.BLOCK_FIRE_EXTINGUISH, SoundCategory.BLOCKS);
+                    soundHasNotPlayedYet = false;
+                }
+            }
         }
         statusManager.setHasHeavyLoadDebuff(IS_SURVIVAL_AND_SERVER.test(this.player) && blocksCount > 128);
     }
