@@ -8,11 +8,13 @@ import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.blockrenderlayer.v1.BlockRenderLayerMap;
 import net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry;
+import net.minecraft.block.Block;
 import net.minecraft.client.item.ModelPredicateProviderRegistry;
 import net.minecraft.client.render.RenderLayer;
 import net.minecraft.client.render.block.entity.BlockEntityRendererFactories;
 import net.minecraft.client.render.entity.FlyingItemEntityRenderer;
 import net.minecraft.util.Identifier;
+import org.jetbrains.annotations.NotNull;
 
 @Environment(EnvType.CLIENT)
 public class Client implements ClientModInitializer {
@@ -20,22 +22,27 @@ public class Client implements ClientModInitializer {
     public void onInitializeClient() {
         ClientS2C.init();
         ClientPlayConnectionEvent.init();
-        initBlockRenderLayerMap();
+        initBlockRenderLayerMap(
+                Reg.ICEBOX,
+                Reg.DRYING_RACK,
+                Reg.CRUDE_TORCH_BLOCK,
+                Reg.WALL_CRUDE_TORCH_BLOCK,
+                Reg.BURNING_CRUDE_TORCH_BLOCK,
+                Reg.WALL_BURNING_CRUDE_TORCH_BLOCK,
+                Reg.UNLIT_TORCH_BLOCK,
+                Reg.WALL_UNLIT_TORCH_BLOCK,
+                Reg.BURNT_TORCH_BLOCK,
+                Reg.WALL_BURNT_TORCH_BLOCK
+        );
         EntityRendererRegistry.register(Reg.ROCK_PROJECTILE_ENTITY, FlyingItemEntityRenderer::new);
         EntityRendererRegistry.register(Reg.FLINT_PROJECTILE_ENTITY, FlyingItemEntityRenderer::new);
         BlockEntityRendererFactories.register(Reg.DRYING_RACK_BLOCK_ENTITY, DryingRackBlockEntityRenderer::new);
         ModelPredicateProviderRegistry.register(Reg.IMPROVISED_SHIELD, new Identifier("blocking"), (stack, world, entity, seed) -> entity != null && entity.isUsingItem() && entity.getActiveItem() == stack ? 1.0F : 0.0F);
     }
 
-    // That's so sad :( , u always need to call me, lol
-    private static void initBlockRenderLayerMap() {
-        BlockRenderLayerMap.INSTANCE.putBlock(Reg.ICEBOX, RenderLayer.getCutout());
-        BlockRenderLayerMap.INSTANCE.putBlock(Reg.DRYING_RACK, RenderLayer.getCutout());
-        BlockRenderLayerMap.INSTANCE.putBlock(Reg.CRUDE_TORCH_BLOCK, RenderLayer.getCutout());
-        BlockRenderLayerMap.INSTANCE.putBlock(Reg.WALL_CRUDE_TORCH_BLOCK, RenderLayer.getCutout());
-        BlockRenderLayerMap.INSTANCE.putBlock(Reg.BURNING_CRUDE_TORCH_BLOCK, RenderLayer.getCutout());
-        BlockRenderLayerMap.INSTANCE.putBlock(Reg.WALL_BURNING_CRUDE_TORCH_BLOCK, RenderLayer.getCutout());
-        BlockRenderLayerMap.INSTANCE.putBlock(Reg.UNLIT_TORCH_BLOCK, RenderLayer.getCutout());
-        BlockRenderLayerMap.INSTANCE.putBlock(Reg.WALL_UNLIT_TORCH_BLOCK, RenderLayer.getCutout());
+    // That's so sad :( , ALWAYS needs to call me, LOL
+    private static void initBlockRenderLayerMap(Block @NotNull ... blocks) {
+        for (Block block : blocks)
+            BlockRenderLayerMap.INSTANCE.putBlock(block, RenderLayer.getCutout());
     }
 }

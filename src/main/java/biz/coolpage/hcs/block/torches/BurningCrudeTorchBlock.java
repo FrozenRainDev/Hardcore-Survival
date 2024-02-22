@@ -2,6 +2,7 @@ package biz.coolpage.hcs.block.torches;
 
 import biz.coolpage.hcs.Reg;
 import biz.coolpage.hcs.entity.BurningCrudeTorchBlockEntity;
+import biz.coolpage.hcs.item.BurningCrudeTorchItem;
 import net.minecraft.block.*;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.block.entity.BlockEntityTicker;
@@ -9,6 +10,8 @@ import net.minecraft.block.entity.BlockEntityType;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NbtCompound;
+import net.minecraft.nbt.NbtElement;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvents;
@@ -23,9 +26,10 @@ import net.minecraft.world.WorldView;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import static net.minecraft.block.HorizontalFacingBlock.FACING;
+
 @SuppressWarnings("deprecation")
 public class BurningCrudeTorchBlock extends BlockWithEntity {
-
     public BurningCrudeTorchBlock(Settings settings) {
         super(settings);
     }
@@ -76,10 +80,14 @@ public class BurningCrudeTorchBlock extends BlockWithEntity {
         return (world1, pos1, state1, blockEntity) -> {
             if (world1.getBlockEntity(pos1) instanceof BurningCrudeTorchBlockEntity torch) {
                 if (torch.shouldExtinguish()) {
-                    world1.setBlockState(pos1, Reg.CRUDE_TORCH_BLOCK.getDefaultState());
+                    if (state1.isOf(Reg.WALL_BURNING_CRUDE_TORCH_BLOCK)) {
+                        BlockState result = Reg.WALL_BURNT_TORCH_BLOCK.getDefaultState();
+                        if (state1.contains(FACING)) result = result.with(FACING, state1.get(FACING));
+                        world1.setBlockState(pos1, result);
+                    } else
+                        world1.setBlockState(pos1, Reg.BURNT_TORCH_BLOCK.getDefaultState());
                     world1.playSound(null, pos1, SoundEvents.BLOCK_FIRE_EXTINGUISH, SoundCategory.BLOCKS);
-                    if (world1 instanceof ServerWorld serverWorld)
-                        serverWorld.getChunkManager().markForUpdate(pos1);
+                    if (world1 instanceof ServerWorld serverWorld) serverWorld.getChunkManager().markForUpdate(pos1);
                 } else if (world1.isRaining() && world1.isSkyVisible(pos1))
                     torch.updateForExtinguish();
             }
@@ -89,7 +97,11 @@ public class BurningCrudeTorchBlock extends BlockWithEntity {
     @Override
     public void onPlaced(World world, BlockPos pos, BlockState state, @Nullable LivingEntity placer, ItemStack stack) {
         super.onPlaced(world, pos, state, placer, stack);
-        if (stack.isOf(Reg.BURNING_CRUDE_TORCH_ITEM) && world.getBlockEntity(pos) instanceof BurningCrudeTorchBlockEntity torch)
-            torch.ignite();
+        if (stack.isOf(Reg.BURNING_CRUDE_TORCH_ITEM) && world.getBlockEntity(pos) instanceof BurningCrudeTorchBlockEntity torch) {
+            NbtCompound nbt = stack.getOrCreateNbt();
+            if (nbt.contains(BurningCrudeTorchItem.LIT_NBT, NbtElement.LONG_TYPE))
+                torch.setLastLitTime(nbt.getLong(BurningCrudeTorchItem.LIT_NBT));
+            else torch.ignite();
+        }
     }
 }

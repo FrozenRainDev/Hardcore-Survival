@@ -23,6 +23,14 @@ public class BurningCrudeTorchBlockEntity extends BlockEntity implements BlockEn
         super(Reg.BURNING_CRUDE_TORCH_BLOCK_ENTITY, pos, state);
     }
 
+    public long getLastLitTime() {
+        return this.lastLitTime;
+    }
+
+    public void setLastLitTime(long time) {
+        this.lastLitTime = time;
+    }
+
     public boolean shouldExtinguish() {
         return this.world == null || this.world.getTime() - this.lastLitTime > MAX_BURNING_LENGTH;
     }

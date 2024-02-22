@@ -8,6 +8,8 @@
   "block.hcs.wall_burning_crude_torch": "墙上燃烧的粗制火把",
   "block.hcs.unlit_torch": "未点燃的火把",
   "block.hcs.wall_unlit_torch": "墙上未点燃的火把",
+  "block.hcs.burnt_torch": "烧焦的火把",
+  "block.hcs.wall_burnt_torch": "墙上烧焦的火把",
   "death.attack.hcs.dehydrate": "%1$s 渴死了",
   "death.attack.hcs.heatstroke": "%1$s 中暑而死",
   "death.attack.hcs.oxygenDeficiency": "%1$s 缺氧而死",

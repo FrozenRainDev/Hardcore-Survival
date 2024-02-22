@@ -1,6 +1,7 @@
 package biz.coolpage.hcs.mixin.entity.player;
 
 import biz.coolpage.hcs.Reg;
+import biz.coolpage.hcs.item.BurningCrudeTorchItem;
 import biz.coolpage.hcs.item.HotWaterBottleItem;
 import biz.coolpage.hcs.status.HcsPersistentState;
 import biz.coolpage.hcs.status.accessor.StatAccessor;
@@ -43,9 +44,11 @@ public abstract class PlayerInventoryMixin {
         HotWaterBottleItem.update(this.player.world, inv, temperatureManager.getTrendType());
         boolean isSubmerged = player.isSubmergedInWater(), soundHasNotPlayedYet = true;
         int blocksCount = 0;
+
         for (int i = 0; i < inv.size(); ++i) {
             ItemStack stack = inv.getStack(i);
             Item item = stack.getItem();
+
             if (item instanceof BlockItem blockItem && !(blockItem.getBlock() instanceof TorchBlock))
                 blocksCount += stack.getCount();
             else if ((stack.isOf(Reg.COPPER_PICKAXE) || stack.isOf(Items.IRON_PICKAXE)) && player.world instanceof ServerWorld serverWorld)
@@ -53,17 +56,21 @@ public abstract class PlayerInventoryMixin {
                     state.setHasObtainedCopperPickaxe(true);
                     state.markDirty();
                 });
+
             if (stack.getDamage() > stack.getMaxDamage()) stack.setDamage(stack.getMaxDamage() - 1);
-            // Torches in players' inventories will extinguish when they submerge in water
+
             boolean isTorch = item == Items.TORCH, isBurningCrudeTorch = item == Reg.BURNING_CRUDE_TORCH_ITEM;
-            if (isSubmerged && (isTorch || isBurningCrudeTorch)) {
-                inv.setStack(i, new ItemStack(isTorch ? Reg.UNLIT_TORCH_ITEM : Reg.CRUDE_TORCH_ITEM, stack.getCount()));
+            if (isBurningCrudeTorch && !stack.getOrCreateNbt().contains(BurningCrudeTorchItem.LIT_NBT))
+                BurningCrudeTorchItem.initDurData(player.world, stack);
+            if ((isSubmerged || (isBurningCrudeTorch && BurningCrudeTorchItem.shouldExtinguish(stack))) && (isTorch || isBurningCrudeTorch)) {
+                inv.setStack(i, new ItemStack(Items.STICK, stack.getCount()));
                 if (soundHasNotPlayedYet) {
                     player.getWorld().playSound(null, player.getBlockPos(), SoundEvents.BLOCK_FIRE_EXTINGUISH, SoundCategory.BLOCKS);
                     soundHasNotPlayedYet = false;
                 }
             }
         }
+
         statusManager.setHasHeavyLoadDebuff(IS_SURVIVAL_AND_SERVER.test(this.player) && blocksCount > 128);
     }
 }

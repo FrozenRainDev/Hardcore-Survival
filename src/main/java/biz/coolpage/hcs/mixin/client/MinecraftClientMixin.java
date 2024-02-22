@@ -80,8 +80,7 @@ public abstract class MinecraftClientMixin extends ReentrantThreadExecutor<Runna
         }
     }
 
-    @Inject(method = "doItemUse", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/network/ClientPlayerInteractionManager;isBreakingBlock()Z", shift = At.Shift.AFTER))
-//@At(value = "INVOKE", target = "Lnet/minecraft/client/network/ClientPlayerInteractionManager;interactBlock(Lnet/minecraft/client/network/ClientPlayerEntity;Lnet/minecraft/util/Hand;Lnet/minecraft/util/hit/BlockHitResult;)Lnet/minecraft/util/ActionResult;", shift = At.Shift.AFTER))
+    @Inject(method = "doItemUse", at = @At("HEAD"), cancellable = true)
     private void doItemUse(CallbackInfo ci) {
         if (world == null || player == null) return;
         BlockHitResult customHitResult = EntityHelper.rayCast(world, player, RaycastContext.FluidHandling.SOURCE_ONLY, 2.5);
@@ -93,6 +92,7 @@ public abstract class MinecraftClientMixin extends ReentrantThreadExecutor<Runna
         else if (state.isIn(FluidTags.LAVA) && (stack.isOf(Reg.UNLIT_TORCH_ITEM) || stack.isOf(Reg.CRUDE_TORCH_ITEM))) {
             ClientC2S.writeC2SPacketOnLitHoldingTorch(player);
             CrudeTorchBlock.litHoldingTorch(player, world, stack);
+            ci.cancel();
         }
     }
 }

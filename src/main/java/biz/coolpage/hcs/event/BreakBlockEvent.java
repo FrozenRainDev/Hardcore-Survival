@@ -2,7 +2,11 @@ package biz.coolpage.hcs.event;
 
 import biz.coolpage.hcs.Reg;
 import biz.coolpage.hcs.block.torches.BurningCrudeTorchBlock;
+import biz.coolpage.hcs.block.torches.BurntTorchBlock;
 import biz.coolpage.hcs.block.torches.CrudeTorchBlock;
+import biz.coolpage.hcs.block.torches.WallBurntTorchBlock;
+import biz.coolpage.hcs.entity.BurningCrudeTorchBlockEntity;
+import biz.coolpage.hcs.item.BurningCrudeTorchItem;
 import biz.coolpage.hcs.item.KnifeItem;
 import biz.coolpage.hcs.status.accessor.StatAccessor;
 import biz.coolpage.hcs.util.EntityHelper;
@@ -74,9 +78,18 @@ public class BreakBlockEvent {
                 if (!(mainHand instanceof AxeItem)) {
                     if (block == Reg.DRYING_RACK) EntityHelper.dropItem(player, x, y, z, Reg.DRYING_RACK_ITEM, 1);
                 }
-                if (block instanceof CrudeTorchBlock || block instanceof BurningCrudeTorchBlock) // FIXME fucking invalid loot table, I had to add loot item manually
-                    EntityHelper.dropItem(player, x + 0.5, y + 0.5, z + 0.5, block.asItem(), 1);
-                if ((block == Blocks.CACTUS || block instanceof AbstractGlassBlock || block instanceof PaneBlock) && player.getMainHandStack().isEmpty()) {
+                boolean isBurningCrudeTorch = block instanceof BurningCrudeTorchBlock;
+                if (block instanceof CrudeTorchBlock || isBurningCrudeTorch) {
+                    ItemStack result;
+                    if (block instanceof BurntTorchBlock || block instanceof WallBurntTorchBlock)
+                        result = Items.STICK.getDefaultStack();
+                    else {
+                        result = block.asItem().getDefaultStack();
+                        if (isBurningCrudeTorch && world.getBlockEntity(pos) instanceof BurningCrudeTorchBlockEntity torch)
+                            result.getOrCreateNbt().putLong(BurningCrudeTorchItem.LIT_NBT, torch.getLastLitTime());
+                    }
+                    ItemScatterer.spawn(world, x + 0.5, y + 0.5, z + 0.5, result);
+                } else if ((block == Blocks.CACTUS || block instanceof AbstractGlassBlock || block instanceof PaneBlock) && player.getMainHandStack().isEmpty()) {
                     player.damage(world.getDamageSources().cactus(), 2f);
                     ((StatAccessor) player).getInjuryManager().addBleeding(1.2);
                 } else if (block == Blocks.SWEET_BERRY_BUSH) EntityHelper.dropItem(player, x, y, z, Reg.BERRY_BUSH, 1);

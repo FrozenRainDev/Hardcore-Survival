@@ -227,9 +227,9 @@ public class Reg implements ModInitializer {
     };
     public static final BurningCrudeTorchBlock BURNING_CRUDE_TORCH_BLOCK = new BurningCrudeTorchBlock(AbstractBlock.Settings.of(Material.DECORATION).noCollision().breakInstantly().luminance(state -> 12).sounds(BlockSoundGroup.WOOD));
     public static final WallBurningCrudeTorchBlock WALL_BURNING_CRUDE_TORCH_BLOCK = new WallBurningCrudeTorchBlock(AbstractBlock.Settings.of(Material.DECORATION).noCollision().breakInstantly().luminance(state -> 12).sounds(BlockSoundGroup.WOOD).dropsLike(BURNING_CRUDE_TORCH_BLOCK));
-    public static final Item BURNING_CRUDE_TORCH_ITEM = new VerticallyAttachableBlockItem(BURNING_CRUDE_TORCH_BLOCK, WALL_BURNING_CRUDE_TORCH_BLOCK, new Item.Settings(), Direction.DOWN);
-    public static final UnlitTorchBlock UNLIT_TORCH_BLOCK = new UnlitTorchBlock(AbstractBlock.Settings.of(Material.DECORATION).noCollision().breakInstantly().luminance(state -> 0).sounds(BlockSoundGroup.WOOD));
-    public static final WallUnlitTorchBlock WALL_UNLIT_TORCH_BLOCK = new WallUnlitTorchBlock(AbstractBlock.Settings.of(Material.DECORATION).noCollision().breakInstantly().luminance(state -> 0).sounds(BlockSoundGroup.WOOD).dropsLike(UNLIT_TORCH_BLOCK));
+    public static final Item BURNING_CRUDE_TORCH_ITEM = new BurningCrudeTorchItem();
+    public static final UnlitTorchBlock UNLIT_TORCH_BLOCK = new UnlitTorchBlock(AbstractBlock.Settings.of(Material.DECORATION).noCollision().breakInstantly().sounds(BlockSoundGroup.WOOD));
+    public static final WallUnlitTorchBlock WALL_UNLIT_TORCH_BLOCK = new WallUnlitTorchBlock(AbstractBlock.Settings.of(Material.DECORATION).noCollision().breakInstantly().sounds(BlockSoundGroup.WOOD).dropsLike(UNLIT_TORCH_BLOCK));
     public static final Item UNLIT_TORCH_ITEM = new VerticallyAttachableBlockItem(UNLIT_TORCH_BLOCK, WALL_UNLIT_TORCH_BLOCK, new Item.Settings(), Direction.DOWN) {
         @Override
         public ActionResult useOnBlock(@NotNull ItemUsageContext context) {
@@ -237,6 +237,8 @@ public class Reg implements ModInitializer {
             return performed == null ? super.useOnBlock(context) : performed;
         }
     };
+    public static final BurntTorchBlock BURNT_TORCH_BLOCK = new BurntTorchBlock(AbstractBlock.Settings.of(Material.DECORATION).noCollision().breakInstantly().sounds(BlockSoundGroup.WOOD));
+    public static final WallBurntTorchBlock WALL_BURNT_TORCH_BLOCK = new WallBurntTorchBlock(AbstractBlock.Settings.of(Material.DECORATION).noCollision().breakInstantly().sounds(BlockSoundGroup.WOOD).dropsLike(BURNT_TORCH_BLOCK));
 
     public static final EntityType<RockProjectileEntity> ROCK_PROJECTILE_ENTITY = FabricEntityTypeBuilder.<RockProjectileEntity>create(SpawnGroup.MISC, RockProjectileEntity::new).dimensions(new EntityDimensions(0.25F, 0.25F, true)).build();
     public static final EntityType<FlintProjectileEntity> FLINT_PROJECTILE_ENTITY = FabricEntityTypeBuilder.<FlintProjectileEntity>create(SpawnGroup.MISC, FlintProjectileEntity::new).dimensions(new EntityDimensions(0.25F, 0.25F, true)).build();
@@ -467,6 +469,9 @@ public class Reg implements ModInitializer {
         Registry.register(Registries.ITEM, new Identifier("hcs", "unlit_torch"), UNLIT_TORCH_ITEM);
         Registry.register(Registries.BLOCK, new Identifier("hcs", "unlit_torch"), UNLIT_TORCH_BLOCK);
         Registry.register(Registries.BLOCK, new Identifier("hcs", "wall_unlit_torch"), WALL_UNLIT_TORCH_BLOCK);
+        // Burnt torch
+        Registry.register(Registries.BLOCK, new Identifier("hcs", "burnt_torch"), BURNT_TORCH_BLOCK);
+        Registry.register(Registries.BLOCK, new Identifier("hcs", "wall_burnt_torch"), WALL_BURNT_TORCH_BLOCK);
 
         Registry.register(Registries.POTION, "hcs_ironskin", IRONSKIN_POTION);
         Registry.register(Registries.POTION, "hcs_long_ironskin", LONG_IRONSKIN_POTION);
