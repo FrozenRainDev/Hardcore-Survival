@@ -63,7 +63,7 @@ public abstract class PlayerInventoryMixin {
             if (isBurningCrudeTorch && !stack.getOrCreateNbt().contains(BurningCrudeTorchItem.LIT_NBT))
                 BurningCrudeTorchItem.initDurData(player.world, stack);
             if ((isSubmerged || (isBurningCrudeTorch && BurningCrudeTorchItem.shouldExtinguish(stack))) && (isTorch || isBurningCrudeTorch)) {
-                inv.setStack(i, new ItemStack(Items.STICK, stack.getCount()));
+                inv.setStack(i, new ItemStack(isTorch ? Reg.UNLIT_TORCH_ITEM : Items.AIR, stack.getCount()));
                 if (soundHasNotPlayedYet) {
                     player.getWorld().playSound(null, player.getBlockPos(), SoundEvents.BLOCK_FIRE_EXTINGUISH, SoundCategory.BLOCKS);
                     soundHasNotPlayedYet = false;

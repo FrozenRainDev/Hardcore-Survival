@@ -1,4 +1,4 @@
-package biz.coolpage.hcs.mixin.world;
+package biz.coolpage.hcs.mixin.structure;
 
 import biz.coolpage.hcs.util.CommUtil;
 import biz.coolpage.hcs.util.WorldHelper;

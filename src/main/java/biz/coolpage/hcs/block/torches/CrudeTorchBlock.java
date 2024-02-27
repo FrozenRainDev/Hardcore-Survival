@@ -69,8 +69,8 @@ public class CrudeTorchBlock extends TorchBlock {
     }
 
     public static void litHoldingTorch(PlayerEntity player, @NotNull World world, @NotNull ItemStack stack) {
-        stack.decrement(1);
         EntityHelper.dropItem(player, stack.isOf(Reg.CRUDE_TORCH_ITEM) ? Reg.BURNING_CRUDE_TORCH_ITEM : Items.TORCH);
+        stack.decrement(1); // This operation must behind the drop item process considering condition when the player holding single torch
         world.playSound(null, player.getBlockPos(), SoundEvents.ITEM_FIRECHARGE_USE, SoundCategory.BLOCKS);
     }
 

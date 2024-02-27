@@ -30,11 +30,11 @@ public class ClientC2S {
         }
     }
 
-    public static void writeC2SPacketOnLitHoldingTorch(Object playerObj) {
+    public static void writeC2SPacketOnLitHoldingTorchInLava(Object playerObj, int hand) {
         if (playerObj instanceof ClientPlayerEntity player) {
             PacketByteBuf buf = new PacketByteBuf(Unpooled.buffer());
-            buf.writeIntArray(new int[]{player.getId()});
-            ClientPlayNetworking.send(ServerC2S.LIT_HOLDING_TORCH, buf);
+            buf.writeIntArray(new int[]{player.getId(), hand});
+            ClientPlayNetworking.send(ServerC2S.LIT_HOLDING_TORCH_IN_LAVA, buf);
         }
     }
 

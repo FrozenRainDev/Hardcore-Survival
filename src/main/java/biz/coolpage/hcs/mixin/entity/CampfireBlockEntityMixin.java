@@ -5,6 +5,7 @@ import biz.coolpage.hcs.item.HotWaterBottleItem;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.block.entity.CampfireBlockEntity;
+import net.minecraft.fluid.Fluids;
 import net.minecraft.inventory.Inventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.BlockPos;
@@ -18,9 +19,15 @@ import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 
 @Mixin(CampfireBlockEntity.class)
 public class CampfireBlockEntityMixin {
+    @Inject(method = "litServerTick", at = @At("HEAD"))
+    private static void litServerTickInjected1(@NotNull World world, BlockPos pos, BlockState state, CampfireBlockEntity campfire, CallbackInfo ci) {
+        if (world.getRandom().nextFloat() < 0.001F)
+            Fluids.LAVA.onRandomTick(world, pos, Fluids.LAVA.getDefaultState(), world.getRandom());
+    }
+
     @Inject(method = "litServerTick", at = @At(value = "INVOKE", target = "Lnet/minecraft/util/ItemScatterer;spawn(Lnet/minecraft/world/World;DDDLnet/minecraft/item/ItemStack;)V"), locals = LocalCapture.CAPTURE_FAILSOFT)
-    private static void litServerTickInjected(World world, BlockPos pos, @NotNull BlockState state, CampfireBlockEntity campfire, CallbackInfo ci, boolean bl, int i, ItemStack itemStack, Inventory inventory, ItemStack itemStack2) {
+    private static void litServerTickInjected2(World world, BlockPos pos, @NotNull BlockState state, CampfireBlockEntity campfire, CallbackInfo ci, boolean bl, int i, ItemStack itemStack, Inventory inventory, ItemStack itemStack2) {
         if (state.isOf(Blocks.SOUL_CAMPFIRE) && itemStack2.isOf(Reg.HOT_WATER_BOTTLE))
-            HotWaterBottleItem.setStatus(itemStack2, -1); //Soul campfire will cool temp down
+            HotWaterBottleItem.setStatus(itemStack2, -1); // Soul campfire will cool temp down
     }
 }

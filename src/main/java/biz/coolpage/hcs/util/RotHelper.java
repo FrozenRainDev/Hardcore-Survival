@@ -27,9 +27,9 @@ import org.jetbrains.annotations.NotNull;
 import java.util.List;
 
 public class RotHelper {
-    public static final String HFE = "hcs_food_exp";//food expiry (ticks)
-    public static final String HFF = "hcs_food_fresh";//percentage of food freshness
-    public static final String HFI = "hcs_food_exp_icebox";//food expiry when in icebox
+    public static final String HFE = "hcs_food_exp"; // food expiry (ticks)
+    public static final String HFF = "hcs_food_fresh"; // percentage of food freshness
+    public static final String HFI = "hcs_food_exp_icebox"; // food expiry when in icebox
 
     public static void combineNBT(@NotNull ItemStack stackA, @NotNull ItemStack stackB) {
         int countA = stackA.getCount();
@@ -47,7 +47,7 @@ public class RotHelper {
             createExp(WorldHelper.currWorld, stackB, avgFresh, nbtB.contains(HFI));
     }
 
-    //To optimize performance, do not onInteract stack.isOf
+    // To improve performance, do not onInteract stack.isOf
     public static boolean canRot(Item item) {
         if (item == null) return false;
         if (item == Reg.ROT || item == Reg.WORM || item == Items.ROTTEN_FLESH || item == Items.GOLDEN_APPLE || item == Items.ENCHANTED_GOLDEN_APPLE || item == Items.GOLDEN_CARROT || item == Items.GLISTERING_MELON_SLICE || Reg.IS_BARK.test(item))
@@ -65,13 +65,13 @@ public class RotHelper {
     public static int getPackageType(@NotNull String name) {
         if ((name.contains("_can") && !name.contains("cane"))) return 2;//Canned Food
         if (name.contains("_stew") || name.contains("stew_") || name.contains("_salad") || name.contains("_soup") || name.contains("_bucket") || name.contains("bucket_") || name.contains("_bottle") || name.contains("bottle_") || name.contains("_cup") || name.contains("cup_") || name.contains("_juice"))
-            return 1;//Food in container
-        return 0;//Non-packaged
+            return 1; // Food in container
+        return 0; // Non-packaged
     }
 
     public static float getExpDate(Item item) {
         if (item == null) return 7;
-        String name = item.getTranslationKey();//item.getName().toString();
+        String name = item.getTranslationKey(); // item.getName().toString();
         int packageType = getPackageType(name);
         if (item == Reg.POTHERB || item == Reg.FEARLESSNESS_HERB || item == Reg.ROASTED_SEEDS || item == Items.PUMPKIN_PIE || item == Items.KELP)
             return 10;
@@ -151,10 +151,10 @@ public class RotHelper {
     }
 
     public static int getFreshLevel(float fresh) {
-        if (fresh > 0.7F) return 3;//Fresh
-        if (fresh > 0.35F) return 2;//Stale
-        if (fresh > 0.0F) return 1;//Spoiled
-        return 0;//Rotten
+        if (fresh > 0.7F) return 3; // Fresh
+        if (fresh > 0.35F) return 2; // Stale
+        if (fresh > 0.0F) return 1; // Spoiled
+        return 0; // Rotten
     }
 
     public static float getFreshCooked(float prevFresh) {
@@ -237,7 +237,7 @@ public class RotHelper {
         int freshLv = getFreshLevel(fresh);
         MutableText modifier = MutableText.of(TextContent.EMPTY);
         if (freshLv >= 3)
-            modifier.append(Text.translatable("hcs.food_info.fresh").formatted(Formatting.DARK_GREEN));//If .formatted() outside of append() rather than outside of it, the sibling cannot clear its style via cleaning father text? See ScreenMixin prev bug
+            modifier.append(Text.translatable("hcs.food_info.fresh").formatted(Formatting.DARK_GREEN)); //If .formatted() outside of append() rather than outside of it, the sibling cannot clear its style via cleaning father text? See ScreenMixin prev bug
         else if (freshLv == 2) modifier.append(Text.translatable("hcs.food_info.stale").formatted(Formatting.YELLOW));
         else if (freshLv == 1) modifier.append(Text.translatable("hcs.food_info.spoiled").formatted(Formatting.RED));
         else {
@@ -246,7 +246,7 @@ public class RotHelper {
                 modifier.append(Text.translatable("hcs.food_info.pour").formatted(Formatting.GRAY));
             return modifier;
         }
-        modifier.append(Text.translatable("hcs.food_info.expiry", (int) Math.ceil(Math.max(getExpDate(stack.getItem()) * fresh * (isInIcebox ? 3 : 1), 0.1F))).formatted(Formatting.GRAY));
+//        modifier.append(Text.translatable("hcs.food_info.expiry", (int) Math.ceil(Math.max(getExpDate(stack.getItem()) * fresh * (isInIcebox ? 3 : 1), 0.1F))).formatted(Formatting.GRAY));
         return modifier;
     }
 

@@ -21,26 +21,29 @@ public class BreakBlockEvent {
     public static void init() {
         PlayerBlockBreakEvents.BEFORE.register(((world, player, pos, state, blockEntity) -> {
             if (EntityHelper.IS_SURVIVAL_AND_SERVER.test(player)) {
-                int x = pos.getX();
-                int y = pos.getY();
-                int z = pos.getZ();
+                Block block = state.getBlock();
+                int x = pos.getX(), y = pos.getY(), z = pos.getZ();
                 if (state.isOf(Blocks.BAMBOO) && world.getBlockState(pos.down()).isIn(BlockTags.BAMBOO_PLANTABLE_ON) && world.getBlockState(pos.up(10)).isOf(Blocks.BAMBOO) && world.getBlockState(pos.east()).isOf(Blocks.BAMBOO) && world.getBlockState(pos.west()).isOf(Blocks.BAMBOO) && world.getBlockState(pos.south()).isOf(Blocks.BAMBOO) && world.getBlockState(pos.north()).isOf(Blocks.BAMBOO))
                     ItemScatterer.spawn(world, x, y, z, Reg.BAMBOO_SHOOT.getDefaultStack());
+                boolean isBurningCrudeTorch = block instanceof BurningCrudeTorchBlock, isBurnt = block instanceof BurntTorchBlock || block instanceof WallBurntTorchBlock;
+                if (!isBurnt && (block instanceof CrudeTorchBlock || isBurningCrudeTorch)) {
+                    ItemStack result = block.asItem().getDefaultStack();
+                    if (isBurningCrudeTorch && world.getBlockEntity(pos) instanceof BurningCrudeTorchBlockEntity torch)
+                        result.getOrCreateNbt().putLong(BurningCrudeTorchItem.LIT_NBT, torch.getLastLitTime());
+                    ItemScatterer.spawn(world, x + 0.5, y + 0.5, z + 0.5, result);
+                }
             }
             return true;
         }));
 
         //See breaking event at PlayerEntityMixin/getBlockBreakingSpeed()
-
         PlayerBlockBreakEvents.AFTER.register(((world, player, pos, state, blockEntity) -> {
             if (EntityHelper.IS_SURVIVAL_AND_SERVER.test(player)) {
-                double rand = Math.random();
+                double rand = world.getRandom().nextDouble();
                 Block block = state.getBlock();
                 Item mainHand = player.getMainHandStack().getItem();
-                int x = pos.getX();
-                int y = pos.getY();
-                int z = pos.getZ();
-                if (mainHand != Items.SHEARS) { //This type CANNOT onInteract switch(){}
+                int x = pos.getX(), y = pos.getY(), z = pos.getZ();
+                if (mainHand != Items.SHEARS) {
                     if (block == Blocks.GRASS) {
                         if (rand < 0.007) EntityHelper.dropItem(player, x, y, z, Reg.FEARLESSNESS_HERB, 1);
                         else if (rand < 0.012) EntityHelper.dropItem(player, x, y, z, Reg.WORM, 1);
@@ -65,7 +68,7 @@ public class BreakBlockEvent {
                             EntityHelper.dropItem(player, x, y, z, Reg.GRASS_FIBER, 2);
                     } else if (block == Blocks.VINE) EntityHelper.dropItem(player, x, y, z, Reg.FIBER_STRING, 1);
                 }
-                //!mainHand.isEnchantable(new ItemStack(mainHand))
+                // !mainHand.isEnchantable(new ItemStack(mainHand))
                 if (!(mainHand instanceof ShovelItem)) {
                     if (block == Blocks.SNOW || block == Blocks.POWDER_SNOW)
                         EntityHelper.dropItem(player, x, y, z, Items.SNOWBALL, 1);
@@ -78,18 +81,7 @@ public class BreakBlockEvent {
                 if (!(mainHand instanceof AxeItem)) {
                     if (block == Reg.DRYING_RACK) EntityHelper.dropItem(player, x, y, z, Reg.DRYING_RACK_ITEM, 1);
                 }
-                boolean isBurningCrudeTorch = block instanceof BurningCrudeTorchBlock;
-                if (block instanceof CrudeTorchBlock || isBurningCrudeTorch) {
-                    ItemStack result;
-                    if (block instanceof BurntTorchBlock || block instanceof WallBurntTorchBlock)
-                        result = Items.STICK.getDefaultStack();
-                    else {
-                        result = block.asItem().getDefaultStack();
-                        if (isBurningCrudeTorch && world.getBlockEntity(pos) instanceof BurningCrudeTorchBlockEntity torch)
-                            result.getOrCreateNbt().putLong(BurningCrudeTorchItem.LIT_NBT, torch.getLastLitTime());
-                    }
-                    ItemScatterer.spawn(world, x + 0.5, y + 0.5, z + 0.5, result);
-                } else if ((block == Blocks.CACTUS || block instanceof AbstractGlassBlock || block instanceof PaneBlock) && player.getMainHandStack().isEmpty()) {
+                if ((block == Blocks.CACTUS || block instanceof AbstractGlassBlock || block instanceof PaneBlock) && player.getMainHandStack().isEmpty()) {
                     player.damage(world.getDamageSources().cactus(), 2f);
                     ((StatAccessor) player).getInjuryManager().addBleeding(1.2);
                 } else if (block == Blocks.SWEET_BERRY_BUSH) EntityHelper.dropItem(player, x, y, z, Reg.BERRY_BUSH, 1);

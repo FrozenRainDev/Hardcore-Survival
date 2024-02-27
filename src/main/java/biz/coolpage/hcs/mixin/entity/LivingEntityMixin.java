@@ -11,9 +11,7 @@ import net.minecraft.entity.boss.WitherEntity;
 import net.minecraft.entity.boss.dragon.EnderDragonEntity;
 import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.effect.StatusEffects;
-import net.minecraft.entity.mob.EndermanEntity;
-import net.minecraft.entity.mob.HostileEntity;
-import net.minecraft.entity.mob.SpiderEntity;
+import net.minecraft.entity.mob.*;
 import net.minecraft.entity.passive.*;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
@@ -93,9 +91,11 @@ public abstract class LivingEntityMixin extends Entity {
             if (this.isBaby()) EntityHelper.dropItem(this, meat);
         } else if (ent instanceof AxolotlEntity || ent instanceof CatEntity || ent instanceof FrogEntity || ent instanceof ParrotEntity || ent instanceof SquidEntity)
             EntityHelper.dropItem(this, meat);
-        else if (ent instanceof AnimalEntity && !(ent instanceof BeeEntity || ent instanceof TadpoleEntity || ent instanceof RabbitEntity)) {
-            EntityHelper.dropItem(this, meat, (int) (Math.random() * 3) + 1);
-            //EntityHelper.dropItem(this, Items.BONE, 2);
+        else if (ent instanceof AnimalEntity && !(ent instanceof BeeEntity || ent instanceof TadpoleEntity || ent instanceof RabbitEntity || ent instanceof ZombieHorseEntity || ent instanceof SkeletonHorseEntity)) {
+            if (ent instanceof AbstractHorseEntity)
+                EntityHelper.dropItem(this, this.getFireTicks() > 0 ? Items.COOKED_BEEF : Items.BEEF, (int) (Math.random() * 3) + 1);
+            else EntityHelper.dropItem(this, meat, (int) (Math.random() * 3) + 1);
+            // EntityHelper.dropItem(this, Items.BONE, 2);
             EntityHelper.dropItem(this, Reg.ANIMAL_VISCERA);
         } else if (ent instanceof SpiderEntity && Math.random() < 0.33) EntityHelper.dropItem(this, Reg.SPIDER_GLAND);
         else if (ent instanceof BatEntity)

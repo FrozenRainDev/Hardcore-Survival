@@ -1,13 +1,16 @@
 package biz.coolpage.hcs.network;
 
-import biz.coolpage.hcs.block.torches.CrudeTorchBlock;
 import biz.coolpage.hcs.event.UseBlockEvent;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.effect.StatusEffect;
 import net.minecraft.entity.effect.StatusEffectCategory;
 import net.minecraft.entity.effect.StatusEffectInstance;
+import net.minecraft.item.ItemStack;
+import net.minecraft.particle.ParticleTypes;
 import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.sound.SoundCategory;
+import net.minecraft.sound.SoundEvents;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.NotNull;
@@ -19,7 +22,7 @@ import java.util.List;
 public class ServerC2S {
     public static final Identifier DRINK_WATER_WITH_BARE_HAND = new Identifier("hcs", "c2s_drink_water_with_bare_hand");
     public static final Identifier ON_PLAYER_ENTER = new Identifier("hcs", "c2s_on_player_enter");
-    public static final Identifier LIT_HOLDING_TORCH = new Identifier("hcs", "c2s_lit_holding_torch");
+    public static final Identifier LIT_HOLDING_TORCH_IN_LAVA = new Identifier("hcs", "c2s_lit_holding_torch_lava");
 
     public static void init() {
         ServerPlayNetworking.registerGlobalReceiver(DRINK_WATER_WITH_BARE_HAND, (server, player, handler, buf, responseSender) -> {
@@ -36,13 +39,13 @@ public class ServerC2S {
         ServerPlayNetworking.registerGlobalReceiver(ON_PLAYER_ENTER, (server, player, handler, buf, responseSender) -> {
             int[] bufArr = buf.readIntArray();
             server.execute(() -> {
-                //Debug when player effects reload
+                // Debug when player effects reload
                 if (player != null && player.world != null && player.world.getEntityById(bufArr[0]) != null) {
                     Entity targetPlayer = player.world.getEntityById(bufArr[0]);
                     if (targetPlayer instanceof ServerPlayerEntity serverPlayerEntity) {
                         Iterator<StatusEffect> iterator = getStatusEffectIterator(serverPlayerEntity);
                         while (iterator.hasNext()) {
-                            //Avoid java.util.ConcurrentModificationException: null
+                            // Avoid java.util.ConcurrentModificationException: null
                             StatusEffect next = iterator.next();
                             serverPlayerEntity.removeStatusEffect(next);
                         }
@@ -51,20 +54,23 @@ public class ServerC2S {
             });
         });
 
-        ServerPlayNetworking.registerGlobalReceiver(LIT_HOLDING_TORCH, (server, player, handler, buf, responseSender) -> {
+        ServerPlayNetworking.registerGlobalReceiver(LIT_HOLDING_TORCH_IN_LAVA, (server, player, handler, buf, responseSender) -> {
             int[] bufArr = buf.readIntArray();
             server.execute(() -> {
                 if (player != null && player.world != null && player.world.getEntityById(bufArr[0]) != null) {
                     Entity targetPlayer = player.world.getEntityById(bufArr[0]);
-                    if (targetPlayer instanceof ServerPlayerEntity serverPlayerEntity)
-                        CrudeTorchBlock.litHoldingTorch(serverPlayerEntity, serverPlayerEntity.getWorld(), serverPlayerEntity.getActiveItem());
+                    if (targetPlayer instanceof ServerPlayerEntity sp) {
+                        ItemStack stack = bufArr[1] == 1 ? sp.getMainHandStack() : sp.getOffHandStack();
+                        stack.decrement(1);
+                        sp.getWorld().playSound(null, player.getBlockPos(), SoundEvents.BLOCK_FIRE_EXTINGUISH, SoundCategory.BLOCKS);
+                        sp.getWorld().spawnParticles(ParticleTypes.LARGE_SMOKE, sp.getX(), sp.getY(), sp.getZ(), 5, 0.0, 0.0, 0.0, 0.3);
+                    }
                 }
             });
         });
     }
 
-    @NotNull
-    private static Iterator<StatusEffect> getStatusEffectIterator(@NotNull ServerPlayerEntity serverPlayerEntity) {
+    private static @NotNull Iterator<StatusEffect> getStatusEffectIterator(@NotNull ServerPlayerEntity serverPlayerEntity) {
         List<StatusEffect> list = new ArrayList<>();
         for (StatusEffectInstance effect : serverPlayerEntity.getStatusEffects()) {
             StatusEffect type = effect.getEffectType();

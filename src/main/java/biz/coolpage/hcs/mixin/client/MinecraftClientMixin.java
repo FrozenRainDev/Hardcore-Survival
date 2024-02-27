@@ -1,7 +1,6 @@
 package biz.coolpage.hcs.mixin.client;
 
 import biz.coolpage.hcs.Reg;
-import biz.coolpage.hcs.block.torches.CrudeTorchBlock;
 import biz.coolpage.hcs.network.ClientC2S;
 import biz.coolpage.hcs.status.accessor.StatAccessor;
 import biz.coolpage.hcs.util.EntityHelper;
@@ -16,6 +15,7 @@ import net.minecraft.client.network.ClientPlayerInteractionManager;
 import net.minecraft.client.world.ClientWorld;
 import net.minecraft.fluid.FluidState;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.Items;
 import net.minecraft.registry.tag.FluidTags;
 import net.minecraft.util.Hand;
 import net.minecraft.util.hit.BlockHitResult;
@@ -82,17 +82,22 @@ public abstract class MinecraftClientMixin extends ReentrantThreadExecutor<Runna
 
     @Inject(method = "doItemUse", at = @At("HEAD"), cancellable = true)
     private void doItemUse(CallbackInfo ci) {
+        // player.getActiveItem() is invalid here! Always return air
         if (world == null || player == null) return;
         BlockHitResult customHitResult = EntityHelper.rayCast(world, player, RaycastContext.FluidHandling.SOURCE_ONLY, 2.5);
         BlockPos pos = customHitResult.getBlockPos();
         FluidState state = world.getFluidState(pos);
-        ItemStack stack = player.getActiveItem();
         if (state.isIn(FluidTags.WATER))
             ClientC2S.writeC2SPacketOnDrinkWater(player, pos.getX(), pos.getY(), pos.getZ());
-        else if (state.isIn(FluidTags.LAVA) && (stack.isOf(Reg.UNLIT_TORCH_ITEM) || stack.isOf(Reg.CRUDE_TORCH_ITEM))) {
-            ClientC2S.writeC2SPacketOnLitHoldingTorch(player);
-            CrudeTorchBlock.litHoldingTorch(player, world, stack);
-            ci.cancel();
+        else if (state.isIn(FluidTags.LAVA)) {
+            ItemStack s1 = player.getMainHandStack(), s2 = player.getOffHandStack();
+            if (!s1.isEmpty()) s2 = Items.AIR.getDefaultStack();
+            boolean b1 = s1.isOf(Reg.UNLIT_TORCH_ITEM) || s1.isOf(Reg.CRUDE_TORCH_ITEM);
+            boolean b2 = s2.isOf(Reg.UNLIT_TORCH_ITEM) || s2.isOf(Reg.CRUDE_TORCH_ITEM);
+            if (b1 || b2) {
+                ClientC2S.writeC2SPacketOnLitHoldingTorchInLava(player, b1 ? 1 : 2);
+                ci.cancel();
+            }
         }
     }
 }

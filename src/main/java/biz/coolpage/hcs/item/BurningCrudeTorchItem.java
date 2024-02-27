@@ -33,10 +33,9 @@ public class BurningCrudeTorchItem extends VerticallyAttachableBlockItem {
 
     private static float getDurPercent(ItemStack stack) {
         if (isInvalidStack(stack)) return 0.0F;
-        long numerator = stack.getOrCreateNbt().getLong(LIT_NBT) - WorldHelper.currWorld.getTime();
+        long numerator = WorldHelper.currWorld.getTime() - stack.getOrCreateNbt().getLong(LIT_NBT);
         numerator = MAX_BURNING_LENGTH - numerator;
-        if (numerator < 0) return 0.0F;
-        return (float) numerator / MAX_BURNING_LENGTH;
+        return MathHelper.clamp((float) numerator / (float) MAX_BURNING_LENGTH, 0.0F, 1.0F);
     }
 
     public static void initDurData(World world, ItemStack stack) {
