@@ -1,10 +1,7 @@
 package biz.coolpage.hcs.event;
 
 import biz.coolpage.hcs.Reg;
-import biz.coolpage.hcs.block.torches.BurningCrudeTorchBlock;
-import biz.coolpage.hcs.block.torches.BurntTorchBlock;
-import biz.coolpage.hcs.block.torches.CrudeTorchBlock;
-import biz.coolpage.hcs.block.torches.WallBurntTorchBlock;
+import biz.coolpage.hcs.block.torches.*;
 import biz.coolpage.hcs.entity.BurningCrudeTorchBlockEntity;
 import biz.coolpage.hcs.item.BurningCrudeTorchItem;
 import biz.coolpage.hcs.item.KnifeItem;
@@ -26,7 +23,7 @@ public class BreakBlockEvent {
                 if (state.isOf(Blocks.BAMBOO) && world.getBlockState(pos.down()).isIn(BlockTags.BAMBOO_PLANTABLE_ON) && world.getBlockState(pos.up(10)).isOf(Blocks.BAMBOO) && world.getBlockState(pos.east()).isOf(Blocks.BAMBOO) && world.getBlockState(pos.west()).isOf(Blocks.BAMBOO) && world.getBlockState(pos.south()).isOf(Blocks.BAMBOO) && world.getBlockState(pos.north()).isOf(Blocks.BAMBOO))
                     ItemScatterer.spawn(world, x, y, z, Reg.BAMBOO_SHOOT.getDefaultStack());
                 boolean isBurningCrudeTorch = block instanceof BurningCrudeTorchBlock, isBurnt = block instanceof BurntTorchBlock || block instanceof WallBurntTorchBlock;
-                if (!isBurnt && (block instanceof CrudeTorchBlock || isBurningCrudeTorch)) {
+                if (!isBurnt && (block instanceof CrudeTorchBlock || isBurningCrudeTorch || block instanceof GlowstoneTorchBlock)) {
                     ItemStack result = block.asItem().getDefaultStack();
                     if (isBurningCrudeTorch && world.getBlockEntity(pos) instanceof BurningCrudeTorchBlockEntity torch)
                         result.getOrCreateNbt().putLong(BurningCrudeTorchItem.LIT_NBT, torch.getLastLitTime());

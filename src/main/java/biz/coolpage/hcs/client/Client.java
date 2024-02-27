@@ -32,7 +32,9 @@ public class Client implements ClientModInitializer {
                 Reg.UNLIT_TORCH_BLOCK,
                 Reg.WALL_UNLIT_TORCH_BLOCK,
                 Reg.BURNT_TORCH_BLOCK,
-                Reg.WALL_BURNT_TORCH_BLOCK
+                Reg.WALL_BURNT_TORCH_BLOCK,
+                Reg.GLOWSTONE_TORCH_BLOCK,
+                Reg.WALL_GLOWSTONE_TORCH_BLOCK
         );
         EntityRendererRegistry.register(Reg.ROCK_PROJECTILE_ENTITY, FlyingItemEntityRenderer::new);
         EntityRendererRegistry.register(Reg.FLINT_PROJECTILE_ENTITY, FlyingItemEntityRenderer::new);

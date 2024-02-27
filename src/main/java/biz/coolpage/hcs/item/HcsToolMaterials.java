@@ -1,12 +1,13 @@
 package biz.coolpage.hcs.item;
 
 import biz.coolpage.hcs.Reg;
+import net.fabricmc.yarn.constants.MiningLevels;
 import net.minecraft.item.Items;
 import net.minecraft.item.ToolMaterial;
 import net.minecraft.recipe.Ingredient;
 
 public enum HcsToolMaterials implements ToolMaterial {
-    COPPER(1, 48, 4.0F, 0.0F, 10, Ingredient.ofItems(Items.COPPER_INGOT)),
+    COPPER(MiningLevels.IRON, 48, 4.0F, 0.0F, 10, Ingredient.ofItems(Items.COPPER_INGOT)),
     FLINT_CONE(0, 12, 0.48F, 0.0F, 0, Ingredient.ofItems(Items.FLINT)),
     FLINT_HATCHET(0, 4, 0.24F, 0.0F, 0, Ingredient.ofItems(Items.FLINT)),
     FLINT_WEAPON(0, 24, 0.0F, 0.0F, 0, Ingredient.ofItems(Items.FLINT)),

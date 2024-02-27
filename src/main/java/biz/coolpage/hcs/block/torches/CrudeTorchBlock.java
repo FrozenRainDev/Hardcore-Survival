@@ -76,7 +76,7 @@ public class CrudeTorchBlock extends TorchBlock {
 
 
     public static boolean isFlammableTorch(Item item) {
-        return item == Reg.BURNING_CRUDE_TORCH_ITEM || (item instanceof BlockItem blockItem && blockItem.getBlock() instanceof TorchBlock && item != Items.REDSTONE_TORCH && item != Reg.CRUDE_TORCH_ITEM && item != Reg.UNLIT_TORCH_ITEM);
+        return item == Reg.BURNING_CRUDE_TORCH_ITEM || (item instanceof BlockItem blockItem && blockItem.getBlock() instanceof TorchBlock && item != Items.REDSTONE_TORCH && item != Reg.CRUDE_TORCH_ITEM && item != Reg.UNLIT_TORCH_ITEM && item != Reg.GLOWSTONE_TORCH_ITEM);
     }
 
     protected BlockState getLitBlockStateForUpdate(BlockState prevStat) {

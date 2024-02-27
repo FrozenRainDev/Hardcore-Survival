@@ -239,6 +239,9 @@ public class Reg implements ModInitializer {
     };
     public static final BurntTorchBlock BURNT_TORCH_BLOCK = new BurntTorchBlock(AbstractBlock.Settings.of(Material.DECORATION).noCollision().breakInstantly().sounds(BlockSoundGroup.WOOD));
     public static final WallBurntTorchBlock WALL_BURNT_TORCH_BLOCK = new WallBurntTorchBlock(AbstractBlock.Settings.of(Material.DECORATION).noCollision().breakInstantly().sounds(BlockSoundGroup.WOOD).dropsLike(BURNT_TORCH_BLOCK));
+    public static final GlowstoneTorchBlock GLOWSTONE_TORCH_BLOCK = new GlowstoneTorchBlock(AbstractBlock.Settings.of(Material.DECORATION).noCollision().breakInstantly().luminance(state -> 15).sounds(BlockSoundGroup.WOOD));
+    public static final WallGlowstoneTorchBlock WALL_GLOWSTONE_TORCH_BLOCK = new WallGlowstoneTorchBlock(AbstractBlock.Settings.of(Material.DECORATION).noCollision().breakInstantly().luminance(state -> 14).sounds(BlockSoundGroup.WOOD).dropsLike(GLOWSTONE_TORCH_BLOCK));
+    public static final Item GLOWSTONE_TORCH_ITEM = new VerticallyAttachableBlockItem(GLOWSTONE_TORCH_BLOCK, WALL_GLOWSTONE_TORCH_BLOCK, new Item.Settings(), Direction.DOWN);
 
     public static final EntityType<RockProjectileEntity> ROCK_PROJECTILE_ENTITY = FabricEntityTypeBuilder.<RockProjectileEntity>create(SpawnGroup.MISC, RockProjectileEntity::new).dimensions(new EntityDimensions(0.25F, 0.25F, true)).build();
     public static final EntityType<FlintProjectileEntity> FLINT_PROJECTILE_ENTITY = FabricEntityTypeBuilder.<FlintProjectileEntity>create(SpawnGroup.MISC, FlintProjectileEntity::new).dimensions(new EntityDimensions(0.25F, 0.25F, true)).build();
@@ -368,6 +371,7 @@ public class Reg implements ModInitializer {
             content.add(new ItemStack(CRUDE_TORCH_ITEM));
             content.add(new ItemStack(BURNING_CRUDE_TORCH_ITEM));
             content.add(new ItemStack(UNLIT_TORCH_ITEM));
+            content.add(new ItemStack(GLOWSTONE_TORCH_ITEM));
         });
 
         Registry.register(Registries.ITEM, new Identifier("hcs", "grass_fiber"), GRASS_FIBER);
@@ -472,6 +476,10 @@ public class Reg implements ModInitializer {
         // Burnt torch
         Registry.register(Registries.BLOCK, new Identifier("hcs", "burnt_torch"), BURNT_TORCH_BLOCK);
         Registry.register(Registries.BLOCK, new Identifier("hcs", "wall_burnt_torch"), WALL_BURNT_TORCH_BLOCK);
+        // Glowstone torch
+        Registry.register(Registries.ITEM, new Identifier("hcs", "glowstone_torch"), GLOWSTONE_TORCH_ITEM);
+        Registry.register(Registries.BLOCK, new Identifier("hcs", "glowstone_torch"), GLOWSTONE_TORCH_BLOCK);
+        Registry.register(Registries.BLOCK, new Identifier("hcs", "wall_glowstone_torch"), WALL_GLOWSTONE_TORCH_BLOCK);
 
         Registry.register(Registries.POTION, "hcs_ironskin", IRONSKIN_POTION);
         Registry.register(Registries.POTION, "hcs_long_ironskin", LONG_IRONSKIN_POTION);

@@ -277,7 +277,8 @@ public class EntityHelper {
         else if (item instanceof ShovelItem || item instanceof PickaxeItem || item instanceof AxeItem || item instanceof HoeItem)
             dist += 2.0F;
         else if (name.contains("spear") || item instanceof TridentItem || item instanceof SwordItem) dist += 2.5F;
-        else if (mainHandStack.isEnchantable() && !(item instanceof ArmorItem)) dist += 1.5F;
+        else if (mainHandStack.isEnchantable() && item != Items.BOOK && !(item instanceof ArmorItem))
+            dist += 1.5F;
         if (IS_HOLDING_BLOCK.test(mainHandStack, offHandStack))
             distAddHoldingBlock += HOLDING_BLOCK_REACHING_RANGE_ADDITION;
         return Math.max(dist, distAddHoldingBlock);

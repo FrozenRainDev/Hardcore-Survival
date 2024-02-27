@@ -10,6 +10,8 @@
   "block.hcs.wall_unlit_torch": "Wall Unlit Torch",
   "block.hcs.burnt_torch": "Burnt Torch",
   "block.hcs.wall_burnt_torch": "Wall Burnt Torch",
+  "block.hcs.glowstone_torch": "Glowstone Torch",
+  "block.hcs.wall_glowstone_torch": "Wall Glowstone Torch",
   "death.attack.hcs.dehydrate": "%1$s died of thirst",
   "death.attack.hcs.heatstroke": "%1$s died of heatstroke",
   "death.attack.hcs.oxygenDeficiency": "%1$s died from oxygen deficiency",
