@@ -49,6 +49,7 @@
     "entity.effect.StatusEffectUtilMixin",
     "entity.goal.BreakDoorGoalMixin",
     "entity.goal.EscapeDangerGoalMixin",
+    "entity.goal.MeleeAttackGoalMixin",
     "entity.goal.MobVisibilityCacheMixin",
     "entity.goal.TrackTargetGoalMixin",
     "entity.player.HungerManagerMixin",
@@ -89,6 +90,7 @@
   ],
   "client": [
     "client.ClientPlayerInteractionManagerMixin",
+    "client.GameOptionsMixin",
     "client.MinecraftClientMixin",
     "client.MouseMixin",
     "client.SoundSystemMixin",
@@ -98,6 +100,7 @@
     "client.gui.InventoryScreenMixin",
     "client.gui.ScreenMixin",
     "client.gui.SubtitlesHudMixin",
+    "client.gui.VideoOptionsScreenMixin",
     "client.render.BuiltinModelItemRendererMixin",
     "client.render.HeldItemRendererMixin",
     "client.render.PlayerEntityRendererMixin",

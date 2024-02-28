@@ -65,6 +65,8 @@ public class BreakBlockEvent {
                             EntityHelper.dropItem(player, x, y, z, Reg.GRASS_FIBER, 2);
                     } else if (block == Blocks.VINE) EntityHelper.dropItem(player, x, y, z, Reg.FIBER_STRING, 1);
                 }
+                if (mainHand == Items.WOODEN_SHOVEL && block == Blocks.GRAVEL && rand < 0.02)
+                    ItemScatterer.spawn(world, x + 0.5, y + 0.5, z + 0.5, Reg.RAW_COPPER_POWDER.getDefaultStack());
                 // !mainHand.isEnchantable(new ItemStack(mainHand))
                 if (!(mainHand instanceof ShovelItem)) {
                     if (block == Blocks.SNOW || block == Blocks.POWDER_SNOW)

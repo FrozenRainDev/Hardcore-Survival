@@ -31,7 +31,8 @@ public abstract class ChickenEntityMixin extends AnimalEntity {
 
     @Inject(method = "tickMovement", at = @At("HEAD"))
     public void tickMovement(CallbackInfo ci) {
-        if (this.eggLayTime == 6000) this.dropItem(Items.FEATHER);
+        if (this.eggLayTime == 7000 && this.getWorld().getRandom().nextFloat() < 0.2F)
+            this.dropItem(Items.FEATHER);
     }
 
 }
