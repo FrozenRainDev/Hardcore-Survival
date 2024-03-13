@@ -24,7 +24,9 @@ public abstract class VideoOptionsScreenMixin extends GameOptionsScreen {
     @Inject(method = "init", at = @At("TAIL"))
     protected void init(CallbackInfo ci) {
         var widget = this.list.getWidgetFor(this.gameOptions.getGamma()); // Also see GameOptionsMixin
-        if (widget != null) widget.active = false;
+        if (widget != null) {
+            widget.active = false;
+        }
     }
 
 
