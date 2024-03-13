@@ -42,7 +42,7 @@ public class BandageItem extends Item {
     @Override
     public UseAction getUseAction(ItemStack stack) {
         return UseAction.BOW;
-    } //FIXME UseAction.CROSSBOW and TOOT_HORN have bug in 1.19.4 which effect is as same as trident(UseAction.SPEAR)
+    } // FIXME UseAction.CROSSBOW and TOOT_HORN have bug in 1.19.4 which effect is as same as trident(UseAction.SPEAR)
 
     @Override
     public int getMaxUseTime(ItemStack stack) {
