@@ -39,8 +39,11 @@ import java.util.concurrent.atomic.AtomicBoolean;
 @Mixin(Block.class)
 public class BlockMixin {
     @Inject(at = @At("HEAD"), method = "onBroken")
-    private void onBroken(WorldAccess world, BlockPos pos, BlockState state, CallbackInfo ci) {
+    private void onBroken(@NotNull WorldAccess world, BlockPos pos, @NotNull BlockState state, CallbackInfo ci) {
         WorldHelper.checkBlockGravity((World) world, pos);
+        BlockPos up = pos.up();
+        if (world instanceof ServerWorld && world.getBlockState(up).isIn(BlockTags.CAMPFIRES))
+            world.breakBlock(up, false, null);
     }
 
     @Inject(at = @At("HEAD"), method = "onPlaced")
@@ -102,6 +105,6 @@ public class BlockMixin {
         ci.cancel();
     }
 
-    //onDestroyedByExplosion only triggered when breaking air(1.19.4)
+    // onDestroyedByExplosion only triggers when breaking air(1.19.4)
 
 }

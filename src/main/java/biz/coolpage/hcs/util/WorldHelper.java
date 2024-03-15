@@ -2,10 +2,7 @@ package biz.coolpage.hcs.util;
 
 import biz.coolpage.hcs.Reg;
 import biz.coolpage.hcs.status.HcsPersistentState;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.Blocks;
-import net.minecraft.block.FallingBlock;
-import net.minecraft.block.FarmlandBlock;
+import net.minecraft.block.*;
 import net.minecraft.entity.FallingBlockEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
@@ -16,6 +13,7 @@ import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.state.property.BooleanProperty;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Direction;
 import net.minecraft.world.Heightmap;
 import net.minecraft.world.LightType;
 import net.minecraft.world.World;
@@ -140,5 +138,16 @@ public class WorldHelper {
         time[1] = (int) Math.floor((lunarTime - Math.floor(lunarTime / 1000.0) * 1000) * 0.06);
         time[2] = (int) Math.floor((lunarTime - Math.floor(lunarTime / 100.0) * 100) * 0.6);
         return time;
+    }
+
+    public static BlockPos getPosByDirection(BlockPos pos, @NotNull Direction direction) {
+        return switch (direction) {
+            case UP -> pos.up();
+            case DOWN -> pos.down();
+            case NORTH -> pos.north();
+            case SOUTH -> pos.south();
+            case WEST -> pos.west();
+            case EAST -> pos.east();
+        };
     }
 }

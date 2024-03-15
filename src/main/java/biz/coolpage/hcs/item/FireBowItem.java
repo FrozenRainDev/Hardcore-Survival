@@ -1,5 +1,7 @@
 package biz.coolpage.hcs.item;
 
+import biz.coolpage.hcs.status.accessor.StatAccessor;
+import biz.coolpage.hcs.status.manager.StaminaManager;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.LivingEntity;
@@ -20,8 +22,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.RaycastContext;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
-
-import static biz.coolpage.hcs.util.CommUtil.applyNullable;
+import org.jetbrains.annotations.Nullable;
 
 public class FireBowItem extends Item {
     public FireBowItem(Settings settings) {
@@ -38,13 +39,19 @@ public class FireBowItem extends Item {
         return 225;
     }
 
+    private boolean canIgnite(@Nullable BlockState state) {
+        return state != null && state.isIn(BlockTags.CAMPFIRES) && state.contains(Properties.LIT) && !state.get(Properties.LIT);
+    }
+
     @Override
     public ActionResult useOnBlock(@NotNull ItemUsageContext context) {
-        PlayerEntity playerEntity = context.getPlayer();
-        if (playerEntity != null) {
-            playerEntity.setCurrentHand(context.getHand());
+        if (canIgnite(context.getWorld().getBlockState(context.getBlockPos()))) {
+            PlayerEntity playerEntity = context.getPlayer();
+            if (playerEntity != null)
+                playerEntity.setCurrentHand(context.getHand());
+            return ActionResult.CONSUME;
         }
-        return ActionResult.CONSUME;
+        return ActionResult.FAIL;
     }
 
     @Override
@@ -56,18 +63,23 @@ public class FireBowItem extends Item {
         BlockHitResult blockHitResult = Item.raycast(world, player, RaycastContext.FluidHandling.NONE);
         BlockPos pos = blockHitResult.getBlockPos();
         BlockState state = world.getBlockState(pos);
-        if (state.isIn(BlockTags.CAMPFIRES) && state.contains(Properties.LIT) && !state.get(Properties.LIT)) {
+        StaminaManager staminaManager = ((StatAccessor) player).getStaminaManager();
+        if (canIgnite(state) && staminaManager.get() > 0.01) {
+            staminaManager.pauseRestoring();
+            staminaManager.add(-0.0005, player);
             int i = this.getMaxUseTime(stack) - remainingUseTicks + 1;
             if (i % 5 == 0) {
                 world.playSound(null, pos, SoundEvents.BLOCK_WOOD_BREAK, SoundCategory.BLOCKS);
-                world.addBlockBreakParticles(pos, state);
-                applyNullable(player, p -> stack.damage(1, p, u -> u.sendEquipmentBreakStatus(EquipmentSlot.MAINHAND)));
-                int mod = i % 160;
+                if (i % 10 == 0) {
+                    world.addBlockBreakParticles(pos, state);
+                    stack.damage(1, player, p -> p.sendEquipmentBreakStatus(EquipmentSlot.MAINHAND));
+                }
+                int mod = i % 180;
                 ParticleEffect effect = null;
-                if (mod > 130) effect = ParticleTypes.CAMPFIRE_SIGNAL_SMOKE;
-                else if (mod > 100) effect = ParticleTypes.CAMPFIRE_COSY_SMOKE;
-                else if (mod > 80) effect = ParticleTypes.LARGE_SMOKE;
-                else if (mod > 60) effect = ParticleTypes.SMOKE;
+                if (mod > 150) effect = ParticleTypes.CAMPFIRE_SIGNAL_SMOKE;
+                else if (mod > 120) effect = ParticleTypes.CAMPFIRE_COSY_SMOKE;
+                else if (mod > 90) effect = ParticleTypes.LARGE_SMOKE;
+                else if (mod > 50) effect = ParticleTypes.SMOKE;
                 if (effect != null)
                     world.addParticle(effect, pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5, 0.0, 0.1, 0.0);
                 if (mod == 0) {

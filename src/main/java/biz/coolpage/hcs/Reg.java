@@ -82,7 +82,7 @@ public class Reg implements ModInitializer {
     public static final Item SHARP_FLINT = new Item(new Item.Settings());
     public static final Item FIREWOOD = new Item(new Item.Settings());
     public static final Item FRIED_EGG = new Item(new Item.Settings().food(new FoodComponent.Builder().hunger(3).saturationModifier(2f).build()));
-    public static final Item EXTINGUISHED_CAMPFIRE = new Item(new Item.Settings());
+    public static final Item EXTINGUISHED_CAMPFIRE = new ExtinguishedCampfireItem();
     public static final Item FIRE_BOW = new FireBowItem(new Item.Settings().maxCount(1).maxDamage(64));
     public static final Item TINDER = new Item(new Item.Settings());
     public static final Item WORM = new EffectiveFoodItem(new Item.Settings().food(new FoodComponent.Builder().hunger(1).saturationModifier(1.0f).statusEffect(new StatusEffectInstance(StatusEffects.NAUSEA, 200), 1).build()), 0.0F, -0.08);

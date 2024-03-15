@@ -38,7 +38,7 @@ public class CrudeTorchBlock extends TorchBlock {
         ItemStack stack = player.getStackInHand(hand);
         Item item = stack.getItem();
         final boolean isFireCharge = item == Items.FIRE_CHARGE, isFlintAndSteel = item == Items.FLINT_AND_STEEL;
-        final boolean isTorch = isFlammableTorch(item);
+        final boolean isTorch = isTorchWithFlame(item);
         if (isFlintAndSteel || isFireCharge || isTorch) {
             if (!player.isCreative()) {
                 if (isFlintAndSteel) stack.damage(1, player, p -> p.sendToolBreakStatus(hand));
@@ -60,7 +60,7 @@ public class CrudeTorchBlock extends TorchBlock {
         Block block = state.getBlock();
         World world = context.getWorld();
         if (state.isIn(BlockTags.FIRE) || state.isIn(BlockTags.CAMPFIRES)
-                || CrudeTorchBlock.isFlammableTorch(block.asItem())
+                || CrudeTorchBlock.isTorchWithFlame(block.asItem())
                 || (block instanceof AbstractFurnaceBlock && state.get(Properties.LIT) && player.isSneaking())) {
             litHoldingTorch(player, world, stack);
             return ActionResult.success(world.isClient);
@@ -75,7 +75,7 @@ public class CrudeTorchBlock extends TorchBlock {
     }
 
 
-    public static boolean isFlammableTorch(Item item) {
+    public static boolean isTorchWithFlame(Item item) {
         return item == Reg.BURNING_CRUDE_TORCH_ITEM || (item instanceof BlockItem blockItem && blockItem.getBlock() instanceof TorchBlock && item != Items.REDSTONE_TORCH && item != Reg.CRUDE_TORCH_ITEM && item != Reg.UNLIT_TORCH_ITEM && item != Reg.GLOWSTONE_TORCH_ITEM);
     }
 

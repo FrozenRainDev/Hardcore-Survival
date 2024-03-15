@@ -37,6 +37,7 @@ import net.minecraft.server.world.ServerChunkManager;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvents;
+import net.minecraft.state.property.Properties;
 import net.minecraft.text.LiteralTextContent;
 import net.minecraft.text.MutableText;
 import net.minecraft.text.Text;
@@ -409,7 +410,7 @@ public class EntityHelper {
         return null;
     }
 
-    public static boolean isPlayerStaring(LivingEntity stared, PlayerEntity player) { //From EndermanEntity
+    public static boolean isPlayerStaring(LivingEntity stared, PlayerEntity player) { // From EndermanEntity
         if (!isExistent(player, stared)) return false;
         ItemStack itemStack = player.getInventory().armor.get(3);
         if (itemStack.isOf(Blocks.CARVED_PUMPKIN.asItem())) return false;
