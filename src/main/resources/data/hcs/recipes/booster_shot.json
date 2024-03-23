@@ -3,9 +3,9 @@
   "category": "misc",
   "show_notification": true,
   "pattern": [
-    "GIG",
+    " I ",
     "GRG",
-    "SRS"
+    "GRG"
   ],
   "key": {
     "I": {
@@ -16,12 +16,10 @@
     },
     "R": {
       "item": "hcs:rot"
-    },
-    "S": {
-      "item": "minecraft:redstone"
     }
   },
   "result": {
-    "item": "hcs:booster_shot"
+    "item": "hcs:booster_shot",
+    "count": 4
   }
 }

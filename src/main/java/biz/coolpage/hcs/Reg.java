@@ -83,8 +83,8 @@ public class Reg implements ModInitializer {
     public static final Item FIREWOOD = new Item(new Item.Settings());
     public static final Item FRIED_EGG = new Item(new Item.Settings().food(new FoodComponent.Builder().hunger(3).saturationModifier(2f).build()));
     public static final Item EXTINGUISHED_CAMPFIRE = new ExtinguishedCampfireItem();
-    public static final Item FIRE_BOW = new FireBowItem(new Item.Settings().maxCount(1).maxDamage(64), 1);
-    public static final Item FIRE_PLOUGH = new FireBowItem(new Item.Settings().maxCount(1).maxDamage(128), 3);
+    public static final Item FIRE_BOW = new FireBowItem(new Item.Settings().maxCount(1).maxDamage(96), 1);
+    public static final Item FIRE_PLOUGH = new FireBowItem(new Item.Settings().maxCount(1).maxDamage(64), 3);
     public static final Item TINDER = new Item(new Item.Settings());
     public static final Item WORM = new EffectiveFoodItem(new Item.Settings().food(new FoodComponent.Builder().hunger(1).saturationModifier(1.0f).statusEffect(new StatusEffectInstance(StatusEffects.NAUSEA, 200), 1).build()), 0.0F, -0.08);
     public static final Item PUMPKIN_SLICE = new Item(new Item.Settings().food(new FoodComponent.Builder().hunger(2).saturationModifier(1f).build()));
@@ -283,8 +283,8 @@ public class Reg implements ModInitializer {
             content.add(new ItemStack(SHORT_STICK));
             content.add(new ItemStack(TINDER));
             content.add(new ItemStack(FIREWOOD));
-            content.add(new ItemStack(FIRE_BOW));
             content.add(new ItemStack(FIRE_PLOUGH));
+            content.add(new ItemStack(FIRE_BOW));
             content.add(new ItemStack(EXTINGUISHED_CAMPFIRE));
             content.add(new ItemStack(ASHES));
             content.add(new ItemStack(ROCK));

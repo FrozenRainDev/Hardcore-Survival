@@ -37,7 +37,6 @@ import net.minecraft.server.world.ServerChunkManager;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvents;
-import net.minecraft.state.property.Properties;
 import net.minecraft.text.LiteralTextContent;
 import net.minecraft.text.MutableText;
 import net.minecraft.text.Text;
@@ -269,7 +268,7 @@ public class EntityHelper {
         float dist = 0.0F, distAddHoldingBlock = 0.0F;
         Item item = mainHandStack.getItem();
         String name = item.getTranslationKey();
-        if (name.contains("knife") || name.contains("hatchet") || name.contains("_cone") || (item instanceof ShearsItem) || (item instanceof FlintAndSteelItem))
+        if (name.contains("knife") || name.contains("hatchet") || name.contains("_cone") || (item instanceof ShearsItem) || (item instanceof FlintAndSteelItem) || item == Reg.FIRE_PLOUGH || item == Reg.FIRE_BOW)
             dist += 0.75F;
         else if ((name.contains("bone") && !mainHandStack.isOf(Items.BONE_MEAL)) || name.contains("rod") || item == Items.STICK)
             dist += 1.0F;

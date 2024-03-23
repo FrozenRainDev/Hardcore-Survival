@@ -3,18 +3,14 @@
   "category": "equipment",
   "show_notification": true,
   "pattern": [
-    "SS",
-    "S#"
+    "SS"
   ],
   "key": {
-    "#": {
-      "item": "minecraft:string"
-    },
     "S": {
       "item": "minecraft:stick"
     }
   },
   "result": {
-    "item": "hcs:fire_bow"
+    "item": "hcs:fire_plough"
   }
 }

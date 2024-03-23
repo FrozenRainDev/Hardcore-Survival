@@ -72,7 +72,9 @@ public class FireBowItem extends Item {
         StaminaManager staminaManager = ((StatAccessor) player).getStaminaManager();
         if (canIgnite(state) && staminaManager.get() > 0.01) {
             staminaManager.pauseRestoring();
-            staminaManager.add(-0.0005, player);
+            staminaManager.add(-0.0007, player);
+            player.getHungerManager().addExhaustion(0.015F);
+            ((StatAccessor) player).getThirstManager().add(-0.0001);
             int i = this.getMaxUseTime(stack) - remainingUseTicks + 1;
             if (i % 5 == 0) {
                 world.playSound(null, pos, SoundEvents.BLOCK_WOOD_BREAK, SoundCategory.BLOCKS);
