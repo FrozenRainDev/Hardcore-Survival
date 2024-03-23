@@ -8,8 +8,8 @@ import net.minecraft.world.World;
 import net.minecraft.world.WorldEvents;
 
 public class BoosterShotItem extends BandageItem {
-    public BoosterShotItem(int useTime) {
-        super(0.0, useTime);
+    public BoosterShotItem() {
+        super(0.0, 70);
     }
 
     @Override

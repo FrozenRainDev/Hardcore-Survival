@@ -25,8 +25,14 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public class FireBowItem extends Item {
-    public FireBowItem(Settings settings) {
+    private final int[] stagesByTick = {225, 180, 150, 120, 90, 50};
+
+    public FireBowItem(Settings settings, float efficiencyMultiplier) {
         super(settings);
+        if (efficiencyMultiplier != 1) {
+            for (int i = 0; i < this.stagesByTick.length; ++i)
+                this.stagesByTick[i] = (int) (this.stagesByTick[i] * efficiencyMultiplier);
+        }
     }
 
     @Override
@@ -36,7 +42,7 @@ public class FireBowItem extends Item {
 
     @Override
     public int getMaxUseTime(ItemStack stack) {
-        return 225;
+        return this.stagesByTick[0];
     }
 
     private boolean canIgnite(@Nullable BlockState state) {
@@ -74,12 +80,12 @@ public class FireBowItem extends Item {
                     world.addBlockBreakParticles(pos, state);
                     stack.damage(1, player, p -> p.sendEquipmentBreakStatus(EquipmentSlot.MAINHAND));
                 }
-                int mod = i % 180;
+                int mod = i % this.stagesByTick[1];
                 ParticleEffect effect = null;
-                if (mod > 150) effect = ParticleTypes.CAMPFIRE_SIGNAL_SMOKE;
-                else if (mod > 120) effect = ParticleTypes.CAMPFIRE_COSY_SMOKE;
-                else if (mod > 90) effect = ParticleTypes.LARGE_SMOKE;
-                else if (mod > 50) effect = ParticleTypes.SMOKE;
+                if (mod > this.stagesByTick[2]) effect = ParticleTypes.CAMPFIRE_SIGNAL_SMOKE;
+                else if (mod > this.stagesByTick[3]) effect = ParticleTypes.CAMPFIRE_COSY_SMOKE;
+                else if (mod > this.stagesByTick[4]) effect = ParticleTypes.LARGE_SMOKE;
+                else if (mod > this.stagesByTick[5]) effect = ParticleTypes.SMOKE;
                 if (effect != null)
                     world.addParticle(effect, pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5, 0.0, 0.1, 0.0);
                 if (mod == 0) {

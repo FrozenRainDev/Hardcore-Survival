@@ -83,7 +83,8 @@ public class Reg implements ModInitializer {
     public static final Item FIREWOOD = new Item(new Item.Settings());
     public static final Item FRIED_EGG = new Item(new Item.Settings().food(new FoodComponent.Builder().hunger(3).saturationModifier(2f).build()));
     public static final Item EXTINGUISHED_CAMPFIRE = new ExtinguishedCampfireItem();
-    public static final Item FIRE_BOW = new FireBowItem(new Item.Settings().maxCount(1).maxDamage(64));
+    public static final Item FIRE_BOW = new FireBowItem(new Item.Settings().maxCount(1).maxDamage(64), 1);
+    public static final Item FIRE_PLOUGH = new FireBowItem(new Item.Settings().maxCount(1).maxDamage(128), 3);
     public static final Item TINDER = new Item(new Item.Settings());
     public static final Item WORM = new EffectiveFoodItem(new Item.Settings().food(new FoodComponent.Builder().hunger(1).saturationModifier(1.0f).statusEffect(new StatusEffectInstance(StatusEffects.NAUSEA, 200), 1).build()), 0.0F, -0.08);
     public static final Item PUMPKIN_SLICE = new Item(new Item.Settings().food(new FoodComponent.Builder().hunger(2).saturationModifier(1f).build()));
@@ -242,7 +243,7 @@ public class Reg implements ModInitializer {
     public static final GlowstoneTorchBlock GLOWSTONE_TORCH_BLOCK = new GlowstoneTorchBlock(AbstractBlock.Settings.of(Material.DECORATION).noCollision().breakInstantly().luminance(state -> 15).sounds(BlockSoundGroup.WOOD));
     public static final WallGlowstoneTorchBlock WALL_GLOWSTONE_TORCH_BLOCK = new WallGlowstoneTorchBlock(AbstractBlock.Settings.of(Material.DECORATION).noCollision().breakInstantly().luminance(state -> 14).sounds(BlockSoundGroup.WOOD).dropsLike(GLOWSTONE_TORCH_BLOCK));
     public static final Item GLOWSTONE_TORCH_ITEM = new VerticallyAttachableBlockItem(GLOWSTONE_TORCH_BLOCK, WALL_GLOWSTONE_TORCH_BLOCK, new Item.Settings(), Direction.DOWN);
-//    public static final Item
+    public static final Item BOOSTER_SHOT = new BoosterShotItem();
 
     public static final EntityType<RockProjectileEntity> ROCK_PROJECTILE_ENTITY = FabricEntityTypeBuilder.<RockProjectileEntity>create(SpawnGroup.MISC, RockProjectileEntity::new).dimensions(new EntityDimensions(0.25F, 0.25F, true)).build();
     public static final EntityType<FlintProjectileEntity> FLINT_PROJECTILE_ENTITY = FabricEntityTypeBuilder.<FlintProjectileEntity>create(SpawnGroup.MISC, FlintProjectileEntity::new).dimensions(new EntityDimensions(0.25F, 0.25F, true)).build();
@@ -283,6 +284,7 @@ public class Reg implements ModInitializer {
             content.add(new ItemStack(TINDER));
             content.add(new ItemStack(FIREWOOD));
             content.add(new ItemStack(FIRE_BOW));
+            content.add(new ItemStack(FIRE_PLOUGH));
             content.add(new ItemStack(EXTINGUISHED_CAMPFIRE));
             content.add(new ItemStack(ASHES));
             content.add(new ItemStack(ROCK));
@@ -357,6 +359,7 @@ public class Reg implements ModInitializer {
             content.add(new ItemStack(IMPROVISED_BANDAGE));
             content.add(new ItemStack(HEALING_SALVE));
             content.add(new ItemStack(SPLINT));
+            content.add(new ItemStack(BOOSTER_SHOT));
             content.add(new ItemStack(PURIFIED_WATER_BOTTLE)); //prev: .getDefaultStack()
             content.add(new ItemStack(SALTWATER_BOTTLE));
             content.add(new ItemStack(COLD_WATER_BOTTLE));
@@ -383,6 +386,7 @@ public class Reg implements ModInitializer {
         Registry.register(Registries.ITEM, new Identifier("hcs", "firewood"), FIREWOOD);
         Registry.register(Registries.ITEM, new Identifier("hcs", "extinguished_campfire"), EXTINGUISHED_CAMPFIRE);
         Registry.register(Registries.ITEM, new Identifier("hcs", "fire_bow"), FIRE_BOW);
+        Registry.register(Registries.ITEM, new Identifier("hcs", "fire_plough"), FIRE_PLOUGH);
         Registry.register(Registries.ITEM, new Identifier("hcs", "tinder"), TINDER);
         Registry.register(Registries.ITEM, new Identifier("hcs", "roasted_seeds"), ROASTED_SEEDS);
         Registry.register(Registries.ITEM, new Identifier("hcs", "fried_egg"), FRIED_EGG);
@@ -457,6 +461,7 @@ public class Reg implements ModInitializer {
         Registry.register(Registries.ITEM, new Identifier("hcs", "roasted_bat_wings"), ROASTED_BAT_WINGS);
         Registry.register(Registries.ITEM, new Identifier("hcs", "healing_salve"), HEALING_SALVE);
         Registry.register(Registries.ITEM, new Identifier("hcs", "ashes"), ASHES);
+        Registry.register(Registries.ITEM, new Identifier("hcs", "booster_shot"), BOOSTER_SHOT);
 
         Registry.register(Registries.BLOCK, new Identifier("hcs", "icebox"), ICEBOX);
         Registry.register(Registries.ITEM, new Identifier("hcs", "icebox"), ICEBOX_ITEM);

@@ -212,6 +212,7 @@
   "item.hcs.fried_egg": "Fried Egg",
   "item.hcs.extinguished_campfire": "Extinguished Campfire",
   "item.hcs.fire_bow": "Fire Bow",
+  "item.hcs.fire_plough": "Fire Plough",
   "item.hcs.tinder": "Tinder",
   "item.hcs.worm": "Worm",
   "item.hcs.pumpkin_slice": "Pumpkin Slice",
@@ -309,5 +310,6 @@
   "item.hcs.bat_wings": "Bat Wings",
   "item.hcs.roasted_bat_wings": "Roasted Bat Wings",
   "item.hcs.healing_salve": "Healing Salve",
+  "item.hcs.booster_shot": "Booster Shot",
   "item.hcs.ashes": "Ashes"
 }

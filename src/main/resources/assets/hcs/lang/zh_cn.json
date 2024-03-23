@@ -212,6 +212,7 @@
   "item.hcs.fried_egg": "煎蛋",
   "item.hcs.extinguished_campfire": "熄灭的营火",
   "item.hcs.fire_bow": "火弓",
+  "item.hcs.fire_plough": "火犁",
   "item.hcs.tinder": "火绒",
   "item.hcs.worm": "虫子",
   "item.hcs.pumpkin_slice": "南瓜片",
@@ -309,5 +310,6 @@
   "item.hcs.bat_wings": "蝙蝠翅膀",
   "item.hcs.roasted_bat_wings": "烤蝙蝠翅膀",
   "item.hcs.healing_salve": "治疗药膏",
+  "item.hcs.booster_shot": "强心针",
   "item.hcs.ashes": "灰烬"
 }

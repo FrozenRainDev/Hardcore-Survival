@@ -3,11 +3,11 @@
   "category": "equipment",
   "show_notification": true,
   "pattern": [
-    " S",
-    "SG"
+    "SS",
+    "SF"
   ],
   "key": {
-    "G": {
+    "F": {
       "item": "hcs:fiber_string"
     },
     "S": {

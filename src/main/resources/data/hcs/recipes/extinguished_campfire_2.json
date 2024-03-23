@@ -4,19 +4,19 @@
   "show_notification": true,
   "ingredients": [
     {
-      "item": "hcs:extinguished_campfire"
-    },
-    {
-      "item": "hcs:fire_bow"
-    },
-    {
       "item": "hcs:tinder"
     },
     {
-      "item": "minecraft:stick"
+      "tag": "minecraft:planks"
+    },
+    {
+      "tag": "minecraft:planks"
+    },
+    {
+      "tag": "minecraft:planks"
     }
   ],
   "result": {
-    "item": "minecraft:campfire"
+    "item": "hcs:extinguished_campfire"
   }
 }
