@@ -12,6 +12,7 @@ import biz.coolpage.hcs.recipe.*;
 import biz.coolpage.hcs.status.HcsEffects;
 import biz.coolpage.hcs.status.accessor.StatAccessor;
 import biz.coolpage.hcs.status.manager.TemperatureManager;
+import biz.coolpage.hcs.util.CombustionHelper;
 import biz.coolpage.hcs.util.EntityHelper;
 import biz.coolpage.hcs.util.WorldHelper;
 import net.fabricmc.api.ModInitializer;
@@ -222,7 +223,7 @@ public class Reg implements ModInitializer {
     public static final Item CRUDE_TORCH_ITEM = new VerticallyAttachableBlockItem(CRUDE_TORCH_BLOCK, WALL_CRUDE_TORCH_BLOCK, new Item.Settings(), Direction.DOWN) {
         @Override
         public ActionResult useOnBlock(@NotNull ItemUsageContext context) {
-            ActionResult performed = CrudeTorchBlock.preLitHoldingTorch(context);
+            ActionResult performed = CombustionHelper.preLitHoldingTorch(context);
             return performed == null ? super.useOnBlock(context) : performed;
         }
     };
@@ -234,7 +235,7 @@ public class Reg implements ModInitializer {
     public static final Item UNLIT_TORCH_ITEM = new VerticallyAttachableBlockItem(UNLIT_TORCH_BLOCK, WALL_UNLIT_TORCH_BLOCK, new Item.Settings(), Direction.DOWN) {
         @Override
         public ActionResult useOnBlock(@NotNull ItemUsageContext context) {
-            ActionResult performed = CrudeTorchBlock.preLitHoldingTorch(context);
+            ActionResult performed = CombustionHelper.preLitHoldingTorch(context);
             return performed == null ? super.useOnBlock(context) : performed;
         }
     };
@@ -355,8 +356,8 @@ public class Reg implements ModInitializer {
             content.add(new ItemStack(BARK));
             content.add(new ItemStack(WILLOW_BARK));
             content.add(new ItemStack(FEARLESSNESS_HERB));
-            content.add(new ItemStack(BANDAGE));
             content.add(new ItemStack(IMPROVISED_BANDAGE));
+            content.add(new ItemStack(BANDAGE));
             content.add(new ItemStack(HEALING_SALVE));
             content.add(new ItemStack(SPLINT));
             content.add(new ItemStack(BOOSTER_SHOT));

@@ -19,7 +19,6 @@
     }
   },
   "result": {
-    "item": "hcs:booster_shot",
-    "count": 4
+    "item": "hcs:booster_shot"
   }
 }

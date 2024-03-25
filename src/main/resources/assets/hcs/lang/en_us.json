@@ -311,5 +311,6 @@
   "item.hcs.roasted_bat_wings": "Roasted Bat Wings",
   "item.hcs.healing_salve": "Healing Salve",
   "item.hcs.booster_shot": "Booster Shot",
+  "item.hcs.booster_shot.description": "Remove soul impaired effect",
   "item.hcs.ashes": "Ashes"
 }

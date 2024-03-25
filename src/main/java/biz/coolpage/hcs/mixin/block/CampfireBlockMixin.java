@@ -5,6 +5,7 @@ import net.minecraft.block.CampfireBlock;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvents;
+import net.minecraft.state.property.IntProperty;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
 import net.minecraft.util.hit.BlockHitResult;
@@ -16,7 +17,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
-import static biz.coolpage.hcs.block.torches.CrudeTorchBlock.isTorchWithFlame;
+import static biz.coolpage.hcs.util.CombustionHelper.isTorchWithFlame;
 
 @Mixin(CampfireBlock.class)
 public class CampfireBlockMixin {

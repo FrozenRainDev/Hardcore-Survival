@@ -311,5 +311,6 @@
   "item.hcs.roasted_bat_wings": "烤蝙蝠翅膀",
   "item.hcs.healing_salve": "治疗药膏",
   "item.hcs.booster_shot": "强心针",
+  "item.hcs.booster_shot.description": "去除灵魂受损效果",
   "item.hcs.ashes": "灰烬"
 }
