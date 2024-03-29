@@ -6,9 +6,12 @@ import biz.coolpage.hcs.entity.BurningCrudeTorchBlockEntity;
 import biz.coolpage.hcs.item.BurningCrudeTorchItem;
 import biz.coolpage.hcs.item.KnifeItem;
 import biz.coolpage.hcs.status.accessor.StatAccessor;
+import biz.coolpage.hcs.util.CombustionHelper;
 import biz.coolpage.hcs.util.EntityHelper;
 import net.fabricmc.fabric.api.event.player.PlayerBlockBreakEvents;
 import net.minecraft.block.*;
+import net.minecraft.enchantment.EnchantmentHelper;
+import net.minecraft.enchantment.Enchantments;
 import net.minecraft.item.*;
 import net.minecraft.registry.tag.BlockTags;
 import net.minecraft.util.ItemScatterer;
@@ -84,6 +87,18 @@ public class BreakBlockEvent {
                     player.damage(world.getDamageSources().cactus(), 2f);
                     ((StatAccessor) player).getInjuryManager().addBleeding(1.2);
                 } else if (block == Blocks.SWEET_BERRY_BUSH) EntityHelper.dropItem(player, x, y, z, Reg.BERRY_BUSH, 1);
+                else if (block == Blocks.CAMPFIRE) {
+                    if (EnchantmentHelper.getLevel(Enchantments.SILK_TOUCH, player.getMainHandStack()) == 0
+                            && state.contains(CombustionHelper.COMBUST_STAGE)) {
+                        int stage = state.get(CombustionHelper.COMBUST_STAGE),
+                                stickCount = (int) (stage * 0.7F),
+                                ashCount = (int) ((15 - stage) * 0.7F);
+                        if (stickCount > 0)
+                            ItemScatterer.spawn(world, x + 0.5, y + 0.5, z + 0.5, new ItemStack(Items.STICK, stickCount));
+                        if (ashCount > 0)
+                            ItemScatterer.spawn(world, x + 0.5, y + 0.5, z + 0.5, new ItemStack(Reg.ASHES, ashCount));
+                    }
+                }
             }
         }));
     }

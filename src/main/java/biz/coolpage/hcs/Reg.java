@@ -14,6 +14,7 @@ import biz.coolpage.hcs.status.accessor.StatAccessor;
 import biz.coolpage.hcs.status.manager.TemperatureManager;
 import biz.coolpage.hcs.util.CombustionHelper;
 import biz.coolpage.hcs.util.EntityHelper;
+import biz.coolpage.hcs.util.LootHelper;
 import biz.coolpage.hcs.util.WorldHelper;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
@@ -277,6 +278,7 @@ public class Reg implements ModInitializer {
         ServerEntityEvent.init();
         ServerPlayerEvent.init();
         UseBlockEvent.init();
+        LootHelper.init();
 
         ItemGroupEvents.modifyEntriesEvent(HCS_ITEM_GROUP).register(content -> {
             content.add(new ItemStack(GRASS_FIBER));

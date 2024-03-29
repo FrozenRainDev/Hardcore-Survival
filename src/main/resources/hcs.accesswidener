@@ -12,6 +12,7 @@ accessible field net/minecraft/entity/boss/dragon/phase/PhaseType name Ljava/lan
 accessible field net/minecraft/entity/boss/dragon/phase/SittingScanningPhase PLAYER_WITHIN_RANGE_PREDICATE Lnet/minecraft/entity/ai/TargetPredicate;
 accessible method net/minecraft/entity/damage/DamageSources create (Lnet/minecraft/registry/RegistryKey;)Lnet/minecraft/entity/damage/DamageSource;
 accessible method net/minecraft/fluid/Fluid onRandomTick (Lnet/minecraft/world/World;Lnet/minecraft/util/math/BlockPos;Lnet/minecraft/fluid/FluidState;Lnet/minecraft/util/math/random/Random;)V
+accessible field net/minecraft/loot/LootTable$Builder pools Ljava/util/List;
 accessible method net/minecraft/entity/mob/MobEntity isAffectedByDaylight ()Z
 accessible method net/minecraft/entity/Entity isBeingRainedOn ()Z
 accessible method net/minecraft/entity/LivingEntity computeFallDamage (FF)I

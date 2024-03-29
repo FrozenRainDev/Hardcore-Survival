@@ -73,11 +73,11 @@ public class CombustionHelper {
 
 
     // ***** Campfires *****
-    public static final IntProperty CUSTOM_BRIGHTNESS = IntProperty.of("hcs_custom_brightness", 1, 15);
+    public static final IntProperty COMBUST_STAGE = IntProperty.of("hcs_campfire_combust_stage", 1, 15);
     public static final int CAMPFIRE_MAX_BURNING_LENGTH = 4800;
 
-    public static BlockState setCustomBrightnessByRemainingBurningLength(@NotNull BlockState state, int remain) {
-        return state.with(CUSTOM_BRIGHTNESS, MathHelper.clamp(remain / CAMPFIRE_MAX_BURNING_LENGTH, 0, 15));
+    public static BlockState updateCombustionState(@NotNull BlockState state, int remain) {
+        return state.with(COMBUST_STAGE, MathHelper.clamp(remain / CAMPFIRE_MAX_BURNING_LENGTH * 15, 0, 15));
     }
 
 }

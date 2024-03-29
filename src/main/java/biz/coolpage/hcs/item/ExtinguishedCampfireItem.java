@@ -1,5 +1,6 @@
 package biz.coolpage.hcs.item;
 
+import biz.coolpage.hcs.util.CombustionHelper;
 import biz.coolpage.hcs.util.EntityHelper;
 import biz.coolpage.hcs.util.WorldHelper;
 import net.minecraft.block.BlockState;
@@ -40,7 +41,9 @@ public class ExtinguishedCampfireItem extends Item {
     }
 
     private ActionResult placeCampfire(@NotNull World world, BlockPos pos, @NotNull ItemUsageContext context) {
-        world.setBlockState(pos, Blocks.CAMPFIRE.getDefaultState().with(Properties.LIT, false));
+        world.setBlockState(pos, Blocks.CAMPFIRE.getDefaultState()
+                .with(Properties.LIT, false)
+                .with(CombustionHelper.COMBUST_STAGE, 15));
         if (EntityHelper.IS_SURVIVAL_AND_SERVER.test(context.getPlayer()))
             context.getStack().decrement(1);
         return ActionResult.success(world.isClient());
