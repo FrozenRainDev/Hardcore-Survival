@@ -216,7 +216,7 @@ public class Reg implements ModInitializer {
             return super.finishUsing(stack, world, user);
         }
     };
-    public static final Item ASHES = new SalveItem(0, 0.35, 50);
+    public static final Item ASHES = new SalveItem(0, 0.2, 50);
 
     // WARNING: ALWAYS DO DO DO CALL FUCKING `BlockRenderLayerMap()` WHEN YOU REGISTER A BLOCK WHICH SIZE IS NOT FULLY 16px×16px ON CLIENT SIDE!!!! OTHERWISE, YOUR BLOCK WILL DISPLAY PERPLEXING WHITE MARGINS!!!!!
     public static final CrudeTorchBlock CRUDE_TORCH_BLOCK = new CrudeTorchBlock(AbstractBlock.Settings.of(Material.DECORATION).noCollision().breakInstantly().luminance(state -> 0).sounds(BlockSoundGroup.WOOD));
@@ -228,8 +228,8 @@ public class Reg implements ModInitializer {
             return performed == null ? super.useOnBlock(context) : performed;
         }
     };
-    public static final BurningCrudeTorchBlock BURNING_CRUDE_TORCH_BLOCK = new BurningCrudeTorchBlock(AbstractBlock.Settings.of(Material.DECORATION).noCollision().breakInstantly().luminance(state -> 12).sounds(BlockSoundGroup.WOOD));
-    public static final WallBurningCrudeTorchBlock WALL_BURNING_CRUDE_TORCH_BLOCK = new WallBurningCrudeTorchBlock(AbstractBlock.Settings.of(Material.DECORATION).noCollision().breakInstantly().luminance(state -> 12).sounds(BlockSoundGroup.WOOD).dropsLike(BURNING_CRUDE_TORCH_BLOCK));
+    public static final BurningCrudeTorchBlock BURNING_CRUDE_TORCH_BLOCK = new BurningCrudeTorchBlock(AbstractBlock.Settings.of(Material.DECORATION).noCollision().breakInstantly().luminance(state -> 13).sounds(BlockSoundGroup.WOOD));
+    public static final WallBurningCrudeTorchBlock WALL_BURNING_CRUDE_TORCH_BLOCK = new WallBurningCrudeTorchBlock(AbstractBlock.Settings.of(Material.DECORATION).noCollision().breakInstantly().luminance(state -> 13).sounds(BlockSoundGroup.WOOD).dropsLike(BURNING_CRUDE_TORCH_BLOCK));
     public static final Item BURNING_CRUDE_TORCH_ITEM = new BurningCrudeTorchItem();
     public static final UnlitTorchBlock UNLIT_TORCH_BLOCK = new UnlitTorchBlock(AbstractBlock.Settings.of(Material.DECORATION).noCollision().breakInstantly().sounds(BlockSoundGroup.WOOD));
     public static final WallUnlitTorchBlock WALL_UNLIT_TORCH_BLOCK = new WallUnlitTorchBlock(AbstractBlock.Settings.of(Material.DECORATION).noCollision().breakInstantly().sounds(BlockSoundGroup.WOOD).dropsLike(UNLIT_TORCH_BLOCK));

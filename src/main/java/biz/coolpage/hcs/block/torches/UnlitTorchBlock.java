@@ -5,6 +5,7 @@ import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.item.Item;
+import org.jetbrains.annotations.NotNull;
 
 @SuppressWarnings("unused")
 public class UnlitTorchBlock extends CrudeTorchBlock {
@@ -12,7 +13,7 @@ public class UnlitTorchBlock extends CrudeTorchBlock {
         super(settings);
     }
 
-    protected BlockState getLitBlockStateForUpdate() {
+    protected BlockState getLitBlockStateForUpdate(@NotNull BlockState prevStat) {
         return Blocks.TORCH.getDefaultState();
     }
 

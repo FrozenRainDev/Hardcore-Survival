@@ -1,6 +1,7 @@
 package biz.coolpage.hcs.entity;
 
 import biz.coolpage.hcs.Reg;
+import biz.coolpage.hcs.util.CombustionHelper;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockEntityProvider;
 import net.minecraft.block.BlockState;
@@ -17,7 +18,6 @@ import static biz.coolpage.hcs.util.CommUtil.applyNullable;
 public class BurningCrudeTorchBlockEntity extends BlockEntity implements BlockEntityProvider {
     private long lastLitTime;
     private static final String LIT_NBT = "hcs_torch_last_lit";
-    public static final long MAX_BURNING_LENGTH = 24000L;
 
     public BurningCrudeTorchBlockEntity(BlockPos pos, BlockState state) {
         super(Reg.BURNING_CRUDE_TORCH_BLOCK_ENTITY, pos, state);
@@ -32,7 +32,7 @@ public class BurningCrudeTorchBlockEntity extends BlockEntity implements BlockEn
     }
 
     public boolean shouldExtinguish() {
-        return this.world == null || this.world.getTime() - this.lastLitTime > MAX_BURNING_LENGTH;
+        return this.world == null || this.world.getTime() - this.lastLitTime > CombustionHelper.MAX_BURNING_LENGTH;
     }
 
     public void updateForExtinguish() {
@@ -40,7 +40,7 @@ public class BurningCrudeTorchBlockEntity extends BlockEntity implements BlockEn
     }
 
     public void ignite() {
-        this.lastLitTime = applyNullable(this.getWorld(), World::getTime, 0L) + MAX_BURNING_LENGTH;
+        this.lastLitTime = applyNullable(this.getWorld(), World::getTime, 0L) + CombustionHelper.MAX_BURNING_LENGTH;
     }
 
     @Override

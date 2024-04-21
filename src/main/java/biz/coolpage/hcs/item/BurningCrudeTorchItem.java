@@ -11,7 +11,7 @@ import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
 
-import static biz.coolpage.hcs.entity.BurningCrudeTorchBlockEntity.MAX_BURNING_LENGTH;
+import static biz.coolpage.hcs.util.CombustionHelper.MAX_BURNING_LENGTH;
 
 public class BurningCrudeTorchItem extends VerticallyAttachableBlockItem {
     public BurningCrudeTorchItem() {

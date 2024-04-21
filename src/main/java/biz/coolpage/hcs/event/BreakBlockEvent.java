@@ -91,8 +91,8 @@ public class BreakBlockEvent {
                     if (EnchantmentHelper.getLevel(Enchantments.SILK_TOUCH, player.getMainHandStack()) == 0
                             && state.contains(CombustionHelper.COMBUST_STAGE)) {
                         int stage = state.get(CombustionHelper.COMBUST_STAGE),
-                                stickCount = (int) (stage * 0.7F),
-                                ashCount = (int) ((15 - stage) * 0.7F);
+                                stickCount = (int) (stage / 1.3F),
+                                ashCount = (int) ((15 - stage) * 0.4F);
                         if (stickCount > 0)
                             ItemScatterer.spawn(world, x + 0.5, y + 0.5, z + 0.5, new ItemStack(Items.STICK, stickCount));
                         if (ashCount > 0)

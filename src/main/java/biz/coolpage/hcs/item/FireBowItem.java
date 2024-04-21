@@ -3,6 +3,7 @@ package biz.coolpage.hcs.item;
 import biz.coolpage.hcs.status.accessor.StatAccessor;
 import biz.coolpage.hcs.status.manager.StaminaManager;
 import net.minecraft.block.BlockState;
+import net.minecraft.block.CampfireBlock;
 import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
@@ -45,13 +46,9 @@ public class FireBowItem extends Item {
         return this.stagesByTick[0];
     }
 
-    private boolean canIgnite(@Nullable BlockState state) {
-        return state != null && state.isIn(BlockTags.CAMPFIRES) && state.contains(Properties.LIT) && !state.get(Properties.LIT);
-    }
-
     @Override
     public ActionResult useOnBlock(@NotNull ItemUsageContext context) {
-        if (canIgnite(context.getWorld().getBlockState(context.getBlockPos()))) {
+        if (CampfireBlock.canBeLit(context.getWorld().getBlockState(context.getBlockPos()))) {
             PlayerEntity playerEntity = context.getPlayer();
             if (playerEntity != null)
                 playerEntity.setCurrentHand(context.getHand());
@@ -70,7 +67,7 @@ public class FireBowItem extends Item {
         BlockPos pos = blockHitResult.getBlockPos();
         BlockState state = world.getBlockState(pos);
         StaminaManager staminaManager = ((StatAccessor) player).getStaminaManager();
-        if (canIgnite(state) && staminaManager.get() > 0.01) {
+        if (CampfireBlock.canBeLit(state) && staminaManager.get() > 0.01) {
             staminaManager.pauseRestoring();
             staminaManager.add(-0.0007, player);
             player.getHungerManager().addExhaustion(0.015F);

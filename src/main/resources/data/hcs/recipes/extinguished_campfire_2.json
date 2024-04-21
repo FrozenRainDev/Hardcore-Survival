@@ -7,13 +7,8 @@
       "item": "hcs:tinder"
     },
     {
-      "tag": "minecraft:planks"
-    },
-    {
-      "tag": "minecraft:planks"
-    },
-    {
-      "tag": "minecraft:planks"
+      "tag": "minecraft:planks",
+      "count": 6
     }
   ],
   "result": {
