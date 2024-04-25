@@ -12,6 +12,8 @@
   "block.hcs.wall_burnt_torch": "Wall Burnt Torch",
   "block.hcs.glowstone_torch": "Glowstone Torch",
   "block.hcs.wall_glowstone_torch": "Wall Glowstone Torch",
+  "block.hcs.smoldering_campfire": "Smoldering Campfire",
+  "block.hcs.burnt_campfire": "Burnt Campfire",
   "death.attack.hcs.dehydrate": "%1$s died of thirst",
   "death.attack.hcs.heatstroke": "%1$s died of heatstroke",
   "death.attack.hcs.oxygenDeficiency": "%1$s died from oxygen deficiency",
@@ -312,5 +314,7 @@
   "item.hcs.healing_salve": "Healing Salve",
   "item.hcs.booster_shot": "Booster Shot",
   "item.hcs.booster_shot.description": "Remove soul impaired effect",
-  "item.hcs.ashes": "Ashes"
+  "item.hcs.ashes": "Ashes",
+  "item.hcs.smoldering_campfire": "Smoldering Campfire",
+  "item.hcs.burnt_campfire": "Burnt Campfire"
 }

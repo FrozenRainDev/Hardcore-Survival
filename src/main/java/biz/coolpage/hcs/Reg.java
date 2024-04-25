@@ -1,7 +1,9 @@
 package biz.coolpage.hcs;
 
+import biz.coolpage.hcs.block.BurntCampfireBlock;
 import biz.coolpage.hcs.block.DryingRackBlock;
 import biz.coolpage.hcs.block.IceboxBlock;
+import biz.coolpage.hcs.block.SmolderingCampfireBlock;
 import biz.coolpage.hcs.block.torches.*;
 import biz.coolpage.hcs.config.HcsDifficulty;
 import biz.coolpage.hcs.entity.*;
@@ -44,6 +46,7 @@ import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.sound.BlockSoundGroup;
+import net.minecraft.state.property.Properties;
 import net.minecraft.text.Text;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Identifier;
@@ -84,7 +87,7 @@ public class Reg implements ModInitializer {
     public static final Item SHARP_FLINT = new Item(new Item.Settings());
     public static final Item FIREWOOD = new Item(new Item.Settings());
     public static final Item FRIED_EGG = new Item(new Item.Settings().food(new FoodComponent.Builder().hunger(3).saturationModifier(2f).build()));
-    public static final Item EXTINGUISHED_CAMPFIRE = new ExtinguishedCampfireItem();
+    public static final Item EXTINGUISHED_CAMPFIRE = new HCSCampfireItem(Blocks.CAMPFIRE.getDefaultState().with(Properties.LIT, false).with(CombustionHelper.COMBUST_STAGE, 15));
     public static final Item FIRE_BOW = new FireBowItem(new Item.Settings().maxCount(1).maxDamage(96), 1);
     public static final Item FIRE_PLOUGH = new FireBowItem(new Item.Settings().maxCount(1).maxDamage(64), 3);
     public static final Item TINDER = new Item(new Item.Settings());
@@ -246,6 +249,10 @@ public class Reg implements ModInitializer {
     public static final WallGlowstoneTorchBlock WALL_GLOWSTONE_TORCH_BLOCK = new WallGlowstoneTorchBlock(AbstractBlock.Settings.of(Material.DECORATION).noCollision().breakInstantly().luminance(state -> 14).sounds(BlockSoundGroup.WOOD).dropsLike(GLOWSTONE_TORCH_BLOCK));
     public static final Item GLOWSTONE_TORCH_ITEM = new VerticallyAttachableBlockItem(GLOWSTONE_TORCH_BLOCK, WALL_GLOWSTONE_TORCH_BLOCK, new Item.Settings(), Direction.DOWN);
     public static final Item BOOSTER_SHOT = new BoosterShotItem();
+    public static final Block SMOLDERING_CAMPFIRE_BLOCK = new SmolderingCampfireBlock();
+    public static final Item SMOLDERING_CAMPFIRE = new HCSCampfireItem(SMOLDERING_CAMPFIRE_BLOCK.getDefaultState());
+    public static final Block BURNT_CAMPFIRE_BLOCK = new BurntCampfireBlock();
+    public static final Item BURNT_CAMPFIRE = new HCSCampfireItem(BURNT_CAMPFIRE_BLOCK.getDefaultState());
 
     public static final EntityType<RockProjectileEntity> ROCK_PROJECTILE_ENTITY = FabricEntityTypeBuilder.<RockProjectileEntity>create(SpawnGroup.MISC, RockProjectileEntity::new).dimensions(new EntityDimensions(0.25F, 0.25F, true)).build();
     public static final EntityType<FlintProjectileEntity> FLINT_PROJECTILE_ENTITY = FabricEntityTypeBuilder.<FlintProjectileEntity>create(SpawnGroup.MISC, FlintProjectileEntity::new).dimensions(new EntityDimensions(0.25F, 0.25F, true)).build();
@@ -289,6 +296,8 @@ public class Reg implements ModInitializer {
             content.add(new ItemStack(FIRE_PLOUGH));
             content.add(new ItemStack(FIRE_BOW));
             content.add(new ItemStack(EXTINGUISHED_CAMPFIRE));
+            content.add(new ItemStack(SMOLDERING_CAMPFIRE));
+            content.add(new ItemStack(BURNT_CAMPFIRE));
             content.add(new ItemStack(ASHES));
             content.add(new ItemStack(ROCK));
             content.add(new ItemStack(SHARP_ROCK));
@@ -489,6 +498,11 @@ public class Reg implements ModInitializer {
         Registry.register(Registries.ITEM, new Identifier("hcs", "glowstone_torch"), GLOWSTONE_TORCH_ITEM);
         Registry.register(Registries.BLOCK, new Identifier("hcs", "glowstone_torch"), GLOWSTONE_TORCH_BLOCK);
         Registry.register(Registries.BLOCK, new Identifier("hcs", "wall_glowstone_torch"), WALL_GLOWSTONE_TORCH_BLOCK);
+        // Custom campfires
+        Registry.register(Registries.BLOCK, new Identifier("hcs", "smoldering_campfire"), SMOLDERING_CAMPFIRE_BLOCK);
+        Registry.register(Registries.ITEM, new Identifier("hcs", "smoldering_campfire"), SMOLDERING_CAMPFIRE);
+        Registry.register(Registries.BLOCK, new Identifier("hcs", "burnt_campfire"), BURNT_CAMPFIRE_BLOCK);
+        Registry.register(Registries.ITEM, new Identifier("hcs", "burnt_campfire"), BURNT_CAMPFIRE);
 
         Registry.register(Registries.POTION, "hcs_ironskin", IRONSKIN_POTION);
         Registry.register(Registries.POTION, "hcs_long_ironskin", LONG_IRONSKIN_POTION);

@@ -15,6 +15,8 @@ import net.minecraft.inventory.Inventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtElement;
+import net.minecraft.sound.SoundCategory;
+import net.minecraft.sound.SoundEvents;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
@@ -58,6 +60,8 @@ public abstract class CampfireBlockEntityMixin extends BlockEntity implements IC
         if (burnOutTime < time) {
             CampfireBlock.extinguish(null, world, pos, state);
             world.setBlockState(pos, state.with(CampfireBlock.LIT, false).with(CombustionHelper.COMBUST_STAGE, 0));
+            // TODO check whether the sound will be played twice
+            world.playSound(null, pos, SoundEvents.BLOCK_FIRE_EXTINGUISH, SoundCategory.BLOCKS, 0.5F, 0.5F);
         } else {
             if (burnOutTime == Long.MAX_VALUE) ((ICampfireBlockEntity) campfire).resetBurnOutTime();
             else world.setBlockState(pos, CombustionHelper.updateCombustionState(state, (int) (burnOutTime - time)));

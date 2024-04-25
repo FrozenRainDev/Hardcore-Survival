@@ -12,6 +12,8 @@
   "block.hcs.wall_burnt_torch": "墙上烧焦的火把",
   "block.hcs.glowstone_torch": "萤石火把",
   "block.hcs.wall_glowstone_torch": "墙上的萤石火把",
+  "block.hcs.smoldering_campfire": "阴燃的篝火",
+  "block.hcs.burnt_campfire": "燃尽的篝火",
   "death.attack.hcs.dehydrate": "%1$s 渴死了",
   "death.attack.hcs.heatstroke": "%1$s 中暑而死",
   "death.attack.hcs.oxygenDeficiency": "%1$s 缺氧而死",
@@ -312,5 +314,7 @@
   "item.hcs.healing_salve": "治疗药膏",
   "item.hcs.booster_shot": "强心针",
   "item.hcs.booster_shot.description": "去除灵魂受损效果",
-  "item.hcs.ashes": "灰烬"
+  "item.hcs.ashes": "灰烬",
+  "item.hcs.smoldering_campfire": "阴燃的篝火",
+  "item.hcs.burnt_campfire": "燃尽的篝火"
 }
