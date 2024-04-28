@@ -1,7 +1,11 @@
 package biz.coolpage.hcs.block;
 
 import biz.coolpage.hcs.Reg;
+import biz.coolpage.hcs.entity.SmolderingCampfireBlockEntity;
 import net.minecraft.block.*;
+import net.minecraft.block.entity.BlockEntity;
+import net.minecraft.block.entity.BlockEntityTicker;
+import net.minecraft.block.entity.BlockEntityType;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
@@ -11,6 +15,7 @@ import net.minecraft.particle.ParticleTypes;
 import net.minecraft.sound.BlockSoundGroup;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvents;
+import net.minecraft.state.property.Properties;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
 import net.minecraft.util.hit.BlockHitResult;
@@ -34,6 +39,17 @@ public class SmolderingCampfireBlock extends CampfireBlock {
         return Reg.SMOLDERING_CAMPFIRE;
     }
 
+    @Override
+    public <T extends BlockEntity> BlockEntityTicker<T> getTicker(World world, BlockState state, BlockEntityType<T> type) {
+        return (world1, pos1, state1, blockEntity) -> {
+            if (blockEntity instanceof SmolderingCampfireBlockEntity campfire) { // TODO test carefully here; compare with other similar code
+                if (state.contains(Properties.LIT) && !state.get(Properties.LIT))
+                    world1.setBlockState(pos1, Reg.BURNT_CAMPFIRE_BLOCK.getDefaultState());
+                else
+                    SmolderingCampfireBlockEntity.litServerTick(world1, pos1, state1, campfire);
+            }
+        };
+    }
 
     // TODO handle on use
     @Override
