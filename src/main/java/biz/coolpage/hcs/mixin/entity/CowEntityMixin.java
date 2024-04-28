@@ -49,7 +49,7 @@ public abstract class CowEntityMixin extends AnimalEntity {
     public void interactMob(@NotNull PlayerEntity player, Hand hand, @NotNull CallbackInfoReturnable<ActionResult> cir) {
         //NOT SOLELY `ServerPlayerEntity` -- Both server and client side need the interaction
         boolean isMilking = player.getMainHandStack().isOf(Items.BUCKET) && !this.isBaby();
-        if (isMilking) {
+        if (isMilking && EntityHelper.IS_SURVIVAL_AND_SERVER.test(player)) {
             if (isInLeather(player)) {
                 long time = this.world.getTime();
                 long milkedTime = this.dataTracker.get(EntityHelper.MILKED_TIME);

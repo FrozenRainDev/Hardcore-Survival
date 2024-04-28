@@ -207,11 +207,11 @@ public abstract class TemperatureHelper implements WorldView {
 
     public static void updateAmbientBlocks(Entity playerObj) {
         if (playerObj instanceof ServerPlayerEntity player) {
-            int i = (int) (player.world.getTime() % (BALL_RAD3.length));
+            int i = (int) player.world.getTime() % (BALL_RAD3.length);
             TemperatureManager temperatureManager = ((StatAccessor) player).getTemperatureManager();
             StatusManager statusManager = ((StatAccessor) player).getStatusManager();
             BlockPos playerPos = player.getBlockPos();
-            if (i == 0) {//Do not put in for-loop
+            if (i == 0) { // Do not put in for-loop
                 temperatureManager.updateAmbient();
                 statusManager.updateOxygenGen();
             }
@@ -230,7 +230,9 @@ public abstract class TemperatureHelper implements WorldView {
                             temperatureManager.addAmbient(-0.06F);
                     }
                 }
-                if (block == Blocks.FIRE || block == Blocks.CAMPFIRE) temperatureManager.addAmbient(0.1F);
+                if (block == Blocks.FIRE || (block == Blocks.CAMPFIRE && state.contains(CampfireBlock.LIT) && state.get(CampfireBlock.LIT)))
+                    temperatureManager.addAmbient(0.1F);
+                else if (block == Reg.SMOLDERING_CAMPFIRE_BLOCK) temperatureManager.addAmbient(0.06F);
                 else if (block instanceof AbstractFurnaceBlock && state.get(AbstractFurnaceBlock.LIT))
                     temperatureManager.addAmbient(0.3F);
                 else if (block == Blocks.MAGMA_BLOCK) temperatureManager.addAmbient(0.5F);
