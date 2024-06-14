@@ -1,7 +1,7 @@
 package biz.coolpage.hcs.block;
 
 import biz.coolpage.hcs.Reg;
-import biz.coolpage.hcs.entity.SmolderingCampfireBlockEntity;
+import biz.coolpage.hcs.entity.SmolderingOrBurntCampfireBlockEntity;
 import net.minecraft.block.*;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.block.entity.BlockEntityTicker;
@@ -18,6 +18,7 @@ import net.minecraft.sound.SoundEvents;
 import net.minecraft.state.property.Properties;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
+import net.minecraft.util.collection.DefaultedList;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.random.Random;
@@ -40,13 +41,18 @@ public class SmolderingCampfireBlock extends CampfireBlock {
     }
 
     @Override
+    public BlockEntity createBlockEntity(BlockPos pos, BlockState state) {
+        return new SmolderingOrBurntCampfireBlockEntity(pos, state);
+    }
+
+    @Override
     public <T extends BlockEntity> BlockEntityTicker<T> getTicker(World world, BlockState state, BlockEntityType<T> type) {
         return (world1, pos1, state1, blockEntity) -> {
-            if (blockEntity instanceof SmolderingCampfireBlockEntity campfire) { // TODO test carefully here; compare with other similar code
+            if (blockEntity instanceof SmolderingOrBurntCampfireBlockEntity campfire) { // TODO test carefully here; compare with other similar code
                 if (state.contains(Properties.LIT) && !state.get(Properties.LIT))
                     world1.setBlockState(pos1, Reg.BURNT_CAMPFIRE_BLOCK.getDefaultState());
                 else
-                    SmolderingCampfireBlockEntity.litServerTick(world1, pos1, state1, campfire);
+                    SmolderingOrBurntCampfireBlockEntity.litServerTick(world1, pos1, state1, campfire);
             }
         };
     }

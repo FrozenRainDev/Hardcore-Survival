@@ -259,7 +259,7 @@ public class Reg implements ModInitializer {
     public static final BlockEntityType<IceboxBlockEntity> ICEBOX_BLOCK_ENTITY = FabricBlockEntityTypeBuilder.create(IceboxBlockEntity::new, ICEBOX).build();
     public static final BlockEntityType<DryingRackBlockEntity> DRYING_RACK_BLOCK_ENTITY = FabricBlockEntityTypeBuilder.create(DryingRackBlockEntity::new, DRYING_RACK).build();
     public static final BlockEntityType<BurningCrudeTorchBlockEntity> BURNING_CRUDE_TORCH_BLOCK_ENTITY = FabricBlockEntityTypeBuilder.create(BurningCrudeTorchBlockEntity::new, BURNING_CRUDE_TORCH_BLOCK, WALL_BURNING_CRUDE_TORCH_BLOCK).build();
-
+    public static final BlockEntityType<SmolderingOrBurntCampfireBlockEntity> SMOLDERING_OR_BURNT_CAMPFIRE_BLOCK_ENTITY_BLOCK_ENTITY_TYPE = FabricBlockEntityTypeBuilder.create(SmolderingOrBurntCampfireBlockEntity::new, SMOLDERING_CAMPFIRE_BLOCK, BURNT_CAMPFIRE_BLOCK).build();
     public static final RecipeSerializer<ExtractWaterFromBambooRecipe> EXTRACT_WATER_FROM_BAMBOO_RECIPE = new SpecialRecipeSerializer<>(ExtractWaterFromBambooRecipe::new);
     public static final RecipeSerializer<ExtractWaterFromSnowRecipe> EXTRACT_WATER_FROM_SNOW_RECIPE = new SpecialRecipeSerializer<>(ExtractWaterFromSnowRecipe::new);
     public static final RecipeSerializer<PetalsSaladRecipe> PETALS_SALAD_RECIPE = new SpecialRecipeSerializer<>(PetalsSaladRecipe::new);
@@ -524,6 +524,7 @@ public class Reg implements ModInitializer {
         Registry.register(Registries.BLOCK_ENTITY_TYPE, new Identifier("hcs", "icebox_block_entity"), ICEBOX_BLOCK_ENTITY);
         Registry.register(Registries.BLOCK_ENTITY_TYPE, new Identifier("hcs", "drying_rack_block_entity"), DRYING_RACK_BLOCK_ENTITY);
         Registry.register(Registries.BLOCK_ENTITY_TYPE, new Identifier("hcs", "burning_crude_torch"), BURNING_CRUDE_TORCH_BLOCK_ENTITY);
+        Registry.register(Registries.BLOCK_ENTITY_TYPE, new Identifier("hcs", "smoldering_or_burnt_campfire"), SMOLDERING_OR_BURNT_CAMPFIRE_BLOCK_ENTITY_BLOCK_ENTITY_TYPE);
 
         Registry.register(Registries.STATUS_EFFECT, new Identifier("hcs", "thirst"), HcsEffects.THIRST);
         Registry.register(Registries.STATUS_EFFECT, new Identifier("hcs", "diarrhea"), HcsEffects.DIARRHEA);

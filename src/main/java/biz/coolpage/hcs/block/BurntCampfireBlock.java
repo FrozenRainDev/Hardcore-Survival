@@ -1,13 +1,16 @@
 package biz.coolpage.hcs.block;
 
 import biz.coolpage.hcs.Reg;
+import biz.coolpage.hcs.entity.SmolderingOrBurntCampfireBlockEntity;
 import net.minecraft.block.*;
+import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.sound.BlockSoundGroup;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
+import net.minecraft.util.collection.DefaultedList;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.random.Random;
@@ -26,6 +29,11 @@ public class BurntCampfireBlock extends CampfireBlock {
     @Override
     public Item asItem() {
         return Reg.BURNT_CAMPFIRE;
+    }
+
+    @Override
+    public BlockEntity createBlockEntity(BlockPos pos, BlockState state) {
+        return new SmolderingOrBurntCampfireBlockEntity(pos, state);
     }
 
     @Override

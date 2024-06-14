@@ -1,8 +1,10 @@
 package biz.coolpage.hcs.entity;
 
+import biz.coolpage.hcs.Reg;
 import net.minecraft.block.Block;
+import net.minecraft.block.BlockEntityProvider;
 import net.minecraft.block.BlockState;
-import net.minecraft.block.entity.CampfireBlockEntity;
+import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.inventory.Inventory;
 import net.minecraft.inventory.SimpleInventory;
 import net.minecraft.item.ItemStack;
@@ -16,28 +18,38 @@ import net.minecraft.world.World;
 import net.minecraft.world.event.GameEvent;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Objects;
-
-public class SmolderingCampfireBlockEntity extends CampfireBlockEntity {
+public class SmolderingOrBurntCampfireBlockEntity extends BlockEntity implements BlockEntityProvider {
     private final DefaultedList<ItemStack> itemsBeingCooked;
     private final int[] cookingTimes;
+
+    @SuppressWarnings("MismatchedReadAndWriteOfArray")
     private final int[] cookingTotalTimes;
     private final RecipeManager.MatchGetter<Inventory, CampfireCookingRecipe> matchGetter;
 
-    public SmolderingCampfireBlockEntity(BlockPos pos, BlockState state, DefaultedList<ItemStack> itemsBeingCooked) {
-        super(pos, state);
+    public SmolderingOrBurntCampfireBlockEntity(BlockPos pos, BlockState state, DefaultedList<ItemStack> itemsBeingCooked/*TODO del this param?*/) {
+        super(Reg.SMOLDERING_OR_BURNT_CAMPFIRE_BLOCK_ENTITY_BLOCK_ENTITY_TYPE, pos, state);
         this.itemsBeingCooked = itemsBeingCooked;
         this.cookingTimes = new int[4];
         this.cookingTotalTimes = new int[4];
         this.matchGetter = RecipeManager.createCachedMatchGetter(RecipeType.CAMPFIRE_COOKING);
     }
 
-    private void updateListeners() {
-        this.markDirty();
-        Objects.requireNonNull(this.getWorld()).updateListeners(this.getPos(), this.getCachedState(), this.getCachedState(), 3);
+    public SmolderingOrBurntCampfireBlockEntity(BlockPos pos, BlockState state) {
+        this(pos, state, DefaultedList.ofSize(4));
     }
 
-    public static void litServerTick(@NotNull World world, BlockPos pos, BlockState state, SmolderingCampfireBlockEntity campfire) {
+    @Override
+    public BlockEntity createBlockEntity(BlockPos pos, BlockState state) {
+        return new SmolderingOrBurntCampfireBlockEntity(pos, state);
+    }
+
+
+//    private void updateListeners() {
+//        this.markDirty();
+//        Objects.requireNonNull(this.getWorld()).updateListeners(this.getPos(), this.getCachedState(), this.getCachedState(), 3);
+//    }
+
+    public static void litServerTick(@NotNull World world, BlockPos pos, BlockState state, SmolderingOrBurntCampfireBlockEntity campfire) {
         if (world.getTime() % 2 == 0) return; // Halve the speed of charcoal grilling
         boolean flag = false;
         for (int i = 0; i < campfire.itemsBeingCooked.size(); ++i) {
@@ -55,8 +67,7 @@ public class SmolderingCampfireBlockEntity extends CampfireBlockEntity {
             world.emitGameEvent(GameEvent.BLOCK_CHANGE, pos, GameEvent.Emitter.of(state));
         }
         if (flag) {
-            SmolderingCampfireBlockEntity.markDirty(world, pos, state);
+            SmolderingOrBurntCampfireBlockEntity.markDirty(world, pos, state);
         }
     }
-
 }

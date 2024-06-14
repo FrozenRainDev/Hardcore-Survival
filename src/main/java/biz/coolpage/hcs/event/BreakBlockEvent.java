@@ -98,6 +98,8 @@ public class BreakBlockEvent {
                         if (ashCount > 0)
                             ItemScatterer.spawn(world, x + 0.5, y + 0.5, z + 0.5, new ItemStack(Reg.ASHES, ashCount));
                     }
+                } else if (block == Reg.SMOLDERING_CAMPFIRE_BLOCK || block == Reg.BURNT_CAMPFIRE_BLOCK) {
+                    ItemScatterer.spawn(world, x + 0.5, y + 0.5, z + 0.5, new ItemStack(Reg.ASHES, 6));
                 }
             }
         }));

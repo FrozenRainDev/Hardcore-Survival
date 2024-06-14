@@ -89,7 +89,7 @@ public class BurningCrudeTorchBlock extends BlockWithEntity {
                     world1.playSound(null, pos1, SoundEvents.BLOCK_FIRE_EXTINGUISH, SoundCategory.BLOCKS);
                     if (world1 instanceof ServerWorld serverWorld) serverWorld.getChunkManager().markForUpdate(pos1);
                 } else if (world1.isRaining() && world1.isSkyVisible(pos1))
-                    torch.updateForExtinguish();
+                    torch.extinguish();
             }
         };
     }

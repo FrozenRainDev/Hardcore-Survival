@@ -35,7 +35,7 @@ public class BurningCrudeTorchBlockEntity extends BlockEntity implements BlockEn
         return this.world == null || this.world.getTime() - this.lastLitTime > CombustionHelper.MAX_BURNING_LENGTH;
     }
 
-    public void updateForExtinguish() {
+    public void extinguish() {
         this.lastLitTime = 0L;
     }
 
@@ -65,7 +65,6 @@ public class BurningCrudeTorchBlockEntity extends BlockEntity implements BlockEn
         return BlockEntityUpdateS2CPacket.create(this);
     }
 
-    //TODO check nbt.putLong(LIT_NBT,this.lastLitTime);
     @Override
     public NbtCompound toInitialChunkDataNbt() {
         NbtCompound nbt = new NbtCompound();
