@@ -8,10 +8,7 @@ import biz.coolpage.hcs.status.HcsEffects;
 import biz.coolpage.hcs.status.accessor.IDamageSources;
 import biz.coolpage.hcs.status.accessor.StatAccessor;
 import biz.coolpage.hcs.status.manager.*;
-import biz.coolpage.hcs.util.ArmorHelper;
-import biz.coolpage.hcs.util.DigRestrictHelper;
-import biz.coolpage.hcs.util.EntityHelper;
-import biz.coolpage.hcs.util.RotHelper;
+import biz.coolpage.hcs.util.*;
 import net.minecraft.block.*;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
@@ -61,7 +58,7 @@ import static biz.coolpage.hcs.util.EntityHelper.toPlayer;
 
 
 @Mixin(PlayerEntity.class)
-@SuppressWarnings({"CanBeFinal", "AddedMixinMembersNamePattern"})
+@SuppressWarnings({"CanBeFinal", "AddedMixinMembersNamePattern", "CommentedOutCode"})
 public abstract class PlayerEntityMixin extends LivingEntity implements StatAccessor {
 
     protected PlayerEntityMixin(EntityType<? extends LivingEntity> entityType, World world) {
@@ -476,7 +473,7 @@ public abstract class PlayerEntityMixin extends LivingEntity implements StatAcce
         if (this.isWet()) this.statusManager.setRecentWetTicks(20);
         else this.statusManager.setRecentWetTicks(Math.max(0, this.statusManager.getRecentWetTicks() - 1));
         if (this.statusManager.getRecentMiningTicks() < 20) this.statusManager.setBareDiggingTicks(0);
-        //Set max health according to max exp level reached
+        // Set max health according to max exp level reached
         if (this.experienceLevel > this.statusManager.getMaxExpLevelReached())
             this.statusManager.setMaxExpLevelReached(this.experienceLevel);
         /*
@@ -493,7 +490,7 @@ public abstract class PlayerEntityMixin extends LivingEntity implements StatAcce
         }
         */
         if (this.getPos().distanceTo(this.staminaManager.getLastVecPos()) > 0.0001) {
-            //Player is moving; `this.getVelocity()` and `this.speed` are useless
+            // Player is moving; `this.getVelocity()` and `this.speed` are useless
             quitReturnTeleport(this);
             if (!this.hasVehicle()) {
                 boolean shouldPauseRestoring = true;
@@ -516,12 +513,12 @@ public abstract class PlayerEntityMixin extends LivingEntity implements StatAcce
                 this.staminaManager.add(0.003, this);
             else this.staminaManager.add(0.001, this);
         }
-        //Gain sanity when being exposed in the sun with flower in hand
+        // Gain sanity when being exposed in the sun with flower in hand
         BlockPos headPos = this.getBlockPos().up();
         int skyBrightness = this.world.getLightLevel(LightType.SKY, headPos);
         if ((this.getMainHandStack().isIn(ItemTags.FLOWERS) || this.getOffHandStack().isIn(ItemTags.FLOWERS)) && this.world.isDay() && skyBrightness >= LightType.SKY.value)
             this.sanityManager.add(0.000009);
-        //Lose sanity
+        // Lose sanity
         if (this.hasStatusEffect(StatusEffects.WITHER)) this.sanityManager.add(-0.00008);
         else if (this.hasStatusEffect(StatusEffects.POISON)) this.sanityManager.add(-0.00003);
         boolean isInCavelike = skyBrightness < 1 && this.world.getDimension().hasSkyLight();
@@ -552,7 +549,7 @@ public abstract class PlayerEntityMixin extends LivingEntity implements StatAcce
             this.sanityManager.add(-sanDecrement * HcsDifficulty.chooseVal(player, 0.5, 1.0, 2.0));
         }
         if (isInCavelike) {
-            //Lose oxygen in deep cave
+            // Lose oxygen in deep cave
             if (y < 42) oxyLackLvl = 3;
             else if (y < 49) oxyLackLvl = 2;
             else if (y < 56) oxyLackLvl = 1;
@@ -569,11 +566,12 @@ public abstract class PlayerEntityMixin extends LivingEntity implements StatAcce
             this.setAir(this.getNextAirUnderwater(this.getAir()));
         if (this.getAir() < -20 && this.world.getTime() % 15 == 0)
             this.damage(((IDamageSources) this.world.getDamageSources()).oxygenDeficiency(), 1.0F);
-        //Wetness
+        // Wetness
+        boolean rainedOn = this.isBeingRainedOn(), touchingWater = this.isTouchingWater();
         if (this.isSubmergedInWater) this.wetnessManager.add(0.03);
-        else if (this.isTouchingWater() && this.wetnessManager.get() < 0.7) this.wetnessManager.add(0.01);
-        else if (this.isBeingRainedOn()) this.wetnessManager.add(0.0004);
-        else if (!this.isTouchingWater()) {
+        else if (touchingWater && this.wetnessManager.get() < 0.7) this.wetnessManager.add(0.01);
+        else if (rainedOn) this.wetnessManager.add(0.0004);
+        else if (!touchingWater) {
             if (this.getFireTicks() > 0) {
                 this.wetnessManager.add(-0.3);
                 if (this.wetnessManager.get() > 0.0) this.setFireTicks(0);
@@ -584,23 +582,25 @@ public abstract class PlayerEntityMixin extends LivingEntity implements StatAcce
                 this.wetnessManager.add(-Math.abs(0.00015 * rate * rate));
             }
         }
-        //Disease
+        // Disease
         this.diseaseManager.tick(!this.hasStatusEffect(HcsEffects.WET));
-        //Controls the max percentage that soul impaired effect can deduct depending on the HcsDifficulty
+        // Controls the max percentage that soul impaired effect can deduct depending on the HcsDifficulty
         int maxSoulImpaired = StatusManager.getMaxSoulImpaired(this);
         if (this.statusManager.getSoulImpairedStat() > maxSoulImpaired)
             this.statusManager.setSoulImpairedStat(maxSoulImpaired);
         this.statusManager.setHasDarknessEnvelopedDebuff(hasDarkDebuff);
-        //Handle buff of return
+        // Handle buff of return
         if (this.hasStatusEffect(HcsEffects.RETURN))
             this.statusManager.setReturnEffectAwaitTicks(this.statusManager.getReturnEffectAwaitTicks() + 1);
         else this.statusManager.setReturnEffectAwaitTicks(0);
-        //Player will not pain in relaxing mode (Also see `applyDamage()`)
+        // Player will not pain in relaxing mode (Also see `applyDamage()`)
         if (isRelaxingMode) {
             this.injuryManager.setRawPain(0.0);
             this.injuryManager.setBleeding(0.0);
             this.injuryManager.setFracture(0.0);
         }
+        // Drink rain water by raising up head
+        if (rainedOn && this.getPitch() < -60.0F) this.thirstManager.addDirectly(0.0005);
     }
 
     @Inject(method = "getXpToDrop", at = @At("HEAD"), cancellable = true)

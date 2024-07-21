@@ -13,6 +13,7 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+@SuppressWarnings({"LoggingSimilarMessage", "StringConcatenationArgumentToLogCall"})
 public class UpdateHelper {
     public static final String MOD_VER = "0.17.0";
 

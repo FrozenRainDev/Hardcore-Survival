@@ -64,6 +64,7 @@ import static net.minecraft.server.command.CommandManager.literal;
 
 //DO NOT implement ModInitializer to abstract classes as it will crash
 //See customized damage sources in DamageSourcesMixin
+@SuppressWarnings("DuplicatedCode")
 public class Reg implements ModInitializer {
     public static final Logger LOGGER = LoggerFactory.getLogger("hcs");
     public static final Potion IRONSKIN_POTION = new Potion("hcs_ironskin", new StatusEffectInstance(HcsEffects.IRONSKIN, 3600, 0));

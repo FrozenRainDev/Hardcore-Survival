@@ -27,6 +27,7 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 
+@SuppressWarnings("AddedMixinMembersNamePattern")
 @Mixin(CampfireBlockEntity.class)
 public abstract class CampfireBlockEntityMixin extends BlockEntity implements ICampfireBlockEntity {
     @Unique
@@ -39,13 +40,11 @@ public abstract class CampfireBlockEntityMixin extends BlockEntity implements IC
         super(type, pos, state);
     }
 
-    @SuppressWarnings("AddedMixinMembersNamePattern")
     @Unique
     public long getBurnOutTime() {
         return this.extinguishTime;
     }
 
-    @SuppressWarnings("AddedMixinMembersNamePattern")
     @Unique
     public void resetBurnOutTime() {
         if (this.world != null)

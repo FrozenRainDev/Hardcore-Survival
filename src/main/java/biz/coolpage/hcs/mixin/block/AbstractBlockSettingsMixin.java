@@ -30,6 +30,7 @@ public abstract class AbstractBlockSettingsMixin {
     @Inject(method = "luminance", at = @At("RETURN"))
     private void luminance(ToIntFunction<BlockState> luminance, CallbackInfoReturnable<Settings> cir) {
         this.luminance = state -> {
+            // Annoying for optimization, but there is no better way to adjust campfire luminance dynamically, I guess
             if (state.contains(COMBUST_STAGE) && state.contains(CampfireBlock.LIT) && state.get(CampfireBlock.LIT))
                 return state.get(COMBUST_STAGE);
             return luminance.applyAsInt(state);
