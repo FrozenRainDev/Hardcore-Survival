@@ -16,165 +16,165 @@
       "y": 90
     },
 
-    "facing=east,lit=true,hcs_campfire_combust_stage=6": {
+    "facing=east,lit=true,hcs_campfire_luminance=6": {
       "model": "block/campfire_flame_size_1",
       "y": 270
     },
-    "facing=north,lit=true,hcs_campfire_combust_stage=6": {
+    "facing=north,lit=true,hcs_campfire_luminance=6": {
       "model": "block/campfire_flame_size_1",
       "y": 180
     },
-    "facing=south,lit=true,hcs_campfire_combust_stage=6": {
+    "facing=south,lit=true,hcs_campfire_luminance=6": {
       "model": "block/campfire_flame_size_1"
     },
-    "facing=west,lit=true,hcs_campfire_combust_stage=6": {
+    "facing=west,lit=true,hcs_campfire_luminance=6": {
       "model": "block/campfire_flame_size_1",
       "y": 90
     },
 
-    "facing=east,lit=true,hcs_campfire_combust_stage=7": {
+    "facing=east,lit=true,hcs_campfire_luminance=7": {
       "model": "block/campfire_flame_size_2",
       "y": 270
     },
-    "facing=north,lit=true,hcs_campfire_combust_stage=7": {
+    "facing=north,lit=true,hcs_campfire_luminance=7": {
       "model": "block/campfire_flame_size_2",
       "y": 180
     },
-    "facing=south,lit=true,hcs_campfire_combust_stage=7": {
+    "facing=south,lit=true,hcs_campfire_luminance=7": {
       "model": "block/campfire_flame_size_2"
     },
-    "facing=west,lit=true,hcs_campfire_combust_stage=7": {
+    "facing=west,lit=true,hcs_campfire_luminance=7": {
       "model": "block/campfire_flame_size_2",
       "y": 90
     },
 
 
-    "facing=east,lit=true,hcs_campfire_combust_stage=8": {
+    "facing=east,lit=true,hcs_campfire_luminance=8": {
       "model": "block/campfire_flame_size_3",
       "y": 270
     },
-    "facing=north,lit=true,hcs_campfire_combust_stage=8": {
+    "facing=north,lit=true,hcs_campfire_luminance=8": {
       "model": "block/campfire_flame_size_3",
       "y": 180
     },
-    "facing=south,lit=true,hcs_campfire_combust_stage=8": {
+    "facing=south,lit=true,hcs_campfire_luminance=8": {
       "model": "block/campfire_flame_size_3"
     },
-    "facing=west,lit=true,hcs_campfire_combust_stage=8": {
+    "facing=west,lit=true,hcs_campfire_luminance=8": {
       "model": "block/campfire_flame_size_3",
       "y": 90
     },
 
 
-    "facing=east,lit=true,hcs_campfire_combust_stage=9": {
+    "facing=east,lit=true,hcs_campfire_luminance=9": {
       "model": "block/campfire_flame_size_4",
       "y": 270
     },
-    "facing=north,lit=true,hcs_campfire_combust_stage=9": {
+    "facing=north,lit=true,hcs_campfire_luminance=9": {
       "model": "block/campfire_flame_size_4",
       "y": 180
     },
-    "facing=south,lit=true,hcs_campfire_combust_stage=9": {
+    "facing=south,lit=true,hcs_campfire_luminance=9": {
       "model": "block/campfire_flame_size_4"
     },
-    "facing=west,lit=true,hcs_campfire_combust_stage=9": {
+    "facing=west,lit=true,hcs_campfire_luminance=9": {
       "model": "block/campfire_flame_size_4",
       "y": 90
     },
 
 
-    "facing=east,lit=true,hcs_campfire_combust_stage=10": {
+    "facing=east,lit=true,hcs_campfire_luminance=10": {
       "model": "block/campfire_flame_size_5",
       "y": 270
     },
-    "facing=north,lit=true,hcs_campfire_combust_stage=10": {
+    "facing=north,lit=true,hcs_campfire_luminance=10": {
       "model": "block/campfire_flame_size_5",
       "y": 180
     },
-    "facing=south,lit=true,hcs_campfire_combust_stage=10": {
+    "facing=south,lit=true,hcs_campfire_luminance=10": {
       "model": "block/campfire_flame_size_5"
     },
-    "facing=west,lit=true,hcs_campfire_combust_stage=10": {
+    "facing=west,lit=true,hcs_campfire_luminance=10": {
       "model": "block/campfire_flame_size_5",
       "y": 90
     },
 
-    "facing=east,lit=true,hcs_campfire_combust_stage=11": {
+    "facing=east,lit=true,hcs_campfire_luminance=11": {
       "model": "block/campfire_flame_size_6",
       "y": 270
     },
-    "facing=north,lit=true,hcs_campfire_combust_stage=11": {
+    "facing=north,lit=true,hcs_campfire_luminance=11": {
       "model": "block/campfire_flame_size_6",
       "y": 180
     },
-    "facing=south,lit=true,hcs_campfire_combust_stage=11": {
+    "facing=south,lit=true,hcs_campfire_luminance=11": {
       "model": "block/campfire_flame_size_6"
     },
-    "facing=west,lit=true,hcs_campfire_combust_stage=11": {
+    "facing=west,lit=true,hcs_campfire_luminance=11": {
       "model": "block/campfire_flame_size_6",
       "y": 90
     },
 
-    "facing=east,lit=true,hcs_campfire_combust_stage=12": {
+    "facing=east,lit=true,hcs_campfire_luminance=12": {
       "model": "block/campfire_flame_size_7",
       "y": 270
     },
-    "facing=north,lit=true,hcs_campfire_combust_stage=12": {
+    "facing=north,lit=true,hcs_campfire_luminance=12": {
       "model": "block/campfire_flame_size_7",
       "y": 180
     },
-    "facing=south,lit=true,hcs_campfire_combust_stage=12": {
+    "facing=south,lit=true,hcs_campfire_luminance=12": {
       "model": "block/campfire_flame_size_7"
     },
-    "facing=west,lit=true,hcs_campfire_combust_stage=12": {
+    "facing=west,lit=true,hcs_campfire_luminance=12": {
       "model": "block/campfire_flame_size_7",
       "y": 90
     },
 
-    "facing=east,lit=true,hcs_campfire_combust_stage=13": {
+    "facing=east,lit=true,hcs_campfire_luminance=13": {
       "model": "block/campfire_flame_size_8",
       "y": 270
     },
-    "facing=north,lit=true,hcs_campfire_combust_stage=13": {
+    "facing=north,lit=true,hcs_campfire_luminance=13": {
       "model": "block/campfire_flame_size_8",
       "y": 180
     },
-    "facing=south,lit=true,hcs_campfire_combust_stage=13": {
+    "facing=south,lit=true,hcs_campfire_luminance=13": {
       "model": "block/campfire_flame_size_8"
     },
-    "facing=west,lit=true,hcs_campfire_combust_stage=13": {
+    "facing=west,lit=true,hcs_campfire_luminance=13": {
       "model": "block/campfire_flame_size_8",
       "y": 90
     },
 
-    "facing=east,lit=true,hcs_campfire_combust_stage=14": {
+    "facing=east,lit=true,hcs_campfire_luminance=14": {
       "model": "block/campfire_flame_size_9",
       "y": 270
     },
-    "facing=north,lit=true,hcs_campfire_combust_stage=14": {
+    "facing=north,lit=true,hcs_campfire_luminance=14": {
       "model": "block/campfire_flame_size_9",
       "y": 180
     },
-    "facing=south,lit=true,hcs_campfire_combust_stage=14": {
+    "facing=south,lit=true,hcs_campfire_luminance=14": {
       "model": "block/campfire_flame_size_9"
     },
-    "facing=west,lit=true,hcs_campfire_combust_stage=14": {
+    "facing=west,lit=true,hcs_campfire_luminance=14": {
       "model": "block/campfire_flame_size_9",
       "y": 90
     },
 
-    "facing=east,lit=true,hcs_campfire_combust_stage=15": {
+    "facing=east,lit=true,hcs_campfire_luminance=15": {
       "model": "block/campfire_flame_size_10",
       "y": 270
     },
-    "facing=north,lit=true,hcs_campfire_combust_stage=15": {
+    "facing=north,lit=true,hcs_campfire_luminance=15": {
       "model": "block/campfire_flame_size_10",
       "y": 180
     },
-    "facing=south,lit=true,hcs_campfire_combust_stage=15": {
+    "facing=south,lit=true,hcs_campfire_luminance=15": {
       "model": "block/campfire_flame_size_10"
     },
-    "facing=west,lit=true,hcs_campfire_combust_stage=15": {
+    "facing=west,lit=true,hcs_campfire_luminance=15": {
       "model": "block/campfire_flame_size_10",
       "y": 90
     }

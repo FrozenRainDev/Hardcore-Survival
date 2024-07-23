@@ -15,10 +15,9 @@ import net.minecraft.inventory.Inventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtElement;
-import net.minecraft.sound.SoundCategory;
-import net.minecraft.sound.SoundEvents;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+import net.minecraft.world.WorldEvents;
 import org.jetbrains.annotations.NotNull;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
@@ -51,26 +50,38 @@ public abstract class CampfireBlockEntityMixin extends BlockEntity implements IC
             this.extinguishTime = this.world.getTime() + CombustionHelper.CAMPFIRE_MAX_BURNING_LENGTH;
     }
 
-    @Inject(method = "litServerTick", at = @At("HEAD"))
-    private static void litServerTickInjected1(@NotNull World world, BlockPos pos, BlockState state, CampfireBlockEntity campfire, CallbackInfo ci) {
-        if (world.getRandom().nextFloat() < 0.001F) // Lit inflammable blocks nearby-
-            Fluids.LAVA.onRandomTick(world, pos, Fluids.LAVA.getDefaultState(), world.getRandom());
-        long time = world.getTime(), burnOutTime = ((ICampfireBlockEntity) campfire).getBurnOutTime();
-        if (burnOutTime < time) {
-            CampfireBlock.extinguish(null, world, pos, state);
-            world.setBlockState(pos, state.with(CampfireBlock.LIT, false).with(CombustionHelper.COMBUST_STAGE, 0));
-            // TODO check whether the sound will be played twice
-            world.playSound(null, pos, SoundEvents.BLOCK_FIRE_EXTINGUISH, SoundCategory.BLOCKS, 0.5F, 0.5F);
+    @Inject(method = "litServerTick", at = @At("HEAD"), cancellable = true)
+    private static void litServerTickInjected1(@NotNull World world, BlockPos pos, @NotNull BlockState state, CampfireBlockEntity campfire, CallbackInfo ci) {
+        if (state.isOf(Reg.BURNT_CAMPFIRE_BLOCK)) ci.cancel();
+        if (state.isOf(Blocks.SOUL_CAMPFIRE)) {
+            world.setBlockState(pos, state.with(CombustionHelper.COMBUST_LUMINANCE, 15));
+            ci.cancel();
         } else {
-            if (burnOutTime == Long.MAX_VALUE) ((ICampfireBlockEntity) campfire).resetBurnOutTime();
-            else world.setBlockState(pos, CombustionHelper.updateCombustionState(state, (int) (burnOutTime - time)));
+            boolean hasFlame = !state.isOf(Reg.SMOLDERING_CAMPFIRE_BLOCK);
+            if (hasFlame && world.getRandom().nextFloat() < 0.001F) // Lit inflammable blocks nearby
+                Fluids.LAVA.onRandomTick(world, pos, Fluids.LAVA.getDefaultState(), world.getRandom());
+            long time = world.getTime(), burnOutTime = ((ICampfireBlockEntity) campfire).getBurnOutTime();
+            if (burnOutTime < time) {
+                CampfireBlock.extinguish(null, world, pos, state);
+                // "setBlockState" causes automatic cooking items drop (See CampfireBlock::onStateReplaced)
+                world.setBlockState(pos,
+                        (hasFlame ? Reg.SMOLDERING_CAMPFIRE_BLOCK : Reg.BURNT_CAMPFIRE_BLOCK)
+                                .getDefaultState()
+                                .with(CampfireBlock.FACING, state.get(CampfireBlock.FACING))
+                                .with(CampfireBlock.WATERLOGGED, state.get(CampfireBlock.WATERLOGGED)));
+                world.syncWorldEvent(null, WorldEvents.FIRE_EXTINGUISHED, pos, 0);
+            } else {
+                if (burnOutTime == Long.MAX_VALUE) ((ICampfireBlockEntity) campfire).resetBurnOutTime();
+                else if (hasFlame)
+                    world.setBlockState(pos, CombustionHelper.updateCombustionState(state, (int) (burnOutTime - time)));
+            }
         }
     }
 
     @Inject(method = "litServerTick", at = @At(value = "INVOKE", target = "Lnet/minecraft/util/ItemScatterer;spawn(Lnet/minecraft/world/World;DDDLnet/minecraft/item/ItemStack;)V"), locals = LocalCapture.CAPTURE_FAILSOFT)
     private static void litServerTickInjected2(World world, BlockPos pos, @NotNull BlockState state, CampfireBlockEntity campfire, CallbackInfo ci, boolean bl, int i, ItemStack itemStack, Inventory inventory, ItemStack itemStack2) {
         if (state.isOf(Blocks.SOUL_CAMPFIRE) && itemStack2.isOf(Reg.HOT_WATER_BOTTLE))
-            HotWaterBottleItem.setStatus(itemStack2, -1); // Soul campfire will cool temp down
+            HotWaterBottleItem.setStatus(itemStack2, -1); // Soul campfire will cool temp down for hot water bag
     }
 
     @Inject(method = "readNbt", at = @At("HEAD"))

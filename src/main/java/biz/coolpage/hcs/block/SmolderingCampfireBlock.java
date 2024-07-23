@@ -18,13 +18,13 @@ import net.minecraft.sound.SoundEvents;
 import net.minecraft.state.property.Properties;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
-import net.minecraft.util.collection.DefaultedList;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.random.Random;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
 
+// TODO submerged in water
 public class SmolderingCampfireBlock extends CampfireBlock {
     public SmolderingCampfireBlock() {
         super(true, 1, AbstractBlock.Settings.of(Material.WOOD, MapColor.SPRUCE_BROWN).strength(2.0f).sounds(BlockSoundGroup.WOOD).luminance(Blocks.createLightLevelFromLitBlockState(5)).nonOpaque());
@@ -65,7 +65,7 @@ public class SmolderingCampfireBlock extends CampfireBlock {
 
     @Override
     public void onEntityCollision(@NotNull BlockState state, @NotNull World world, BlockPos pos, Entity entity) {
-        // Reduce fire damage
+        // Reduced fire damage
         if (state.get(LIT) && entity instanceof LivingEntity && !EnchantmentHelper.hasFrostWalker((LivingEntity) entity)) {
             entity.damage(world.getDamageSources().inFire(), 0.5F);
         }

@@ -89,8 +89,8 @@ public class BreakBlockEvent {
                 } else if (block == Blocks.SWEET_BERRY_BUSH) EntityHelper.dropItem(player, x, y, z, Reg.BERRY_BUSH, 1);
                 else if (block == Blocks.CAMPFIRE) {
                     if (EnchantmentHelper.getLevel(Enchantments.SILK_TOUCH, player.getMainHandStack()) == 0
-                            && state.contains(CombustionHelper.COMBUST_STAGE)) {
-                        int stage = state.get(CombustionHelper.COMBUST_STAGE),
+                            && state.contains(CombustionHelper.COMBUST_LUMINANCE)) {
+                        int stage = state.get(CombustionHelper.COMBUST_LUMINANCE),
                                 stickCount = (int) (stage / 1.3F),
                                 ashCount = (int) ((15 - stage) * 0.4F);
                         if (stickCount > 0)

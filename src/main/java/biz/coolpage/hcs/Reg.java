@@ -88,7 +88,7 @@ public class Reg implements ModInitializer {
     public static final Item SHARP_FLINT = new Item(new Item.Settings());
     public static final Item FIREWOOD = new Item(new Item.Settings());
     public static final Item FRIED_EGG = new Item(new Item.Settings().food(new FoodComponent.Builder().hunger(3).saturationModifier(2f).build()));
-    public static final Item EXTINGUISHED_CAMPFIRE = new HCSCampfireItem(Blocks.CAMPFIRE.getDefaultState().with(Properties.LIT, false).with(CombustionHelper.COMBUST_STAGE, 15));
+    public static final Item EXTINGUISHED_CAMPFIRE = new HCSCampfireItem(Blocks.CAMPFIRE.getDefaultState().with(Properties.LIT, false).with(CombustionHelper.COMBUST_LUMINANCE, 15));
     public static final Item FIRE_BOW = new FireBowItem(new Item.Settings().maxCount(1).maxDamage(96), 1);
     public static final Item FIRE_PLOUGH = new FireBowItem(new Item.Settings().maxCount(1).maxDamage(64), 3);
     public static final Item TINDER = new Item(new Item.Settings());

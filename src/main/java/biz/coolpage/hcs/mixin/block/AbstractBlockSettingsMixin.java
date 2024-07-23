@@ -12,7 +12,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import java.util.function.ToIntFunction;
 
-import static biz.coolpage.hcs.util.CombustionHelper.COMBUST_STAGE;
+import static biz.coolpage.hcs.util.CombustionHelper.COMBUST_LUMINANCE;
 
 @Mixin(Settings.class)
 public abstract class AbstractBlockSettingsMixin {
@@ -31,8 +31,9 @@ public abstract class AbstractBlockSettingsMixin {
     private void luminance(ToIntFunction<BlockState> luminance, CallbackInfoReturnable<Settings> cir) {
         this.luminance = state -> {
             // Annoying for optimization, but there is no better way to adjust campfire luminance dynamically, I guess
-            if (state.contains(COMBUST_STAGE) && state.contains(CampfireBlock.LIT) && state.get(CampfireBlock.LIT))
-                return state.get(COMBUST_STAGE);
+            // state.isOf(Blocks.CAMPFIRE) is invalid here
+            if (state.contains(COMBUST_LUMINANCE) && state.contains(CampfireBlock.LIT) && state.get(CampfireBlock.LIT))
+                return state.get(COMBUST_LUMINANCE);
             return luminance.applyAsInt(state);
         };
     }
