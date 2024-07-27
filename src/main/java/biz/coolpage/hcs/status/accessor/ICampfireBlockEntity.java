@@ -4,4 +4,6 @@ public interface ICampfireBlockEntity {
     long getBurnOutTime();
 
     void resetBurnOutTime();
+
+    void setBurnOutTime(long val);
 }

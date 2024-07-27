@@ -1,11 +1,13 @@
 package biz.coolpage.hcs.mixin.block;
 
+import biz.coolpage.hcs.status.accessor.ICampfireBlockEntity;
 import biz.coolpage.hcs.util.CombustionHelper;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.BlockWithEntity;
 import net.minecraft.block.CampfireBlock;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.item.ItemStack;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.state.StateManager;
@@ -21,7 +23,7 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
-import static biz.coolpage.hcs.util.CombustionHelper.isTorchWithFlame;
+import static biz.coolpage.hcs.util.CombustionHelper.*;
 
 @Mixin(CampfireBlock.class)
 public abstract class CampfireBlockMixin extends BlockWithEntity {
@@ -31,12 +33,18 @@ public abstract class CampfireBlockMixin extends BlockWithEntity {
 
     @Inject(method = "onUse", at = @At("HEAD"), cancellable = true)
     public void onUse(@NotNull BlockState state, World world, BlockPos pos, @NotNull PlayerEntity player, Hand hand, BlockHitResult hit, CallbackInfoReturnable<ActionResult> cir) {
-        if (state.contains(CampfireBlock.LIT) && !state.get(CampfireBlock.LIT) &&
-                (isTorchWithFlame(player.getMainHandStack().getItem()) || isTorchWithFlame(player.getOffHandStack().getItem()))) {
-            world.setBlockState(pos, state.with(CampfireBlock.LIT, true));
-            world.playSound(null, pos, SoundEvents.ITEM_FIRECHARGE_USE, SoundCategory.BLOCKS);
-            cir.setReturnValue(ActionResult.success(world.isClient()));
+        ItemStack stack = player.getStackInHand(hand);
+        if (state.contains(CampfireBlock.LIT) && !state.get(CampfireBlock.LIT)) {
+            // Lit up with burning torch
+            if (isTorchWithFlame(stack.getItem())) {
+                world.setBlockState(pos, state.with(CampfireBlock.LIT, true));
+                world.playSound(null, pos, SoundEvents.ITEM_FIRECHARGE_USE, SoundCategory.BLOCKS);
+                cir.setReturnValue(ActionResult.success(world.isClient()));
+            }
         }
+        // Add fuel
+        if (CombustionHelper.checkAddFuel(world, pos, state, stack))
+            cir.setReturnValue(ActionResult.success(world.isClient()));
     }
 
     @Inject(method = "appendProperties", at = @At("HEAD"))

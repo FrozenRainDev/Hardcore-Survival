@@ -1,41 +1,41 @@
 package biz.coolpage.hcs.entity;
 
 import biz.coolpage.hcs.Reg;
-import net.minecraft.block.Block;
+import biz.coolpage.hcs.status.accessor.ICampfireBlockEntity;
+import biz.coolpage.hcs.util.CombustionHelper;
 import net.minecraft.block.BlockEntityProvider;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.entity.BlockEntity;
-import net.minecraft.inventory.Inventory;
-import net.minecraft.inventory.SimpleInventory;
-import net.minecraft.item.ItemStack;
-import net.minecraft.recipe.CampfireCookingRecipe;
-import net.minecraft.recipe.RecipeManager;
-import net.minecraft.recipe.RecipeType;
-import net.minecraft.util.ItemScatterer;
-import net.minecraft.util.collection.DefaultedList;
+import net.minecraft.block.entity.CampfireBlockEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-import net.minecraft.world.event.GameEvent;
 import org.jetbrains.annotations.NotNull;
+import org.spongepowered.asm.mixin.Unique;
 
-public class SmolderingOrBurntCampfireBlockEntity extends BlockEntity implements BlockEntityProvider {
-    private final DefaultedList<ItemStack> itemsBeingCooked;
-    private final int[] cookingTimes;
-
-    @SuppressWarnings("MismatchedReadAndWriteOfArray")
-    private final int[] cookingTotalTimes;
-    private final RecipeManager.MatchGetter<Inventory, CampfireCookingRecipe> matchGetter;
-
-    public SmolderingOrBurntCampfireBlockEntity(BlockPos pos, BlockState state, DefaultedList<ItemStack> itemsBeingCooked/*TODO del this param?*/) {
+@SuppressWarnings("CommentedOutCode")
+public class SmolderingOrBurntCampfireBlockEntity extends BlockEntity implements BlockEntityProvider, ICampfireBlockEntity {
+    public SmolderingOrBurntCampfireBlockEntity(BlockPos pos, BlockState state) {
         super(Reg.SMOLDERING_OR_BURNT_CAMPFIRE_BLOCK_ENTITY_BLOCK_ENTITY_TYPE, pos, state);
-        this.itemsBeingCooked = itemsBeingCooked;
-        this.cookingTimes = new int[4];
-        this.cookingTotalTimes = new int[4];
-        this.matchGetter = RecipeManager.createCachedMatchGetter(RecipeType.CAMPFIRE_COOKING);
     }
 
-    public SmolderingOrBurntCampfireBlockEntity(BlockPos pos, BlockState state) {
-        this(pos, state, DefaultedList.ofSize(4));
+    private long extinguishTime = Long.MAX_VALUE;
+
+    @Unique
+    public long getBurnOutTime() {
+        return this.extinguishTime;
+    }
+
+    @Unique
+    public void resetBurnOutTime() {
+        if (this.world != null) {
+            CampfireBlockEntity.markDirty(this.world, this.pos, this.world.getBlockState(pos));
+            this.extinguishTime = this.world.getTime() + CombustionHelper.CAMPFIRE_MAX_BURNING_LENGTH * 2L; // note: *2 here
+        }
+    }
+
+    @Override
+    public void setBurnOutTime(long val) {
+        this.extinguishTime = val;
     }
 
     @Override
@@ -43,13 +43,11 @@ public class SmolderingOrBurntCampfireBlockEntity extends BlockEntity implements
         return new SmolderingOrBurntCampfireBlockEntity(pos, state);
     }
 
-
-//    private void updateListeners() {
-//        this.markDirty();
-//        Objects.requireNonNull(this.getWorld()).updateListeners(this.getPos(), this.getCachedState(), this.getCachedState(), 3);
-//    }
-
-    public static void litServerTick(@NotNull World world, BlockPos pos, BlockState state, SmolderingOrBurntCampfireBlockEntity campfire) {
+    @SuppressWarnings({"unused", "GrazieInspection"})
+    public static void litServerTick(@NotNull World world, BlockPos pos, @NotNull BlockState state, SmolderingOrBurntCampfireBlockEntity campfire) {
+        if (state.isOf(Reg.BURNT_CAMPFIRE_BLOCK)) return;
+        CombustionHelper.onServerTick(world, pos, state, campfire);
+        /*
         if (world.getTime() % 2 == 0) return; // Halve the speed of charcoal grilling
         boolean flag = false;
         for (int i = 0; i < campfire.itemsBeingCooked.size(); ++i) {
@@ -68,6 +66,29 @@ public class SmolderingOrBurntCampfireBlockEntity extends BlockEntity implements
         }
         if (flag) {
             SmolderingOrBurntCampfireBlockEntity.markDirty(world, pos, state);
-        }
+        }*/
     }
+
+
+    // These var still not being used
+    /*
+    private final DefaultedList<ItemStack> itemsBeingCooked;
+    private final int[] cookingTimes;
+
+    @SuppressWarnings("MismatchedReadAndWriteOfArray")
+    private final int[] cookingTotalTimes;
+    private final RecipeManager.MatchGetter<Inventory, CampfireCookingRecipe> matchGetter;
+
+    public SmolderingOrBurntCampfireBlockEntity(BlockPos pos, BlockState state, DefaultedList<ItemStack> itemsBeingCooked) {
+        super(Reg.SMOLDERING_OR_BURNT_CAMPFIRE_BLOCK_ENTITY_BLOCK_ENTITY_TYPE, pos, state);
+        this.itemsBeingCooked = itemsBeingCooked;
+        this.cookingTimes = new int[4];
+        this.cookingTotalTimes = new int[4];
+        this.matchGetter = RecipeManager.createCachedMatchGetter(RecipeType.CAMPFIRE_COOKING);
+    }
+
+    public SmolderingOrBurntCampfireBlockEntity(BlockPos pos, BlockState state) {
+        this(pos, state, DefaultedList.ofSize(4));
+    }
+    */
 }

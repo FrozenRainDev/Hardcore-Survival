@@ -1,8 +1,11 @@
 package biz.coolpage.hcs.util;
 
 import biz.coolpage.hcs.Reg;
+import biz.coolpage.hcs.status.accessor.ICampfireBlockEntity;
+import net.fabricmc.fabric.api.registry.FuelRegistry;
 import net.minecraft.block.*;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.fluid.Fluids;
 import net.minecraft.item.*;
 import net.minecraft.registry.tag.BlockTags;
 import net.minecraft.sound.SoundCategory;
@@ -14,6 +17,7 @@ import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+import net.minecraft.world.WorldEvents;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -50,9 +54,7 @@ public class CombustionHelper {
         BlockState state = context.getWorld().getBlockState(pos);
         Block block = state.getBlock();
         World world = context.getWorld();
-        if (state.isIn(BlockTags.FIRE) || state.isIn(BlockTags.CAMPFIRES)
-                || isTorchWithFlame(block.asItem())
-                || (block instanceof AbstractFurnaceBlock && state.get(Properties.LIT) && player.isSneaking())) {
+        if (state.isIn(BlockTags.FIRE) || state.isIn(BlockTags.CAMPFIRES) || isTorchWithFlame(block.asItem()) || (block instanceof AbstractFurnaceBlock && state.get(Properties.LIT) && player.isSneaking())) {
             litHoldingTorch(player, world, stack);
             return ActionResult.success(world.isClient);
         }
@@ -75,6 +77,7 @@ public class CombustionHelper {
     public static final IntProperty COMBUST_LUMINANCE = IntProperty.of("hcs_campfire_luminance", 0, 15);
     // Input: remain ticks; output: brightness; Hash table for less computing
     public static final int CAMPFIRE_MAX_BURNING_LENGTH = LUMINANCE_FUNC.length - 1; // 4000
+    public static final String EXTINGUISH_TIME_NBT = "hcs_extinguish_nbt";
 
     public static BlockState updateCombustionState(@NotNull BlockState state, int remain) {
         if (remain > CAMPFIRE_MAX_BURNING_LENGTH) remain = CAMPFIRE_MAX_BURNING_LENGTH;
@@ -82,8 +85,49 @@ public class CombustionHelper {
         return state.with(COMBUST_LUMINANCE, LUMINANCE_FUNC[remain]);
     }
 
-    public static void addFuel() {
-
+    public static void onServerTick(@NotNull World world, BlockPos pos, @NotNull BlockState state, ICampfireBlockEntity campfire) {
+        boolean hasFlame = !state.isOf(Reg.SMOLDERING_CAMPFIRE_BLOCK);
+        if (hasFlame && world.getRandom().nextFloat() < 0.001F) // Lit inflammable blocks nearby
+            Fluids.LAVA.onRandomTick(world, pos, Fluids.LAVA.getDefaultState(), world.getRandom());
+        long time = world.getTime(), burnOutTime = campfire.getBurnOutTime();
+        if (burnOutTime < time) {
+            CampfireBlock.extinguish(null, world, pos, state);
+            // "setBlockState" causes automatic cooking items drop (See CampfireBlock::onStateReplaced)
+            world.setBlockState(pos, (hasFlame ? Reg.SMOLDERING_CAMPFIRE_BLOCK : Reg.BURNT_CAMPFIRE_BLOCK).getDefaultState().with(CampfireBlock.FACING, state.get(CampfireBlock.FACING)).with(CampfireBlock.WATERLOGGED, state.get(CampfireBlock.WATERLOGGED)));
+            world.syncWorldEvent(null, WorldEvents.FIRE_EXTINGUISHED, pos, 0);
+        } else {
+            if (burnOutTime == Long.MAX_VALUE) campfire.resetBurnOutTime();
+            else if (hasFlame)
+                world.setBlockState(pos, CombustionHelper.updateCombustionState(state, (int) (burnOutTime - time)));
+        }
     }
 
+    public static int getFuelDuration(@NotNull ItemStack stack) {
+        Integer dur = FuelRegistry.INSTANCE.get(stack.getItem());
+        if (dur == null) return 0;
+        return dur;
+    }
+
+    public static boolean checkAddFuel(@NotNull World world, BlockPos pos, @NotNull BlockState state, @NotNull ItemStack stack) {
+        if (world.getBlockEntity(pos) instanceof ICampfireBlockEntity campfire) {
+            int fuelDur = getFuelDuration(stack) * 2;
+            if (state.isOf(Reg.BURNT_CAMPFIRE_BLOCK) || !state.contains(CampfireBlock.LIT) || !state.get(CampfireBlock.LIT) || fuelDur == 0)
+                return false;
+            addFuel(world, pos, state, campfire, stack, fuelDur);
+            world.playSound(null, pos, SoundEvents.ITEM_FIRECHARGE_USE, SoundCategory.BLOCKS);
+            return true;
+        }
+        return false;
+    }
+
+    // TODO add fuel 1. right click√ 2. drop item
+    private static void addFuel(World world, BlockPos pos, @NotNull BlockState state, ICampfireBlockEntity campfire, @NotNull ItemStack fuel, int fuelDur) {
+        if (state.isOf(Reg.SMOLDERING_CAMPFIRE_BLOCK)) {
+            world.setBlockState(pos, Blocks.CAMPFIRE.getDefaultState().with(CampfireBlock.FACING, state.get(CampfireBlock.FACING)).with(CampfireBlock.WATERLOGGED, state.get(CampfireBlock.WATERLOGGED)));
+            if (world.getBlockEntity(pos) instanceof ICampfireBlockEntity camp)
+                camp.setBurnOutTime(world.getTime() + fuelDur);
+        } else  // Regular campfires
+            campfire.setBurnOutTime(campfire.getBurnOutTime() + fuelDur);
+        fuel.decrement(1);
+    }
 }

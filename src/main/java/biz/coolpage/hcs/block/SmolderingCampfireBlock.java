@@ -2,6 +2,7 @@ package biz.coolpage.hcs.block;
 
 import biz.coolpage.hcs.Reg;
 import biz.coolpage.hcs.entity.SmolderingOrBurntCampfireBlockEntity;
+import biz.coolpage.hcs.util.CombustionHelper;
 import net.minecraft.block.*;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.block.entity.BlockEntityTicker;
@@ -11,6 +12,7 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
 import net.minecraft.particle.ParticleTypes;
 import net.minecraft.sound.BlockSoundGroup;
 import net.minecraft.sound.SoundCategory;
@@ -59,7 +61,10 @@ public class SmolderingCampfireBlock extends CampfireBlock {
 
     // TODO handle on use
     @Override
-    public ActionResult onUse(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockHitResult hit) {
+    public ActionResult onUse(BlockState state, World world, BlockPos pos, @NotNull PlayerEntity player, Hand hand, BlockHitResult hit) {
+        ItemStack stack = player.getStackInHand(hand);
+        if (CombustionHelper.checkAddFuel(world, pos, state, stack))
+            return ActionResult.success(world.isClient());
         return ActionResult.FAIL;
     }
 
