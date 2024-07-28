@@ -1,6 +1,5 @@
 package biz.coolpage.hcs.mixin.block;
 
-import biz.coolpage.hcs.status.accessor.ICampfireBlockEntity;
 import biz.coolpage.hcs.util.CombustionHelper;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;

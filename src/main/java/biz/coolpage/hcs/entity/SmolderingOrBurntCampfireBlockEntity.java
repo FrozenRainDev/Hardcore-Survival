@@ -18,6 +18,7 @@ public class SmolderingOrBurntCampfireBlockEntity extends BlockEntity implements
         super(Reg.SMOLDERING_OR_BURNT_CAMPFIRE_BLOCK_ENTITY_BLOCK_ENTITY_TYPE, pos, state);
     }
 
+    private static final long CAMPFIRE_MAX_BURNING_LENGTH = CombustionHelper.CAMPFIRE_MAX_BURNING_LENGTH * 2L;
     private long extinguishTime = Long.MAX_VALUE;
 
     @Unique
@@ -29,13 +30,14 @@ public class SmolderingOrBurntCampfireBlockEntity extends BlockEntity implements
     public void resetBurnOutTime() {
         if (this.world != null) {
             CampfireBlockEntity.markDirty(this.world, this.pos, this.world.getBlockState(pos));
-            this.extinguishTime = this.world.getTime() + CombustionHelper.CAMPFIRE_MAX_BURNING_LENGTH * 2L; // note: *2 here
+            this.extinguishTime = this.world.getTime() + CAMPFIRE_MAX_BURNING_LENGTH; // note: *2 here
         }
     }
 
     @Override
-    public void setBurnOutTime(long val) {
-        this.extinguishTime = val;
+    public boolean setBurnOutTime(long val) {
+        Reg.LOGGER.error("SmolderingOrBurntCampfireBlockEntity::setBurnOutTime should not be called; find why called and call CampfireBlockEntity::setBurnOutTime instead");
+        return false;
     }
 
     @Override

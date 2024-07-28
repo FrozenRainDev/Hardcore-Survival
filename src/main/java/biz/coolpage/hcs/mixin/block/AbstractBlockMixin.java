@@ -1,17 +1,22 @@
 package biz.coolpage.hcs.mixin.block;
 
 import biz.coolpage.hcs.Reg;
+import biz.coolpage.hcs.util.CombustionHelper;
 import net.minecraft.block.*;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.ItemEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.AxeItem;
 import net.minecraft.item.SwordItem;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.BlockView;
+import net.minecraft.world.World;
 import net.minecraft.world.WorldView;
 import org.jetbrains.annotations.NotNull;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(AbstractBlock.class)
@@ -36,5 +41,11 @@ public class AbstractBlockMixin {
                 cir.setReturnValue(isUsingSuitableTool ? 0.15F : 0.01F);
             }
         }
+    }
+
+    @Inject(at = @At("HEAD"), method = "onEntityCollision")
+    public void onEntityCollision(BlockState state, World world, BlockPos pos, Entity entity, CallbackInfo ci) {
+        if (entity instanceof ItemEntity itemEntity)
+            CombustionHelper.checkAddFuel(entity.world, entity.getBlockPos(), state, itemEntity.getStack());
     }
 }

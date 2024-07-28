@@ -86,6 +86,7 @@ public class CombustionHelper {
     }
 
     public static void onServerTick(@NotNull World world, BlockPos pos, @NotNull BlockState state, ICampfireBlockEntity campfire) {
+        // Campfire extinguish: Normal -> Smoldering -> Burnt
         boolean hasFlame = !state.isOf(Reg.SMOLDERING_CAMPFIRE_BLOCK);
         if (hasFlame && world.getRandom().nextFloat() < 0.001F) // Lit inflammable blocks nearby
             Fluids.LAVA.onRandomTick(world, pos, Fluids.LAVA.getDefaultState(), world.getRandom());
@@ -108,26 +109,33 @@ public class CombustionHelper {
         return dur;
     }
 
-    public static boolean checkAddFuel(@NotNull World world, BlockPos pos, @NotNull BlockState state, @NotNull ItemStack stack) {
+    public static boolean checkAddFuel(World world, BlockPos pos, BlockState state, ItemStack stack) {
+        if (CommUtil.hasNull(world, pos, state, stack)) return false;
         if (world.getBlockEntity(pos) instanceof ICampfireBlockEntity campfire) {
             int fuelDur = getFuelDuration(stack) * 2;
             if (state.isOf(Reg.BURNT_CAMPFIRE_BLOCK) || !state.contains(CampfireBlock.LIT) || !state.get(CampfireBlock.LIT) || fuelDur == 0)
                 return false;
-            addFuel(world, pos, state, campfire, stack, fuelDur);
-            world.playSound(null, pos, SoundEvents.ITEM_FIRECHARGE_USE, SoundCategory.BLOCKS);
-            return true;
+            if (addFuel(world, pos, state, campfire, stack, fuelDur)) {
+                world.playSound(null, pos, SoundEvents.ITEM_FIRECHARGE_USE, SoundCategory.BLOCKS);
+                return true;
+            }
         }
         return false;
     }
 
-    // TODO add fuel 1. right click√ 2. drop item
-    private static void addFuel(World world, BlockPos pos, @NotNull BlockState state, ICampfireBlockEntity campfire, @NotNull ItemStack fuel, int fuelDur) {
+    private static boolean addFuel(World world, BlockPos pos, @NotNull BlockState state, ICampfireBlockEntity campfire, @NotNull ItemStack fuel, int fuelDur) {
         if (state.isOf(Reg.SMOLDERING_CAMPFIRE_BLOCK)) {
             world.setBlockState(pos, Blocks.CAMPFIRE.getDefaultState().with(CampfireBlock.FACING, state.get(CampfireBlock.FACING)).with(CampfireBlock.WATERLOGGED, state.get(CampfireBlock.WATERLOGGED)));
             if (world.getBlockEntity(pos) instanceof ICampfireBlockEntity camp)
-                camp.setBurnOutTime(world.getTime() + fuelDur);
+                if (camp.setBurnOutTime(world.getTime() + fuelDur)) {
+                    fuel.decrement(1);
+                    return true;
+                }
         } else  // Regular campfires
-            campfire.setBurnOutTime(campfire.getBurnOutTime() + fuelDur);
-        fuel.decrement(1);
+            if (campfire.setBurnOutTime(campfire.getBurnOutTime() + fuelDur)) {
+                fuel.decrement(1);
+                return true;
+            }
+        return false;
     }
 }

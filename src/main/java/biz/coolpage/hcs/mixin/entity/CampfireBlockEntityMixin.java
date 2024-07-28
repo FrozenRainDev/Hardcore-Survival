@@ -52,21 +52,23 @@ public abstract class CampfireBlockEntityMixin extends BlockEntity implements IC
 
     @Unique
     @Override
-    public void setBurnOutTime(long val) {
-        if (val < 0L || this.world == null) return;
+    public boolean setBurnOutTime(long val) {
+        if (val < 0L || this.world == null) return false;
         long maxExtinguish = this.world.getTime() + CombustionHelper.CAMPFIRE_MAX_BURNING_LENGTH;
+        if (this.extinguishTime != Long.MAX_VALUE && maxExtinguish - this.extinguishTime < 20)
+            return false; // Cannot add fuel when just added fuel
         if (val > maxExtinguish) val = maxExtinguish;
         this.extinguishTime = val;
+        return true;
     }
 
-    @Inject(method = "litServerTick", at = @At("HEAD"), cancellable = true)
+    @Inject(method = "litServerTick", at = @At("HEAD"))
     private static void litServerTickInjected1(@NotNull World world, BlockPos pos, @NotNull BlockState state, CampfireBlockEntity campfire, CallbackInfo ci) {
 //        if (state.isOf(Reg.BURNT_CAMPFIRE_BLOCK)) ci.cancel();
         if (state.isOf(Blocks.SOUL_CAMPFIRE)) {
             world.setBlockState(pos, state.with(CombustionHelper.COMBUST_LUMINANCE, 15));
-            ci.cancel();
-        } else {
-            if (campfire instanceof ICampfireBlockEntity ic) CombustionHelper.onServerTick(world, pos, state, ic);
+        } else if (campfire instanceof ICampfireBlockEntity ic) {
+            CombustionHelper.onServerTick(world, pos, state, ic);
         }
     }
 

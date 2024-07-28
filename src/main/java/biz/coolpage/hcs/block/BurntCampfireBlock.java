@@ -4,7 +4,6 @@ import biz.coolpage.hcs.Reg;
 import biz.coolpage.hcs.entity.SmolderingOrBurntCampfireBlockEntity;
 import net.minecraft.block.*;
 import net.minecraft.block.entity.BlockEntity;
-import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.sound.BlockSoundGroup;
@@ -33,11 +32,6 @@ public class BurntCampfireBlock extends CampfireBlock {
     @Override
     public BlockEntity createBlockEntity(BlockPos pos, BlockState state) {
         return new SmolderingOrBurntCampfireBlockEntity(pos, state);
-    }
-
-    @Override
-    public void onEntityCollision(BlockState state, World world, BlockPos pos, Entity entity) {
-        // Do nothing
     }
 
     @Override

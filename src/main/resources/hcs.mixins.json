@@ -27,6 +27,7 @@
     "entity.CowEntityMixin",
     "entity.EntityMixin",
     "entity.FireballEntityMixin",
+    "entity.ItemEntityMixin",
     "entity.JukeboxBlockEntityMixin",
     "entity.LivingEntityMixin",
     "entity.MobEntityMixin",

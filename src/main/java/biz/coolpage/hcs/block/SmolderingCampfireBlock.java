@@ -59,7 +59,6 @@ public class SmolderingCampfireBlock extends CampfireBlock {
         };
     }
 
-    // TODO handle on use
     @Override
     public ActionResult onUse(BlockState state, World world, BlockPos pos, @NotNull PlayerEntity player, Hand hand, BlockHitResult hit) {
         ItemStack stack = player.getStackInHand(hand);
@@ -71,6 +70,7 @@ public class SmolderingCampfireBlock extends CampfireBlock {
     @Override
     public void onEntityCollision(@NotNull BlockState state, @NotNull World world, BlockPos pos, Entity entity) {
         // Reduced fire damage
+        super.onEntityCollision(state, world, pos, entity);
         if (state.get(LIT) && entity instanceof LivingEntity && !EnchantmentHelper.hasFrostWalker((LivingEntity) entity)) {
             entity.damage(world.getDamageSources().inFire(), 0.5F);
         }
