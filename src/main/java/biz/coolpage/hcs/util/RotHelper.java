@@ -9,6 +9,7 @@ import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.entity.effect.StatusEffects;
 import net.minecraft.entity.player.HungerManager;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.Inventory;
 import net.minecraft.item.FoodComponent;
 import net.minecraft.item.Item;
@@ -37,7 +38,7 @@ public class RotHelper {
         NbtCompound nbtA = stackA.getOrCreateNbt();
         NbtCompound nbtB = stackB.getOrCreateNbt();
         if (countA + countB <= 0) {
-            Reg.LOGGER.error("RotHelper/combineNBT();countA+countB=" + (countA + countB));
+            Reg.LOGGER.error("RotHelper/combineNBT();countA+countB={}", countA + countB);
             return;
         }
         float avgFresh = (getFresh(WorldHelper.currWorld, stackA) * countA + getFresh(WorldHelper.currWorld, stackB) * countB) / (float) (countA + countB);
@@ -174,6 +175,8 @@ public class RotHelper {
     }
 
     public static void update(World world, Inventory inv) {
+        if (!(inv instanceof PlayerInventory)) // Prevent duplicate call
+            CombustionHelper.inventoryTick(false, inv, null);
         update(world, inv, false);
     }
 
@@ -297,6 +300,11 @@ public class RotHelper {
             }
         }
         return freshLevel;
+    }
+
+    public static boolean isMeat(ItemStack stack) {
+        if (stack == null) return false;
+        return CommUtil.applyNullable(stack.getItem().getFoodComponent(), FoodComponent::isMeat, false);
     }
 
 }

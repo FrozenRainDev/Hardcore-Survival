@@ -99,8 +99,8 @@ public class BurningCrudeTorchBlock extends BlockWithEntity {
         super.onPlaced(world, pos, state, placer, stack);
         if (stack.isOf(Reg.BURNING_CRUDE_TORCH_ITEM) && world.getBlockEntity(pos) instanceof BurningCrudeTorchBlockEntity torch) {
             NbtCompound nbt = stack.getOrCreateNbt();
-            if (nbt.contains(BurningCrudeTorchItem.LIT_NBT, NbtElement.LONG_TYPE))
-                torch.setLastLitTime(nbt.getLong(BurningCrudeTorchItem.LIT_NBT));
+            if (nbt.contains(BurningCrudeTorchItem.EXTINGUISH_NBT, NbtElement.LONG_TYPE))
+                torch.setExtinguishTime(nbt.getLong(BurningCrudeTorchItem.EXTINGUISH_NBT));
             else torch.ignite();
         }
     }

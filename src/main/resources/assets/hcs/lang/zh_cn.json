@@ -146,6 +146,7 @@
   "hcs.tip.return_failed_interdimention": "无法跨维度传送！",
   "hcs.tip.need_netherite_pickaxe": "需要下界合金镐破坏末影水晶！",
   "hcs.tip.when_in_leather": "穿皮革护甲可以让你免遭牛踢！",
+  "hcs.tip.cannot_cook_more_meat": "一次只能烹饪一块肉",
   "item.minecraft.potion.effect.hcs_ironskin": "铁皮药水",
   "item.minecraft.potion.effect.hcs_long_ironskin": "铁皮药水",
   "item.minecraft.potion.effect.hcs_strong_ironskin": "铁皮药水",

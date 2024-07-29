@@ -286,7 +286,7 @@ public class Reg implements ModInitializer {
         ServerEntityEvent.init();
         ServerPlayerEvent.init();
         UseBlockEvent.init();
-        LootHelper.init();
+//        LootHelper.init();
 
         ItemGroupEvents.modifyEntriesEvent(HCS_ITEM_GROUP).register(content -> {
             content.add(new ItemStack(GRASS_FIBER));

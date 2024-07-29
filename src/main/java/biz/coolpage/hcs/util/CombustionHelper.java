@@ -1,11 +1,13 @@
 package biz.coolpage.hcs.util;
 
 import biz.coolpage.hcs.Reg;
+import biz.coolpage.hcs.item.BurningCrudeTorchItem;
 import biz.coolpage.hcs.status.accessor.ICampfireBlockEntity;
 import net.fabricmc.fabric.api.registry.FuelRegistry;
 import net.minecraft.block.*;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.fluid.Fluids;
+import net.minecraft.inventory.Inventory;
 import net.minecraft.item.*;
 import net.minecraft.registry.tag.BlockTags;
 import net.minecraft.sound.SoundCategory;
@@ -44,7 +46,7 @@ public class CombustionHelper {
 
     // ***** Torches *****
 
-    public static final long MAX_BURNING_LENGTH = 24000L;
+    public static final long MAX_TORCH_BURNING_LENGTH = 24000L;
 
     public static @Nullable ActionResult preLitHoldingTorch(@NotNull ItemUsageContext context) {
         PlayerEntity player = context.getPlayer();
@@ -76,11 +78,11 @@ public class CombustionHelper {
 
     public static final IntProperty COMBUST_LUMINANCE = IntProperty.of("hcs_campfire_luminance", 0, 15);
     // Input: remain ticks; output: brightness; Hash table for less computing
-    public static final int CAMPFIRE_MAX_BURNING_LENGTH = LUMINANCE_FUNC.length - 1; // 4000
+    public static final int MAX_CAMPFIRE_BURNING_LENGTH = LUMINANCE_FUNC.length - 1; // 4000
     public static final String EXTINGUISH_TIME_NBT = "hcs_extinguish_nbt";
 
     public static BlockState updateCombustionState(@NotNull BlockState state, int remain) {
-        if (remain > CAMPFIRE_MAX_BURNING_LENGTH) remain = CAMPFIRE_MAX_BURNING_LENGTH;
+        if (remain > MAX_CAMPFIRE_BURNING_LENGTH) remain = MAX_CAMPFIRE_BURNING_LENGTH;
         else if (remain < 0) remain = 0;
         return state.with(COMBUST_LUMINANCE, LUMINANCE_FUNC[remain]);
     }
@@ -103,16 +105,18 @@ public class CombustionHelper {
         }
     }
 
-    public static int getFuelDuration(@NotNull ItemStack stack) {
+    public static int getFuelDuration(@Nullable ItemStack stack) {
+        if (stack == null) return 0;
         Integer dur = FuelRegistry.INSTANCE.get(stack.getItem());
         if (dur == null) return 0;
         return dur;
     }
 
     public static boolean checkAddFuel(World world, BlockPos pos, BlockState state, ItemStack stack) {
-        if (CommUtil.hasNull(world, pos, state, stack)) return false;
+        int fuelDur = getFuelDuration(stack) * 2;
+        if (fuelDur == 0) return false;
+        if (CommUtil.hasNull(world, pos, state)) return false;
         if (world.getBlockEntity(pos) instanceof ICampfireBlockEntity campfire) {
-            int fuelDur = getFuelDuration(stack) * 2;
             if (state.isOf(Reg.BURNT_CAMPFIRE_BLOCK) || !state.contains(CampfireBlock.LIT) || !state.get(CampfireBlock.LIT) || fuelDur == 0)
                 return false;
             if (addFuel(world, pos, state, campfire, stack, fuelDur)) {
@@ -137,5 +141,33 @@ public class CombustionHelper {
                 return true;
             }
         return false;
+    }
+
+    public static boolean isFuelableCampfire(@Nullable Item item) {
+        if (item == null) return false;
+        return item == Items.CAMPFIRE;
+    }
+
+    public static void inventoryTick(boolean isSubmerged, Inventory inv, PlayerEntity player) {
+        if (inv == null) return;
+        for (int i = 0; i < inv.size(); ++i) {
+            ItemStack stack = inv.getStack(i);
+            Item item = stack.getItem();
+
+            boolean isTorch = item == Items.TORCH, isBurningCrudeTorch = item == Reg.BURNING_CRUDE_TORCH_ITEM, isFuelableCampfire = CombustionHelper.isFuelableCampfire(item);
+            if ((isSubmerged || ((isBurningCrudeTorch || isFuelableCampfire) && BurningCrudeTorchItem.shouldExtinguish(stack)))
+                    && (isTorch || isBurningCrudeTorch || isFuelableCampfire)) {
+                Item extinguishedItem = Items.AIR;
+                int extinguishCount = stack.getCount();
+                if (isTorch) extinguishedItem = Reg.UNLIT_TORCH_ITEM;
+                else if (isFuelableCampfire) {
+                    extinguishedItem = Reg.ASHES;
+                    extinguishCount = 6;
+                }
+                inv.setStack(i, new ItemStack(extinguishedItem, extinguishCount));
+                if (player != null)
+                    player.getWorld().playSound(null, player.getBlockPos(), SoundEvents.BLOCK_FIRE_EXTINGUISH, SoundCategory.BLOCKS);
+            }
+        }
     }
 }

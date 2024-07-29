@@ -7,6 +7,7 @@ import biz.coolpage.hcs.status.HcsPersistentState;
 import biz.coolpage.hcs.status.accessor.StatAccessor;
 import biz.coolpage.hcs.status.manager.StatusManager;
 import biz.coolpage.hcs.status.manager.TemperatureManager;
+import biz.coolpage.hcs.util.CombustionHelper;
 import biz.coolpage.hcs.util.RotHelper;
 import net.minecraft.block.TorchBlock;
 import net.minecraft.entity.player.PlayerEntity;
@@ -16,8 +17,6 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.server.world.ServerWorld;
-import net.minecraft.sound.SoundCategory;
-import net.minecraft.sound.SoundEvents;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -34,7 +33,6 @@ public abstract class PlayerInventoryMixin {
     @Shadow
     public PlayerEntity player;
 
-    @SuppressWarnings("CommentedOutCode")
     @Inject(method = "updateItems", at = @At("HEAD"))
     public void updateItems(CallbackInfo ci) {
         PlayerInventory inv = this.player.getInventory();
@@ -42,7 +40,6 @@ public abstract class PlayerInventoryMixin {
         TemperatureManager temperatureManager = ((StatAccessor) player).getTemperatureManager();
         StatusManager statusManager = ((StatAccessor) player).getStatusManager();
         HotWaterBottleItem.update(this.player.world, inv, temperatureManager.getTrendType());
-        boolean isSubmerged = player.isSubmergedInWater(), soundHasNotPlayedYet = true;
         int blocksCount = 0;
 
         for (int i = 0; i < inv.size(); ++i) {
@@ -59,17 +56,14 @@ public abstract class PlayerInventoryMixin {
 
             if (stack.getDamage() > stack.getMaxDamage()) stack.setDamage(stack.getMaxDamage() - 1);
 
-            boolean isTorch = item == Items.TORCH, isBurningCrudeTorch = item == Reg.BURNING_CRUDE_TORCH_ITEM;
-            if (isBurningCrudeTorch && !stack.getOrCreateNbt().contains(BurningCrudeTorchItem.LIT_NBT))
+            boolean isBurningCrudeTorch = item == Reg.BURNING_CRUDE_TORCH_ITEM, isFuelableCampfire = CombustionHelper.isFuelableCampfire(item);
+            if ((isBurningCrudeTorch || isFuelableCampfire) && !stack.getOrCreateNbt().contains(BurningCrudeTorchItem.EXTINGUISH_NBT))
                 BurningCrudeTorchItem.initDurData(player.world, stack);
-            if ((isSubmerged || (isBurningCrudeTorch && BurningCrudeTorchItem.shouldExtinguish(stack))) && (isTorch || isBurningCrudeTorch)) {
-                inv.setStack(i, new ItemStack(isTorch ? Reg.UNLIT_TORCH_ITEM : Items.AIR, stack.getCount()));
-                if (soundHasNotPlayedYet) {
-                    player.getWorld().playSound(null, player.getBlockPos(), SoundEvents.BLOCK_FIRE_EXTINGUISH, SoundCategory.BLOCKS);
-                    soundHasNotPlayedYet = false;
-                }
-            }
+            // Also see CombustionHelper::inventoryTick
         }
+
+        // VERY CRITICAL!!! MUST call AFTER BurningCrudeTorchItem::initDurData, otherwise the stack is invalid, and then extinguish
+        CombustionHelper.inventoryTick(player.isSubmergedInWater(), inv, player);
 
         statusManager.setHasHeavyLoadDebuff(IS_SURVIVAL_AND_SERVER.test(this.player) && blocksCount > 128);
     }

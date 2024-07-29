@@ -5,6 +5,7 @@ import biz.coolpage.hcs.block.torches.*;
 import biz.coolpage.hcs.entity.BurningCrudeTorchBlockEntity;
 import biz.coolpage.hcs.item.BurningCrudeTorchItem;
 import biz.coolpage.hcs.item.KnifeItem;
+import biz.coolpage.hcs.status.accessor.ICampfireBlockEntity;
 import biz.coolpage.hcs.status.accessor.StatAccessor;
 import biz.coolpage.hcs.util.CombustionHelper;
 import biz.coolpage.hcs.util.EntityHelper;
@@ -25,12 +26,22 @@ public class BreakBlockEvent {
                 int x = pos.getX(), y = pos.getY(), z = pos.getZ();
                 if (state.isOf(Blocks.BAMBOO) && world.getBlockState(pos.down()).isIn(BlockTags.BAMBOO_PLANTABLE_ON) && world.getBlockState(pos.up(10)).isOf(Blocks.BAMBOO) && world.getBlockState(pos.east()).isOf(Blocks.BAMBOO) && world.getBlockState(pos.west()).isOf(Blocks.BAMBOO) && world.getBlockState(pos.south()).isOf(Blocks.BAMBOO) && world.getBlockState(pos.north()).isOf(Blocks.BAMBOO))
                     ItemScatterer.spawn(world, x, y, z, Reg.BAMBOO_SHOOT.getDefaultStack());
+
                 boolean isBurningCrudeTorch = block instanceof BurningCrudeTorchBlock, isBurnt = block instanceof BurntTorchBlock || block instanceof WallBurntTorchBlock;
                 if (!isBurnt && (block instanceof CrudeTorchBlock || isBurningCrudeTorch || block instanceof GlowstoneTorchBlock)) {
                     ItemStack result = block.asItem().getDefaultStack();
                     if (isBurningCrudeTorch && world.getBlockEntity(pos) instanceof BurningCrudeTorchBlockEntity torch)
-                        result.getOrCreateNbt().putLong(BurningCrudeTorchItem.LIT_NBT, torch.getLastLitTime());
+                        result.getOrCreateNbt().putLong(BurningCrudeTorchItem.EXTINGUISH_NBT, torch.getExtinguishTime());
                     ItemScatterer.spawn(world, x + 0.5, y + 0.5, z + 0.5, result);
+                }
+
+                int silkTouch = EnchantmentHelper.getLevel(Enchantments.SILK_TOUCH, player.getMainHandStack());
+                if (silkTouch > 0 && CombustionHelper.isFuelableCampfire(state.getBlock().asItem())) {
+                    // Campfire's JSON loot table dropping contents has been deleted
+                    ItemStack drop = new ItemStack(Items.CAMPFIRE);
+                    if (world.getBlockEntity(pos) instanceof ICampfireBlockEntity campfire)
+                        drop.getOrCreateNbt().putLong(BurningCrudeTorchItem.EXTINGUISH_NBT, campfire.getBurnOutTime());
+                    ItemScatterer.spawn(world, x + 0.5, y + 0.5, z + 0.5, drop);
                 }
             }
             return true;
@@ -88,7 +99,8 @@ public class BreakBlockEvent {
                     ((StatAccessor) player).getInjuryManager().addBleeding(1.2);
                 } else if (block == Blocks.SWEET_BERRY_BUSH) EntityHelper.dropItem(player, x, y, z, Reg.BERRY_BUSH, 1);
                 else if (block == Blocks.CAMPFIRE) {
-                    if (EnchantmentHelper.getLevel(Enchantments.SILK_TOUCH, player.getMainHandStack()) == 0
+                    int silkTouch = EnchantmentHelper.getLevel(Enchantments.SILK_TOUCH, player.getMainHandStack());
+                    if (silkTouch == 0
                             && state.contains(CombustionHelper.COMBUST_LUMINANCE)) {
                         int stage = state.get(CombustionHelper.COMBUST_LUMINANCE),
                                 stickCount = (int) (stage / 1.3F),

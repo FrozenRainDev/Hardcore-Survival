@@ -1,11 +1,10 @@
 package biz.coolpage.hcs.mixin.block;
 
+import biz.coolpage.hcs.item.BurningCrudeTorchItem;
+import biz.coolpage.hcs.status.accessor.ICampfireBlockEntity;
 import biz.coolpage.hcs.status.accessor.StatAccessor;
 import biz.coolpage.hcs.status.manager.InjuryManager;
-import biz.coolpage.hcs.util.CommUtil;
-import biz.coolpage.hcs.util.EntityHelper;
-import biz.coolpage.hcs.util.LootHelper;
-import biz.coolpage.hcs.util.WorldHelper;
+import biz.coolpage.hcs.util.*;
 import net.minecraft.block.*;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.enchantment.EnchantmentHelper;
@@ -15,6 +14,7 @@ import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
+import net.minecraft.nbt.NbtCompound;
 import net.minecraft.particle.BlockStateParticleEffect;
 import net.minecraft.particle.ParticleTypes;
 import net.minecraft.registry.tag.BlockTags;
@@ -47,8 +47,15 @@ public class BlockMixin {
     }
 
     @Inject(at = @At("HEAD"), method = "onPlaced")
-    private void onPlaced(World world, BlockPos pos, BlockState state, LivingEntity placer, ItemStack itemStack, CallbackInfo ci) {
+    private void onPlaced(World world, BlockPos pos, BlockState state, LivingEntity placer, ItemStack stack, CallbackInfo ci) {
         WorldHelper.checkBlockGravity(world, pos);
+        if (CombustionHelper.isFuelableCampfire(world.getBlockState(pos).getBlock().asItem())) {
+            if (world.getBlockEntity(pos) instanceof ICampfireBlockEntity campfire) {
+                NbtCompound nbt = stack.getOrCreateNbt();
+                if (nbt.contains(BurningCrudeTorchItem.EXTINGUISH_NBT))
+                    campfire.setBurnOutTime(stack.getOrCreateNbt().getLong(BurningCrudeTorchItem.EXTINGUISH_NBT));
+            }
+        }
     }
 
     @Inject(at = @At("HEAD"), method = "randomDisplayTick")

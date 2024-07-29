@@ -1,8 +1,10 @@
 package biz.coolpage.hcs.mixin.item;
 
+import biz.coolpage.hcs.Reg;
 import biz.coolpage.hcs.entity.FlintProjectileEntity;
 import biz.coolpage.hcs.item.RockItem;
 import biz.coolpage.hcs.status.HcsEffects;
+import biz.coolpage.hcs.util.CombustionHelper;
 import biz.coolpage.hcs.util.EntityHelper;
 import biz.coolpage.hcs.util.RotHelper;
 import net.minecraft.client.item.TooltipContext;
@@ -154,7 +156,28 @@ public class ItemMixin {
 
     @Inject(method = "getMaxCount", at = @At("HEAD"), cancellable = true)
     public final void getMaxCount(CallbackInfoReturnable<Integer> cir) {
-        if (((Object) this) instanceof PotionItem) cir.setReturnValue(16);
+        if (((Object) this) instanceof Item item) {
+            if (item instanceof PotionItem) cir.setReturnValue(16);
+            if (CombustionHelper.isFuelableCampfire(item)) cir.setReturnValue(1);
+        }
+    }
+
+    @Inject(method = "isItemBarVisible", at = @At("HEAD"), cancellable = true)
+    public void isItemBarVisible(@NotNull ItemStack stack, CallbackInfoReturnable<Boolean> cir) {
+        if (CombustionHelper.isFuelableCampfire(stack.getItem()))
+            cir.setReturnValue(Reg.BURNING_CRUDE_TORCH_ITEM.isItemBarVisible(stack));
+    }
+
+    @Inject(method = "getItemBarStep", at = @At("HEAD"), cancellable = true)
+    public void getItemBarStep(@NotNull ItemStack stack, CallbackInfoReturnable<Integer> cir) {
+        if (CombustionHelper.isFuelableCampfire(stack.getItem()))
+            cir.setReturnValue(Reg.BURNING_CRUDE_TORCH_ITEM.getItemBarStep(stack));
+    }
+
+    @Inject(method = "getItemBarColor", at = @At("HEAD"), cancellable = true)
+    public void getItemBarColor(@NotNull ItemStack stack, CallbackInfoReturnable<Integer> cir) {
+        if (CombustionHelper.isFuelableCampfire(stack.getItem()))
+            cir.setReturnValue(Reg.BURNING_CRUDE_TORCH_ITEM.getItemBarColor(stack));
     }
 }
 

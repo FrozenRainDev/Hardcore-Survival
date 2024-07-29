@@ -9,6 +9,7 @@ import net.minecraft.block.entity.BlockEntityTicker;
 import net.minecraft.block.entity.BlockEntityType;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.ItemEntity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
@@ -26,7 +27,6 @@ import net.minecraft.util.math.random.Random;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
 
-// TODO submerged in water
 public class SmolderingCampfireBlock extends CampfireBlock {
     public SmolderingCampfireBlock() {
         super(true, 1, AbstractBlock.Settings.of(Material.WOOD, MapColor.SPRUCE_BROWN).strength(2.0f).sounds(BlockSoundGroup.WOOD).luminance(Blocks.createLightLevelFromLitBlockState(5)).nonOpaque());
@@ -70,10 +70,12 @@ public class SmolderingCampfireBlock extends CampfireBlock {
     @Override
     public void onEntityCollision(@NotNull BlockState state, @NotNull World world, BlockPos pos, Entity entity) {
         // Reduced fire damage
-        super.onEntityCollision(state, world, pos, entity);
         if (state.get(LIT) && entity instanceof LivingEntity && !EnchantmentHelper.hasFrostWalker((LivingEntity) entity)) {
             entity.damage(world.getDamageSources().inFire(), 0.5F);
         }
+        // Do NOT call super.onEntityCollision(state, world, pos, entity);
+        if (entity instanceof ItemEntity itemEntity)
+            CombustionHelper.checkAddFuel(world, entity.getBlockPos(), state, itemEntity.getStack());
     }
 
     @Override

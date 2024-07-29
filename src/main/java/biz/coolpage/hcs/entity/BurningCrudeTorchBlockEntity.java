@@ -14,33 +14,33 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
 import static biz.coolpage.hcs.util.CommUtil.applyNullable;
+import static biz.coolpage.hcs.item.BurningCrudeTorchItem.EXTINGUISH_NBT;
 
 public class BurningCrudeTorchBlockEntity extends BlockEntity implements BlockEntityProvider {
-    private long lastLitTime;
-    private static final String LIT_NBT = "hcs_torch_last_lit";
+    private long extinguishTime;
 
     public BurningCrudeTorchBlockEntity(BlockPos pos, BlockState state) {
         super(Reg.BURNING_CRUDE_TORCH_BLOCK_ENTITY, pos, state);
     }
 
-    public long getLastLitTime() {
-        return this.lastLitTime;
+    public long getExtinguishTime() {
+        return this.extinguishTime;
     }
 
-    public void setLastLitTime(long time) {
-        this.lastLitTime = time;
+    public void setExtinguishTime(long time) {
+        this.extinguishTime = time;
     }
 
     public boolean shouldExtinguish() {
-        return this.world == null || this.world.getTime() - this.lastLitTime > CombustionHelper.MAX_BURNING_LENGTH;
+        return this.world == null ||  this.extinguishTime < this.world.getTime();
     }
 
     public void extinguish() {
-        this.lastLitTime = 0L;
+        this.extinguishTime = 0L;
     }
 
     public void ignite() {
-        this.lastLitTime = applyNullable(this.getWorld(), World::getTime, 0L) + CombustionHelper.MAX_BURNING_LENGTH;
+        this.extinguishTime = applyNullable(this.getWorld(), World::getTime, 0L) + CombustionHelper.MAX_TORCH_BURNING_LENGTH;
     }
 
     @Override
@@ -51,13 +51,13 @@ public class BurningCrudeTorchBlockEntity extends BlockEntity implements BlockEn
     @Override
     public void readNbt(NbtCompound nbt) {
         super.readNbt(nbt);
-        if (nbt.contains(LIT_NBT, NbtElement.LONG_TYPE)) this.lastLitTime = nbt.getLong(LIT_NBT);
+        if (nbt.contains(EXTINGUISH_NBT, NbtElement.LONG_TYPE)) this.extinguishTime = nbt.getLong(EXTINGUISH_NBT);
     }
 
     @Override
     protected void writeNbt(NbtCompound nbt) {
         super.writeNbt(nbt);
-        nbt.putLong(LIT_NBT, this.lastLitTime);
+        nbt.putLong(EXTINGUISH_NBT, this.extinguishTime);
     }
 
     @Override
@@ -68,7 +68,7 @@ public class BurningCrudeTorchBlockEntity extends BlockEntity implements BlockEn
     @Override
     public NbtCompound toInitialChunkDataNbt() {
         NbtCompound nbt = new NbtCompound();
-        nbt.putLong(LIT_NBT, this.lastLitTime);
+        nbt.putLong(EXTINGUISH_NBT, this.extinguishTime);
         return nbt;
     }
 

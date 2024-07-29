@@ -11,36 +11,40 @@ import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
 
-import static biz.coolpage.hcs.util.CombustionHelper.MAX_BURNING_LENGTH;
+import static biz.coolpage.hcs.util.CombustionHelper.*;
 
 public class BurningCrudeTorchItem extends VerticallyAttachableBlockItem {
     public BurningCrudeTorchItem() {
         super(Reg.BURNING_CRUDE_TORCH_BLOCK, Reg.WALL_BURNING_CRUDE_TORCH_BLOCK, new Item.Settings().maxCount(1), Direction.DOWN);
     }
 
-    public static final String LIT_NBT = "hcs_torch_item_last_lit";
+    public static final String EXTINGUISH_NBT = "hcs_torch_extinguish";
 
+    // Shared methods for burning crude torch & campfire item, which are used for burning length sync in inventories
     private static boolean isInvalidStack(ItemStack stack) {
         if (stack == null || WorldHelper.currWorld == null) return true;
         NbtCompound nbt = stack.getOrCreateNbt();
-        return !nbt.contains(LIT_NBT);
+        return !nbt.contains(EXTINGUISH_NBT);
     }
 
     public static boolean shouldExtinguish(ItemStack stack) {
         if (isInvalidStack(stack)) return true;
-        return WorldHelper.currWorld.getTime() - stack.getOrCreateNbt().getLong(LIT_NBT) > MAX_BURNING_LENGTH;
+        return stack.getOrCreateNbt().getLong(EXTINGUISH_NBT) < WorldHelper.currWorld.getTime();
     }
 
     private static float getDurPercent(ItemStack stack) {
         if (isInvalidStack(stack)) return 0.0F;
-        long numerator = WorldHelper.currWorld.getTime() - stack.getOrCreateNbt().getLong(LIT_NBT);
-        numerator = MAX_BURNING_LENGTH - numerator;
-        return MathHelper.clamp((float) numerator / (float) MAX_BURNING_LENGTH, 0.0F, 1.0F);
+        long diff = stack.getOrCreateNbt().getLong(EXTINGUISH_NBT) - WorldHelper.currWorld.getTime();
+        return MathHelper.clamp((float) diff / (float) getMaxBurningLength(stack), 0.0F, 1.0F);
     }
 
     public static void initDurData(World world, ItemStack stack) {
         if (world == null || stack == null) return;
-        stack.getOrCreateNbt().putLong(LIT_NBT, world.getTime());
+        stack.getOrCreateNbt().putLong(EXTINGUISH_NBT, world.getTime() + getMaxBurningLength(stack));
+    }
+
+    public static long getMaxBurningLength(@NotNull ItemStack stack) {
+        return isFuelableCampfire(stack.getItem()) ? MAX_CAMPFIRE_BURNING_LENGTH : MAX_TORCH_BURNING_LENGTH;
     }
 
     @Override

@@ -18,7 +18,7 @@ public class SmolderingOrBurntCampfireBlockEntity extends BlockEntity implements
         super(Reg.SMOLDERING_OR_BURNT_CAMPFIRE_BLOCK_ENTITY_BLOCK_ENTITY_TYPE, pos, state);
     }
 
-    private static final long CAMPFIRE_MAX_BURNING_LENGTH = CombustionHelper.CAMPFIRE_MAX_BURNING_LENGTH * 2L;
+    private static final long CAMPFIRE_MAX_BURNING_LENGTH = CombustionHelper.MAX_CAMPFIRE_BURNING_LENGTH * 2L;
     private long extinguishTime = Long.MAX_VALUE;
 
     @Unique

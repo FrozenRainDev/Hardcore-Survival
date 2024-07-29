@@ -1,12 +1,16 @@
 package biz.coolpage.hcs.mixin.block;
 
 import biz.coolpage.hcs.util.CombustionHelper;
+import biz.coolpage.hcs.util.EntityHelper;
+import biz.coolpage.hcs.util.RotHelper;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.BlockWithEntity;
 import net.minecraft.block.CampfireBlock;
+import net.minecraft.block.entity.CampfireBlockEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
+import net.minecraft.recipe.CampfireCookingRecipe;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.state.StateManager;
@@ -21,6 +25,8 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
+
+import java.util.Optional;
 
 import static biz.coolpage.hcs.util.CombustionHelper.*;
 
@@ -44,6 +50,16 @@ public abstract class CampfireBlockMixin extends BlockWithEntity {
         // Add fuel
         if (CombustionHelper.checkAddFuel(world, pos, state, stack))
             cir.setReturnValue(ActionResult.success(world.isClient()));
+        // Cook single meat at once
+        if (world.getBlockEntity(pos) instanceof CampfireBlockEntity campfire) {
+            Optional<CampfireCookingRecipe> result = campfire.getRecipeFor(stack);
+            if (result.isPresent() && RotHelper.isMeat(result.get().output))
+                for (ItemStack cooking : campfire.getItemsBeingCooked())
+                    if (RotHelper.isMeat(cooking)) {
+                        EntityHelper.msgById(player, "hcs.tip.cannot_cook_more_meat");
+                        cir.setReturnValue(ActionResult.PASS);
+                    }
+        }
     }
 
     @Inject(method = "appendProperties", at = @At("HEAD"))

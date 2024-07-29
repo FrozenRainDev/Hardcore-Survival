@@ -1,7 +1,6 @@
 package biz.coolpage.hcs.util;
 
 import biz.coolpage.hcs.Reg;
-import net.fabricmc.fabric.api.loot.v2.LootTableEvents;
 import net.minecraft.block.*;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
@@ -16,7 +15,6 @@ import net.minecraft.registry.tag.BlockTags;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.state.property.IntProperty;
 import net.minecraft.state.property.Properties;
-import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
@@ -28,6 +26,7 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 // Also see LootModifier
+@SuppressWarnings("CommentedOutCode")
 public class LootHelper {
 
     public static int getCropAge(@NotNull BlockState state) {
@@ -116,17 +115,18 @@ public class LootHelper {
             cir.setReturnValue(true);
     }
 
+    /*
     private static final Identifier CAMPFIRE_LOOT_TABLE_ID = Blocks.CAMPFIRE.getLootTableId();
 
     public static void init() {
         LootTableEvents.MODIFY.register((resourceManager, lootManager, id, tableBuilder, source) -> {
-            /* // Remove by JSON
+             // Removed, JSON instead
             if (source.isBuiltin()) {
                 if (CAMPFIRE_LOOT_TABLE_ID.equals(id)) {
                     tableBuilder.pools.clear(); // delete default looting
                 }
             }
-            */
         });
     }
+     */
 }

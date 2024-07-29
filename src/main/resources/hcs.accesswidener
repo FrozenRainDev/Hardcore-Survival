@@ -22,6 +22,7 @@ accessible method net/minecraft/client/gui/screen/option/VideoOptionsScreen getO
 accessible field net/minecraft/item/ArmorMaterials BASE_DURABILITY Ljava/util/EnumMap;
 accessible method net/minecraft/item/AxeItem getStrippedState (Lnet/minecraft/block/BlockState;)Ljava/util/Optional;
 accessible method net/minecraft/item/Items register (Lnet/minecraft/util/Identifier;Lnet/minecraft/item/Item;)Lnet/minecraft/item/Item;
+accessible field net/minecraft/recipe/AbstractCookingRecipe output Lnet/minecraft/item/ItemStack;
 accessible method net/minecraft/server/command/LocateCommand getStructureListForPredicate (Lnet/minecraft/command/argument/RegistryPredicateArgumentType$RegistryPredicate;Lnet/minecraft/registry/Registry;)Ljava/util/Optional;
 accessible field net/minecraft/server/command/LocateCommand STRUCTURE_NOT_FOUND_EXCEPTION Lcom/mojang/brigadier/exceptions/DynamicCommandExceptionType;
 accessible field net/minecraft/server/command/LocateCommand STRUCTURE_INVALID_EXCEPTION Lcom/mojang/brigadier/exceptions/DynamicCommandExceptionType;

@@ -46,7 +46,7 @@ public abstract class CampfireBlockEntityMixin extends BlockEntity implements IC
     public void resetBurnOutTime() {
         if (this.world != null) {
             CampfireBlockEntity.markDirty(this.world, this.pos, this.world.getBlockState(pos));
-            this.extinguishTime = this.world.getTime() + CombustionHelper.CAMPFIRE_MAX_BURNING_LENGTH;
+            this.extinguishTime = this.world.getTime() + CombustionHelper.MAX_CAMPFIRE_BURNING_LENGTH;
         }
     }
 
@@ -54,7 +54,7 @@ public abstract class CampfireBlockEntityMixin extends BlockEntity implements IC
     @Override
     public boolean setBurnOutTime(long val) {
         if (val < 0L || this.world == null) return false;
-        long maxExtinguish = this.world.getTime() + CombustionHelper.CAMPFIRE_MAX_BURNING_LENGTH;
+        long maxExtinguish = this.world.getTime() + CombustionHelper.MAX_CAMPFIRE_BURNING_LENGTH;
         if (this.extinguishTime != Long.MAX_VALUE && maxExtinguish - this.extinguishTime < 20)
             return false; // Cannot add fuel when just added fuel
         if (val > maxExtinguish) val = maxExtinguish;
