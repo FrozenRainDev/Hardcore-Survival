@@ -117,7 +117,7 @@ public class CombustionHelper {
         if (fuelDur == 0) return false;
         if (CommUtil.hasNull(world, pos, state)) return false;
         if (world.getBlockEntity(pos) instanceof ICampfireBlockEntity campfire) {
-            if (state.isOf(Reg.BURNT_CAMPFIRE_BLOCK) || !state.contains(CampfireBlock.LIT) || !state.get(CampfireBlock.LIT) || fuelDur == 0)
+            if (state.isOf(Reg.BURNT_CAMPFIRE_BLOCK) || !state.contains(CampfireBlock.LIT) || !state.get(CampfireBlock.LIT))
                 return false;
             if (addFuel(world, pos, state, campfire, stack, fuelDur)) {
                 world.playSound(null, pos, SoundEvents.ITEM_FIRECHARGE_USE, SoundCategory.BLOCKS);

@@ -2,8 +2,6 @@ package biz.coolpage.hcs.util;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.render.*;
-import net.minecraft.item.FoodComponent;
-import net.minecraft.item.ItemStack;
 import net.minecraft.registry.RegistryKey;
 import net.minecraft.registry.entry.RegistryEntry;
 import org.jetbrains.annotations.Contract;
@@ -11,7 +9,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.text.DecimalFormat;
-import java.util.HashMap;
 import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.function.Function;

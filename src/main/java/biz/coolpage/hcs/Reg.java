@@ -16,7 +16,6 @@ import biz.coolpage.hcs.status.accessor.StatAccessor;
 import biz.coolpage.hcs.status.manager.TemperatureManager;
 import biz.coolpage.hcs.util.CombustionHelper;
 import biz.coolpage.hcs.util.EntityHelper;
-import biz.coolpage.hcs.util.LootHelper;
 import biz.coolpage.hcs.util.WorldHelper;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
