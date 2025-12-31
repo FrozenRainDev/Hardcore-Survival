@@ -665,15 +665,16 @@ public abstract class PlayerEntityMixin extends LivingEntity implements StatAcce
         cir.setReturnValue(cir.getReturnValueZ() && !this.hasStatusEffect(HcsEffects.BLEEDING) && EntityHelper.getEffectAmplifier(this, HcsEffects.PARASITE_INFECTION) <= 1);
     }
 
-    @Inject(method = "canPlaceOn", at = @At("HEAD"), cancellable = true)
-    public void canPlaceOn(BlockPos pos, Direction facing, ItemStack stack, CallbackInfoReturnable<Boolean> cir) {
-        System.out.println("*** 1");
-        if ((Object) this instanceof PlayerEntity player) {
-            System.out.println("*** 2");
-            if (IS_SURVIVAL_LIKE.test(player) && !player.isOnGround()) {
-                System.out.println("*** 3");
-                cir.setReturnValue(false);
-            }
-        }
-    }
+    // try to ban placing block for jumping ; delete it, only work for spawing eggs etc
+//    @Inject(method = "canPlaceOn", at = @At("HEAD"), cancellable = true)
+//    public void canPlaceOn(BlockPos pos, Direction facing, ItemStack stack, CallbackInfoReturnable<Boolean> cir) {
+//        System.out.println("*** 1");
+//        if ((Object) this instanceof PlayerEntity player) {
+//            System.out.println("*** 2");
+//            if (IS_SURVIVAL_LIKE.test(player) && !player.isOnGround()) {
+//                System.out.println("*** 3");
+//                cir.setReturnValue(false);
+//            }
+//        }
+//    }
 }
