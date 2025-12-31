@@ -15,7 +15,7 @@ import java.util.regex.Pattern;
 
 @SuppressWarnings({"LoggingSimilarMessage", "StringConcatenationArgumentToLogCall"})
 public class UpdateHelper {
-    public static final String MOD_VER = "0.17.3";
+    public static final String MOD_VER = "0.17.4";
 
     @Contract(pure = true)
     public static String fetchLatestVersion() {

@@ -12,6 +12,7 @@ import static net.minecraft.block.HorizontalFacingBlock.FACING;
 public class WallBurntTorchBlock extends WallCrudeTorchBlock {
     public WallBurntTorchBlock(Settings settings) {
         super(settings);
+        this.setDefaultState(this.stateManager.getDefaultState());
     }
 
     @Override

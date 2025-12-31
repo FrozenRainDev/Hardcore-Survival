@@ -21,18 +21,20 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
+import static biz.coolpage.hcs.util.WorldHelper.cannotGetServerWorld;
+
 public class HotWaterBottleItem extends Item {
     public HotWaterBottleItem() {
         super(new Settings().maxCount(1));
     }
 
-    public static final String HHE = "hcs_hwb_exp"; //The expiry time for effect of cooling down/heating process
-    public static final String HHES = "hcs_hwb_exp_slow"; //Expiry time will be deferred when cold bottle in chilly env or warm one in hot env; On the contrary, it will be transformed into HHE and vice versa
-    public static final String HHS = "hcs_hwb_stat"; //Three status: 0: normal, -1: cold, 1:hot
-    public static final String HHEP = "hcs_hwb_exp_percentage"; //percentage=(expiry time-now)/length of cool down. Saved after quit and removed and transferred to HHE or HHS when entering
+    public static final String HHE = "hcs_hwb_exp"; // The expiry time for effect of cooling down/heating process
+    public static final String HHES = "hcs_hwb_exp_slow"; // Expiry time will be deferred when cold bottle in chilly env or warm one in hot env; On the contrary, it will be transformed into HHE and vice versa
+    public static final String HHS = "hcs_hwb_stat"; // Three status: 0: normal, -1: cold, 1:hot
+    public static final String HHEP = "hcs_hwb_exp_percentage"; // percentage=(expiry time-now)/length of cool down. Saved after quit and removed and transferred to HHE or HHS when entering
     public static final String HHCI = "hcs_hwb_cooldown_init_time";
     public static final String HHSM = "hcs_hwb_soul_campfire_marked";
-    public static final long MAX_COOL_DOWN_LENGTH = 8000; //The length of time that a hot water bottle needs to cool down to normal
+    public static final long MAX_COOL_DOWN_LENGTH = 8000; // The length of time that a hot water bottle needs to cool down to normal
     public static final float ICEBOX_FREEZING_RATE = 4.0F;
 
     public static boolean isChangeable(@NotNull ItemStack stack) {
@@ -45,10 +47,10 @@ public class HotWaterBottleItem extends Item {
         else {
             NbtCompound nbt = stack.getOrCreateNbt();
             if (statId == 2) {
-//                nbt.putFloat(HHEP, 1.0F);//Just heated
+//                nbt.putFloat(HHEP, 1.0F);// Just heated
                 statId = 1;
             } else if (statId == -2) {
-//                nbt.putFloat(HHEP, -1.0F);//Just chilled
+//                nbt.putFloat(HHEP, -1.0F);// Just chilled
                 statId = -1;
             }
             nbt.putInt(HotWaterBottleItem.HHS, statId);
@@ -81,9 +83,9 @@ public class HotWaterBottleItem extends Item {
     }
 
     public static float getUnsignedPercentByInitTimeAdvanced(World world, @NotNull ItemStack stack) {
-        //hot water bottle will getRealPain inverse percent for debug
+        // hot water bottle will getRealPain inverse percent for debug
         NbtCompound nbt = stack.getOrCreateNbt();
-        if (WorldHelper.cannotGetServerWorld()) {
+        if (cannotGetServerWorld()) {
             Reg.LOGGER.error("getUnsignedPercentByInitTimeAdvanced client side called");
             return 1.0F;
         }
@@ -147,14 +149,14 @@ public class HotWaterBottleItem extends Item {
                     nbt.remove(HHCI);
                 }
             } else if (inv instanceof IceboxBlockEntity) createInit(world, stack);
-            //Transfer percentage to expiry time
+            // Transfer percentage to expiry time
             if (nbt.contains(HHEP)) {
                 float percent = nbt.getFloat(HHEP);
                 createExp(world, stack, Math.abs(percent), false);
                 setStatus(stack, percent >= 0 ? 1 : -1);
                 nbt.remove(HHEP);
             }
-            //Update status
+            // Update status
             if (nbt.contains(HHS)) {
                 int statType = nbt.getInt(HHS);
                 if (statType == 0) {
@@ -201,12 +203,14 @@ public class HotWaterBottleItem extends Item {
     @Override
     public void appendTooltip(@NotNull ItemStack stack, @Nullable World world, List<Text> tooltip, TooltipContext context) {
         super.appendTooltip(stack, world, tooltip, context);
+//        if (world == null) return;
+//        if (cannotGetServerWorld()) return;
         NbtCompound nbt = stack.getOrCreateNbt();
 //        tooltip.addRawPain(Text.of(nbt.toString()));
         int tempId = 0;
         if ((nbt.contains(HHS) && nbt.getInt(HHS) != 0) || nbt.contains(HHEP)) {
             float percent;
-            if (nbt.contains(HHCI)) percent = getUnsignedPercentByInitTimeAdvanced(world, stack) * nbt.getInt(HHS);
+            if (nbt.contains(HHCI)) return; // "return" serves as a bug fixer for showing temp wrongly in dedicated server // percent = getUnsignedPercentByInitTimeAdvanced(world, stack) * nbt.getInt(HHS);
             else
                 percent = nbt.contains(HHEP) ? nbt.getFloat(HHEP) : getExpPercent(world, stack, nbt.contains(HHES)) * nbt.getInt(HHS);
             if (percent < -0.8F) tempId = -5;
@@ -253,13 +257,15 @@ public class HotWaterBottleItem extends Item {
 
     @Override
     public boolean isItemBarVisible(@NotNull ItemStack stack) {
-        NbtCompound nbt = stack.getOrCreateNbt();
-        return nbt.contains(HHS) && nbt.getInt(HHS) != 0;
+        return false;
+        // Bugs occurred in Dedicated Server (progress bars always empty)
+        // NbtCompound nbt = stack.getOrCreateNbt();
+        // return nbt.contains(HHS) && nbt.getInt(HHS) != 0;
     }
 
     @Override
     public int getItemBarStep(ItemStack stack) {
-        if (stack == null || WorldHelper.cannotGetServerWorld()) return super.getItemBarStep(stack);
+        if (stack == null || cannotGetServerWorld()) return super.getItemBarStep(stack);
         NbtCompound nbt = stack.getOrCreateNbt();
         return Math.round(13.0F * (nbt.contains(HHCI) ? getUnsignedPercentByInitTimeAdvanced(WorldHelper.getServerWorld(), stack) : getExpPercent(WorldHelper.getServerWorld(), stack, stack.getOrCreateNbt().contains(HHES))));
     }
@@ -270,6 +276,5 @@ public class HotWaterBottleItem extends Item {
         if (nbt.contains(HHS)) return nbt.getInt(HHS) > 0 ? 0xff6000 : 0x0084ff;
         return super.getItemBarColor(stack);
     }
-
 
 }

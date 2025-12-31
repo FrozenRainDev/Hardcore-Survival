@@ -40,7 +40,7 @@ public class ShapedRecipeMixin {
 
     // TODO test whether works
     @Inject(method = "matches(Lnet/minecraft/inventory/RecipeInputInventory;Lnet/minecraft/world/World;)Z", at = @At("HEAD"))
-    private void matches(RecipeInputInventory inventory, World world, CallbackInfoReturnable<Boolean> cir) {
+    private void matches(@NotNull RecipeInputInventory inventory, World world, CallbackInfoReturnable<Boolean> cir) {
         theWorld = world;
         freshSum = 0.0F;
         freshCou = 0;

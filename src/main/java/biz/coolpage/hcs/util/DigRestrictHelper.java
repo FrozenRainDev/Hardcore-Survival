@@ -7,6 +7,7 @@ import net.minecraft.item.Items;
 import net.minecraft.item.SwordItem;
 import net.minecraft.item.ToolItem;
 import net.minecraft.registry.tag.BlockTags;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.function.Predicate;
 
@@ -42,7 +43,7 @@ public class DigRestrictHelper {
     }
 
 
-    public static boolean canBreak(Item mainHand, BlockState state) {
+    public static boolean canBreakExceptShovel(@Nullable Item mainHand, @Nullable BlockState state) {
         if (mainHand == null || state == null) {
             Reg.LOGGER.error("DigRestrictHelper/canBreak;mainHand==null||state==null");
             return false;
@@ -65,6 +66,11 @@ public class DigRestrictHelper {
         if (Float.compare(hardness, 0.0F) == -1) return false;
         if (hardness <= 0.41F) return true;
         return state.isIn(BlockTags.WOOL) || block instanceof ButtonBlock || block instanceof PressurePlateBlock;
+    }
+
+    public static boolean canBreak(@Nullable Item mainHand, @Nullable BlockState state) {
+        if (state == null) return false;
+        return canBreakExceptShovel(mainHand, state) || state.isIn(BlockTags.SHOVEL_MINEABLE);
     }
 
 }

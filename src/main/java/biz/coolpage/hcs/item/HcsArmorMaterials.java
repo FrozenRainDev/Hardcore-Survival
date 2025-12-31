@@ -12,6 +12,7 @@ import net.minecraft.util.StringIdentifiable;
 import net.minecraft.util.Util;
 
 import java.util.EnumMap;
+import java.util.Objects;
 
 public enum HcsArmorMaterials implements StringIdentifiable, ArmorMaterial {
     COPPER("hcs_copper", 12, Util.make(new EnumMap<>(ArmorItem.Type.class), map -> {
@@ -32,7 +33,7 @@ public enum HcsArmorMaterials implements StringIdentifiable, ArmorMaterial {
         map.put(ArmorItem.Type.LEGGINGS, 1);
         map.put(ArmorItem.Type.BOOTS, 1);
     }), 9, SoundEvents.ITEM_ARMOR_EQUIP_GENERIC, 0.0F, 0.0F, Ingredient.fromTag(ItemTags.PLANKS)),
-    NONE("hcs_none", 2, Util.make(new EnumMap<>(ArmorItem.Type.class), map -> {
+    GARLAND("hcs_garland", 1, Util.make(new EnumMap<>(ArmorItem.Type.class), map -> {
         map.put(ArmorItem.Type.HELMET, 0);
         map.put(ArmorItem.Type.CHESTPLATE, 0);
         map.put(ArmorItem.Type.LEGGINGS, 0);
@@ -61,6 +62,8 @@ public enum HcsArmorMaterials implements StringIdentifiable, ArmorMaterial {
 
     @Override
     public int getDurability(ArmorItem.Type type) {
+        if (type == null) return 0;
+        if (Objects.equals(type.getName(), "hcs_garland")) return 5;
         return ArmorMaterials.BASE_DURABILITY.get(type) * this.durabilityMultiplier;
     }
 

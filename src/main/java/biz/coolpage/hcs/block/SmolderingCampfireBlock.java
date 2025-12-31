@@ -29,6 +29,7 @@ import org.jetbrains.annotations.NotNull;
 public class SmolderingCampfireBlock extends CampfireBlock {
     public SmolderingCampfireBlock() {
         super(true, 1, Settings.copy(Blocks.CAMPFIRE).luminance(state -> 3));
+        this.setDefaultState(this.stateManager.getDefaultState());
     }
 
     @Override

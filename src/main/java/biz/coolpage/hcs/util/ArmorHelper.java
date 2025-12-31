@@ -48,7 +48,7 @@ public class ArmorHelper {
 
         public static float get(ArmorMaterial material, Enum<EquipmentSlot> slot) {
             if (!contains(material)) {
-                Reg.LOGGER.error(ArmorHelper.class + "/" + CustomDecimalProtection.class + "/get()F: !contains(" + material + ")");
+                Reg.LOGGER.error("{}/{}/get()F: !contains({})", ArmorHelper.class, CustomDecimalProtection.class, material);
                 return 0.0F;
             }
             var protections = PROTECTIONS.get(material);
@@ -122,7 +122,7 @@ public class ArmorHelper {
             }));
             return protection.getValue();
         }
-        Reg.LOGGER.error(ArmorHelper.class + "/getProtectionWithCustomDecimals(): !(player instanceof ServerPlayerEntity)");
+        Reg.LOGGER.error("{}/getProtectionWithCustomDecimals(): !(player instanceof ServerPlayerEntity)", ArmorHelper.class);
         return (float) applyNullable(player, LivingEntity::getArmor, 0);
     }
 

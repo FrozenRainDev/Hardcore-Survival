@@ -34,6 +34,7 @@ import net.minecraft.stat.Stats;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Direction;
 import net.minecraft.world.GameRules;
 import net.minecraft.world.LightType;
 import net.minecraft.world.World;
@@ -52,9 +53,9 @@ import java.util.Objects;
 
 import static biz.coolpage.hcs.recipe.DryingRackRecipe.HAS_COOKED;
 import static biz.coolpage.hcs.status.manager.DiseaseManager.getParasitePossibilityAndCheckFoodPoisoning;
+import static biz.coolpage.hcs.util.CommUtil.rehabPlayerStats;
 import static biz.coolpage.hcs.util.DigRestrictHelper.Predicates.IS_PLANT;
-import static biz.coolpage.hcs.util.EntityHelper.IS_SURVIVAL_AND_SERVER;
-import static biz.coolpage.hcs.util.EntityHelper.toPlayer;
+import static biz.coolpage.hcs.util.EntityHelper.*;
 
 
 @Mixin(PlayerEntity.class)
@@ -270,7 +271,7 @@ public abstract class PlayerEntityMixin extends LivingEntity implements StatAcce
         final boolean isShovelMineable = state.isIn(BlockTags.SHOVEL_MINEABLE);
         final boolean isKnife = mainHand instanceof KnifeItem, isSword = mainHand instanceof SwordItem, isAxe = mainHand instanceof AxeItem;
         Block block = state.getBlock();
-        if (!DigRestrictHelper.canBreak(mainHand, state)) {
+        if (!DigRestrictHelper.canBreakExceptShovel(mainHand, state)) {
             if (isShovelMineable) speed /= 30.0F;
             else speed = -1.0F;
             /*
@@ -289,7 +290,7 @@ public abstract class PlayerEntityMixin extends LivingEntity implements StatAcce
         }
         if (isShovelMineable && mainHand instanceof ShovelItem && mainHand != Reg.FLINT_CONE) speed /= 2.0F;
         else if (state.isIn(BlockTags.AXE_MINEABLE) || isSword) {
-//            System.out.println(speed);//0.00952381
+//            System.out.println(speed); // 0.00952381
             if (mainHand == Reg.FLINT_HATCHET) speed *= 6.0F;
             else speed /= 2.5F;
         }
@@ -310,7 +311,7 @@ public abstract class PlayerEntityMixin extends LivingEntity implements StatAcce
         else if (block == Blocks.OBSIDIAN || block == Blocks.CRYING_OBSIDIAN) speed *= 3.0F;
         else if ((block == Blocks.CLAY && !isShovelMineable)) speed /= 9.0F;
         else if (block instanceof LeavesBlock && !isSword && !isAxe) speed /= 10.0F;
-        if (block instanceof TorchBlock || block instanceof BurningCrudeTorchBlock || state.isIn(BlockTags.FLOWERS))
+        if (block instanceof TorchBlock || block instanceof BurningCrudeTorchBlock || (state.isIn(BlockTags.FLOWERS) && !(block instanceof LeavesBlock)))
             speed = 999999.0F;
         cir.setReturnValue(speed);
     }
@@ -339,13 +340,7 @@ public abstract class PlayerEntityMixin extends LivingEntity implements StatAcce
                 if (name.contains("ginger")) this.diseaseManager.setCold(-0.2);
                 int freshLevel = RotHelper.addDebuff(world, player, stack);
                 if (item == Items.GOLDEN_APPLE || item == Items.ENCHANTED_GOLDEN_APPLE) {
-                    this.sanityManager.add(1.0);
-                    this.statusManager.setSoulImpairedStat(0);
-                    this.injuryManager.applyPainkiller();
-                    this.injuryManager.setBleeding(0.0);
-                    this.injuryManager.setFracture(0.0);
-                    this.diseaseManager.reset();
-                    this.moodManager.setHappiness(1.0);
+                    rehabPlayerStats(this);
                 } else if (item == Items.KELP || Reg.IS_BARK.test(item)) {
                     if (item == Reg.WILLOW_BARK) this.injuryManager.applyPainkiller();
                     this.sanityManager.add(-0.02);
@@ -668,5 +663,17 @@ public abstract class PlayerEntityMixin extends LivingEntity implements StatAcce
     @Inject(method = "canFoodHeal", at = @At("RETURN"), cancellable = true)
     public void canFoodHeal(@NotNull CallbackInfoReturnable<Boolean> cir) {
         cir.setReturnValue(cir.getReturnValueZ() && !this.hasStatusEffect(HcsEffects.BLEEDING) && EntityHelper.getEffectAmplifier(this, HcsEffects.PARASITE_INFECTION) <= 1);
+    }
+
+    @Inject(method = "canPlaceOn", at = @At("HEAD"), cancellable = true)
+    public void canPlaceOn(BlockPos pos, Direction facing, ItemStack stack, CallbackInfoReturnable<Boolean> cir) {
+        System.out.println("*** 1");
+        if ((Object) this instanceof PlayerEntity player) {
+            System.out.println("*** 2");
+            if (IS_SURVIVAL_LIKE.test(player) && !player.isOnGround()) {
+                System.out.println("*** 3");
+                cir.setReturnValue(false);
+            }
+        }
     }
 }

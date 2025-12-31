@@ -32,6 +32,7 @@ import static net.minecraft.block.HorizontalFacingBlock.FACING;
 public class BurningCrudeTorchBlock extends BlockWithEntity {
     public BurningCrudeTorchBlock(Settings settings) {
         super(settings);
+        this.setDefaultState(this.stateManager.getDefaultState());
     }
 
     @Override
@@ -84,8 +85,9 @@ public class BurningCrudeTorchBlock extends BlockWithEntity {
                         BlockState result = Reg.WALL_BURNT_TORCH_BLOCK.getDefaultState();
                         if (state1.contains(FACING)) result = result.with(FACING, state1.get(FACING));
                         world1.setBlockState(pos1, result);
-                    } else
+                    } else {
                         world1.setBlockState(pos1, Reg.BURNT_TORCH_BLOCK.getDefaultState());
+                    }
                     world1.playSound(null, pos1, SoundEvents.BLOCK_FIRE_EXTINGUISH, SoundCategory.BLOCKS);
                     if (world1 instanceof ServerWorld serverWorld) serverWorld.getChunkManager().markForUpdate(pos1);
                 } else if (world1.isRaining() && world1.isSkyVisible(pos1))

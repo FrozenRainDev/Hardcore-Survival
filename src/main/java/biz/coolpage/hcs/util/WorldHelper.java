@@ -36,19 +36,19 @@ public class WorldHelper {
     private static World clientWorld = null;
     private static PlayerEntity clientPlayer = null;
     public static final BooleanProperty FERTILIZER_FREE = BooleanProperty.of("hcs_fertilizer_free");
-    public static final Predicate<BlockState> IS_GRAVITY_AFFECTED = state -> state != null && (state.isOf(Blocks.DIRT) || state.isOf(Blocks.DIRT_PATH) || state.isOf(Blocks.CLAY) || state.isOf(Blocks.COARSE_DIRT));
+    public static final Predicate<BlockState> IS_GRAVITY_AFFECTED = state -> state != null && (state.getBlock() instanceof FallingBlock || state.isOf(Blocks.DIRT) || state.isOf(Blocks.DIRT_PATH) || state.isOf(Blocks.CLAY) || state.isOf(Blocks.COARSE_DIRT));
     public static final Predicate<RegistryEntry<Biome>> IS_SALTY_WATER_BIOME = entry -> entry.isIn(BiomeTags.IS_OCEAN) || entry.isIn(BiomeTags.IS_DEEP_OCEAN) || entry.isIn(BiomeTags.IS_BEACH) || TemperatureHelper.getBiomeName(entry).contains("stony_shore");
 
     public static void checkBlockGravity(World world, BlockPos pos) {
         try {
             if (!(world instanceof ServerWorld)) return;
             for (BlockPos bp : new BlockPos[]{pos, pos.up(), pos.down(), pos.east(), pos.west(), pos.south(), pos.north()}) {
-                //Check the pos and its immediate pos
+                // Check the pos and its immediate pos
                 BlockState state = world.getBlockState(bp);
                 if (IS_GRAVITY_AFFECTED.test(state)) {
                     if (FallingBlock.canFallThrough(world.getBlockState(bp.down())) || bp.getY() < world.getBottomY()) {
                         if (IS_GRAVITY_AFFECTED.test(state)) FallingBlockEntity.spawnFromBlock(world, bp, state);
-                        //Recurse for further neighbor tick
+                        // Recurse for further neighbor tick
                         for (BlockPos bpn : new BlockPos[]{bp.up(), bp.down(), bp.east(), bp.west(), bp.south(), bp.north()})
                             checkBlockGravity(world, bpn);
                     }
@@ -61,17 +61,13 @@ public class WorldHelper {
 
     // Do not abuse
     @SuppressWarnings({"GrazieInspection"})
-    // NOTE: CLIENT SIDE UNAVAILABLE!!!!!!!! ALWAYS == NULL!!!!!
-    // NOTE: CLIENT SIDE UNAVAILABLE!!!!!!!! ALWAYS == NULL!!!!!
-    // NOTE: CLIENT SIDE UNAVAILABLE!!!!!!!! ALWAYS == NULL!!!!!
-    // NOTE: CLIENT SIDE UNAVAILABLE!!!!!!!! ALWAYS == NULL!!!!!
-    // NOTE: CLIENT SIDE UNAVAILABLE!!!!!!!! ALWAYS == NULL!!!!!
+    // NOTE: CLIENT SIDE ALWAYS == NULL!!!!!
     public static @Nullable ServerWorld getServerWorld() {
         if (serverWorld == null) {
             Reg.LOGGER.error("WorldHelper::getServerWorld() You're likely to called this from client side. You should call cannotGetServerWorld first before getServerWorld()");
         }
         return serverWorld;
-        // NOTE: Using MinecraftClient.class will crash in server env
+        // >A< NOTE: Using MinecraftClient.class will crash in server env (No such class: MinecraftClient)
         /*
         MinecraftClient client = MinecraftClient.getInstance();
         if (client == null || client.world == null) {

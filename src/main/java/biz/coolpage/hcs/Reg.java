@@ -61,7 +61,7 @@ import java.util.function.Predicate;
 
 import static net.minecraft.server.command.CommandManager.literal;
 
-//DO NOT implement ModInitializer to abstract classes as it will crash
+//DO NOT implement ModInitializer to abstract classes because it will crash
 //See customized damage sources in DamageSourcesMixin
 @SuppressWarnings("DuplicatedCode")
 public class Reg implements ModInitializer {
@@ -244,7 +244,7 @@ public class Reg implements ModInitializer {
         }
     };
     public static final BurntTorchBlock BURNT_TORCH_BLOCK = new BurntTorchBlock(Settings.copy(Blocks.TORCH).luminance(state -> 0).noCollision().breakInstantly().sounds(BlockSoundGroup.WOOD));
-    public static final WallBurntTorchBlock WALL_BURNT_TORCH_BLOCK = new WallBurntTorchBlock(Settings.copy(Blocks.WALL_TORCH).noCollision().breakInstantly().sounds(BlockSoundGroup.WOOD).dropsLike(BURNT_TORCH_BLOCK));
+    public static final WallBurntTorchBlock WALL_BURNT_TORCH_BLOCK = new WallBurntTorchBlock(Settings.copy(Blocks.WALL_TORCH).luminance(state -> 0).noCollision().breakInstantly().sounds(BlockSoundGroup.WOOD).dropsLike(BURNT_TORCH_BLOCK));
     public static final GlowstoneTorchBlock GLOWSTONE_TORCH_BLOCK = new GlowstoneTorchBlock(Settings.copy(Blocks.TORCH).noCollision().breakInstantly().luminance(state -> 15).sounds(BlockSoundGroup.WOOD));
     public static final WallGlowstoneTorchBlock WALL_GLOWSTONE_TORCH_BLOCK = new WallGlowstoneTorchBlock(Settings.copy(Blocks.WALL_TORCH).noCollision().breakInstantly().luminance(state -> 14).sounds(BlockSoundGroup.WOOD).dropsLike(GLOWSTONE_TORCH_BLOCK));
     public static final Item GLOWSTONE_TORCH_ITEM = new VerticallyAttachableBlockItem(GLOWSTONE_TORCH_BLOCK, WALL_GLOWSTONE_TORCH_BLOCK, new Item.Settings(), Direction.DOWN);
@@ -253,7 +253,7 @@ public class Reg implements ModInitializer {
     public static final Item SMOLDERING_CAMPFIRE = new HCSCampfireItem(SMOLDERING_CAMPFIRE_BLOCK.getDefaultState());
     public static final Block BURNT_CAMPFIRE_BLOCK = new BurntCampfireBlock();
     public static final Item BURNT_CAMPFIRE = new HCSCampfireItem(BURNT_CAMPFIRE_BLOCK.getDefaultState());
-    public static final Item GARLAND = new ArmorItem(HcsArmorMaterials.NONE, ArmorItem.Type.HELMET, new Item.Settings());
+    public static final Item GARLAND = new ArmorItem(HcsArmorMaterials.GARLAND, ArmorItem.Type.HELMET, new Item.Settings());
 
     public static final EntityType<RockProjectileEntity> ROCK_PROJECTILE_ENTITY = FabricEntityTypeBuilder.<RockProjectileEntity>create(SpawnGroup.MISC, RockProjectileEntity::new).dimensions(new EntityDimensions(0.25F, 0.25F, true)).build();
     public static final EntityType<FlintProjectileEntity> FLINT_PROJECTILE_ENTITY = FabricEntityTypeBuilder.<FlintProjectileEntity>create(SpawnGroup.MISC, FlintProjectileEntity::new).dimensions(new EntityDimensions(0.25F, 0.25F, true)).build();
@@ -602,6 +602,16 @@ public class Reg implements ModInitializer {
         FuelRegistry.INSTANCE.add(WOODEN_CHESTPLATE, 480);
         FuelRegistry.INSTANCE.add(WOODEN_LEGGINGS, 420);
         FuelRegistry.INSTANCE.add(WOODEN_BOOTS, 240);
+        FuelRegistry.INSTANCE.add(Items.FLOWERING_AZALEA_LEAVES, 100);
+        FuelRegistry.INSTANCE.add(Items.JUNGLE_LEAVES, 100);
+        FuelRegistry.INSTANCE.add(Items.OAK_LEAVES, 100);
+        FuelRegistry.INSTANCE.add(Items.SPRUCE_LEAVES, 100);
+        FuelRegistry.INSTANCE.add(Items.DARK_OAK_LEAVES, 100);
+        FuelRegistry.INSTANCE.add(Items.ACACIA_LEAVES, 100);
+        FuelRegistry.INSTANCE.add(Items.CHERRY_LEAVES, 100);
+        FuelRegistry.INSTANCE.add(Items.BIRCH_LEAVES, 100);
+        FuelRegistry.INSTANCE.add(Items.AZALEA_LEAVES, 100);
+        FuelRegistry.INSTANCE.add(Items.MANGROVE_LEAVES, 100);
 
         ComposterBlock.ITEM_TO_LEVEL_INCREASE_CHANCE.put(BERRY_BUSH, 0.3F);
         ComposterBlock.ITEM_TO_LEVEL_INCREASE_CHANCE.put(ROASTED_SEEDS, 0.3F);
@@ -622,10 +632,11 @@ public class Reg implements ModInitializer {
         ComposterBlock.ITEM_TO_LEVEL_INCREASE_CHANCE.put(WILLOW_BARK, 0.5F);
         ComposterBlock.ITEM_TO_LEVEL_INCREASE_CHANCE.put(FEARLESSNESS_HERB, 0.5F);
 
+
         CommandRegistrationCallback.EVENT.register((dispatcher, registryAccess, environment) -> dispatcher.register(literal("village")
                 .executes(context -> {
                     context.getSource().sendMessage(Text.translatable(WorldHelper.shouldGenerateVillages() ? "hcs.tip.can_gen_village" : "hcs.tip.cant_gen_village"));
-                    // TODO For versions since 1.20, please onInteract the following, which is intended to avoid creating Text objects if no feedback is needed.
+                    // For versions since 1.20, please onInteract the following, which is intended to avoid creating Text objects if no feedback is needed.
 //                    context.getSource().sendMessage(() -> Text.literal("Called /foo with no arguments"));
                     return 1;
                 })));

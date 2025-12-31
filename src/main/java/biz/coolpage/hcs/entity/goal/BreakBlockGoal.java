@@ -23,7 +23,7 @@ public class BreakBlockGoal extends Goal {
     protected BlockPos breakPos = BlockPos.ORIGIN;
     protected BlockState breakState = Blocks.AIR.getDefaultState();
     protected boolean shouldStop;
-    private float offsetX, offsetZ;
+//    private float offsetX, offsetZ;
     protected int breakProgress = -1, prevBreakStage = -1;
 
     public BreakBlockGoal(MobEntity mob) {
@@ -67,8 +67,8 @@ public class BreakBlockGoal extends Goal {
     public void start() {
 //        System.out.println("Starting BreakBlockGoal");
         this.shouldStop = false;
-        this.offsetX = (float) ((double) this.breakPos.getX() + 0.5 - this.mob.getX());
-        this.offsetZ = (float) ((double) this.breakPos.getZ() + 0.5 - this.mob.getZ());
+//        this.offsetX = (float) ((double) this.breakPos.getX() + 0.5 - this.mob.getX());
+//        this.offsetZ = (float) ((double) this.breakPos.getZ() + 0.5 - this.mob.getZ());
         this.breakProgress = 0;
     }
 
@@ -86,25 +86,33 @@ public class BreakBlockGoal extends Goal {
 
     @Override
     public boolean shouldContinue() {
-//         System.out.println("state=" + this.breakState + "\t!shouldStop=" + !this.shouldStop + "\t breakProgress=" + this.breakProgress + "\t max=" + this.getMaxProgress() + "\t canBreak=" + canBreakBlock(this.breakState) + "\t withinDistance=" + this.breakPos.isWithinDistance(this.mob.getPos(), 5) + "\tTimeSinceLastAttack=" + this.mob.getDamageTracker().getTimeSinceLastAttack());
+//         System.out.println("state=" + this.breakState + "\tshouldStop=" + this.shouldStop + "\t breakProgress=" + this.breakProgress + "\t max=" + this.getMaxProgress() + "\t canBreak=" + this.canBreakBlock(this.breakState) + "\t withinDistance=" + this.breakPos.isWithinDistance(this.mob.getPos(), 5) + "\tTimeSinceLastAttack=" + this.mob.getDamageTracker().getTimeSinceLastAttack());
         if (this.mob.getAttacker() != null) this.hcsLastAttacker = this.mob.getLastAttacker();
         if (this.hcsLastAttacker != null && this.hcsLastAttacker.isDead()) this.hcsLastAttacker = null;
-        return !this.shouldStop && this.breakProgress <= this.getMaxProgress() && canBreakBlock(this.breakState) && this.breakPos.isWithinDistance(this.mob.getPos(), 4) && (this.hcsLastAttacker == null /*wasRecentlyAttacked*/ || this.mob.getDamageTracker().getTimeSinceLastAttack() > 20);
+        return !this.shouldStop
+                && this.breakProgress <= this.getMaxProgress()
+                && canBreakBlock(this.breakState)
+                && this.breakPos.isWithinDistance(this.mob.getPos(), 4)
+                && (this.hcsLastAttacker == null /*wasRecentlyAttacked*/
+                || this.mob.getDamageTracker().getTimeSinceLastAttack() > 20);
     }
 
     public int getMaxProgress() {
-        return (int) (HcsDifficulty.chooseVal(this.mob.getWorld(), 2000.0F, 1000.0F, 500.0F) * this.breakState.getBlock().getHardness() * ((this.mob.getMainHandStack().getItem() instanceof ShovelItem) ? 0.2F : 1.0F));
+        return (int) (HcsDifficulty.chooseVal(this.mob.getWorld(), 4000.0F, 2000.0F, 1000.0F) * this.breakState.getBlock().getHardness() * ((this.mob.getMainHandStack().getItem() instanceof ShovelItem) ? 0.2F : 1.0F));
     }
 
     public boolean canBreakBlock(@NotNull BlockState state) {
-        return !state.isAir() && (state.isIn(BlockTags.WOODEN_DOORS) || (DigRestrictHelper.canBreak(this.mob.getMainHandStack().getItem(), state) && (state.getBlock().getHardness() < Blocks.STONE.getHardness() || this.mob.getMainHandStack().getItem() instanceof PickaxeItem)) /*&& !state.getBlock().getTranslationKey().contains("brick")*/) || state.isIn(BlockTags.SHOVEL_MINEABLE);
+        if (state.isAir()) return false;
+        if (state.isIn(BlockTags.WOODEN_DOORS)) return true;
+        boolean stoneConstraint = state.getBlock().getHardness() < Blocks.STONE.getHardness() || this.mob.getMainHandStack().getItem() instanceof PickaxeItem;
+        return DigRestrictHelper.canBreak(this.mob.getMainHandStack().getItem(), state) && stoneConstraint;
     }
 
     @Override
     public void tick() {
         ++this.breakProgress;
-        if (this.offsetX * (float) ((double) this.breakPos.getX() + 0.5 - this.mob.getX()) + this.offsetZ * (float) ((double) this.breakPos.getZ() + 0.5 - this.mob.getZ()) < 0.0f)
-            this.shouldStop = true;
+//        if (this.offsetX * (float) ((double) this.breakPos.getX() + 0.5 - this.mob.getX()) + this.offsetZ * (float) ((double) this.breakPos.getZ() + 0.5 - this.mob.getZ()) < 0.0f)
+//            this.shouldStop = true; // digging pos too distant for mob
         if (this.breakProgress % 40 == 0 && !this.mob.handSwinging) this.mob.swingHand(this.mob.getActiveHand());
         int breakStage = (int) ((float) this.breakProgress / (float) this.getMaxProgress() * 10.0f);
         if (breakStage != this.prevBreakStage) {

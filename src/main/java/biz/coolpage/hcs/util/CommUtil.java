@@ -1,7 +1,9 @@
 package biz.coolpage.hcs.util;
 
+import biz.coolpage.hcs.status.accessor.StatAccessor;
 import net.minecraft.registry.RegistryKey;
 import net.minecraft.registry.entry.RegistryEntry;
+import net.minecraft.server.network.ServerPlayerEntity;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -22,7 +24,8 @@ public class CommUtil {
         return numFormat(pattern, (double) value);
     }
 
-    public static String retain5(double val) {
+    @Contract(pure = true)
+    public static @NotNull String retain5(double val) {
         // Retain five decimal places
         return String.format("%.5f", val);
     }
@@ -69,6 +72,22 @@ public class CommUtil {
         Optional<? extends RegistryKey<?>> key = entry.getKey();
         if (key != null && key.isPresent()) return key.get().getValue().getPath().contains(pattern);
         return false;
+    }
+
+    public static void rehabPlayerStats(@Nullable Object obj) {
+        if (obj instanceof ServerPlayerEntity player) {
+            player.getHungerManager().add(40, 1.0F);
+            if (player instanceof StatAccessor p) {
+                p.getThirstManager().addDirectly(1000D);
+                p.getSanityManager().add(1.0);
+                p.getStatusManager().setSoulImpairedStat(0);
+                p.getInjuryManager().applyPainkiller();
+                p.getInjuryManager().setBleeding(0.0);
+                p.getInjuryManager().setFracture(0.0);
+                p.getDiseaseManager().reset();
+                p.getMoodManager().setHappiness(1.0);
+            }
+        }
     }
 
 }
