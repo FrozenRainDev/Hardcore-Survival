@@ -1,5 +1,6 @@
 package biz.coolpage.hcs.mixin.block;
 
+import biz.coolpage.hcs.block.SmolderingCampfireBlock;
 import net.minecraft.block.AbstractBlock.Settings;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.CampfireBlock;
@@ -19,7 +20,7 @@ public abstract class AbstractBlockSettingsMixin {
     @Shadow
     public ToIntFunction<BlockState> luminance;
 
-    // There is no better solution up to now
+    // There is no better solution up to now from what I thought
     @Inject(method = "breakInstantly", at = @At("RETURN"), cancellable = true)
     private void breakInstantly(@NotNull CallbackInfoReturnable<Settings> cir) {
         Settings sets = cir.getReturnValue();
@@ -32,7 +33,9 @@ public abstract class AbstractBlockSettingsMixin {
         this.luminance = state -> {
             // Annoying for optimization, but there is no better way to adjust campfire luminance dynamically, I guess
             // state.isOf(Blocks.CAMPFIRE) is invalid here
-            if (state.contains(COMBUST_LUMINANCE) && state.contains(CampfireBlock.LIT) && state.get(CampfireBlock.LIT))
+            if (!(state.getBlock() instanceof SmolderingCampfireBlock) && // use state.isOf => client crash :(
+                    state.contains(COMBUST_LUMINANCE) &&
+                    state.contains(CampfireBlock.LIT) && state.get(CampfireBlock.LIT))
                 return state.get(COMBUST_LUMINANCE);
             return luminance.applyAsInt(state);
         };

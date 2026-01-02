@@ -14,6 +14,7 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.damage.DamageSource;
+import net.minecraft.entity.damage.DamageTypes;
 import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.entity.effect.StatusEffectUtil;
 import net.minecraft.entity.effect.StatusEffects;
@@ -34,7 +35,6 @@ import net.minecraft.stat.Stats;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Direction;
 import net.minecraft.world.GameRules;
 import net.minecraft.world.LightType;
 import net.minecraft.world.World;
@@ -589,7 +589,8 @@ public abstract class PlayerEntityMixin extends LivingEntity implements StatAcce
             }
         }
         // Disease
-        this.diseaseManager.tick(!this.hasStatusEffect(HcsEffects.WET));
+        this.diseaseManager.tick(!this.hasStatusEffect(HcsEffects.WET) && this.temperatureManager.get() > 0.3);
+        if (this.temperatureManager.get() < 0.2) this.diseaseManager.addCold(0.0001);
         // Controls the max percentage that soul impaired effect can deduct depending on the HcsDifficulty
         int maxSoulImpaired = StatusManager.getMaxSoulImpaired(this);
         if (this.statusManager.getSoulImpairedStat() > maxSoulImpaired)
@@ -645,7 +646,7 @@ public abstract class PlayerEntityMixin extends LivingEntity implements StatAcce
         this.statusManager.setRecentFeelingDamage(feelingAmount);
         this.statusManager.setRecentHurtTicks(20);
         //Add damage-leading debuffs
-        if (EntityHelper.IS_PHYSICAL_DAMAGE.test(source) && this.getAbsorptionAmount() < 2.0F && !HcsDifficulty.isOf(toPlayer(this), HcsDifficulty.HcsDifficultyEnum.relaxing)) {
+        if (EntityHelper.IS_PHYSICAL_DAMAGE.and(damageSource -> !damageSource.isOf(DamageTypes.FREEZE)).test(source) && this.getAbsorptionAmount() < 2.0F && !HcsDifficulty.isOf(toPlayer(this), HcsDifficulty.HcsDifficultyEnum.relaxing)) {
             if (!this.hasStatusEffect(HcsEffects.PAIN_KILLING)) this.injuryManager.addRawPain(hurtPercent * 4.5);
             if (!isBurningDamage && EntityHelper.IS_BLEEDING_CAUSING_DAMAGE.test(source)) {
                 this.injuryManager.addBleeding(hurtPercent * 7.5);

@@ -28,7 +28,7 @@ public class TemperatureManager {
 
     public void set(double val) {
         if (Double.isNaN(val)) {
-            Reg.LOGGER.error(this.getClass().getSimpleName() + "/setRealPain(): Val is NaN");
+            Reg.LOGGER.error("{}/setRealPain(): Val is NaN", this.getClass().getSimpleName());
             return;
         }
         if (val > 1.0F) val = 1.0F;
@@ -38,7 +38,7 @@ public class TemperatureManager {
 
     public void add(double val) {
         if (Double.isNaN(val)) {
-            Reg.LOGGER.error(this.getClass().getSimpleName() + "/addRawPain(): Val is NaN");
+            Reg.LOGGER.error("{}/addRawPain(): Val is NaN", this.getClass().getSimpleName());
             return;
         }
         double expected = temperature + val;
@@ -69,7 +69,7 @@ public class TemperatureManager {
 
     public void addAmbient(float val) {
         if (Float.isNaN(val)) {
-            Reg.LOGGER.error(this.getClass().getSimpleName() + "/addAmbient(): Val is NaN");
+            Reg.LOGGER.error("{}/addAmbient(): Val is NaN", this.getClass().getSimpleName());
             return;
         }
         if (val > 0.0F) {
@@ -95,7 +95,7 @@ public class TemperatureManager {
 
     public void setEnvTempCache(float val) {
         if (Float.isNaN(val)) {
-            Reg.LOGGER.error(this.getClass().getSimpleName() + "/setEnvTempCache(): Val is NaN");
+            Reg.LOGGER.error("{}/setEnvTempCache(): Val is NaN", this.getClass().getSimpleName());
             return;
         }
         envTempCache = val;
@@ -118,7 +118,7 @@ public class TemperatureManager {
 
     public void addSaturation(float val) {
         if (Float.isNaN(val)) {
-            Reg.LOGGER.error(this.getClass().getSimpleName() + "/addSaturation(): Val is NaN");
+            Reg.LOGGER.error("{}/addSaturation(): Val is NaN", this.getClass().getSimpleName());
             return;
         }
         saturation += val;
@@ -128,7 +128,7 @@ public class TemperatureManager {
 
     public void setSaturation(float val) {
         if (Float.isNaN(val)) {
-            Reg.LOGGER.error(this.getClass().getSimpleName() + "/setSaturation(): Val is NaN");
+            Reg.LOGGER.error("{}/setSaturation(): Val is NaN", this.getClass().getSimpleName());
             return;
         }
         saturation = val;

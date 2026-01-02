@@ -52,7 +52,7 @@ public class InjuryManager {
 
     public void setRawPain(double val) {
         if (Double.isNaN(val)) {
-            Reg.LOGGER.error(this.getClass().getSimpleName() + "/setParasite(): Val is NaN");
+            Reg.LOGGER.error("{}/setParasite(): Val is NaN", this.getClass().getSimpleName());
             return;
         }
         if (val > 4.0) val = 4.0;
@@ -68,7 +68,7 @@ public class InjuryManager {
 
     public void setAlleviationCache(double val) {
         if (Double.isNaN(val)) {
-            Reg.LOGGER.error(this.getClass().getSimpleName() + "/setAlleviationCache(): Val is NaN");
+            Reg.LOGGER.error("{}/setAlleviationCache(): Val is NaN", this.getClass().getSimpleName());
             return;
         }
         if (val > 4.0) val = 4.0;
@@ -104,7 +104,7 @@ public class InjuryManager {
 
     public void setBleeding(double val) {
         if (Double.isNaN(val)) {
-            Reg.LOGGER.error(this.getClass().getSimpleName() + "/setBleeding(): Val is NaN");
+            Reg.LOGGER.error("{}/setBleeding(): Val is NaN", this.getClass().getSimpleName());
             return;
         }
         if (val > 5.0) val = 5.0;
@@ -125,7 +125,7 @@ public class InjuryManager {
 
     public void setFracture(double val) {
         if (Double.isNaN(val)) {
-            Reg.LOGGER.error(this.getClass().getSimpleName() + "/setFracture(): Val is NaN");
+            Reg.LOGGER.error("{}/setFracture(): Val is NaN", this.getClass().getSimpleName());
             return;
         }
         if (val > 1.0) val = 1.0;

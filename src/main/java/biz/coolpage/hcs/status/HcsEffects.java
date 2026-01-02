@@ -103,8 +103,9 @@ public class HcsEffects {
             }
         }
     }.addAttributeModifier(EntityAttributes.GENERIC_MOVEMENT_SPEED, "DFAE009E-7F40-4EC2-BF1F-D6F0B5CA77B5", -0.15f, EntityAttributeModifier.Operation.MULTIPLY_TOTAL)
-            .addAttributeModifier(EntityAttributes.GENERIC_ATTACK_SPEED, "726C2159-5D61-4656-8B1E-A594BC7C3E84", -0.1f, EntityAttributeModifier.Operation.MULTIPLY_TOTAL)
-            .addAttributeModifier(EntityAttributes.GENERIC_ATTACK_KNOCKBACK, "F03F53E5-DC9E-4716-8248-7B13FCAFE753", -0.1f, EntityAttributeModifier.Operation.MULTIPLY_TOTAL);
+            .addAttributeModifier(EntityAttributes.GENERIC_ATTACK_DAMAGE, "DF97F5A2-0133-4F21-AED4-D3F51227624C", -0.2f, EntityAttributeModifier.Operation.MULTIPLY_TOTAL)
+            .addAttributeModifier(EntityAttributes.GENERIC_ATTACK_SPEED, "726C2159-5D61-4656-8B1E-A594BC7C3E84", -0.2f, EntityAttributeModifier.Operation.MULTIPLY_TOTAL)
+            .addAttributeModifier(EntityAttributes.GENERIC_ATTACK_KNOCKBACK, "F03F53E5-DC9E-4716-8248-7B13FCAFE753", -0.2f, EntityAttributeModifier.Operation.MULTIPLY_TOTAL);
 
     public static final StatusEffect STARVING = new StatusEffect(StatusEffectCategory.HARMFUL, 0x646464) {
         //Extremely hungry
@@ -117,9 +118,10 @@ public class HcsEffects {
         public void applyUpdateEffect(LivingEntity entity, int amplifier) {
             if (entity instanceof ServerPlayerEntity && !entity.isSpectator()) entity.setSprinting(false);
         }
-    }.addAttributeModifier(EntityAttributes.GENERIC_ATTACK_DAMAGE, "8DD81631-9D25-477D-BD49-AC3608D64A63", 0.0, EntityAttributeModifier.Operation.ADDITION)
-            .addAttributeModifier(EntityAttributes.GENERIC_MOVEMENT_SPEED, "FB211E69-EB0E-411C-A0CF-C766028B2931", -0.15f, EntityAttributeModifier.Operation.MULTIPLY_TOTAL).addAttributeModifier(EntityAttributes.GENERIC_ATTACK_KNOCKBACK, "29EDAC81-3142-47BD-883B-360920634AEF", -0.1f, EntityAttributeModifier.Operation.MULTIPLY_TOTAL)
-            .addAttributeModifier(EntityAttributes.GENERIC_ATTACK_SPEED, "8D397C83-05C8-4236-88F3-05392A81A63B", -0.1f, EntityAttributeModifier.Operation.MULTIPLY_TOTAL);
+    }.addAttributeModifier(EntityAttributes.GENERIC_MOVEMENT_SPEED, "14A47B9E-D4A3-4964-BDA2-CAFB774D60D6", -0.15f, EntityAttributeModifier.Operation.MULTIPLY_TOTAL)
+            .addAttributeModifier(EntityAttributes.GENERIC_ATTACK_DAMAGE, "008C8E27-DE78-4072-BF58-AC0B3CFBF2AF", -0.2f, EntityAttributeModifier.Operation.MULTIPLY_TOTAL)
+            .addAttributeModifier(EntityAttributes.GENERIC_ATTACK_SPEED, "EEBB2A0F-C4E6-4E60-9BC3-B4D730C1F1F7", -0.2f, EntityAttributeModifier.Operation.MULTIPLY_TOTAL)
+            .addAttributeModifier(EntityAttributes.GENERIC_ATTACK_KNOCKBACK, "D9F3A91B-915C-4E69-A03E-558D0744C7AA", -0.2f, EntityAttributeModifier.Operation.MULTIPLY_TOTAL);
 
     public static final StatusEffect EXHAUSTED = new StatusEffect(StatusEffectCategory.HARMFUL, 0xe3e3e3) {
         @Override
@@ -131,7 +133,7 @@ public class HcsEffects {
         public void applyUpdateEffect(LivingEntity entity, int amplifier) {
             if (entity instanceof ServerPlayerEntity && amplifier > 0) entity.setSprinting(false);
         }
-    }.addAttributeModifier(EntityAttributes.GENERIC_ATTACK_DAMAGE, "DC32D347-22EC-4B12-9E50-035302B760F0", -0.45F, EntityAttributeModifier.Operation.MULTIPLY_TOTAL)
+    }.addAttributeModifier(EntityAttributes.GENERIC_ATTACK_DAMAGE, "DC32D347-22EC-4B12-9E50-035302B760F0", -0.5F, EntityAttributeModifier.Operation.MULTIPLY_TOTAL)
             .addAttributeModifier(EntityAttributes.GENERIC_MOVEMENT_SPEED, "3FE53989-7FA5-4D88-8060-D774E67796FE", -0.35F, EntityAttributeModifier.Operation.MULTIPLY_TOTAL)
             .addAttributeModifier(EntityAttributes.GENERIC_ATTACK_SPEED, "92C8EC57-582C-43C2-A8C7-F164774349D6", -0.4F, EntityAttributeModifier.Operation.MULTIPLY_TOTAL)
             .addAttributeModifier(EntityAttributes.GENERIC_ATTACK_KNOCKBACK, "6C27DCA8-9388-45EE-B6A8-33197B686DE4", -0.1f, EntityAttributeModifier.Operation.MULTIPLY_TOTAL);
@@ -387,7 +389,9 @@ public class HcsEffects {
     };
 
     public static final StatusEffect COLD = new StatusEffect(StatusEffectCategory.HARMFUL, 0xf0c1ba) {
-    };
+    }       .addAttributeModifier(EntityAttributes.GENERIC_ATTACK_DAMAGE, "008C8E27-DE78-4072-BF58-AC0B3CFBF2AF", -0.07F, EntityAttributeModifier.Operation.MULTIPLY_TOTAL)
+            .addAttributeModifier(EntityAttributes.GENERIC_ATTACK_SPEED, "EEBB2A0F-C4E6-4E60-9BC3-B4D730C1F1F7", -0.1F, EntityAttributeModifier.Operation.MULTIPLY_TOTAL)
+            .addAttributeModifier(EntityAttributes.GENERIC_ATTACK_KNOCKBACK, "D9F3A91B-915C-4E69-A03E-558D0744C7AA", -0.2F, EntityAttributeModifier.Operation.MULTIPLY_TOTAL);
 
     public static final StatusEffect HEAVY_LOAD = new StatusEffect(StatusEffectCategory.HARMFUL, 0xfed93f) {
     };

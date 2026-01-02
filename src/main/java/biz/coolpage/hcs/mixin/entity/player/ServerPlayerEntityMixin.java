@@ -101,7 +101,7 @@ public abstract class ServerPlayerEntityMixin extends PlayerEntity {
         float envTempReal = temperatureManager.getEnvTempCache();
         int skyLightLevel = this.getWorld().getLightLevel(LightType.SKY, this.getBlockPos().up())/*, darkness = this.getWorld().getAmbientDarkness()*/;
         int sunshineIntensity = TemperatureHelper.getSunshineIntensityLevel(this.getWorld().getLunarTime(), this.getWorld().isRaining(), biomeName);
-        int windchillLevel = TemperatureHelper.getWindchillLevel(this.getWorld(), this.getBlockPos(), envTempReal, biomeEntry);
+        int windchillLevel = TemperatureHelper.getWindchillLevel(this.getWorld(), this.getBlockPos(), biomeEntry);
         float envTemp = TemperatureHelper.getFeelingTemp(this, envTempReal, biomeName, skyLightLevel);
         double span1 = TemperatureManager.CHANGE_SPAN * ((playerTemp > 0.75) ? 0.3 : 1.0);
         double span2 = -TemperatureManager.CHANGE_SPAN * ((playerTemp < 0.25) ? 0.3 : 1.0);
@@ -118,7 +118,11 @@ public abstract class ServerPlayerEntityMixin extends PlayerEntity {
         else if (temperatureManager.getAmbientCache() > 1.5F) {
             if (statusManager.getRecentHasColdWaterBagTicks() > 0)
                 temperatureManager.add(0.0001);
-            else temperatureManager.add(0.0005);
+            else {
+                if (temperatureManager.getAmbientCache() >= 9.9F)
+                    temperatureManager.add(0.003);
+                else temperatureManager.add(0.0005);
+            }
         } else if (envTemp - playerTemp > span1) {
             temperatureManager.setTrendType(1);
             temperatureManager.add(span1);

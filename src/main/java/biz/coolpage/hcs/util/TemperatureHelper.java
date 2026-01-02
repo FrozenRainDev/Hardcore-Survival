@@ -37,7 +37,7 @@ public abstract class TemperatureHelper implements WorldView {
     /*
     To avoid unnecessary calculation, the coordinates have been given
     Original algorithm:
-    // √(x^2+y^2+z^2) <=r (Based on 3D space distance formula)
+    // √(x^2+y^2+z^2) <= r (Based on 3D space distance formula)
     public static @NotNull String getBall(int r) {
         int x, y, z, l = 0;
         x = y = z = -r;
@@ -230,19 +230,21 @@ public abstract class TemperatureHelper implements WorldView {
                             temperatureManager.addAmbient(-0.06F);
                     }
                 }
-                if (block == Blocks.FIRE || (block == Blocks.CAMPFIRE && state.contains(CampfireBlock.LIT) && state.get(CampfireBlock.LIT)))
-                    temperatureManager.addAmbient(0.1F);
-                else if (block == Reg.SMOLDERING_CAMPFIRE_BLOCK) temperatureManager.addAmbient(0.06F);
-                else if (block instanceof AbstractFurnaceBlock && state.get(AbstractFurnaceBlock.LIT))
+                if (block == Blocks.TORCH || block instanceof BurningCrudeTorchBlock || block == Reg.SMOLDERING_CAMPFIRE_BLOCK)
+                    temperatureManager.addAmbient(0.05F);
+                else if (block == Blocks.CAMPFIRE && state.contains(CampfireBlock.LIT) && state.get(CampfireBlock.LIT))
+                    temperatureManager.addAmbient(0.2F);
+                else if ((block instanceof AbstractFurnaceBlock && state.get(AbstractFurnaceBlock.LIT)) || block == Blocks.FIRE)
                     temperatureManager.addAmbient(0.3F);
-                else if (block == Blocks.MAGMA_BLOCK) temperatureManager.addAmbient(0.5F);
-                else if (block == Blocks.LAVA || block == Blocks.LAVA_CAULDRON) temperatureManager.addAmbient(2.0F);
-                else if (block == Blocks.TORCH || block instanceof BurningCrudeTorchBlock)
-                    temperatureManager.addAmbient(0.03F);
+                else if (block == Blocks.MAGMA_BLOCK)
+                    temperatureManager.addAmbient(0.5F);
+                else if (block == Blocks.LAVA || block == Blocks.LAVA_CAULDRON)
+                    temperatureManager.addAmbient(10.0F);
                 //Addition: check oxygen generation
                 if ((block instanceof LeavesBlock || (block instanceof PlantBlock && !(block instanceof RootsBlock) && block != Blocks.DEAD_BUSH) || block == Blocks.GRASS_BLOCK)/* && player.getWorld().raycast(new RaycastContext(player.getPos(), new Vec3d(checkPos.getX(), checkPos.getY(), checkPos.getZ()), RaycastContext.ShapeType.COLLIDER, RaycastContext.FluidHandling.NONE, player)).getType() != HitResult.Type.MISS*/) {
                     for (BlockPos immediatePos : new BlockPos[]{checkPos.up(), checkPos.down(), checkPos.east(), checkPos.south(), checkPos.west(), checkPos.north()}) {
-                        if (player.getWorld().getLightLevel(LightType.BLOCK, immediatePos) > 5) statusManager.addOxygenGen();
+                        if (player.getWorld().getLightLevel(LightType.BLOCK, immediatePos) > 5)
+                            statusManager.addOxygenGen();
                         break;
                     }
                 }
@@ -294,7 +296,7 @@ public abstract class TemperatureHelper implements WorldView {
             if (wet > 0.3 && x >= 0.95F && x <= 1.48F) x = 0.95F;
             x += insulation * (1 - wetFactor);
             if (insulationLevel * (1 - wetFactor) >= 19.0F) {
-                //Fully wear woolen suit will gain an award of protection from bitter cold
+                //Fully wearing woolen suit gains extra award of low temp protection
                 if (x + insulation <= 0.0F) {
                     if (x + insulation >= -0.7F) x = 0.01F;
                     else x += 0.7F;
@@ -304,8 +306,11 @@ public abstract class TemperatureHelper implements WorldView {
                 else if (envTemp < 0.0F) x += 0.05F;
             }
             if (player.isSprinting() || statusManager.getRecentAttackTicks() > 0) { //Heat from doing sport
-                if (x <= 0.0F) x = 0.7F * x + 0.2F;
-                else if (x <= 1.0F)
+                if (x <= 0.0F) {
+                    if (player.hasStatusEffect(HcsEffects.CHILLY_WIND) || player.hasStatusEffect(HcsEffects.COLD))
+                        x += 0.1F;
+                    else x += 0.2F;
+                } else if (x <= 1.0F)
                     x = (float) (0.83 * Math.pow(x, 0.7) + 0.2);
                 else x += 0.03F;
             }
@@ -334,15 +339,15 @@ public abstract class TemperatureHelper implements WorldView {
         return level;
     }
 
-    public static int getWindchillLevel(World world, BlockPos pos, float envTempReal, RegistryEntry<Biome> biomeEntry) {
+    public static int getWindchillLevel(World world, BlockPos pos/*, float envTempReal*/, RegistryEntry<Biome> biomeEntry) {
         int result = 0;
         if (world == null || pos == null || biomeEntry == null) {
             Reg.LOGGER.error("TemperatureHelper/getWindchillLevel; world, pos, biomeEntry is null");
             return result;
         }
         Biome biome = biomeEntry.value();
-        if (envTempReal > 0.0F || !biome.isCold(pos) || world.getLightLevel(LightType.SKY, pos) < 1 || (!world.isSkyVisible(pos) && world.getLightLevel(LightType.BLOCK, pos) > 7))
-            return result;
+        if (/*envTempReal > 0.0F ||*/ !biome.isCold(pos) || world.getLightLevel(LightType.SKY, pos) < 1 || (!world.isSkyVisible(pos) && world.getLightLevel(LightType.BLOCK, pos) > 7))
+            return result; // indoors
         String biomeName = getBiomeName(biomeEntry);
         boolean isInForest = biomeName.contains("taiga") || biomeName.contains("forest");
         //Calculate windchill level according to time and isInForest
