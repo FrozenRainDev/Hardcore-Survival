@@ -22,4 +22,8 @@ public interface StatAccessor {
     MoodManager getMoodManager();
 
     DiseaseManager getDiseaseManager();
+
+    ConfigManager getConfigManager();
+
+    OxygenManager getOxygenManager();
 }

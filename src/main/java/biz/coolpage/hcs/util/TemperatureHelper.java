@@ -4,6 +4,7 @@ import biz.coolpage.hcs.Reg;
 import biz.coolpage.hcs.block.torches.BurningCrudeTorchBlock;
 import biz.coolpage.hcs.status.HcsEffects;
 import biz.coolpage.hcs.status.accessor.StatAccessor;
+import biz.coolpage.hcs.status.manager.OxygenManager;
 import biz.coolpage.hcs.status.manager.StatusManager;
 import biz.coolpage.hcs.status.manager.TemperatureManager;
 import net.minecraft.block.*;
@@ -210,10 +211,11 @@ public abstract class TemperatureHelper implements WorldView {
             int i = (int) player.getWorld().getTime() % (BALL_RAD3.length);
             TemperatureManager temperatureManager = ((StatAccessor) player).getTemperatureManager();
             StatusManager statusManager = ((StatAccessor) player).getStatusManager();
+            OxygenManager oxygenManager = ((StatAccessor) player).getOxygenManager();
             BlockPos playerPos = player.getBlockPos();
             if (i == 0) { // Do not put in for-loop
                 temperatureManager.updateAmbient();
-                statusManager.updateOxygenGen();
+                oxygenManager.updateOxygenGen();
             }
             int[][] bp = BALL_RAD3[i];
             for (int[] bpp : bp) {
@@ -244,7 +246,7 @@ public abstract class TemperatureHelper implements WorldView {
                 if ((block instanceof LeavesBlock || (block instanceof PlantBlock && !(block instanceof RootsBlock) && block != Blocks.DEAD_BUSH) || block == Blocks.GRASS_BLOCK)/* && player.getWorld().raycast(new RaycastContext(player.getPos(), new Vec3d(checkPos.getX(), checkPos.getY(), checkPos.getZ()), RaycastContext.ShapeType.COLLIDER, RaycastContext.FluidHandling.NONE, player)).getType() != HitResult.Type.MISS*/) {
                     for (BlockPos immediatePos : new BlockPos[]{checkPos.up(), checkPos.down(), checkPos.east(), checkPos.south(), checkPos.west(), checkPos.north()}) {
                         if (player.getWorld().getLightLevel(LightType.BLOCK, immediatePos) > 5)
-                            statusManager.addOxygenGen();
+                            oxygenManager.addOxygenGen();
                         break;
                     }
                 }

@@ -1,6 +1,7 @@
 package biz.coolpage.hcs.block.torches;
 
 import biz.coolpage.hcs.Reg;
+import biz.coolpage.hcs.config.Configs;
 import biz.coolpage.hcs.entity.BurningCrudeTorchBlockEntity;
 import biz.coolpage.hcs.item.BurningCrudeTorchItem;
 import net.minecraft.block.*;
@@ -26,6 +27,7 @@ import net.minecraft.world.WorldView;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import static biz.coolpage.hcs.config.Configs.BURN;
 import static net.minecraft.block.HorizontalFacingBlock.FACING;
 
 @SuppressWarnings("deprecation")
@@ -79,7 +81,7 @@ public class BurningCrudeTorchBlock extends BlockWithEntity {
     @Override
     public <T extends BlockEntity> BlockEntityTicker<T> getTicker(World world, BlockState state, BlockEntityType<T> type) {
         return (world1, pos1, state1, blockEntity) -> {
-            if (world1.getBlockEntity(pos1) instanceof BurningCrudeTorchBlockEntity torch) {
+            if (Configs.isEnabled(BURN) && world1.getBlockEntity(pos1) instanceof BurningCrudeTorchBlockEntity torch) {
                 if (torch.shouldExtinguish()) {
                     if (state1.isOf(Reg.WALL_BURNING_CRUDE_TORCH_BLOCK)) {
                         BlockState result = Reg.WALL_BURNT_TORCH_BLOCK.getDefaultState();

@@ -43,6 +43,7 @@ public abstract class DebugHudMixin {
         NutritionManager nutritionManager = ((StatAccessor) player).getNutritionManager();
         StatusManager statusManager = ((StatAccessor) player).getStatusManager();
         InjuryManager injuryManager = ((StatAccessor) player).getInjuryManager();
+        OxygenManager oxygenManager = ((StatAccessor) player).getOxygenManager();
         MoodManager moodManager = ((StatAccessor) player).getMoodManager();
         DiseaseManager diseaseManager = ((StatAccessor) player).getDiseaseManager();
         World world = player.getWorld();
@@ -59,8 +60,8 @@ public abstract class DebugHudMixin {
         list.add("Sanity: " + sanityManager.get() + ", diff=" + sanityManager.getDifference());
         list.add("Temperature: biome=" + biome.getTemperature() + ", env=[real: " + retain5(TemperatureHelper.getTemp(player)) + " ,feel:" + retain5(TemperatureHelper.getFeelingTemp(player, TemperatureHelper.getTemp(player), biomeName, player.getWorld().getLightLevel(LightType.SKY, player.getBlockPos()))) + "]" + ", value=" + retain5(temperatureManager.get()) + ", satu=" + retain5(temperatureManager.getSaturation()) + ", trend=" + temperatureManager.getTrendType());
         list.add("Nutrition: vegetable=" + nutritionManager.getVegetable());
-        list.add("Oxygen: lack=" + statusManager.getOxygenLackLevel() + ", gen=" + statusManager.getOxygenGenLevel());
-        list.add("Injury: pain[real=" + retain5(injuryManager.getRealPain()) + ", raw=" + retain5(injuryManager.getRawPain()) + ", alle=" + retain5(injuryManager.getPainkillerAlle()) + "], bleeding=" + retain5(injuryManager.getBleeding()) + ", fracture=" + retain5(injuryManager.getFracture()));
+        list.add("Oxygen: lack=" + oxygenManager.getOxygenLackLevel() + ", gen=" + oxygenManager.getOxygenGenLevel());
+        list.add("Injury: pain[real=" + retain5(injuryManager.getRealPain()) + ", raw=" + retain5(injuryManager.getRawPain()) + ", alle=" + retain5(injuryManager.getPainkillerAlleviation()) + "], bleeding=" + retain5(injuryManager.getBleeding()) + ", fracture=" + retain5(injuryManager.getFracture()));
         list.add("Wetness: " + ((StatAccessor) player).getWetnessManager().get());
         list.add("Mood: panic=[raw=" + retain5(moodManager.getRawPanic()) + ", real=" + retain5(moodManager.getRealPanic()) + ", alle=" + retain5(moodManager.getPanicAlleCache()) + "], happiness=" + retain5(moodManager.getHappiness()));
         list.add("Disease: parasite=" + retain5(diseaseManager.getParasite()) + ", cold=" + retain5(diseaseManager.getCold()));

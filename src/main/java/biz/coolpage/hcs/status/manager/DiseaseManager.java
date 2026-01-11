@@ -1,6 +1,7 @@
 package biz.coolpage.hcs.status.manager;
 
 import biz.coolpage.hcs.Reg;
+import biz.coolpage.hcs.config.Configs;
 import biz.coolpage.hcs.status.HcsEffects;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.effect.StatusEffectInstance;
@@ -12,6 +13,7 @@ import net.minecraft.server.network.ServerPlayerEntity;
 
 import static biz.coolpage.hcs.recipe.DryingRackRecipe.IS_RAW_MEAT;
 import static biz.coolpage.hcs.util.CommUtil.hasNull;
+import static biz.coolpage.hcs.util.EntityHelper.toPlayer;
 
 public class DiseaseManager {
     public static final String PARASITE_NBT = "hcs_parasite";
@@ -21,7 +23,9 @@ public class DiseaseManager {
 
     public static double getParasitePossibilityAndCheckFoodPoisoning(Item item, LivingEntity entity) {
         double poss = -1.0;
-        if (hasNull(item, entity)) return poss;
+        var player = toPlayer(entity);
+        // todo test here
+        if (hasNull(item, player) || (!Configs.isEnabled(player, Configs.FOOD_POISON))) return poss;
         // WARNING: Food with parasite == Food causing poisoning
         // Modify it if new rules needed
         else if (IS_RAW_MEAT.test(item)) {
@@ -29,8 +33,8 @@ public class DiseaseManager {
             else poss = 0.04;
         } else if (item == Items.ROTTEN_FLESH) return 0.2;
         else if (item == Reg.ROT || item == Reg.BAT_WINGS) poss = 0.1;
-        if ((Math.random() < (poss * 3.5) || isFoodPoisonous(item.getFoodComponent())) && entity instanceof ServerPlayerEntity player)
-            player.addStatusEffect(new StatusEffectInstance(HcsEffects.FOOD_POISONING, 1200, 0, false, false, true));
+        if ((Math.random() < (poss * 3.5) || isFoodPoisonous(item.getFoodComponent())) && entity instanceof ServerPlayerEntity sp)
+            sp.addStatusEffect(new StatusEffectInstance(HcsEffects.FOOD_POISONING, 1200, 0, false, false, true));
         return poss; // -1.0: Impossible
     }
 
@@ -75,7 +79,7 @@ public class DiseaseManager {
 
     public void setCold(double val) {
         if (Double.isNaN(val)) {
-            Reg.LOGGER.error(this.getClass().getSimpleName() + "/setCold(): Val is NaN");
+            Reg.LOGGER.error("{}/setCold(): Val is NaN", this.getClass().getSimpleName());
             return;
         }
         if (val > 2.0) val = 2.0;

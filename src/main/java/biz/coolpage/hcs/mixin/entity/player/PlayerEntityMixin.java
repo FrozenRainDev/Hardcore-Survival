@@ -2,12 +2,14 @@ package biz.coolpage.hcs.mixin.entity.player;
 
 import biz.coolpage.hcs.Reg;
 import biz.coolpage.hcs.block.torches.BurningCrudeTorchBlock;
+import biz.coolpage.hcs.config.Configs;
 import biz.coolpage.hcs.config.HcsDifficulty;
 import biz.coolpage.hcs.item.KnifeItem;
 import biz.coolpage.hcs.status.HcsEffects;
 import biz.coolpage.hcs.status.accessor.IDamageSources;
 import biz.coolpage.hcs.status.accessor.StatAccessor;
 import biz.coolpage.hcs.status.manager.*;
+import biz.coolpage.hcs.status.manager.disabled.*;
 import biz.coolpage.hcs.util.*;
 import net.minecraft.block.*;
 import net.minecraft.entity.Entity;
@@ -51,6 +53,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import java.util.Objects;
 
+import static biz.coolpage.hcs.config.Configs.*;
 import static biz.coolpage.hcs.recipe.DryingRackRecipe.HAS_COOKED;
 import static biz.coolpage.hcs.status.manager.DiseaseManager.getParasitePossibilityAndCheckFoodPoisoning;
 import static biz.coolpage.hcs.util.CommUtil.rehabPlayerStats;
@@ -61,7 +64,6 @@ import static biz.coolpage.hcs.util.EntityHelper.*;
 @Mixin(PlayerEntity.class)
 @SuppressWarnings({"CanBeFinal", "AddedMixinMembersNamePattern", "CommentedOutCode"})
 public abstract class PlayerEntityMixin extends LivingEntity implements StatAccessor {
-
     protected PlayerEntityMixin(EntityType<? extends LivingEntity> entityType, World world) {
         super(entityType, world);
     }
@@ -119,25 +121,31 @@ public abstract class PlayerEntityMixin extends LivingEntity implements StatAcce
     public abstract Iterable<ItemStack> getArmorItems();
 
     @Unique
-    protected ThirstManager thirstManager = new ThirstManager();
-    @Unique
-    protected StaminaManager staminaManager = new StaminaManager();
-    @Unique
-    protected TemperatureManager temperatureManager = new TemperatureManager();
-    @Unique
     protected StatusManager statusManager = new StatusManager();
     @Unique
-    protected SanityManager sanityManager = new SanityManager();
+    protected ConfigManager configManager = new ConfigManager();
+
     @Unique
-    protected NutritionManager nutritionManager = new NutritionManager();
+    protected ThirstManager thirstManager = new ThirstManager(), disabledThirstManager = new DisabledThirstManager();
     @Unique
-    protected WetnessManager wetnessManager = new WetnessManager();
+    protected StaminaManager staminaManager = new StaminaManager(), disabledStaminaManager = new DisabledStaminaManager();
     @Unique
-    protected InjuryManager injuryManager = new InjuryManager();
+    protected TemperatureManager temperatureManager = new TemperatureManager(), disabledTemperatureManager = new DisabledTemperatureManager();
     @Unique
-    protected MoodManager moodManager = new MoodManager();
+    protected SanityManager sanityManager = new SanityManager(), disabledSanityManager = new DisabledSanityManager();
     @Unique
-    protected DiseaseManager diseaseManager = new DiseaseManager();
+    protected NutritionManager nutritionManager = new NutritionManager(), disabledNutritionManager = new DisabledNutritionManager();
+    @Unique
+    protected WetnessManager wetnessManager = new WetnessManager(), disabledWetnessManager = new DisabledWetnessManager();
+    @Unique
+    protected InjuryManager injuryManager = new InjuryManager(), disabledInjuryManager = new DisabledInjuryManager();
+    @Unique
+    protected MoodManager moodManager = new MoodManager(), disabledMoodManager = new DisabledMoodManager();
+    @Unique
+    protected DiseaseManager diseaseManager = new DiseaseManager(), disabledDiseaseManger = new DisabledDiseaseManager();
+    @Unique
+    protected OxygenManager oxygenManager = new OxygenManager(), disabledOxygenManager = new DisabledOxygenManager();
+
 
     @Unique
     private static void quitReturnTeleport(@Nullable Entity entity) {
@@ -148,23 +156,6 @@ public abstract class PlayerEntityMixin extends LivingEntity implements StatAcce
         }
     }
 
-    @Unique
-    @Override
-    public ThirstManager getThirstManager() {
-        return this.thirstManager;
-    }
-
-    @Unique
-    @Override
-    public StaminaManager getStaminaManager() {
-        return this.staminaManager;
-    }
-
-    @Unique
-    @Override
-    public TemperatureManager getTemperatureManager() {
-        return this.temperatureManager;
-    }
 
     @Unique
     @Override
@@ -174,38 +165,78 @@ public abstract class PlayerEntityMixin extends LivingEntity implements StatAcce
 
     @Unique
     @Override
+    public ConfigManager getConfigManager() {
+        return this.configManager;
+    }
+
+    @Unique
+    @Override
+    public ThirstManager getThirstManager() {
+        if (configManager.get(THIRST)) return this.thirstManager;
+        return this.disabledThirstManager;
+    }
+
+    @Unique
+    @Override
+    public StaminaManager getStaminaManager() {
+        if (configManager.get(STAMINA)) return this.staminaManager;
+        return this.disabledStaminaManager;
+    }
+
+    @Unique
+    @Override
+    public TemperatureManager getTemperatureManager() {
+        if (configManager.get(TEMPERATURE)) return this.temperatureManager;
+        return this.disabledTemperatureManager;
+    }
+
+    @Unique
+    @Override
     public SanityManager getSanityManager() {
-        return this.sanityManager;
+        if (configManager.get(SANITY)) return this.sanityManager;
+        return this.disabledSanityManager;
     }
 
     @Unique
     @Override
     public NutritionManager getNutritionManager() {
-        return this.nutritionManager;
+        if (configManager.get(NUTRITION)) return this.nutritionManager;
+        return this.disabledNutritionManager;
     }
 
     @Unique
     @Override
     public WetnessManager getWetnessManager() {
-        return this.wetnessManager;
+        if (configManager.get(WET)) return this.wetnessManager;
+        return this.disabledWetnessManager;
     }
 
     @Unique
     @Override
     public InjuryManager getInjuryManager() {
-        return this.injuryManager;
+        if (configManager.get(INJURY)) return this.injuryManager;
+        return this.disabledInjuryManager;
     }
 
     @Unique
     @Override
     public MoodManager getMoodManager() {
-        return this.moodManager;
+        if (configManager.get(MOOD)) return this.moodManager;
+        return this.disabledMoodManager;
     }
 
     @Unique
     @Override
     public DiseaseManager getDiseaseManager() {
-        return this.diseaseManager;
+        if (configManager.get(DISEASE)) return this.diseaseManager;
+        return this.disabledDiseaseManger;
+    }
+
+    @Unique
+    @Override
+    public OxygenManager getOxygenManager() {
+        if (configManager.get(OXYGEN)) return this.oxygenManager;
+        return this.disabledOxygenManager;
     }
 
     @Inject(method = "readCustomDataFromNbt", at = @At("TAIL"))
@@ -270,10 +301,13 @@ public abstract class PlayerEntityMixin extends LivingEntity implements StatAcce
         Item mainHand = this.getMainHandStack().getItem();
         final boolean isShovelMineable = state.isIn(BlockTags.SHOVEL_MINEABLE);
         final boolean isKnife = mainHand instanceof KnifeItem, isSword = mainHand instanceof SwordItem, isAxe = mainHand instanceof AxeItem;
+        final boolean digRestrict = this.configManager.get(DIG_CONSTRAIN);
         Block block = state.getBlock();
-        if (!DigRestrictHelper.canBreakExceptShovel(mainHand, state)) {
-            if (isShovelMineable) speed /= 30.0F;
-            else speed = -1.0F;
+
+        if (digRestrict) {
+            if (!DigRestrictHelper.canBreakExceptShovel(mainHand, state)) {
+                if (isShovelMineable) speed /= 30.0F;
+                else speed = -1.0F;
             /*
             if (IS_BAREHANDED.and(IS_SURVIVAL_AND_SERVER).test(player)) {
                 this.statusManager.addBareDiggingTicks();
@@ -287,33 +321,36 @@ public abstract class PlayerEntityMixin extends LivingEntity implements StatAcce
                 }
             }
             */
-        }
-        if (isShovelMineable && mainHand instanceof ShovelItem && mainHand != Reg.FLINT_CONE) speed /= 2.0F;
-        else if (state.isIn(BlockTags.AXE_MINEABLE) || isSword) {
+            }
+            if (isShovelMineable && mainHand instanceof ShovelItem && mainHand != Reg.FLINT_CONE) speed /= 2.0F;
+            else if (state.isIn(BlockTags.AXE_MINEABLE) || isSword) {
 //            System.out.println(speed); // 0.00952381
-            if (mainHand == Reg.FLINT_HATCHET) speed *= 6.0F;
-            else speed /= 2.5F;
+                if (mainHand == Reg.FLINT_HATCHET) speed *= 6.0F;
+                else speed /= 2.5F;
+            }
+            if ((mainHand instanceof HoeItem || isKnife) && (block instanceof CropBlock || block instanceof StemBlock || state.isReplaceable()))
+                speed *= 2.0F;
+            else if (isKnife) {
+                if (IS_PLANT.test(block) || block instanceof CobwebBlock) speed *= 3.0F;
+                else speed /= 10.0F;
+            }
+            if (this.hasStatusEffect(HcsEffects.DEHYDRATED)) speed /= 2.0F;
+            if (this.hasStatusEffect(HcsEffects.STARVING)) speed /= 2.0F;
+            if (this.hasStatusEffect(HcsEffects.EXHAUSTED)) speed /= 2.0F;
+            if (this.hasStatusEffect(HcsEffects.UNHAPPY)) speed /= 1.2F;
+            if (EntityHelper.getEffectAmplifier(this, HcsEffects.PARASITE_INFECTION) > 0) speed /= 1.5F;
+            speed /= (float) Math.max(1.0, Math.pow(1.15, (EntityHelper.getEffectAmplifier(this, HcsEffects.PAIN) + 1) + (EntityHelper.getEffectAmplifier(this, HcsEffects.INJURY) + 1)));
+            if (DigRestrictHelper.Predicates.IS_BREAKABLE_FUNCTIONAL.test(block))
+                speed *= (block instanceof AbstractFurnaceBlock || block == Blocks.ENDER_CHEST) ? 16.0F : 4.0F;
+            else if (block == Blocks.OBSIDIAN || block == Blocks.CRYING_OBSIDIAN) speed *= 3.0F;
+            else if ((block == Blocks.CLAY && !isShovelMineable)) speed /= 9.0F;
+            else if (block instanceof LeavesBlock && !isSword && !isAxe) speed /= 10.0F;
         }
-        if ((mainHand instanceof HoeItem || isKnife) && (block instanceof CropBlock || block instanceof StemBlock || state.isReplaceable()))
-            speed *= 2.0F;
-        else if (isKnife) {
-            if (IS_PLANT.test(block) || block instanceof CobwebBlock) speed *= 3.0F;
-            else speed /= 10.0F;
-        }
-        if (this.hasStatusEffect(HcsEffects.DEHYDRATED)) speed /= 2.0F;
-        if (this.hasStatusEffect(HcsEffects.STARVING)) speed /= 2.0F;
-        if (this.hasStatusEffect(HcsEffects.EXHAUSTED)) speed /= 2.0F;
-        if (this.hasStatusEffect(HcsEffects.UNHAPPY)) speed /= 1.2F;
-        if (EntityHelper.getEffectAmplifier(this, HcsEffects.PARASITE_INFECTION) > 0) speed /= 1.5F;
-        speed /= (float) Math.max(1.0, Math.pow(1.15, (EntityHelper.getEffectAmplifier(this, HcsEffects.PAIN) + 1) + (EntityHelper.getEffectAmplifier(this, HcsEffects.INJURY) + 1)));
-        if (DigRestrictHelper.Predicates.IS_BREAKABLE_FUNCTIONAL.test(block))
-            speed *= (block instanceof AbstractFurnaceBlock || block == Blocks.ENDER_CHEST) ? 16.0F : 4.0F;
-        else if (block == Blocks.OBSIDIAN || block == Blocks.CRYING_OBSIDIAN) speed *= 3.0F;
-        else if ((block == Blocks.CLAY && !isShovelMineable)) speed /= 9.0F;
-        else if (block instanceof LeavesBlock && !isSword && !isAxe) speed /= 10.0F;
-        if (block instanceof TorchBlock || block instanceof BurningCrudeTorchBlock || (state.isIn(BlockTags.FLOWERS) && !(block instanceof LeavesBlock)))
-            speed = 999999.0F;
-        cir.setReturnValue(speed);
+        boolean shouldBreakInstantly = block instanceof TorchBlock || block instanceof BurningCrudeTorchBlock || (state.isIn(BlockTags.FLOWERS) && !(block instanceof LeavesBlock));
+        boolean shouldVanillaBreakInstantly = Float.compare(block.getHardness(), 0.060114F) == 0; // equals; see AbstractBlockSettingsMixin::breakInstantly
+        if (shouldBreakInstantly || (!digRestrict && shouldVanillaBreakInstantly))
+            speed = 9999999F;
+        if (digRestrict || shouldVanillaBreakInstantly) cir.setReturnValue(speed);
     }
 
     @Inject(method = "damage", at = @At("HEAD"))
@@ -532,7 +569,7 @@ public abstract class PlayerEntityMixin extends LivingEntity implements StatAcce
         if (((this.getWorld().isNight() || isInCavelike) && !this.hasStatusEffect(StatusEffects.NIGHT_VISION)) || isInUnpleasantDimension) {
             double sanDecrement = 0.00001;
             int blockBrightness = this.getWorld().getLightLevel(LightType.BLOCK, headPos);
-            if (!isInUnpleasantDimension) {
+            if (!isInUnpleasantDimension&&configManager.get(DARK_THREAT)) {
                 if (blockBrightness < 1 && isInCavelike && !isDarkSafe) {
                     sanDecrement = 0.00006;
                     hasDarkDebuff = true;
@@ -567,8 +604,8 @@ public abstract class PlayerEntityMixin extends LivingEntity implements StatAcce
         if (this.hasStatusEffect(StatusEffects.STRENGTH)) this.staminaManager.reset();
         this.staminaManager.setLastVecPos(this.getPos());
         this.sanityManager.updateDifference();
-        this.statusManager.setOxygenLackLevel(oxyLackLvl);
-        if (this.statusManager.getFinalOxygenLackLevel() >= 3 && (this.getWorld().getTime() % 20 == 0 || this.getAir() < 0))
+        this.oxygenManager.setOxygenLackLevel(oxyLackLvl);
+        if (this.oxygenManager.getFinalOxygenLackLevel() >= 3 && (this.getWorld().getTime() % 20 == 0 || this.getAir() < 0))
             this.setAir(this.getNextAirUnderwater(this.getAir()));
         if (this.getAir() < -20 && this.getWorld().getTime() % 15 == 0)
             this.damage(((IDamageSources) this.getWorld().getDamageSources()).oxygenDeficiency(), 1.0F);

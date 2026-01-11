@@ -1,10 +1,13 @@
 package biz.coolpage.hcs.status.manager;
 
 import biz.coolpage.hcs.config.HcsDifficulty;
+import biz.coolpage.hcs.status.accessor.StatAccessor;
 import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.player.PlayerEntity;
 import org.jetbrains.annotations.Nullable;
 
 import static biz.coolpage.hcs.util.EntityHelper.toPlayer;
+import static biz.coolpage.hcs.config.Configs.*;
 
 public class StatusManager {
     public static final String MAX_LVL_NBT = "hcs_max_lvl_reached";
@@ -19,9 +22,6 @@ public class StatusManager {
     private int maxExpLevelReached = 0;
     private int recentLittleOvereatenTicks = 0;
     private boolean hasDecimalFoodLevel = false;
-    private int oxygenLackLevel = 0;
-    private int oxygenGenLevelAccumulation = 0;
-    private int oxygenGenLevel = 0;
     private boolean shouldLockDestroying = false; // Client only
     private int soulImpairedStat = 0; // Server only
     private int recentSleepTicks = 0;
@@ -31,7 +31,7 @@ public class StatusManager {
     private int enterCurrWldTimes = 0;
     private int stonesSmashed = 0;
     private boolean hasCheckInitTips = false; // Client side only
-    Enum<HcsDifficulty.HcsDifficultyEnum> hcsDifficulty = HcsDifficulty.HcsDifficultyEnum.standard;
+    private Enum<HcsDifficulty.HcsDifficultyEnum> hcsDifficulty = HcsDifficulty.HcsDifficultyEnum.standard;
     private boolean hasDarknessEnvelopedDebuff = false; // Server side only -- add all debuffs in ServerPlayerEntityMixin/tick() so the order of hcs debuffs won't change randomly
     private boolean hasHeavyLoadDebuff = false; // Server side only
     private int bandageWorkTicks = 0; // Server side only
@@ -40,10 +40,13 @@ public class StatusManager {
     private float realProtection = 0.0F;
     private float recentFeelingDamage = 0.0F;
     private int returnEffectAwaitTicks = 0; //Server side only
-    private boolean canFoodSpoil = true;
 
     public static int getMaxSoulImpaired(@Nullable LivingEntity entity) {
-        return HcsDifficulty.chooseVal(toPlayer(entity), 0, 6, 8);
+        PlayerEntity player = toPlayer(entity);
+        if (player == null) return 0;
+        var config = ((StatAccessor) player).getConfigManager();
+        if (config != null && !config.get(SOUL_IMPAIR)) return 0;
+        return HcsDifficulty.chooseVal(player, 0, 6, 8);
     }
 
     public void reset(int lvlReached, int soulImpaired, int smashed, Enum<HcsDifficulty.HcsDifficultyEnum> hcsDifficulty, boolean hasCheckInitTips, int enterCurrWldTimes) {
@@ -56,9 +59,6 @@ public class StatusManager {
         maxExpLevelReached = lvlReached;
         recentLittleOvereatenTicks = 0;
         hasDecimalFoodLevel = false;
-        oxygenLackLevel = 0;
-        oxygenGenLevelAccumulation = 0;
-        oxygenGenLevel = 0;
         shouldLockDestroying = false;
         recentSleepTicks = 0;
         recentWetTicks = 0;
@@ -139,36 +139,6 @@ public class StatusManager {
 
     public void setHasDecimalFoodLevel(boolean val) {
         hasDecimalFoodLevel = val;
-    }
-
-    public int getOxygenLackLevel() {
-        return oxygenLackLevel;
-    }
-
-    public void setOxygenLackLevel(int val) {
-        oxygenLackLevel = val;
-    }
-
-    public void addOxygenGen() {
-        oxygenGenLevelAccumulation += 1;
-    }
-
-    public int getOxygenGenLevel() {
-        return oxygenGenLevel;
-    }
-
-    public void setOxygenGenLevel(int val) {
-        oxygenGenLevel = val;
-    }
-
-
-    public void updateOxygenGen() {
-        oxygenGenLevel = Math.min(2, oxygenGenLevelAccumulation);
-        oxygenGenLevelAccumulation = 0;
-    }
-
-    public int getFinalOxygenLackLevel() {
-        return oxygenLackLevel - oxygenGenLevel;
     }
 
     public boolean lockDestroying() {
@@ -345,12 +315,5 @@ public class StatusManager {
         this.returnEffectAwaitTicks = returnEffectAwaitTicks;
     }
 
-    public boolean canFoodSpoil() {
-        return canFoodSpoil;
-    }
-
-    public void setCanFoodSpoil(boolean canFoodSpoil) {
-        this.canFoodSpoil = canFoodSpoil;
-    }
 
 }

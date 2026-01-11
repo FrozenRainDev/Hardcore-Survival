@@ -1,5 +1,6 @@
 package biz.coolpage.hcs.mixin.entity;
 
+import biz.coolpage.hcs.config.Configs;
 import biz.coolpage.hcs.status.accessor.IKickCoolDown;
 import biz.coolpage.hcs.util.EntityHelper;
 import net.minecraft.entity.EntityType;
@@ -20,6 +21,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
+import static biz.coolpage.hcs.config.Configs.HOSTILE_COW;
 import static biz.coolpage.hcs.util.EntityHelper.isInLeather;
 
 @SuppressWarnings("AddedMixinMembersNamePattern")
@@ -71,7 +73,7 @@ public abstract class CowEntityMixin extends AnimalEntity implements IKickCoolDo
         //  NOT SOLELY `ServerPlayerEntity` -- Both server and client side need the interaction
         boolean isMilking = player.getMainHandStack().isOf(Items.BUCKET) && !this.isBaby();
         if (isMilking && EntityHelper.IS_SURVIVAL_AND_SERVER.test(player)) {
-            if (isInLeather(player)) {
+            if (isInLeather(player) || !Configs.isEnabled(player, HOSTILE_COW)) {
                 long time = this.getWorld().getTime();
                 long milkedTime = this.dataTracker.get(EntityHelper.MILKED_TIME);
                 if (Math.abs(milkedTime - time) < 24000L) {

@@ -1,5 +1,6 @@
 package biz.coolpage.hcs.status;
 
+import biz.coolpage.hcs.config.Configs;
 import biz.coolpage.hcs.status.accessor.StatAccessor;
 import biz.coolpage.hcs.status.manager.*;
 import io.netty.buffer.Unpooled;
@@ -20,6 +21,7 @@ public class ServerS2C {
     public static final Identifier PAIN_ID = new Identifier("hcs", "s2c_pain");
     public static final Identifier MOOD_ID = new Identifier("hcs", "s2c_mood");
     public static final Identifier DISEASE_ID = new Identifier("hcs", "s2c_disease");
+    public static final Identifier CONFIG_ID = new Identifier("hcs", "s2c_config");
     public static final float TRANS_MULTIPLIER = 10000000.0F;
 
     public static int f2i(float val) {
@@ -42,6 +44,7 @@ public class ServerS2C {
     }
 
     private static void writeS2CPacket(@NotNull ServerPlayerEntity player) {
+        // todo refactor SHIT >A<
         PacketByteBuf buf1 = new PacketByteBuf(Unpooled.buffer());
         ThirstManager thirstManager = ((StatAccessor) player).getThirstManager();
         buf1.writeIntArray(new int[]{player.getId(), d2i(thirstManager.get()), f2i(thirstManager.getSaturation()), f2i(thirstManager.getThirstRateAffectedByTemp())});
@@ -58,8 +61,9 @@ public class ServerS2C {
 
         PacketByteBuf buf4 = new PacketByteBuf(Unpooled.buffer());
         StatusManager statusManager = ((StatAccessor) player).getStatusManager();
+        OxygenManager oxygenManager = ((StatAccessor) player).getOxygenManager();
         statusManager.setExhaustion(player.getHungerManager().getExhaustion());
-        buf4.writeIntArray(new int[]{player.getId(), f2i(statusManager.getExhaustion()), statusManager.getRecentAttackTicks(), statusManager.getRecentMiningTicks(), statusManager.getRecentHasColdWaterBagTicks(), statusManager.getRecentHasHotWaterBagTicks(), statusManager.getMaxExpLevelReached(), statusManager.getRecentLittleOvereatenTicks(), b2i(statusManager.hasDecimalFoodLevel()), statusManager.getOxygenLackLevel(), statusManager.getOxygenGenLevel(), statusManager.getRecentSleepTicks(), statusManager.getRecentWetTicks(), statusManager.getInDarknessTicks(), statusManager.getEnterCurrWldTimes(), statusManager.getStonesSmashed(), statusManager.getHcsDifficulty().ordinal(), f2i(statusManager.getBlockBreakingSpeed()), f2i(statusManager.getRealProtection()), statusManager.getRecentHurtTicks(), f2i(statusManager.getRecentFeelingDamage()), b2i(statusManager.canFoodSpoil())});
+        buf4.writeIntArray(new int[]{player.getId(), f2i(statusManager.getExhaustion()), statusManager.getRecentAttackTicks(), statusManager.getRecentMiningTicks(), statusManager.getRecentHasColdWaterBagTicks(), statusManager.getRecentHasHotWaterBagTicks(), statusManager.getMaxExpLevelReached(), statusManager.getRecentLittleOvereatenTicks(), b2i(statusManager.hasDecimalFoodLevel()), oxygenManager.getOxygenLackLevel(), oxygenManager.getOxygenGenLevel(), statusManager.getRecentSleepTicks(), statusManager.getRecentWetTicks(), statusManager.getInDarknessTicks(), statusManager.getEnterCurrWldTimes(), statusManager.getStonesSmashed(), statusManager.getHcsDifficulty().ordinal(), f2i(statusManager.getBlockBreakingSpeed()), f2i(statusManager.getRealProtection()), statusManager.getRecentHurtTicks(), f2i(statusManager.getRecentFeelingDamage())});
         player.networkHandler.sendPacket(new CustomPayloadS2CPacket(STATUS_ID, buf4));
 
         PacketByteBuf buf5 = new PacketByteBuf(Unpooled.buffer());
@@ -79,7 +83,7 @@ public class ServerS2C {
 
         PacketByteBuf buf8 = new PacketByteBuf(Unpooled.buffer());
         InjuryManager injuryManager = ((StatAccessor) player).getInjuryManager();
-        buf8.writeIntArray(new int[]{player.getId(), d2i(injuryManager.getRawPain()), d2i(injuryManager.getPainkillerAlle()), injuryManager.getPainkillerApplied(), d2i(injuryManager.getBleeding()), d2i(injuryManager.getFracture())});
+        buf8.writeIntArray(new int[]{player.getId(), d2i(injuryManager.getRawPain()), d2i(injuryManager.getPainkillerAlleviation()), injuryManager.getPainkillerApplied(), d2i(injuryManager.getBleeding()), d2i(injuryManager.getFracture())});
         player.networkHandler.sendPacket(new CustomPayloadS2CPacket(PAIN_ID, buf8));
 
         PacketByteBuf buf9 = new PacketByteBuf(Unpooled.buffer());
@@ -91,5 +95,15 @@ public class ServerS2C {
         DiseaseManager diseaseManager = ((StatAccessor) player).getDiseaseManager();
         buf10.writeIntArray(new int[]{player.getId(), d2i(diseaseManager.getParasite()), d2i(diseaseManager.getCold())});
         player.networkHandler.sendPacket(new CustomPayloadS2CPacket(DISEASE_ID, buf10));
+
+        // Awful operations :( factory design pattern
+        PacketByteBuf buf11 = new PacketByteBuf(Unpooled.buffer());
+        int[] arr11 = new int[1 + Configs.values().length];
+        arr11[0] = player.getId();
+        for (Enum<Configs> val : Configs.values()) {
+            arr11[val.ordinal() + 1] = b2i(((StatAccessor) player).getConfigManager().get(val));
+        }
+        buf11.writeIntArray(arr11);
+        player.networkHandler.sendPacket(new CustomPayloadS2CPacket(CONFIG_ID, buf11));
     }
 }

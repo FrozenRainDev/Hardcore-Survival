@@ -1,14 +1,12 @@
 package biz.coolpage.hcs.mixin.item;
 
 import biz.coolpage.hcs.Reg;
-import biz.coolpage.hcs.config.HcsFoodSpoilage;
 import biz.coolpage.hcs.entity.FlintProjectileEntity;
 import biz.coolpage.hcs.item.RockItem;
 import biz.coolpage.hcs.status.HcsEffects;
 import biz.coolpage.hcs.util.CombustionHelper;
 import biz.coolpage.hcs.util.EntityHelper;
 import biz.coolpage.hcs.util.RotHelper;
-import biz.coolpage.hcs.util.WorldHelper;
 import net.minecraft.client.item.TooltipContext;
 import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.effect.StatusEffectInstance;

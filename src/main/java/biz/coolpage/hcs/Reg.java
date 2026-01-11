@@ -6,7 +6,6 @@ import biz.coolpage.hcs.block.IceboxBlock;
 import biz.coolpage.hcs.block.SmolderingCampfireBlock;
 import biz.coolpage.hcs.block.torches.*;
 import biz.coolpage.hcs.config.HcsDifficulty;
-import biz.coolpage.hcs.config.HcsFoodSpoilage;
 import biz.coolpage.hcs.entity.*;
 import biz.coolpage.hcs.event.*;
 import biz.coolpage.hcs.item.*;
@@ -59,6 +58,7 @@ import org.slf4j.LoggerFactory;
 
 import java.util.function.Predicate;
 
+import static biz.coolpage.hcs.config.Configs.FOOD_SPOIL;
 import static net.minecraft.server.command.CommandManager.literal;
 
 //DO NOT implement ModInitializer to abstract classes because it will crash
@@ -273,7 +273,7 @@ public class Reg implements ModInitializer {
 
     public static final RegistryKey<ItemGroup> HCS_ITEM_GROUP = RegistryKey.of(RegistryKeys.ITEM_GROUP, new Identifier("hcs", "main"));
     public static final GameRules.Key<EnumRule<HcsDifficulty.HcsDifficultyEnum>> HCS_DIFFICULTY = GameRules.register(HcsDifficulty.HCS_DIFFICULTY_NAME, GameRules.Category.PLAYER, GameRuleFactory.createEnumRule(HcsDifficulty.HcsDifficultyEnum.standard, HcsDifficulty.HcsDifficultyEnum.values()));
-    public static final GameRules.Key<GameRules.BooleanRule> HCS_FOOD_SPOILAGE = GameRules.register(HcsFoodSpoilage.HCS_SPOILAGE_NAME, GameRules.Category.PLAYER, GameRuleFactory.createBooleanRule(true));
+//    public static final GameRules.Key<GameRules.BooleanRule> HCS_FOOD_SPOILAGE = GameRules.register(HcsFoodSpoilage.HCS_SPOILAGE_NAME, GameRules.Category.PLAYER, GameRuleFactory.createBooleanRule(true));
     public static final Predicate<Item> IS_BARK = item -> item == BARK || item == WILLOW_BARK;
 
     @Override
@@ -287,6 +287,12 @@ public class Reg implements ModInitializer {
         ServerPlayerEvent.init();
         UseBlockEvent.init();
 //        LootHelper.init();
+
+        // The registration of these game rules(StatConfig) RELIES ON BUGS TO RUN;
+        // it must be invoked here to ensure full initialization, so please
+        // DO NOT DELETE this seemingly useless line of code.
+        //noinspection ResultOfMethodCallIgnored
+        FOOD_SPOIL.gameRule.toString();
 
         Registry.register(Registries.ITEM_GROUP, HCS_ITEM_GROUP, FabricItemGroup.builder().displayName(Text.translatable("itemGroup.hcs.main")).icon(() -> new ItemStack(FLINT_HATCHET)).entries((context, entries) -> {
             entries.add(new ItemStack(GRASS_FIBER));

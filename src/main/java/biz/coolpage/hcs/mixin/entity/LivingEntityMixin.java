@@ -67,7 +67,7 @@ public abstract class LivingEntityMixin extends Entity implements ILivingEntity 
     @Inject(method = "getNextAirOnLand", at = @At("RETURN"), cancellable = true)
     protected void getNextAirOnLand(int air, @NotNull CallbackInfoReturnable<Integer> cir) {
         if ((Object) this instanceof PlayerEntity player) {
-            int lvl = ((StatAccessor) player).getStatusManager().getFinalOxygenLackLevel();
+            int lvl = ((StatAccessor) player).getOxygenManager().getFinalOxygenLackLevel();
             if (lvl > 0 && !player.hasStatusEffect(StatusEffects.WATER_BREATHING)) {
                 cir.setReturnValue(air + ((air + 1 >= this.getMaxAir()) ? 0 : (lvl == 1 ? 1 : 0)));
             }

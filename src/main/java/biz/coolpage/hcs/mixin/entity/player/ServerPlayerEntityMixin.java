@@ -1,7 +1,7 @@
 package biz.coolpage.hcs.mixin.entity.player;
 
+import biz.coolpage.hcs.config.Configs;
 import biz.coolpage.hcs.config.HcsDifficulty;
-import biz.coolpage.hcs.config.HcsFoodSpoilage;
 import biz.coolpage.hcs.status.HcsEffects;
 import biz.coolpage.hcs.status.accessor.IDamageSources;
 import biz.coolpage.hcs.status.accessor.StatAccessor;
@@ -74,10 +74,11 @@ public abstract class ServerPlayerEntityMixin extends PlayerEntity {
         TemperatureHelper.getTemp(this); // Update temp cache
         ServerS2C.writeS2CPacket(this);
         StatusManager statusManager = ((StatAccessor) this).getStatusManager();
+        ConfigManager configs = ((StatAccessor) this).getConfigManager();
         if (this.getWorld() instanceof ServerWorld serverWorld) {
             WorldHelper.trySetServerWorld(serverWorld);
             statusManager.setHcsDifficulty(HcsDifficulty.getDifficulty(serverWorld));
-            statusManager.setCanFoodSpoil(HcsFoodSpoilage.canFoodSpoil(serverWorld));
+            configs.update(serverWorld);
         }
         if (!statusManager.hasShownInitTips()) {
             int enterWorldTimes = statusManager.getEnterCurrWldTimes();
@@ -185,11 +186,13 @@ public abstract class ServerPlayerEntityMixin extends PlayerEntity {
             }
 
             // Debuff of injury
-            float hpPercent = this.getHealth() / this.getMaxHealth();
-            if (hpPercent < 0.1F) EntityHelper.addHcsDebuff(this, HcsEffects.INJURY, 3);
-            else if (hpPercent < 0.25F) EntityHelper.addHcsDebuff(this, HcsEffects.INJURY, 2);
-            else if (hpPercent < 0.45F) EntityHelper.addHcsDebuff(this, HcsEffects.INJURY, 1);
-            else if (hpPercent < 0.7F) EntityHelper.addHcsDebuff(this, HcsEffects.INJURY, 0);
+            if (((StatAccessor) this).getConfigManager().get(Configs.INJURY)) {
+                float hpPercent = this.getHealth() / this.getMaxHealth();
+                if (hpPercent < 0.1F) EntityHelper.addHcsDebuff(this, HcsEffects.INJURY, 3);
+                else if (hpPercent < 0.25F) EntityHelper.addHcsDebuff(this, HcsEffects.INJURY, 2);
+                else if (hpPercent < 0.45F) EntityHelper.addHcsDebuff(this, HcsEffects.INJURY, 1);
+                else if (hpPercent < 0.7F) EntityHelper.addHcsDebuff(this, HcsEffects.INJURY, 0);
+            }
 
             // Debuff of pain (view add pain in PlayerEntityMixin/applyDamage)
             final double pain = injuryManager.getRealPain();
@@ -239,12 +242,15 @@ public abstract class ServerPlayerEntityMixin extends PlayerEntity {
         if (currCold > 1.0) EntityHelper.addHcsDebuff(this, HcsEffects.COLD);
 
         // Debuff of unhappiness
-        if (moodManager.getHappiness() < 0.5) EntityHelper.addHcsDebuff(this, HcsEffects.UNHAPPY);
+        if (moodManager.getHappiness() < 0.5)
+            EntityHelper.addHcsDebuff(this, HcsEffects.UNHAPPY);
 
         // Debuff of darkness enveloped
-        if (statusManager.hasDarknessEnvelopedDebuff()) EntityHelper.addHcsDebuff(this, HcsEffects.DARKNESS_ENVELOPED);
+        if (statusManager.hasDarknessEnvelopedDebuff())
+            EntityHelper.addHcsDebuff(this, HcsEffects.DARKNESS_ENVELOPED);
 
         // Debuff of heavy load
-        if (statusManager.hasHeavyLoadDebuff()) EntityHelper.addHcsDebuff(this, HcsEffects.HEAVY_LOAD);
+        if (statusManager.hasHeavyLoadDebuff() && configs.get(Configs.HEAVY_LOAD))
+            EntityHelper.addHcsDebuff(this, HcsEffects.HEAVY_LOAD);
     }
 }

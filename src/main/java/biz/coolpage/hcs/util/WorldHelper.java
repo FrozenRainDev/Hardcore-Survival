@@ -91,6 +91,7 @@ public class WorldHelper {
         return clientWorld;
     }
 
+    @Deprecated
     public static PlayerEntity getClientPlayer() {
         return clientPlayer;
     }

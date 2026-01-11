@@ -23,8 +23,10 @@ public abstract class AbstractBlockSettingsMixin {
     // There is no better solution up to now from what I thought
     @Inject(method = "breakInstantly", at = @At("RETURN"), cancellable = true)
     private void breakInstantly(@NotNull CallbackInfoReturnable<Settings> cir) {
+//        if(Configs.isEnabled(Configs.DIG_CONSTRAIN)) // Call here => null pointer exception :(
+        // to break instantly, set PlayerEntity::getBlockBreakingSpeed return 9999...
         Settings sets = cir.getReturnValue();
-        sets.strength(0.06F);
+        sets.strength(0.060114F);
         cir.setReturnValue(sets);
     }
 

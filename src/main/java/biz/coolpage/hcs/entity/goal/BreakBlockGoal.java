@@ -1,5 +1,6 @@
 package biz.coolpage.hcs.entity.goal;
 
+import biz.coolpage.hcs.config.Configs;
 import biz.coolpage.hcs.config.HcsDifficulty;
 import biz.coolpage.hcs.util.DigRestrictHelper;
 import biz.coolpage.hcs.util.EntityHelper;
@@ -12,8 +13,10 @@ import net.minecraft.entity.mob.MobEntity;
 import net.minecraft.item.PickaxeItem;
 import net.minecraft.item.ShovelItem;
 import net.minecraft.registry.tag.BlockTags;
+import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.GameRules;
+import net.minecraft.world.World;
 import net.minecraft.world.WorldEvents;
 import org.jetbrains.annotations.NotNull;
 
@@ -23,7 +26,7 @@ public class BreakBlockGoal extends Goal {
     protected BlockPos breakPos = BlockPos.ORIGIN;
     protected BlockState breakState = Blocks.AIR.getDefaultState();
     protected boolean shouldStop;
-//    private float offsetX, offsetZ;
+    //    private float offsetX, offsetZ;
     protected int breakProgress = -1, prevBreakStage = -1;
 
     public BreakBlockGoal(MobEntity mob) {
@@ -37,7 +40,11 @@ public class BreakBlockGoal extends Goal {
     public boolean canStart() {
         // Choose a block to break
         LivingEntity target = this.mob.getTarget();
-        if (target == null || !this.mob.getWorld().getGameRules().getBoolean(GameRules.DO_MOB_GRIEFING)) return false;
+        World world = this.mob.getWorld();
+        if (target == null || !this.mob.getWorld().getGameRules().getBoolean(GameRules.DO_MOB_GRIEFING))
+            return false;
+        if (world instanceof ServerWorld serverWorld && !Configs.isEnabled(serverWorld, Configs.HOSTILE_ZOMBIE))
+            return false;
         for (double[] findPos : EntityHelper.FIND_NEAREST_BLOCKS) {
             // Should not dig upward when not above target
             if (findPos[1] == -1 && this.mob.getY() <= target.getY()) continue;
@@ -89,6 +96,8 @@ public class BreakBlockGoal extends Goal {
 //         System.out.println("state=" + this.breakState + "\tshouldStop=" + this.shouldStop + "\t breakProgress=" + this.breakProgress + "\t max=" + this.getMaxProgress() + "\t canBreak=" + this.canBreakBlock(this.breakState) + "\t withinDistance=" + this.breakPos.isWithinDistance(this.mob.getPos(), 5) + "\tTimeSinceLastAttack=" + this.mob.getDamageTracker().getTimeSinceLastAttack());
         if (this.mob.getAttacker() != null) this.hcsLastAttacker = this.mob.getLastAttacker();
         if (this.hcsLastAttacker != null && this.hcsLastAttacker.isDead()) this.hcsLastAttacker = null;
+        if (this.mob.getWorld() instanceof ServerWorld serverWorld && !Configs.isEnabled(serverWorld, Configs.HOSTILE_ZOMBIE))
+            return false;
         return !this.shouldStop
                 && this.breakProgress <= this.getMaxProgress()
                 && canBreakBlock(this.breakState)

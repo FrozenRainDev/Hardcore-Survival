@@ -1,6 +1,7 @@
 package biz.coolpage.hcs.util;
 
 import biz.coolpage.hcs.Reg;
+import biz.coolpage.hcs.config.Configs;
 import biz.coolpage.hcs.entity.DryingRackBlockEntity;
 import biz.coolpage.hcs.status.HcsEffects;
 import biz.coolpage.hcs.status.accessor.StatAccessor;
@@ -27,7 +28,6 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
-import static biz.coolpage.hcs.config.HcsFoodSpoilage.canFoodSpoil;
 
 public class RotHelper {
     public static final String HFE = "hcs_food_exp"; // food expiry (ticks)
@@ -62,12 +62,7 @@ public class RotHelper {
     public static boolean canRot(Item item) {
         if (item == null) return false;
         // Check food spoil enabling config
-        // Just need to add code here; other complex methods are not wise
-        if (WorldHelper.cannotGetServerWorld()) { // Client Side
-            if (WorldHelper.getClientPlayer() != null && !canFoodSpoil(WorldHelper.getClientPlayer()))
-                return false;
-        } else if (!canFoodSpoil(WorldHelper.getServerWorld()))
-            return false; // Server Side
+        if (Configs.isEnabled(Configs.FOOD_SPOIL)) return false;
         // Check special food types
         if (item == Reg.ROT || item == Reg.WORM || item == Items.ROTTEN_FLESH || item == Items.GOLDEN_APPLE || item == Items.ENCHANTED_GOLDEN_APPLE || item == Items.GOLDEN_CARROT || item == Items.GLISTERING_MELON_SLICE || Reg.IS_BARK.test(item))
             return false;

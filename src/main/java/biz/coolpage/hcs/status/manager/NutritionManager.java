@@ -14,7 +14,7 @@ public class NutritionManager {
 
     public void setVegetable(double val) {
         if (Double.isNaN(val)) {
-            Reg.LOGGER.error(this.getClass().getSimpleName() + ": Val is NaN");
+            Reg.LOGGER.error("{}: Val is NaN", this.getClass().getSimpleName());
             return;
         }
         if (val > 1.0) val = 1.0;

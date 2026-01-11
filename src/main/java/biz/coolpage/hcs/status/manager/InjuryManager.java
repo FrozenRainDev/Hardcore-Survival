@@ -27,7 +27,7 @@ public class InjuryManager {
         fracture = 0.0;
     }
 
-    public double getPainkillerAlle() {
+    public double getPainkillerAlleviation() {
         if (painkillerUpdateInterval > 0) {
             // Refresh alleviation every 60 ticks to avoid too much calculation
             --painkillerUpdateInterval;
@@ -47,7 +47,7 @@ public class InjuryManager {
     }
 
     public double getRealPain() {
-        return Math.max(0, getRawPain() - getPainkillerAlle());
+        return Math.max(0, getRawPain() - getPainkillerAlleviation());
     }
 
     public void setRawPain(double val) {

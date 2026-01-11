@@ -45,7 +45,7 @@ public class MoodManager {
         panic = val;
     }
 
-    public void setPanicAlle(double val) {
+    public void setPanicAlleviation(double val) {
         if (Double.isNaN(val)) {
             Reg.LOGGER.error(this.getClass().getSimpleName() + "/setPanicAlle(): Val is NaN");
             return;

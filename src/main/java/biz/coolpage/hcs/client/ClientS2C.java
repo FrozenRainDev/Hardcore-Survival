@@ -1,5 +1,6 @@
 package biz.coolpage.hcs.client;
 
+import biz.coolpage.hcs.config.Configs;
 import biz.coolpage.hcs.config.HcsDifficulty;
 import biz.coolpage.hcs.status.accessor.StatAccessor;
 import biz.coolpage.hcs.status.manager.*;
@@ -44,6 +45,7 @@ public class ClientS2C {
             });
         });
 
+        // todo redundant codes :( consider strategy design pattern???
         ClientPlayNetworking.registerGlobalReceiver(STAMINA_ID, (client, handler, buffer, responseSender) -> {
             int[] bufArr = buffer.readIntArray();
             client.execute(() -> {
@@ -80,7 +82,9 @@ public class ClientS2C {
                 if (client.player != null && client.player.getWorld().getEntityById(bufArr[0]) != null) {
                     PlayerEntity player = (PlayerEntity) client.player.getWorld().getEntityById(bufArr[0]);
                     if (player != null) {
+                        // todo refactor :( SHIT
                         StatusManager statusManager = ((StatAccessor) player).getStatusManager();
+                        OxygenManager oxygenManager = ((StatAccessor) player).getOxygenManager();
                         statusManager.setExhaustion(i2f(bufArr[1]));
                         statusManager.setRecentAttackTicks(bufArr[2]);
                         statusManager.setRecentMiningTicks(bufArr[3]);
@@ -89,8 +93,8 @@ public class ClientS2C {
                         statusManager.setMaxExpLevelReached(bufArr[6]);
                         statusManager.setRecentLittleOvereatenTicks(bufArr[7]);
                         statusManager.setHasDecimalFoodLevel(i2b(bufArr[8]));
-                        statusManager.setOxygenLackLevel(bufArr[9]);
-                        statusManager.setOxygenGenLevel(bufArr[10]);
+                        oxygenManager.setOxygenLackLevel(bufArr[9]);
+                        oxygenManager.setOxygenGenLevel(bufArr[10]);
                         statusManager.setRecentSleepTicks(bufArr[11]);
                         statusManager.setRecentWetTicks(bufArr[12]);
                         statusManager.setInDarknessTicks(bufArr[13]);
@@ -101,7 +105,6 @@ public class ClientS2C {
                         statusManager.setRealProtection(i2f(bufArr[18]));
                         statusManager.setRecentHurtTicks(bufArr[19]);
                         statusManager.setRecentFeelingDamage(i2f(bufArr[20]));
-                        statusManager.setCanFoodSpoil(i2b(bufArr[21]));
                     }
                 }
             });
@@ -173,7 +176,7 @@ public class ClientS2C {
                     if (player != null) {
                         MoodManager moodManager = ((StatAccessor) player).getMoodManager();
                         moodManager.setPanic(i2d(bufArr[1]));
-                        moodManager.setPanicAlle(i2d(bufArr[2]));
+                        moodManager.setPanicAlleviation(i2d(bufArr[2]));
                         moodManager.setHappiness(i2d(bufArr[3]));
                     }
                 }
@@ -189,6 +192,21 @@ public class ClientS2C {
                         DiseaseManager diseaseManager = ((StatAccessor) player).getDiseaseManager();
                         diseaseManager.setParasite(i2d(bufArr[1]));
                         diseaseManager.setCold(i2d(bufArr[2]));
+                    }
+                }
+            });
+        });
+
+        ClientPlayNetworking.registerGlobalReceiver(CONFIG_ID, (client, handler, buffer, responseSender) -> {
+            int[] bufArr = buffer.readIntArray();
+            client.execute(() -> {
+                if (client.player != null && client.player.getWorld().getEntityById(bufArr[0]) != null) {
+                    PlayerEntity player = (PlayerEntity) client.player.getWorld().getEntityById(bufArr[0]);
+                    if (player != null) {
+                        ConfigManager configManager = ((StatAccessor) player).getConfigManager();
+                        for (Enum<Configs> val : Configs.values()) {
+                            configManager.set(val, i2b(bufArr[val.ordinal() + 1]));
+                        }
                     }
                 }
             });

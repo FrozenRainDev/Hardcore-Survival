@@ -40,6 +40,7 @@ import java.util.Objects;
 
 import static biz.coolpage.hcs.util.CommUtil.applyNullable;
 import static biz.coolpage.hcs.util.CommUtil.numFormat;
+import static biz.coolpage.hcs.config.Configs.*;
 
 
 @Mixin(InGameHud.class)
@@ -243,6 +244,7 @@ public abstract class InGameHudMixin {
 //        RenderSystem.setShaderTexture(0, InGameHud.ICONS); // Being used for 1.19
         PlayerEntity player = this.getCameraPlayer();
         if (player == null || this.client.player == null) return;
+        var config = ((StatAccessor) player).getConfigManager();
         LivingEntity livingEntity = this.getRiddenEntity();
         int xx = this.scaledWidth / 2;
         int yy = this.scaledHeight - 46;
@@ -293,16 +295,16 @@ public abstract class InGameHudMixin {
         float arm = ArmorHelper.getFinalProtection(player);
         float armPercentage = arm / 20; //NOTE: Math.round(int/int)==0
         if (arm > 0) {
-            renderEntries.put("arm", true);
+            renderEntries.put("armor", true);
             int armHeight = this.getDrawIconHeight(armPercentage);
             this.drawHCSTexture(ctx, xx, yy, 0, 32, 16, 16);
             this.drawHCSTexture(ctx, xx, yy + 16 - armHeight, 16, 48 - armHeight, 16, armHeight);
             this.drawTextWithThickShadow(ctx, String.format("%.1f", arm), arm < 10.0F ? (xx + 4) : (xx + 1), yyy + 11, getColorByPercentage(armPercentage), 0.75F);
             xx += 20;
-        } else renderEntries.put("arm", false);
+        } else renderEntries.put("armor", false);
         // HEALTH
         // this.client.getProfiler().swap("health");
-        renderEntries.put("hea", true);
+        renderEntries.put("health", true);
         TemperatureManager temperatureManager = ((StatAccessor) player).getTemperatureManager();
         double tem = temperatureManager.get();
         float hea = player.getHealth();
@@ -330,35 +332,39 @@ public abstract class InGameHudMixin {
         this.drawTextWithThickShadow(ctx, String.format("%.1f", hea > 0 ? Math.max(hea, 0.1F) : Math.max(hea, 0.0F)), hea < 10.0F ? xx + 2 : xx, yyy + 11, getColorByPercentage(heaPercentage), 0.75F);//\n is invalid
         this.drawTextWithThickShadow(ctx, (heaAbsorption >= 1.0F ? "+" + String.format("%.1f", heaAbsorption) : "") + "/" + String.format("%.1f", heaMax), xx, yyy + 17, getColorByPercentage(heaPercentage), 0.5F);
         // STAMINA
-        double str = ((StatAccessor) player).getStaminaManager().get();
-        renderEntries.put("str", true);
-        xx += 20;
-        int strHeight = this.getDrawIconHeight((float) Math.pow(str, 0.8D));
-        int strDeviation = 0, strShake = 0;
-        if (this.ticks % (Math.round(str * 20) + 1) == 0 && str < 0.3F)
-            strShake = Math.round((float) Math.random() * 2) - 1;
-        this.drawHCSTexture(ctx, xx, yy + strShake, 0, 112, 16, 16);
-        this.drawHCSTexture(ctx, xx, yy + (16 - strHeight) + strShake, 16 + strDeviation, 128 - strHeight, 16, strHeight);
-        this.drawTextWithThickShadow(ctx, numFormat(str < 0.1 ? " #%" : "##%", str), xx + 2, yyy + 11, getColorByPercentage(str), 0.75F);
+        if (config.get(STAMINA)) {
+            renderEntries.put("stamina", true);
+            double str = ((StatAccessor) player).getStaminaManager().get();
+            xx += 20;
+            int strHeight = this.getDrawIconHeight((float) Math.pow(str, 0.8D));
+            int strDeviation = 0, strShake = 0;
+            if (this.ticks % (Math.round(str * 20) + 1) == 0 && str < 0.3F)
+                strShake = Math.round((float) Math.random() * 2) - 1;
+            this.drawHCSTexture(ctx, xx, yy + strShake, 0, 112, 16, 16);
+            this.drawHCSTexture(ctx, xx, yy + (16 - strHeight) + strShake, 16 + strDeviation, 128 - strHeight, 16, strHeight);
+            this.drawTextWithThickShadow(ctx, numFormat(str < 0.1 ? " #%" : "##%", str), xx + 2, yyy + 11, getColorByPercentage(str), 0.75F);
+        }else renderEntries.put("stamina", false);
         // THIRST
-        renderEntries.put("thi", true);
-        xx += 20;
-        double thi = ((StatAccessor) player).getThirstManager().get();
-        int thiHeight = this.getDrawIconHeight(thi, 1, 1);//(float)Math.pow(thi,1.18D)
-        if (thiHeight < 0) thiHeight = 0;
-        else if (thi > 0.05F && thiHeight <= 1) thiHeight = 2;
-        int thiDeviation = 0, thiShake = 0;
-        // Note that int % 0 will throw java.lang.ArithmeticException: / by zero
-        if (this.ticks % (Math.round(thi * 20) * 3 + 1) == 0 && thi < 0.3F)
-            thiShake = Math.round((float) Math.random() * 2) - 1;
-        if (player.hasStatusEffect(HcsEffects.THIRST) || player.hasStatusEffect(HcsEffects.DIARRHEA) || player.hasStatusEffect(HcsEffects.PARASITE_INFECTION) || player.hasStatusEffect(HcsEffects.FOOD_POISONING))
-            thiDeviation = 16;
-        this.drawHCSTexture(ctx, xx, yy + thiShake, 0, 48, 16, 16);
-        this.drawHCSTexture(ctx, xx, yy + (16 - thiHeight) + thiShake, 16 + thiDeviation, 64 - thiHeight, 16, thiHeight);
-        this.drawTextWithThickShadow(ctx, numFormat(thi < 0.1 ? " #%" : "##%", thi), xx + 2, yyy + 11, getColorByPercentage(thi), 0.75F);
+        if (config.get(THIRST)) {
+            renderEntries.put("thirst", true);
+            xx += 20;
+            double thi = ((StatAccessor) player).getThirstManager().get();
+            int thiHeight = this.getDrawIconHeight(thi, 1, 1);//(float)Math.pow(thi,1.18D)
+            if (thiHeight < 0) thiHeight = 0;
+            else if (thi > 0.05F && thiHeight <= 1) thiHeight = 2;
+            int thiDeviation = 0, thiShake = 0;
+            // Note that int % 0 will throw java.lang.ArithmeticException: / by zero
+            if (this.ticks % (Math.round(thi * 20) * 3 + 1) == 0 && thi < 0.3F)
+                thiShake = Math.round((float) Math.random() * 2) - 1;
+            if (player.hasStatusEffect(HcsEffects.THIRST) || player.hasStatusEffect(HcsEffects.DIARRHEA) || player.hasStatusEffect(HcsEffects.PARASITE_INFECTION) || player.hasStatusEffect(HcsEffects.FOOD_POISONING))
+                thiDeviation = 16;
+            this.drawHCSTexture(ctx, xx, yy + thiShake, 0, 48, 16, 16);
+            this.drawHCSTexture(ctx, xx, yy + (16 - thiHeight) + thiShake, 16 + thiDeviation, 64 - thiHeight, 16, thiHeight);
+            this.drawTextWithThickShadow(ctx, numFormat(thi < 0.1 ? " #%" : "##%", thi), xx + 2, yyy + 11, getColorByPercentage(thi), 0.75F);
+        }else renderEntries.put("thirst", false);
         // HUNGER
         // this.client.getProfiler().swap("food");
-        renderEntries.put("hun", true);
+        renderEntries.put("hunger", true);
         xx += 20;
         HungerManager hunManager = player.getHungerManager();
         float hun = (float) hunManager.getFoodLevel();
@@ -377,61 +383,65 @@ public abstract class InGameHudMixin {
         this.drawHCSTexture(ctx, xx, yy + (16 - hunHeight) + hunShake, 16 + hunDeviation, 32 - hunHeight, 16, hunHeight);
         this.drawTextWithThickShadow(ctx, numFormat(hunPercentage < 0.1 ? " #%" : "##%", hunPercentage), xx + 2, yyy + 11, getColorByPercentage(hunPercentage), 0.75F);
         // SANITY
-        renderEntries.put("san", true);
-        xx += 20;
-        SanityManager sanityManager = ((StatAccessor) player).getSanityManager();
-        double san = sanityManager.get();
-        double sanDifference = sanityManager.getDifference(), sanDifferenceAbs = Math.abs(sanDifference);
-        if (san > 1.0F) san = 1.0F;
-        else if (san < 0.0F) san = 0.0F;
-        int sanHeight = this.getDrawIconHeight((float) Math.pow(san, 0.6D));
-        int sanDeviation = 0, sanShake = 0;
-        if (this.ticks % (Math.round(san * 20) * 3 + 1) == 0 && san < 0.3F)
-            sanShake = Math.round((float) Math.random() * 2) - 1;
-        if (sanDifferenceAbs > 0.0049F) sanTwinkleCoolDown = 5;
-        boolean sanTwinkle = sanTwinkleCoolDown > 0;
-        if (sanTwinkle) --sanTwinkleCoolDown;
-        this.drawHCSTexture(ctx, xx, yy + sanShake, sanTwinkle ? 16 : 0, 80, 16, 16);
-        this.drawHCSTexture(ctx, xx, yy + (16 - sanHeight) + sanShake, 32 + sanDeviation, 96 - sanHeight, 16, sanHeight);
-        if (sanDifferenceAbs > 0.0F && sanTwinkleCoolDown < 5) {
-            int devi, shakeInterval = 24;
-            if (sanDifference < -0.000079F) {
-                devi = 96;
-                shakeInterval = 6;
-            } else if (sanDifference < -0.000039F) {
-                devi = 80;
-                shakeInterval = 12;
-            } else if (sanDifference < 0.0F) devi = 64;
-            else if (sanDifference < 0.000039F) devi = 112;
-            else if (sanDifference < 0.000079F) {
-                devi = 128;
-                shakeInterval = 12;
-            } else {
-                devi = 144;
-                shakeInterval = 6;
+        if (config.get(SANITY)) {
+            renderEntries.put("sanity", true);
+            xx += 20;
+            SanityManager sanityManager = ((StatAccessor) player).getSanityManager();
+            double san = sanityManager.get();
+            double sanDifference = sanityManager.getDifference(), sanDifferenceAbs = Math.abs(sanDifference);
+            if (san > 1.0F) san = 1.0F;
+            else if (san < 0.0F) san = 0.0F;
+            int sanHeight = this.getDrawIconHeight((float) Math.pow(san, 0.6D));
+            int sanDeviation = 0, sanShake = 0;
+            if (this.ticks % (Math.round(san * 20) * 3 + 1) == 0 && san < 0.3F)
+                sanShake = Math.round((float) Math.random() * 2) - 1;
+            if (sanDifferenceAbs > 0.0049F) sanTwinkleCoolDown = 5;
+            boolean sanTwinkle = sanTwinkleCoolDown > 0;
+            if (sanTwinkle) --sanTwinkleCoolDown;
+            this.drawHCSTexture(ctx, xx, yy + sanShake, sanTwinkle ? 16 : 0, 80, 16, 16);
+            this.drawHCSTexture(ctx, xx, yy + (16 - sanHeight) + sanShake, 32 + sanDeviation, 96 - sanHeight, 16, sanHeight);
+            if (sanDifferenceAbs > 0.0F && sanTwinkleCoolDown < 5) {
+                int devi, shakeInterval = 24;
+                if (sanDifference < -0.000079F) {
+                    devi = 96;
+                    shakeInterval = 6;
+                } else if (sanDifference < -0.000039F) {
+                    devi = 80;
+                    shakeInterval = 12;
+                } else if (sanDifference < 0.0F) devi = 64;
+                else if (sanDifference < 0.000039F) devi = 112;
+                else if (sanDifference < 0.000079F) {
+                    devi = 128;
+                    shakeInterval = 12;
+                } else {
+                    devi = 144;
+                    shakeInterval = 6;
+                }
+                this.drawHCSTexture(ctx, xx, yy + (((this.ticks % (shakeInterval * 2)) < shakeInterval) ? 1 : 0), devi, 80, 16, 16);
             }
-            this.drawHCSTexture(ctx, xx, yy + (((this.ticks % (shakeInterval * 2)) < shakeInterval) ? 1 : 0), devi, 80, 16, 16);
-        }
-        this.drawTextWithThickShadow(ctx, numFormat(san < 0.1F ? " #%" : "##%", san), xx + 2, yyy + 11, getColorByPercentage(san), 0.75F);
+            this.drawTextWithThickShadow(ctx, numFormat(san < 0.1F ? " #%" : "##%", san), xx + 2, yyy + 11, getColorByPercentage(san), 0.75F);
+        }renderEntries.put("sanity", false);
         // TEMPERATURE
-        renderEntries.put("tem", true);
-        xx += 20;
-        // The time before getRealPain damaged for too hot or too cold
-        float temSaturationPercentage = temperatureManager.getSaturationPercentage();
-        int temShake = 0;
-        if (this.ticks % 3 == 0) temShake = Math.round((float) Math.random() * 2) - 1;
-        int temHeight = this.getDrawIconHeight(temSaturationPercentage);
-        if (tem <= 0.0F) {//Cold
-            this.drawHCSTexture(ctx, xx, yy + temShake, 0, 64, 16, 16);
-            this.drawHCSTexture(ctx, xx, yy + (16 - temHeight) + temShake, 16, 80 - temHeight, 16, temHeight);
-        } else if (tem >= 1.0F) {//Hot
-            this.drawHCSTexture(ctx, xx + temShake, yy, 208, 64, 16, 16);
-            this.drawHCSTexture(ctx, xx, yy + (16 - temHeight) + temShake, 224, 80 - temHeight, 16, temHeight);
-        } else {
-            int temDeviation = (int) Math.floor(getTempForDisplay(tem) * 12) * 16;
-            if (temDeviation <= 0) temDeviation = 16;
-            else if (temDeviation > 176) temDeviation = 176;
-            this.drawHCSTexture(ctx, xx, yy, 16 + temDeviation, 64, 16, 16);
+        if (config.get(TEMPERATURE)) {
+            renderEntries.put("temperature", true);
+            xx += 20;
+            // The time before getRealPain damaged for too hot or too cold
+            float temSaturationPercentage = temperatureManager.getSaturationPercentage();
+            int temShake = 0;
+            if (this.ticks % 3 == 0) temShake = Math.round((float) Math.random() * 2) - 1;
+            int temHeight = this.getDrawIconHeight(temSaturationPercentage);
+            if (tem <= 0.0F) {//Cold
+                this.drawHCSTexture(ctx, xx, yy + temShake, 0, 64, 16, 16);
+                this.drawHCSTexture(ctx, xx, yy + (16 - temHeight) + temShake, 16, 80 - temHeight, 16, temHeight);
+            } else if (tem >= 1.0F) {//Hot
+                this.drawHCSTexture(ctx, xx + temShake, yy, 208, 64, 16, 16);
+                this.drawHCSTexture(ctx, xx, yy + (16 - temHeight) + temShake, 224, 80 - temHeight, 16, temHeight);
+            } else {
+                int temDeviation = (int) Math.floor(getTempForDisplay(tem) * 12) * 16;
+                if (temDeviation <= 0) temDeviation = 16;
+                else if (temDeviation > 176) temDeviation = 176;
+                this.drawHCSTexture(ctx, xx, yy, 16 + temDeviation, 64, 16, 16);
+            }
         }
         // AIR
         // this.client.getProfiler().swap("air");
@@ -449,7 +459,7 @@ public abstract class InGameHudMixin {
         } else renderEntries.put("air", false);
         // MOUNT HEALTH
         if (shouldRenderMountHealth && livingEntity != null) {
-            renderEntries.put("mou", true);
+            renderEntries.put("mount", true);
             xx += 20;
             float mou = livingEntity.getHealth();
             float mouMax = livingEntity.getMaxHealth();
@@ -459,7 +469,7 @@ public abstract class InGameHudMixin {
             this.drawHCSTexture(ctx, xx, yy + (16 - mouHeight), 48, 48 - mouHeight, 16, mouHeight);
             this.drawTextWithThickShadow(ctx, String.format("%.1f", mou > 0 ? Math.max(mou, 0.1F) : Math.max(mou, 0.0F)), xx, yyy + 11, getColorByPercentage(mouPercentage), 0.75F);
             this.drawTextWithThickShadow(ctx, "/" + String.format("%.1f", mouMax), xx, yyy + 17, getColorByPercentage(mouPercentage), 0.5F);
-        } else renderEntries.put("mou", false);
+        } else renderEntries.put("mount", false);
         // WETNESS - the icon was hidden
         /*
         double wet = ((StatAccessor) player).getWetnessManager().get();

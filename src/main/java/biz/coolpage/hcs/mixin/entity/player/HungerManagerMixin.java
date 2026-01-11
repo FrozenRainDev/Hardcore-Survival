@@ -15,6 +15,8 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
+import static biz.coolpage.hcs.config.Configs.SLOW_HEAL;
+
 @Mixin(HungerManager.class)
 public abstract class HungerManagerMixin {
     @Shadow
@@ -35,10 +37,9 @@ public abstract class HungerManagerMixin {
     private static float adjustHealingAmount(@NotNull PlayerEntity player, float f) {
         if (player.hasStatusEffect(HcsEffects.COLD)) f *= 0.65F;
         if (player.hasStatusEffect(HcsEffects.UNHAPPY)) f *= 0.75F;
+        // bad code; malnutrition see method "update"
         StatusManager statusManager = ((StatAccessor) player).getStatusManager();
-        if (statusManager.getBandageWorkTicks() > 0) {
-            f *= 1.5F;
-        }
+        if (statusManager.getBandageWorkTicks() > 0) f *= 1.5F;
         return f;
     }
 
@@ -58,52 +59,53 @@ public abstract class HungerManagerMixin {
 
     @Inject(at = @At("HEAD"), method = "update", cancellable = true)
     public void update(@NotNull PlayerEntity player, CallbackInfo cir) {
-        Difficulty difficulty = player.getWorld().getDifficulty();
-        this.prevFoodLevel = this.foodLevel;
-        double thirst = ((StatAccessor) player).getThirstManager().get();
-        boolean malnutrition = player.hasStatusEffect(HcsEffects.MALNUTRITION);
-        if (difficulty == Difficulty.PEACEFUL) {
-            ((StatAccessor) player).getThirstManager().addDirectly(0.01);
-            ((StatAccessor) player).getSanityManager().add(0.01);
-        }
-        if (this.saturationLevel > 3.0F) this.saturationLevel = 3.0F;
-        if (this.exhaustion > 4.0F) {
-            this.exhaustion = 0.0F;
-            if (this.saturationLevel > 0.0F) {
-                this.saturationLevel = Math.max(this.saturationLevel - 1.0F, 0.0F);
-            } else if (difficulty != Difficulty.PEACEFUL) {
-                this.foodLevel = Math.max(this.foodLevel - 1, 0);
+        if (((StatAccessor) player).getConfigManager().get(SLOW_HEAL)) {
+            Difficulty difficulty = player.getWorld().getDifficulty();
+            this.prevFoodLevel = this.foodLevel;
+            double thirst = ((StatAccessor) player).getThirstManager().get();
+            boolean malnutrition = player.hasStatusEffect(HcsEffects.MALNUTRITION);
+            if (difficulty == Difficulty.PEACEFUL) {
+                ((StatAccessor) player).getThirstManager().addDirectly(0.01);
+                ((StatAccessor) player).getSanityManager().add(0.01);
             }
-        }
-        boolean bl = player.getWorld().getGameRules().getBoolean(GameRules.NATURAL_REGENERATION);
-        if (bl && this.saturationLevel >= 0.0F && player.canFoodHeal() && this.foodLevel >= 19 && thirst >= 0.8 && !player.hasStatusEffect(HcsEffects.BLEEDING)) {
-            if (!malnutrition || Math.random() < 0.5) ++this.foodTickTimer;
-            if (this.foodTickTimer >= 10) {
-                float f = Math.min(1.0F + this.saturationLevel / 6.0F, 2.0F) / 100.0F;
-                f = adjustHealingAmount(player, f);
-                player.heal(f);
-                this.addExhaustion(f * 6.0F);
+            if (this.saturationLevel > 3.0F) this.saturationLevel = 3.0F;
+            if (this.exhaustion > 4.0F) {
+                this.exhaustion = 0.0F;
+                if (this.saturationLevel > 0.0F) {
+                    this.saturationLevel = Math.max(this.saturationLevel - 1.0F, 0.0F);
+                } else if (difficulty != Difficulty.PEACEFUL) {
+                    this.foodLevel = Math.max(this.foodLevel - 1, 0);
+                }
+            }
+            boolean bl = player.getWorld().getGameRules().getBoolean(GameRules.NATURAL_REGENERATION);
+            if (bl && this.saturationLevel >= 0.0F && player.canFoodHeal() && this.foodLevel >= 19 && thirst >= 0.8 && !player.hasStatusEffect(HcsEffects.BLEEDING)) {
+                if (!malnutrition || Math.random() < 0.5) ++this.foodTickTimer;
+                if (this.foodTickTimer >= 10) {
+                    float f = Math.min(1.0F + this.saturationLevel / 6.0F, 2.0F) / 100.0F;
+                    f = adjustHealingAmount(player, f);
+                    player.heal(f);
+                    this.addExhaustion(f * 6.0F);
+                    this.foodTickTimer = 0;
+                }
+            } else if (bl && this.foodLevel >= 10 && player.canFoodHeal() && thirst >= 0.5) {
+                ++this.foodTickTimer;
+                if (this.foodTickTimer >= (100 * (this.foodLevel >= 14 ? 1 : 2) * (thirst >= 0.7 ? 1 : 1.5))) {
+                    float f = 0.1F;
+                    f = adjustHealingAmount(player, f);
+                    player.heal(f);
+                    this.addExhaustion(0.6F);
+                    this.foodTickTimer = 0;
+                }
+            } else if (this.foodLevel <= 0) {
+                ++this.foodTickTimer;
+                if (this.foodTickTimer >= 400) {
+                    player.damage(player.getWorld().getDamageSources().starve(), 1.0F);
+                    this.foodTickTimer = 0;
+                }
+            } else {
                 this.foodTickTimer = 0;
             }
-        } else if (bl && this.foodLevel >= 10 && player.canFoodHeal() && thirst >= 0.5) {
-            ++this.foodTickTimer;
-            if (this.foodTickTimer >= (100 * (this.foodLevel >= 14 ? 1 : 2) * (thirst >= 0.7 ? 1 : 1.5))) {
-                float f = 0.1F;
-                f = adjustHealingAmount(player, f);
-                player.heal(f);
-                this.addExhaustion(0.6F);
-                this.foodTickTimer = 0;
-            }
-        } else if (this.foodLevel <= 0) {
-            ++this.foodTickTimer;
-            if (this.foodTickTimer >= 400) {
-                player.damage(player.getWorld().getDamageSources().starve(), 1.0F);
-                this.foodTickTimer = 0;
-            }
-        } else {
-            this.foodTickTimer = 0;
+            cir.cancel();
         }
-        cir.cancel();
     }
-
 }
