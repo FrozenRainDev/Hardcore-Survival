@@ -39,7 +39,9 @@ public abstract class ZombieEntityMixin extends HostileEntity {
         this.targetSelector.add(2, new ActiveTargetGoal<>(this, AnimalEntity.class, false) {
             @Override
             public boolean canStart() {
-                if (this.mob != null && this.mob.getWorld() instanceof ServerWorld serverWorld)
+                if (this.mob == null) return false;
+                if (this.mob.isBaby() || this.mob.getVehicle() instanceof AnimalEntity) return false;
+                if (this.mob.getWorld() instanceof ServerWorld serverWorld)
                     return super.canStart() && Configs.isEnabled(serverWorld, Configs.HOSTILE_ZOMBIE);
                 return super.canStart();
             }

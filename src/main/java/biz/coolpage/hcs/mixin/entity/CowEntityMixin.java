@@ -39,7 +39,8 @@ public abstract class CowEntityMixin extends AnimalEntity implements IKickCoolDo
     @Unique
     @Override
     public boolean canKick() {
-        return this.kickCoolDown <= 0;
+        if (Configs.isEnabled(HOSTILE_COW)) return this.kickCoolDown <= 0;
+        return false;
     }
 
     @Unique

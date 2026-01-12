@@ -3,7 +3,7 @@ package biz.coolpage.hcs.status.manager;
 import biz.coolpage.hcs.Reg;
 import biz.coolpage.hcs.config.Configs;
 import biz.coolpage.hcs.status.HcsEffects;
-import net.minecraft.entity.LivingEntity;
+import biz.coolpage.hcs.status.accessor.StatAccessor;
 import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.entity.effect.StatusEffects;
 import net.minecraft.item.FoodComponent;
@@ -12,8 +12,6 @@ import net.minecraft.item.Items;
 import net.minecraft.server.network.ServerPlayerEntity;
 
 import static biz.coolpage.hcs.recipe.DryingRackRecipe.IS_RAW_MEAT;
-import static biz.coolpage.hcs.util.CommUtil.hasNull;
-import static biz.coolpage.hcs.util.EntityHelper.toPlayer;
 
 public class DiseaseManager {
     public static final String PARASITE_NBT = "hcs_parasite";
@@ -21,24 +19,26 @@ public class DiseaseManager {
     private double parasite = 0.0; //[0,3] 0~1 early stage 1~2 medium term 2~3 later period
     private double cold = 0.0; //[0,2] 0~1 pre 1~2 symptom appearing
 
-    public static double getParasitePossibilityAndCheckFoodPoisoning(Item item, LivingEntity entity) {
-        double poss = -1.0;
-        var player = toPlayer(entity);
-        // todo test here
-        if (hasNull(item, player) || (!Configs.isEnabled(player, Configs.FOOD_POISON))) return poss;
-        // WARNING: Food with parasite == Food causing poisoning
-        // Modify it if new rules needed
-        else if (IS_RAW_MEAT.test(item)) {
-            if (item == Items.PORKCHOP || item == Reg.ANIMAL_VISCERA) poss = 0.08;
-            else poss = 0.04;
-        } else if (item == Items.ROTTEN_FLESH) return 0.2;
-        else if (item == Reg.ROT || item == Reg.BAT_WINGS) poss = 0.1;
-        if ((Math.random() < (poss * 3.5) || isFoodPoisonous(item.getFoodComponent())) && entity instanceof ServerPlayerEntity sp)
-            sp.addStatusEffect(new StatusEffectInstance(HcsEffects.FOOD_POISONING, 1200, 0, false, false, true));
-        return poss; // -1.0: Impossible
+    // facade
+    public static void updateRawFoodDetriment(Item item, Object entity) {
+        if (item != null && entity instanceof ServerPlayerEntity player
+                && Configs.isEnabled(player, Configs.FOOD_POISON)) {
+            double poss = getBasicPoisonPoss(item);
+            if (Math.random() < (poss * 0.5))
+                (((StatAccessor) player)).getDiseaseManager().addParasite(0.12);
+            if (Math.random() < (poss * 4) || isFoodPoisonous(item.getFoodComponent()))
+                player.addStatusEffect(new StatusEffectInstance(HcsEffects.FOOD_POISONING, 1200, 0, false, false, true));
+        }
     }
 
-    public static boolean isFoodPoisonous(FoodComponent component) {
+    private static double getBasicPoisonPoss(Item item) {
+        if (item == Items.PORKCHOP || item == Reg.ANIMAL_VISCERA) return 0.22;
+        if (item == Items.ROTTEN_FLESH || item == Reg.ROT || item == Reg.BAT_WINGS) return 0.26;
+        if (IS_RAW_MEAT.test(item)) return 0.17;
+        return -1.0;
+    }
+
+    private static boolean isFoodPoisonous(FoodComponent component) {
         if (component != null) {
             var effects = component.getStatusEffects();
             if (effects != null) {

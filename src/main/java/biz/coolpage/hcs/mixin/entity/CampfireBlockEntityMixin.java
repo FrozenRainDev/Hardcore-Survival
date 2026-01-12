@@ -14,7 +14,6 @@ import net.minecraft.inventory.Inventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtElement;
-import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
@@ -40,9 +39,8 @@ public abstract class CampfireBlockEntityMixin extends BlockEntity implements IC
     @Unique
     @Override
     public long getBurnOutTime() {
-        if (this.getWorld() instanceof ServerWorld serverWorld && Configs.isEnabled(serverWorld, Configs.BURN))
-            return this.extinguishTime = Long.MAX_VALUE;
-        return this.extinguishTime;
+        if (Configs.isEnabled(Configs.BURN)) return this.extinguishTime;
+        return this.extinguishTime = Long.MAX_VALUE;
     }
 
     @Unique

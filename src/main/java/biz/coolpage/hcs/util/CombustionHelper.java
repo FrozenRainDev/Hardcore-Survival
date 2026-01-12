@@ -11,7 +11,6 @@ import net.minecraft.fluid.Fluids;
 import net.minecraft.inventory.Inventory;
 import net.minecraft.item.*;
 import net.minecraft.registry.tag.BlockTags;
-import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.stat.Stats;
@@ -94,9 +93,9 @@ public class CombustionHelper {
     public static final int MAX_CAMPFIRE_BURNING_LENGTH = 4000;
     public static final String EXTINGUISH_TIME_NBT = "hcs_extinguish_nbt";
 
-    public static BlockState updateCombustionState(@NotNull BlockState state, int remain) {
+    public static BlockState updateCombustionState(@NotNull BlockState state, long remain) {
         if (remain > MAX_CAMPFIRE_BURNING_LENGTH) remain = MAX_CAMPFIRE_BURNING_LENGTH;
-        else if (remain < 0) remain = 0;
+        else if (remain < 0L) remain = 0L;
         return state.with(COMBUST_LUMINANCE, getLuminance(remain));
     }
 
@@ -112,10 +111,11 @@ public class CombustionHelper {
             world.setBlockState(pos, (hasFlame ? Reg.SMOLDERING_CAMPFIRE_BLOCK : Reg.BURNT_CAMPFIRE_BLOCK).getDefaultState().with(CampfireBlock.FACING, state.get(CampfireBlock.FACING)).with(CampfireBlock.WATERLOGGED, state.get(CampfireBlock.WATERLOGGED)));
             world.syncWorldEvent(null, WorldEvents.FIRE_EXTINGUISHED, pos, 0);
         } else {
-            if (burnOutTime == Long.MAX_VALUE && world instanceof ServerWorld serverWorld && Configs.isEnabled(serverWorld, Configs.BURN))
+            if (burnOutTime == Long.MAX_VALUE && Configs.isEnabled(Configs.BURN))
                 campfire.resetBurnOutTime();
-            else if (hasFlame)
-                world.setBlockState(pos, CombustionHelper.updateCombustionState(state, (int) (burnOutTime - time)));
+            else if (hasFlame) {
+                world.setBlockState(pos, CombustionHelper.updateCombustionState(state, burnOutTime - time));
+            }
         }
     }
 

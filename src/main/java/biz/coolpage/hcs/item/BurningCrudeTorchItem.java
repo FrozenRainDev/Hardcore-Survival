@@ -1,6 +1,7 @@
 package biz.coolpage.hcs.item;
 
 import biz.coolpage.hcs.Reg;
+import biz.coolpage.hcs.config.Configs;
 import biz.coolpage.hcs.util.WorldHelper;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.VerticallyAttachableBlockItem;
@@ -22,25 +23,22 @@ public class BurningCrudeTorchItem extends VerticallyAttachableBlockItem {
     // Shared methods for burning crude torch & campfire item, which are used for burning length sync in inventories
     private static boolean isInvalidStack(ItemStack stack) {
         if (stack == null || WorldHelper.cannotGetServerWorld()) return true;
+        if (!Configs.isEnabled(Configs.BURN)) return true;
         NbtCompound nbt = stack.getOrCreateNbt();
         return !nbt.contains(EXTINGUISH_NBT);
     }
 
     public static boolean shouldExtinguish(ItemStack stack) {
-        if (isInvalidStack(stack)) return true;
-        if (WorldHelper.cannotGetServerWorld()) return false; // todo test here
+        if (isInvalidStack(stack)) return false;
         World world = WorldHelper.getServerWorld();
-        if (world == null) {
-            System.out.println();
-            return false;
-        }
+        if (world == null) return false;
         return stack.getOrCreateNbt().getLong(EXTINGUISH_NBT) < world.getTime();
     }
 
-    private static float getDurPercent(ItemStack stack) {
+    private static float getDurationPercent(ItemStack stack) {
         if (isInvalidStack(stack)) return 0.0F;
         if (WorldHelper.cannotGetServerWorld()) {
-            Reg.LOGGER.error("getDurPercent world==null client side called");
+            Reg.LOGGER.error("getDurPercent world==null since called on client side");
             return 0;
         }
         World world = WorldHelper.getServerWorld();
@@ -65,12 +63,12 @@ public class BurningCrudeTorchItem extends VerticallyAttachableBlockItem {
 
     @Override
     public int getItemBarStep(ItemStack stack) {
-        return Math.round(getDurPercent(stack) * 13);
+        return Math.round(getDurationPercent(stack) * 13);
     }
 
     @Override
     public int getItemBarColor(@NotNull ItemStack stack) {
-        float f = Math.max(0.0f, getDurPercent(stack));
+        float f = Math.max(0.0f, getDurationPercent(stack));
         return MathHelper.hsvToRgb(f / 3.0f, 1.0f, 1.0f);
     }
 }

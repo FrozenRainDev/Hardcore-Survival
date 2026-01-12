@@ -20,20 +20,17 @@ public enum Configs {
     TEMPERATURE("hcsTemperature"),
     WET("hcsWetness"),
     SOUL_IMPAIR("hcsSoulImpairment"),
-    DARK_THREAT("hcsDarknessThreatening"), // todo v
-    DIG_CONSTRAIN("hcsDiggingConstraints"), // todo v
-    HEAVY_LOAD("hcsHeavyLoading"), // todo v
-    INJURY("hcsInjuryPunishment"), // todo low hp punish v
-    FOOD_SPOIL("hcsFoodSpoilage"), // todo :(
-    FOOD_POISON("hcsFoodPoisoning"), // todo v
-    OXYGEN("hcsOxygenDeficiency"), // todo v
-    SLOW_HEAL("hcsSlowHealing"), // todo v
-    BURN("hcsBurningTimeLimits"), // todo v
-    HOSTILE_ZOMBIE("hcsZombieExtraHostility"), // todo v
-    HOSTILE_COW("hcsCowKicking"),; //todo v
-
-    // todo healing speed
-    // todo burning time
+    DARK_THREAT("hcsDarknessThreatening"),
+    DIG_CONSTRAIN("hcsDiggingConstraints"),
+    HEAVY_LOAD("hcsHeavyLoading"),
+    INJURY("hcsInjuryPunishment"),
+    FOOD_SPOIL("hcsFoodSpoilage"),
+    FOOD_POISON("hcsFoodPoisoning"),
+    OXYGEN("hcsOxygenDeficiency"),
+    SLOW_HEAL("hcsSlowHealing"),
+    BURN("hcsBurningTimeLimits"),
+    HOSTILE_ZOMBIE("hcsZombieExtraHostility"),
+    HOSTILE_COW("hcsCowKicking");
 
     public final GameRules.Key<GameRules.BooleanRule> gameRule;
 

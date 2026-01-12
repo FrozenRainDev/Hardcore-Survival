@@ -147,6 +147,7 @@
   "hcs.tip.need_netherite_pickaxe": "A netherite pickaxe is required for destroying end crystals!",
   "hcs.tip.when_in_leather": "Wearing leather armor can protect you from cow kicking",
   "hcs.tip.cannot_cook_more_meat": "Can only cook one piece of meat at once",
+  "hcs.tip.config": "Configs",
   "item.minecraft.potion.effect.hcs_ironskin": "Potion of Ironskin",
   "item.minecraft.potion.effect.hcs_long_ironskin": "Potion of Ironskin",
   "item.minecraft.potion.effect.hcs_strong_ironskin": "Potion of Ironskin",

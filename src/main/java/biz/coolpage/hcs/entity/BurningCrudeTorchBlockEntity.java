@@ -1,6 +1,7 @@
 package biz.coolpage.hcs.entity;
 
 import biz.coolpage.hcs.Reg;
+import biz.coolpage.hcs.config.Configs;
 import biz.coolpage.hcs.util.CombustionHelper;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockEntityProvider;
@@ -13,6 +14,7 @@ import net.minecraft.network.packet.s2c.play.BlockEntityUpdateS2CPacket;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
+import static biz.coolpage.hcs.config.Configs.BURN;
 import static biz.coolpage.hcs.util.CommUtil.applyNullable;
 import static biz.coolpage.hcs.item.BurningCrudeTorchItem.EXTINGUISH_NBT;
 
@@ -32,7 +34,9 @@ public class BurningCrudeTorchBlockEntity extends BlockEntity implements BlockEn
     }
 
     public boolean shouldExtinguish() {
-        return this.getWorld() == null ||  this.extinguishTime < this.getWorld().getTime();
+        if (this.getWorld() == null) return false;
+        if (!Configs.isEnabled(BURN)) return false;
+        return this.extinguishTime < this.getWorld().getTime();
     }
 
     public void extinguish() {

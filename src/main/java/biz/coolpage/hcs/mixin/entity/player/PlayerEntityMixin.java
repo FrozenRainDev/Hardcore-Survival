@@ -2,7 +2,6 @@ package biz.coolpage.hcs.mixin.entity.player;
 
 import biz.coolpage.hcs.Reg;
 import biz.coolpage.hcs.block.torches.BurningCrudeTorchBlock;
-import biz.coolpage.hcs.config.Configs;
 import biz.coolpage.hcs.config.HcsDifficulty;
 import biz.coolpage.hcs.item.KnifeItem;
 import biz.coolpage.hcs.status.HcsEffects;
@@ -55,7 +54,6 @@ import java.util.Objects;
 
 import static biz.coolpage.hcs.config.Configs.*;
 import static biz.coolpage.hcs.recipe.DryingRackRecipe.HAS_COOKED;
-import static biz.coolpage.hcs.status.manager.DiseaseManager.getParasitePossibilityAndCheckFoodPoisoning;
 import static biz.coolpage.hcs.util.CommUtil.rehabPlayerStats;
 import static biz.coolpage.hcs.util.DigRestrictHelper.Predicates.IS_PLANT;
 import static biz.coolpage.hcs.util.EntityHelper.*;
@@ -367,8 +365,7 @@ public abstract class PlayerEntityMixin extends LivingEntity implements StatAcce
             FoodComponent food = item.getFoodComponent();
             EntityHelper.checkOvereaten(player, false);
             if (food != null) {
-                if (Math.random() < getParasitePossibilityAndCheckFoodPoisoning(item, this))
-                    this.diseaseManager.addParasite(0.12);
+                DiseaseManager.updateRawFoodDetriment(item, this);
                 if (food.isMeat() || name.contains("egg")) this.nutritionManager.addVegetable(-0.1);
                 else if (name.contains("kelp") || name.contains("sugar_cane")) this.nutritionManager.addVegetable(0.19);
                 else if (name.contains("berries") || name.contains("berry")) this.nutritionManager.addVegetable(0.21);
@@ -569,7 +566,7 @@ public abstract class PlayerEntityMixin extends LivingEntity implements StatAcce
         if (((this.getWorld().isNight() || isInCavelike) && !this.hasStatusEffect(StatusEffects.NIGHT_VISION)) || isInUnpleasantDimension) {
             double sanDecrement = 0.00001;
             int blockBrightness = this.getWorld().getLightLevel(LightType.BLOCK, headPos);
-            if (!isInUnpleasantDimension&&configManager.get(DARK_THREAT)) {
+            if (!isInUnpleasantDimension && configManager.get(DARK_THREAT)) {
                 if (blockBrightness < 1 && isInCavelike && !isDarkSafe) {
                     sanDecrement = 0.00006;
                     hasDarkDebuff = true;
