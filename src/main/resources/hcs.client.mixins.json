@@ -1,0 +1,27 @@
+{
+  "required": true,
+  "package": "biz.coolpage.hcs.client.mixin",
+  "compatibilityLevel": "JAVA_17",
+  "client": [
+    "ClientPlayerInteractionManagerMixin",
+    "GameOptionsMixin",
+    "MinecraftClientMixin",
+    "MouseMixin",
+    "SoundSystemMixin",
+    "gui.AbstractInventoryScreenMixin",
+    "gui.DebugHudMixin",
+    "gui.InGameHudMixin",
+    "gui.InventoryScreenMixin",
+    "gui.ScreenMixin",
+    "gui.SubtitlesHudMixin",
+    "gui.VideoOptionsScreenMixin",
+    "render.BuiltinModelItemRendererMixin",
+    "render.HeldItemRendererMixin",
+    "render.PlayerEntityRendererMixin",
+    "render.WorldRendererMixin",
+    "ClientPlayerEntityMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}

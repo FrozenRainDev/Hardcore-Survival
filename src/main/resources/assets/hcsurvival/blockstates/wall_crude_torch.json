@@ -1,0 +1,19 @@
+{
+  "variants": {
+    "facing=east": {
+      "model": "hcs:block/wall_crude_torch"
+    },
+    "facing=north": {
+      "model": "hcs:block/wall_crude_torch",
+      "y": 270
+    },
+    "facing=south": {
+      "model": "hcs:block/wall_crude_torch",
+      "y": 90
+    },
+    "facing=west": {
+      "model": "hcs:block/wall_crude_torch",
+      "y": 180
+    }
+  }
+}

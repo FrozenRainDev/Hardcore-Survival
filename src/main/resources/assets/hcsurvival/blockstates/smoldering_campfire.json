@@ -1,0 +1,19 @@
+{
+  "variants": {
+    "facing=east": {
+      "model": "hcs:block/smoldering_campfire",
+      "y": 270
+    },
+    "facing=north": {
+      "model": "hcs:block/smoldering_campfire",
+      "y": 180
+    },
+    "facing=south": {
+      "model": "hcs:block/smoldering_campfire"
+    },
+    "facing=west": {
+      "model": "hcs:block/smoldering_campfire",
+      "y": 90
+    }
+  }
+}
