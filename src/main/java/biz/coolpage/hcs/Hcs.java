@@ -86,6 +86,9 @@ public final class Hcs {
         if (outputBuilder.indexOf("warn") == 0) {
             outputBuilder.deleteCharAt(outputBuilder.indexOf("warn"));
             LOGGER.warn(output);
+        } else if (outputBuilder.indexOf("error") == 0) {
+            outputBuilder.deleteCharAt(outputBuilder.indexOf("error"));
+            LOGGER.error(output);
         } else {
             LOGGER.info(output);
         }

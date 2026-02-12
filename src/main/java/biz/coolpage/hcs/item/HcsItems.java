@@ -1,6 +1,7 @@
 package biz.coolpage.hcs.item;
 
 import biz.coolpage.hcs.Hcs;
+import net.minecraft.world.item.AxeItem;
 import net.minecraft.world.item.Item;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.registries.DeferredRegister;
@@ -15,7 +16,7 @@ public final class HcsItems {
     //todo data gen -> custom block -> custom item -> custom tool
     public static final DeferredRegister<Item> ITEMS = DeferredRegister.create(ForgeRegistries.ITEMS, Hcs.MOD_ID);
 
-    public static final RegistryObject<Item> FLINT_HATCHET = register("flint_hatchet", () -> new Item(new Item.Properties()));
+    public static final RegistryObject<Item> FLINT_HATCHET = register("flint_hatchet", () -> new AxeItem(HcsToolTiers.FLINT, 6.0F, -3.1F, new Item.Properties()));
 
     public static void register(IEventBus iEventBus) {
         ITEMS.register(iEventBus);
@@ -29,6 +30,4 @@ public final class HcsItems {
     private static <T extends Item> RegistryObject<T> register(@NotNull String name, Supplier<T> item) {
         return ITEMS.register(name.toLowerCase(Locale.ROOT/* free from languages distinction */), item);
     }
-
-
 }

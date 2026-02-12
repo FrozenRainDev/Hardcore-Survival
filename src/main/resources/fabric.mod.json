@@ -26,8 +26,8 @@
     ]
   },
   "mixins": [
-    "hcs.mixins.json",
-    "hcs.client.mixins.json"
+    "hcsurvival.mixins.json",
+    "hcsurvival.client.mixins.json.txt"
   ],
 
   "depends": {

@@ -1,4 +1,4 @@
-package biz.coolpage.hcs.datagen;
+package biz.coolpage.hcs.data;
 
 import biz.coolpage.hcs.Hcs;
 import net.minecraft.core.HolderLookup;

@@ -1,0 +1,13 @@
+{
+  "required": true,
+  "package": "biz.coolpage.hcs.mixin",
+  "compatibilityLevel": "JAVA_17",
+  "mixins": [
+    "item.ItemMixin"
+  ],
+  "server": [
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}

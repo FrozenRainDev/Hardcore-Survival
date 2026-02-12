@@ -1,4 +1,4 @@
-package biz.coolpage.hcs.datagen.loot;
+package biz.coolpage.hcs.data.loot;
 
 import biz.coolpage.hcs.item.HcsBlocks;
 import net.minecraft.data.loot.BlockLootSubProvider;
