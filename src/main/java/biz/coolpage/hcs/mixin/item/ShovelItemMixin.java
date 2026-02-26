@@ -1,0 +1,27 @@
+package biz.coolpage.hcs.mixin.item;
+
+import biz.coolpage.hcs.status.accessor.StatAccessor;
+import biz.coolpage.hcs.status.manager.StaminaManager;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ShovelItem;
+import net.minecraft.world.item.context.UseOnContext;
+import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
+
+@Mixin(ShovelItem.class)
+public class ShovelItemMixin {
+    @Inject(method = "useOn", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/InteractionResult;sidedSuccess(Z)Lnet/minecraft/world/InteractionResult;"))
+    public void useOnInjected(UseOnContext context, CallbackInfoReturnable<InteractionResult> cir) {
+        if (context == null) return;
+        Player player = context.getPlayer();
+        if (player == null) return;
+        if (!player.level().isClientSide && !player.getAbilities().invulnerable) {
+            StaminaManager staminaManager = ((StatAccessor) player).getStaminaManager();
+            staminaManager.add(-0.005, player);
+            staminaManager.pauseRestoring();
+        }
+    }
+}

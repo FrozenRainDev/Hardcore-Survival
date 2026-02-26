@@ -3,7 +3,8 @@
   "package": "biz.coolpage.hcs.mixin",
   "compatibilityLevel": "JAVA_17",
   "mixins": [
-    "item.ItemMixin"
+    "item.ItemMixin",
+    "item.TiersMixin"
   ],
   "server": [
   ],

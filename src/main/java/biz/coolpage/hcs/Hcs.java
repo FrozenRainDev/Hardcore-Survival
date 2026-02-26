@@ -4,6 +4,8 @@ import biz.coolpage.hcs.config.Config;
 import biz.coolpage.hcs.item.HcsItems;
 import com.mojang.logging.LogUtils;
 import net.minecraft.core.registries.Registries;
+import net.minecraft.network.chat.Component;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.CreativeModeTabs;
 import net.minecraftforge.api.distmarker.Dist;
@@ -32,6 +34,7 @@ public final class Hcs {
 
     public static final RegistryObject<CreativeModeTab> EXAMPLE_TAB = CREATIVE_MODE_TABS.register(MOD_ID /* lower case only */, () -> CreativeModeTab.builder()
             .withTabsBefore(CreativeModeTabs.COMBAT) // placed after the combat tab
+            .title(Component.translatable("itemGroup.hcsurvival.main"))
             .icon(() -> FLINT_HATCHET.get().getDefaultInstance())
             .displayItems((parameters, output) -> {
                 output.accept(FLINT_HATCHET.get()); // Add the example item to the tab. For your own tabs, this method is preferred over the event
@@ -48,6 +51,8 @@ public final class Hcs {
         MinecraftForge.EVENT_BUS.register(this);
         // Config
         context.registerConfig(ModConfig.Type.COMMON, Config.CFG_SPEC);
+        // todo test
+        info(LivingEntity.SLOW_FALLING_ID);
     }
 
     private void commonSetup(final FMLCommonSetupEvent event) {
@@ -72,25 +77,28 @@ public final class Hcs {
         }
     }
 
-    public static void print(Object... contents) {
+    private static @NotNull String getInfoString(Object... contents) {
         if (contents == null) {
-            LOGGER.warn("Printed content is null");
-            return;
+            LOGGER.warn("Printing content is null");
+            return "";
         }
         StringBuilder outputBuilder = new StringBuilder();
         for (Object content : contents) {
             outputBuilder.append(content);
             outputBuilder.append(" ");
         }
-        String output = outputBuilder.toString();
-        if (outputBuilder.indexOf("warn") == 0) {
-            outputBuilder.deleteCharAt(outputBuilder.indexOf("warn"));
-            LOGGER.warn(output);
-        } else if (outputBuilder.indexOf("error") == 0) {
-            outputBuilder.deleteCharAt(outputBuilder.indexOf("error"));
-            LOGGER.error(output);
-        } else {
-            LOGGER.info(output);
-        }
+        return outputBuilder.toString();
+    }
+
+    public static void info(Object... contents) {
+        LOGGER.info(getInfoString(contents));
+    }
+
+    public static void warn(Object... contents) {
+        LOGGER.warn(getInfoString(contents));
+    }
+
+    public static void error(Object... contents) {
+        LOGGER.error(getInfoString(contents));
     }
 }

@@ -1,0 +1,82 @@
+package biz.coolpage.hcs.util;
+
+import biz.coolpage.hcs.status.accessor.StatAccessor;
+import net.minecraft.core.Registry;
+import net.minecraft.core.registries.Registries;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerPlayer;
+import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import java.text.DecimalFormat;
+import java.util.Optional;
+import java.util.function.Consumer;
+import java.util.function.Function;
+
+public class CommUtil {
+
+    public static String numFormat(String pattern, double value) {
+        DecimalFormat decimalFormat = new DecimalFormat(pattern);
+        return decimalFormat.format(value);
+    }
+
+    public static String numFormat(String pattern, float value) {
+        return numFormat(pattern, (double) value);
+    }
+
+    @Contract(pure = true)
+    public static @NotNull String retain5(double val) {
+        // Retain five decimal places
+        return String.format("%.5f", val);
+    }
+
+    @Contract(pure = true)
+    public static <T> @NotNull T optElse(@Nullable T instance, @NotNull T defaultVal) {
+        return Optional.ofNullable(instance).orElse(defaultVal);
+    }
+
+    //Optional class cannot directly do these:
+    @Contract(pure = true)
+    public static <T> void applyNullable(@Nullable T instance, @NotNull Consumer<T> consumer) {
+        if (instance != null) consumer.accept(instance);
+    }
+
+    @Contract(pure = true)
+    public static <T, R> @NotNull R applyNullable(@Nullable T instance, @NotNull Function<T, R> function, @NotNull R defaultVal) {
+        if (instance == null) return defaultVal;
+        return function.apply(instance);
+    }
+
+    @Contract(pure = true)
+    public static boolean hasNull(@Nullable Object... objects) {
+        if (objects == null || objects.length == 0) return true;
+        for (Object object : objects) if (object == null) return true;
+        return false;
+    }
+
+    @Contract(pure = true)
+    public static boolean regEntryContains(@NotNull net.minecraft.core.Holder<?> entry, String pattern) {
+        Optional<? extends ResourceKey<?>> key = entry.unwrapKey();
+        if (key != null && key.isPresent()) return key.get().location().getPath().contains(pattern);
+        return false;
+    }
+
+    public static void rehabPlayerStats(@Nullable Object obj) {
+        if (obj instanceof ServerPlayer player) {
+            player.getFoodData().eat(40, 1.0F);
+            if (player instanceof StatAccessor p) {
+                p.getThirstManager().addDirectly(1000D);
+                p.getSanityManager().add(1.0);
+                p.getStatusManager().setSoulImpairedStat(0);
+                p.getInjuryManager().applyPainkiller();
+                p.getInjuryManager().setBleeding(0.0);
+                p.getInjuryManager().setFracture(0.0);
+                p.getDiseaseManager().reset();
+                p.getMoodManager().setHappiness(1.0);
+            }
+        }
+    }
+
+}

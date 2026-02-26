@@ -17,7 +17,7 @@ import java.util.concurrent.CompletableFuture;
 public class HcsDataGenerators {
     @SubscribeEvent
     public static void gatherData(@NotNull GatherDataEvent event) {
-        Hcs.print("Gathering data is called");
+        Hcs.info("Gathering data is called");
         DataGenerator generator = event.getGenerator();
         PackOutput output = generator.getPackOutput();
         ExistingFileHelper fileHelper = event.getExistingFileHelper();

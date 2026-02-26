@@ -17,8 +17,7 @@ public final class HcsFactory {
             // when the path has prefix "minecraft:", remove it
             path = path.split(":")[1]; // todo shit code here to optimize
         }
-        // todo delete me
-        Hcs.print("withDefaultNamespace" + ResourceLocation.withDefaultNamespace(path));
+//        Hcs.info("withDefaultNamespace" + ResourceLocation.withDefaultNamespace(path));
         return ResourceLocation.withDefaultNamespace(path);
     }
 }

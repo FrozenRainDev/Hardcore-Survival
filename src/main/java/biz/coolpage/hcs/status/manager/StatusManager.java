@@ -1,0 +1,319 @@
+package biz.coolpage.hcs.status.manager;
+
+import biz.coolpage.hcs.config.HcsDifficulty;
+import biz.coolpage.hcs.status.accessor.StatAccessor;
+import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.player.PlayerEntity;
+import org.jetbrains.annotations.Nullable;
+
+import static biz.coolpage.hcs.config.Configs.*;
+import static biz.coolpage.hcs.util.EntityHelper.toPlayer;
+
+public class StatusManager {
+    public static final String MAX_LVL_NBT = "hcs_max_lvl_reached";
+    public static final String IS_SOUL_IMPAIRED_NBT = "hcs_is_soul_impaired";
+    public static final String IN_DARKNESS_TICKS_NBT = "hcs_in_darkness";
+    public static final String ENTER_TIMES_NBT = "hcs_enter_curr_wld";
+    private float exhaustion = 0.0F; //A field in HungerManager that needs to used in InGameHudMixin
+    private int recentAttackTicks = 0; //Increase when player attacks an entity; Decrease over time
+    private int recentMiningTicks = 0;
+    private int recentHasColdWaterBagTicks = 0;
+    private int recentHasHotWaterBagTicks = 0;
+    private int maxExpLevelReached = 0;
+    private int recentLittleOvereatenTicks = 0;
+    private boolean hasDecimalFoodLevel = false;
+    private boolean shouldLockDestroying = false; // Client only
+    private int soulImpairedStat = 0; // Server only
+    private int recentSleepTicks = 0;
+    private int recentWetTicks = 0;
+    private int inDarknessTicks = 0, lastInDarknessTicks = 0;
+    private int bareDiggingTicks = 0; // Ticks of digging blocks with bare hand; Server only
+    private int enterCurrWldTimes = 0;
+    private int stonesSmashed = 0;
+    private boolean hasCheckInitTips = false; // Client side only
+    private Enum<HcsDifficulty.HcsDifficultyEnum> hcsDifficulty = HcsDifficulty.HcsDifficultyEnum.standard;
+    private boolean hasDarknessEnvelopedDebuff = false; // Server side only -- add all debuffs in ServerPlayerEntityMixin/tick() so the order of hcs debuffs won't change randomly
+    private boolean hasHeavyLoadDebuff = false; // Server side only
+    private int bandageWorkTicks = 0; // Server side only
+    private float blockBreakingSpeed = 1.0F;
+    private int recentHurtTicks = 0;
+    private float realProtection = 0.0F;
+    private float recentFeelingDamage = 0.0F;
+    private int returnEffectAwaitTicks = 0; //Server side only
+
+    public static int getMaxSoulImpaired(@Nullable LivingEntity entity) {
+        PlayerEntity player = toPlayer(entity);
+        if (player == null) return 0;
+        var config = ((StatAccessor) player).getConfigManager();
+        if (config != null && !config.get(SOUL_IMPAIR)) return 0;
+        return HcsDifficulty.chooseVal(player, 0, 6, 8);
+    }
+
+    public void reset(int lvlReached, int soulImpaired, int smashed, Enum<HcsDifficulty.HcsDifficultyEnum> hcsDifficulty, boolean hasCheckInitTips, int enterCurrWldTimes) {
+        setSoulImpairedStat(soulImpaired);
+        exhaustion = 0.0F;
+        recentAttackTicks = 0;
+        recentMiningTicks = 0;
+        recentHasColdWaterBagTicks = 0;
+        recentHasHotWaterBagTicks = 0;
+        maxExpLevelReached = lvlReached;
+        recentLittleOvereatenTicks = 0;
+        hasDecimalFoodLevel = false;
+        shouldLockDestroying = false;
+        recentSleepTicks = 0;
+        recentWetTicks = 0;
+        lastInDarknessTicks = inDarknessTicks = 0;
+        bareDiggingTicks = 0;
+        stonesSmashed = smashed;
+        this.hcsDifficulty = hcsDifficulty;
+        this.hasCheckInitTips = hasCheckInitTips;
+        hasDarknessEnvelopedDebuff = false;
+        hasHeavyLoadDebuff = false;
+        bandageWorkTicks = 0;
+        this.enterCurrWldTimes = enterCurrWldTimes;
+        recentHurtTicks = 0;
+        realProtection = 0.0F;
+        recentFeelingDamage = 0.0F;
+        returnEffectAwaitTicks = 0;
+    }
+
+    public float getExhaustion() {
+        return exhaustion;
+    }
+
+    public void setExhaustion(float val) {
+        exhaustion = val;
+    }
+
+    public int getRecentAttackTicks() {
+        return recentAttackTicks;
+    }
+
+    public void setRecentAttackTicks(int val) {
+        recentAttackTicks = val;
+    }
+
+    public int getRecentMiningTicks() {
+        return recentMiningTicks;
+    }
+
+    public void setRecentMiningTicks(int val) {
+        recentMiningTicks = val;
+    }
+
+    public int getRecentHasColdWaterBagTicks() {
+        return recentHasColdWaterBagTicks;
+    }
+
+    public void setRecentHasColdWaterBagTicks(int val) {
+        recentHasColdWaterBagTicks = val;
+    }
+
+    public int getRecentHasHotWaterBagTicks() {
+        return recentHasHotWaterBagTicks;
+    }
+
+    public void setRecentHasHotWaterBagTicks(int val) {
+        recentHasHotWaterBagTicks = val;
+    }
+
+    public int getMaxExpLevelReached() {
+        return maxExpLevelReached;
+    }
+
+    public void setMaxExpLevelReached(int val) {
+        maxExpLevelReached = val;
+    }
+
+    public int getRecentLittleOvereatenTicks() {
+        return recentLittleOvereatenTicks;
+    }
+
+    public void setRecentLittleOvereatenTicks(int val) {
+        recentLittleOvereatenTicks = val;
+    }
+
+    public boolean hasDecimalFoodLevel() {
+        return hasDecimalFoodLevel;
+    }
+
+    public void setHasDecimalFoodLevel(boolean val) {
+        hasDecimalFoodLevel = val;
+    }
+
+    public boolean lockDestroying() {
+        return shouldLockDestroying;
+    }
+
+    public void setLockDestroying(boolean val) {
+        shouldLockDestroying = val;
+    }
+
+    public int getSoulImpairedStat() {
+        if (soulImpairedStat < 0) soulImpairedStat = 0;
+        return soulImpairedStat;
+    }
+
+    public void setSoulImpairedStat(int val) {//See end of PlayerEntityMixin/ticks(); -- controls max value
+        if (val < 0) val = 0;
+        soulImpairedStat = val;
+    }
+
+    public int getRecentSleepTicks() {
+        return recentSleepTicks;
+    }
+
+    public void setRecentSleepTicks(int val) {
+        recentSleepTicks = val;
+    }
+
+    public int getRecentWetTicks() {
+        return recentWetTicks;
+    }
+
+    public void setRecentWetTicks(int val) {
+        recentWetTicks = val;
+    }
+
+    public int getInDarknessTicks() {
+        if (inDarknessTicks < 0) inDarknessTicks = 0;
+        return inDarknessTicks;
+    }
+
+    public int getLastInDarknessTicks() {
+        return lastInDarknessTicks;
+    }
+
+    public void setInDarknessTicks(int val) {
+        lastInDarknessTicks = inDarknessTicks;
+        inDarknessTicks = Math.min(114514, val);
+    }
+
+    @Deprecated
+    public int getBareDiggingTicks() {
+        return bareDiggingTicks;
+    }
+
+    public void setBareDiggingTicks(int val) {
+        bareDiggingTicks = val;
+    }
+
+    @Deprecated
+    public void addBareDiggingTicks() {
+        if (bareDiggingTicks < 10000) ++bareDiggingTicks;
+    }
+
+    public int getEnterCurrWldTimes() {
+        return enterCurrWldTimes;
+    }
+
+    public void setEnterCurrWldTimes(int val) {
+        enterCurrWldTimes = val;
+    }
+
+    public int getStonesSmashed() {
+        if (stonesSmashed < 0) stonesSmashed = 0;
+        return stonesSmashed;
+    }
+
+    public void setStonesSmashed(int val) {
+        stonesSmashed = val;
+        if (stonesSmashed < 0) stonesSmashed = 0;
+        else if (stonesSmashed + val > 114514) stonesSmashed = 114514;
+    }
+
+    @Deprecated
+    public void addStonesSmashed() {
+        setStonesSmashed(getStonesSmashed() + 1);
+    }
+
+    public boolean hasShownInitTips() {
+        return hasCheckInitTips;
+    }
+
+    public void setHasCheckInitTips(boolean hasCheckInitTips) {
+        this.hasCheckInitTips = hasCheckInitTips;
+    }
+
+    public Enum<HcsDifficulty.HcsDifficultyEnum> getHcsDifficulty() {
+        return hcsDifficulty;
+    }
+
+    public void setHcsDifficulty(Enum<HcsDifficulty.HcsDifficultyEnum> hcsDifficulty) {
+        this.hcsDifficulty = hcsDifficulty;
+    }
+
+    public boolean hasDarknessEnvelopedDebuff() {
+        return hasDarknessEnvelopedDebuff;
+    }
+
+    public void setHasDarknessEnvelopedDebuff(boolean hasDarknessEnvelopedDebuff) {
+        this.hasDarknessEnvelopedDebuff = hasDarknessEnvelopedDebuff;
+    }
+
+    public boolean hasHeavyLoadDebuff() {
+        return hasHeavyLoadDebuff;
+    }
+
+    public void setHasHeavyLoadDebuff(boolean hasHeavyLoadDebuff) {
+        this.hasHeavyLoadDebuff = hasHeavyLoadDebuff;
+    }
+
+    public int getBandageWorkTicks() {
+        return bandageWorkTicks;
+    }
+
+    public void setBandageWorkTicks(int bandageWorkTicks) {
+        this.bandageWorkTicks = bandageWorkTicks;
+    }
+
+    public void addBandageWorkTicks(int increment) {
+        int result = getBandageWorkTicks() + increment;
+        if (result < 0) result = 0;
+        setBandageWorkTicks(result);
+    }
+
+    public float getBlockBreakingSpeed() {
+        return blockBreakingSpeed;
+    }
+
+    public void setBlockBreakingSpeed(float blockBreakingSpeed) {
+        this.blockBreakingSpeed = blockBreakingSpeed;
+    }
+
+    public int getRecentHurtTicks() {
+        return recentHurtTicks;
+    }
+
+    public void setRecentHurtTicks(int recentHurtTicks) {
+        if (recentHurtTicks < 0) recentHurtTicks = 0;
+        else if (recentHurtTicks > 20) recentHurtTicks = 20;
+        this.recentHurtTicks = recentHurtTicks;
+    }
+
+    public float getRealProtection() {
+        return realProtection;
+    }
+
+    public void setRealProtection(float realProtection) {
+        this.realProtection = realProtection;
+    }
+
+    public float getRecentFeelingDamage() {
+        return recentFeelingDamage;
+    }
+
+    public void setRecentFeelingDamage(float recentFeelingDamage) {
+        this.recentFeelingDamage = recentFeelingDamage;
+    }
+
+    public int getReturnEffectAwaitTicks() {
+        return returnEffectAwaitTicks;
+    }
+
+    public void setReturnEffectAwaitTicks(int returnEffectAwaitTicks) {
+        this.returnEffectAwaitTicks = returnEffectAwaitTicks;
+    }
+
+
+}
