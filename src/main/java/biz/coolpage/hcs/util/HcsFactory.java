@@ -5,19 +5,26 @@ import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Objects;
+
 public final class HcsFactory {
     @Contract("_ -> new")
     public static @NotNull ResourceLocation createResourceLocation(String name) {
-        return ResourceLocation.fromNamespaceAndPath(Hcs.MOD_ID, name);
+        return createResourceLocation(Hcs.MOD_ID, name);
     }
 
     @Contract("_ -> new")
-    public static @NotNull ResourceLocation createDefaultResourceLocation(@NotNull String path) {
+    public static @NotNull ResourceLocation createPathResourceLocation(@NotNull String path) {
+        String namespace = "minecraft";
         if (path.contains(":")) {
-            // when the path has prefix "minecraft:", remove it
-            path = path.split(":")[1]; // todo shit code here to optimize
+            String[] split = path.split(":");
+            namespace = split[0];
+            path = split[1];
         }
-//        Hcs.info("withDefaultNamespace" + ResourceLocation.withDefaultNamespace(path));
-        return ResourceLocation.withDefaultNamespace(path);
+        return createResourceLocation(namespace, path);
+    }
+
+    public static @NotNull ResourceLocation createResourceLocation(String namespace, String path){
+       return ResourceLocation.fromNamespaceAndPath(namespace, path);
     }
 }

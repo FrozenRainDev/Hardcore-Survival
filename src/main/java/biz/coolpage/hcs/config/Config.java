@@ -44,7 +44,7 @@ public final class Config {
     public static Set<Item> items;
 
     private static boolean validateItemName(final Object obj) {
-        return obj instanceof final String itemName && ForgeRegistries.ITEMS.containsKey(HcsFactory.createDefaultResourceLocation(itemName));
+        return obj instanceof final String itemName && ForgeRegistries.ITEMS.containsKey(HcsFactory.createPathResourceLocation(itemName));
     }
 
     @SubscribeEvent
@@ -55,7 +55,7 @@ public final class Config {
 
         // convert the list of strings into a set of items
         items = ITEM_STRINGS.get().stream()
-                .map(itemName -> ForgeRegistries.ITEMS.getValue(HcsFactory.createDefaultResourceLocation(itemName)))
+                .map(itemName -> ForgeRegistries.ITEMS.getValue(HcsFactory.createPathResourceLocation(itemName)))
                 .collect(Collectors.toSet());
     }
 }
