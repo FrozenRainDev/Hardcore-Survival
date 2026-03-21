@@ -41,9 +41,10 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 @Mixin(ServerPlayer.class)
-public abstract class ServerPlayerEntityMixin extends Player {
+// ServerPlayerEntityMixin
+public abstract class ServerPlayerMixin extends Player {
 
-    public ServerPlayerEntityMixin(Level level, BlockPos pos, float yaw, GameProfile gameProfile) {
+    public ServerPlayerMixin(Level level, BlockPos pos, float yaw, GameProfile gameProfile) {
         super(level, pos, yaw, gameProfile);
     }
 
@@ -153,7 +154,7 @@ public abstract class ServerPlayerEntityMixin extends Player {
         if (this.isUsingItem() && (this.getMainHandItem().getItem() instanceof ShieldItem || this.getOffhandItem().getItem() instanceof ShieldItem))
             staminaManager.pauseRestoring();
 
-        if (biome.getModifiedClimateSettings().downfall <= 0.0F || TemperatureHelper.isSpecialSunshineArea(biomeName)) {
+        if (biome.getModifiedClimateSettings().downfall() <= 0.0F || TemperatureHelper.isSpecialSunshineArea(biomeName)) {
             if (sunshineIntensity > 0 && skyLightLevel >= 15)
                 EntityHelper.addHcsDebuff(this, HcsEffects.STRONG_SUN, Math.max(0, sunshineIntensity - 1));
         }

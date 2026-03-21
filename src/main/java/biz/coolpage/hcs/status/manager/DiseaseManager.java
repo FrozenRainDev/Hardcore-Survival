@@ -1,15 +1,15 @@
 package biz.coolpage.hcs.status.manager;
 
-import biz.coolpage.hcs.Reg;
+import biz.coolpage.hcs.Hcs;
 import biz.coolpage.hcs.config.Configs;
 import biz.coolpage.hcs.status.HcsEffectss;
 import biz.coolpage.hcs.status.accessor.StatAccessor;
-import net.minecraft.entity.effect.StatusEffectInstance;
-import net.minecraft.entity.effect.StatusEffects;
-import net.minecraft.item.FoodComponent;
-import net.minecraft.item.Item;
-import net.minecraft.item.Items;
-import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.effect.MobEffects;
+import net.minecraft.world.food.FoodProperties;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.Items;
+import net.minecraft.server.level.ServerPlayer;
 
 import static biz.coolpage.hcs.recipe.DryingRackRecipe.IS_RAW_MEAT;
 
@@ -21,30 +21,30 @@ public class DiseaseManager {
 
     // facade
     public static void updateRawFoodDetriment(Item item, Object entity) {
-        if (item != null && entity instanceof ServerPlayerEntity player
+        if (item != null && entity instanceof ServerPlayer player
                 && Configs.isEnabled(player, Configs.FOOD_POISON)) {
             double poss = getBasicPoisonPoss(item);
             if (Math.random() < (poss * 0.5))
                 (((StatAccessor) player)).getDiseaseManager().addParasite(0.12);
-            if (Math.random() < (poss * 4) || isFoodPoisonous(item.getFoodComponent()))
-                player.addStatusEffect(new StatusEffectInstance(HcsEffectss.FOOD_POISONING, 1200, 0, false, false, true));
+            if (Math.random() < (poss * 4) || isFoodPoisonous(item.getFoodProperties()))
+                player.addEffect(new MobEffectInstance(HcsEffectss.FOOD_POISONING, 1200, 0, false, false, true));
         }
     }
 
     private static double getBasicPoisonPoss(Item item) {
-        if (item == Items.PORKCHOP || item == Reg.ANIMAL_VISCERA) return 0.22;
-        if (item == Items.ROTTEN_FLESH || item == Reg.ROT || item == Reg.BAT_WINGS) return 0.26;
+        if (item == Items.PORKCHOP || item == Hcs.ANIMAL_VISCERA) return 0.22;
+        if (item == Items.ROTTEN_FLESH || item == Hcs.ROT || item == Hcs.BAT_WINGS) return 0.26;
         if (IS_RAW_MEAT.test(item)) return 0.17;
         return -1.0;
     }
 
-    private static boolean isFoodPoisonous(FoodComponent component) {
+    private static boolean isFoodPoisonous(FoodProperties component) {
         if (component != null) {
-            var effects = component.getStatusEffects();
+            var effects = component.getEffects();
             if (effects != null) {
                 for (var effectFloatPair : effects) {
                     var first = effectFloatPair.getFirst();
-                    if (first != null && first.getEffectType() == StatusEffects.POISON) return true;
+                    if (first != null && first.getEffect() == MobEffects.POISON) return true;
                 }
             }
         }
@@ -59,7 +59,7 @@ public class DiseaseManager {
 
     public void setParasite(double val) {
         if (Double.isNaN(val)) {
-            Reg.LOGGER.error("{}/setParasite(): Val is NaN", this.getClass().getSimpleName());
+            Hcs.error("{}/setParasite(): Val is NaN", this.getClass().getSimpleName());
             return;
         }
         if (val > 3.0) val = 3.0;
@@ -79,7 +79,7 @@ public class DiseaseManager {
 
     public void setCold(double val) {
         if (Double.isNaN(val)) {
-            Reg.LOGGER.error("{}/setCold(): Val is NaN", this.getClass().getSimpleName());
+            Hcs.error("{}/setCold(): Val is NaN", this.getClass().getSimpleName());
             return;
         }
         if (val > 2.0) val = 2.0;

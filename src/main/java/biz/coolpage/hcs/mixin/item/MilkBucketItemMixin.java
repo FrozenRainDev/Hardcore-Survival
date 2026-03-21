@@ -1,6 +1,6 @@
 package biz.coolpage.hcs.mixin.item;
 
-import biz.coolpage.hcs.Reg;
+import biz.coolpage.hcs.Hcs;
 import biz.coolpage.hcs.status.accessor.StatAccessor;
 import biz.coolpage.hcs.util.EntityHelper;
 import biz.coolpage.hcs.util.RotHelper;
@@ -30,7 +30,7 @@ public class MilkBucketItemMixin {
     private @NotNull ItemStack judgeMilkStack(@NotNull ItemStack mainHand, ItemStack offHand) {
         if (mainHand.is(Items.MILK_BUCKET)) return mainHand;
         if (offHand.is(Items.MILK_BUCKET)) return offHand;
-        Reg.LOGGER.error("MilkBucketItemMixin/judgeMilkStack/mainHand,offHand!=MilkBucket");
+        Hcs.error("MilkBucketItemMixin/judgeMilkStack/mainHand,offHand!=MilkBucket");
         return new ItemStack(Items.AIR);
     }
 
@@ -42,13 +42,14 @@ public class MilkBucketItemMixin {
     @Inject(method = "finishUsingItem", at = @At("RETURN"))
     public void finishUsing(ItemStack stack, Level world, LivingEntity user, CallbackInfoReturnable<ItemStack> cir) {
         if (user instanceof ServerPlayer player) {
-            FoodData foodData = player.getFoodData();
-            foodData.setExhaustion(0.0F);
+            FoodData hm = player.getFoodData();
+            hm.setExhaustion(0.0F);
             int freshLevel = RotHelper.getFreshLevel(RotHelper.getFresh(world, oriStack));
-            foodData.setFoodLevel(Math.min(20, foodData.getFoodLevel() + Math.min(freshLevel * (freshLevel > 1 ? 2 : 1), 5)));
+            hm.setFoodLevel(Math.min(20, hm.getFoodLevel() + Math.min(freshLevel * (freshLevel > 1 ? 2 : 1), 5)));
             ((StatAccessor) user).getThirstManager().add(1.0);
             RotHelper.addDebuff(world, player, oriStack);
             EntityHelper.checkOvereaten(player, true);
         }
     }
+
 }

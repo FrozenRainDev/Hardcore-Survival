@@ -1,10 +1,8 @@
 package biz.coolpage.hcs.util;
 
 import biz.coolpage.hcs.status.accessor.StatAccessor;
-import net.minecraft.core.Registry;
-import net.minecraft.core.registries.Registries;
+import net.minecraft.core.Holder;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
@@ -32,6 +30,19 @@ public class CommUtil {
         return String.format("%.5f", val);
     }
 
+    /*
+    public static void renderGuiQuad(@NotNull BufferBuilder buffer, int x, int y, int width, int height, int red, int green, int blue, int alpha, boolean needShader) {
+        RenderSystem.setShader(GameRenderer::getPositionColorProgram);
+        buffer.begin(VertexFormat.DrawMode.QUADS, VertexFormats.POSITION_COLOR);
+        buffer.vertex(x, y, 0.0).color(red, green, blue, alpha).endVertex();
+        buffer.vertex(x, y + height, 0.0).color(red, green, blue, alpha).endVertex();
+        buffer.vertex(x + width, y + height, 0.0).color(red, green, blue, alpha).endVertex();
+        buffer.vertex(x + width, y, 0.0).color(red, green, blue, alpha).endVertex();
+        if (needShader) BufferRenderer.drawWithGlobalProgram(buffer.end());
+        else BufferRenderer.drawWithGlobalProgram(buffer.end()); //never onInteract it !!
+    }
+     */
+
     @Contract(pure = true)
     public static <T> @NotNull T optElse(@Nullable T instance, @NotNull T defaultVal) {
         return Optional.ofNullable(instance).orElse(defaultVal);
@@ -57,7 +68,7 @@ public class CommUtil {
     }
 
     @Contract(pure = true)
-    public static boolean regEntryContains(@NotNull net.minecraft.core.Holder<?> entry, String pattern) {
+    public static boolean regEntryContains(@NotNull Holder<?> entry, String pattern) {
         Optional<? extends ResourceKey<?>> key = entry.unwrapKey();
         if (key != null && key.isPresent()) return key.get().location().getPath().contains(pattern);
         return false;

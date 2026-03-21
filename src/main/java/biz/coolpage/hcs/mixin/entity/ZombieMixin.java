@@ -19,9 +19,9 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(Zombie.class)
-public abstract class ZombieEntityMixin extends Monster {
+public abstract class ZombieMixin extends Monster { // ZombieEntityMixin
     // Also see MobVisibilityCacheMixin, BreakDoorGoalMixin and TrackTargetGoalMixin
-    protected ZombieEntityMixin(EntityType<? extends Monster> entityType, Level world) {
+    protected ZombieMixin(EntityType<? extends Monster> entityType, Level world) {
         super(entityType, world);
     }
 

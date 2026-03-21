@@ -18,7 +18,8 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import static biz.coolpage.hcs.config.Configs.SLOW_HEAL;
 
 @Mixin(FoodData.class)
-public abstract class HungerManagerMixin {
+// HungerManagerMixin
+public abstract class FoodDataMixin {
     @Shadow
     private int foodLevel = 20;
     @Shadow
@@ -58,7 +59,7 @@ public abstract class HungerManagerMixin {
     }
 
     @Inject(at = @At("HEAD"), method = "tick", cancellable = true)
-    public void tick(@NotNull Player player, CallbackInfo cir) {
+    public void update(@NotNull Player player, CallbackInfo ci) {
         if (((StatAccessor) player).getConfigManager().get(SLOW_HEAL)) {
             Difficulty difficulty = player.level().getDifficulty();
             this.lastFoodLevel = this.foodLevel;
@@ -78,7 +79,8 @@ public abstract class HungerManagerMixin {
                 }
             }
             boolean bl = player.level().getGameRules().getBoolean(GameRules.RULE_NATURAL_REGENERATION);
-            if (bl && this.saturationLevel >= 0.0F && player.isHurt() && player.getHealth() < player.getMaxHealth() && this.foodLevel >= 19 && thirst >= 0.8 && !player.hasEffect(HcsEffects.BLEEDING)) {
+            // 修正点：player.canFoodHeal() -> player.isHurt()
+            if (bl && this.saturationLevel >= 0.0F && player.isHurt() && this.foodLevel >= 19 && thirst >= 0.8 && !player.hasEffect(HcsEffects.BLEEDING)) {
                 if (!malnutrition || Math.random() < 0.5) ++this.tickTimer;
                 if (this.tickTimer >= 10) {
                     float f = Math.min(1.0F + this.saturationLevel / 6.0F, 2.0F) / 100.0F;
@@ -87,7 +89,7 @@ public abstract class HungerManagerMixin {
                     this.addExhaustion(f * 6.0F);
                     this.tickTimer = 0;
                 }
-            } else if (bl && this.foodLevel >= 10 && player.isHurt() && player.getHealth() < player.getMaxHealth() && thirst >= 0.5) {
+            } else if (bl && this.foodLevel >= 10 && player.isHurt() && thirst >= 0.5) {
                 ++this.tickTimer;
                 if (this.tickTimer >= (100 * (this.foodLevel >= 14 ? 1 : 2) * (thirst >= 0.7 ? 1 : 1.5))) {
                     float f = 0.1F;
@@ -105,7 +107,7 @@ public abstract class HungerManagerMixin {
             } else {
                 this.tickTimer = 0;
             }
-            cir.cancel();
+            ci.cancel();
         }
     }
 }

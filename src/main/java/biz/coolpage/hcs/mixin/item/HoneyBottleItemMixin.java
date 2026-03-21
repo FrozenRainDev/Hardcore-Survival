@@ -16,7 +16,6 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(HoneyBottleItem.class)
 public class HoneyBottleItemMixin {
-
     // finishUsing -> finishUsingItem (Mojang)
     @Inject(at = @At("RETURN"), method = "finishUsingItem")
     public void finishUsing(ItemStack stack, @NotNull Level level, LivingEntity user, CallbackInfoReturnable<ItemStack> cir) {

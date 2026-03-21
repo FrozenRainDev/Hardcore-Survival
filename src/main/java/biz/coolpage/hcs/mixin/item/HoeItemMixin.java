@@ -13,8 +13,6 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(HoeItem.class)
 public class HoeItemMixin {
-    // useOnBlock -> useOn (Mojang)
-    // 目标方法调用 InteractionResult.sidedSuccess (Mojang 映射中 success(Z) 通常指向此)
     @Inject(method = "useOn", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/InteractionResult;sidedSuccess(Z)Lnet/minecraft/world/InteractionResult;"))
     public void useOnBlock(UseOnContext context, CallbackInfoReturnable<InteractionResult> cir) {
         if (context == null) return;

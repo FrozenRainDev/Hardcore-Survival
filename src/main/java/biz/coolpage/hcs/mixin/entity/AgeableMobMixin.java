@@ -13,9 +13,9 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(AgeableMob.class)
 @SuppressWarnings("ConstantValue")
-public abstract class PassiveEntityMixin extends PathfinderMob {
+public abstract class AgeableMobMixin extends PathfinderMob { // PassiveEntityMixin
 
-    protected PassiveEntityMixin(EntityType<? extends PathfinderMob> entityType, Level world) {
+    protected AgeableMobMixin(EntityType<? extends PathfinderMob> entityType, Level world) {
         super(entityType, world);
     }
 

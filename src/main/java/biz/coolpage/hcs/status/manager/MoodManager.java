@@ -1,6 +1,6 @@
 package biz.coolpage.hcs.status.manager;
 
-import biz.coolpage.hcs.Reg;
+import biz.coolpage.hcs.Hcs;
 
 import static biz.coolpage.hcs.util.EntityHelper.PLASMA_CONCENTRATION;
 
@@ -39,7 +39,7 @@ public class MoodManager {
 
     public void setPanic(double val) {
         if (Double.isNaN(val)) {
-            Reg.LOGGER.error(this.getClass().getSimpleName() + "/setPanic(): Val is NaN");
+            Hcs.error(this.getClass().getSimpleName() + "/setPanic(): Val is NaN");
             return;
         }
         panic = val;
@@ -47,7 +47,7 @@ public class MoodManager {
 
     public void setPanicAlleviation(double val) {
         if (Double.isNaN(val)) {
-            Reg.LOGGER.error(this.getClass().getSimpleName() + "/setPanicAlle(): Val is NaN");
+            Hcs.error(this.getClass().getSimpleName() + "/setPanicAlle(): Val is NaN");
             return;
         }
         if (val > 4.0) val = 4.0;
@@ -79,7 +79,7 @@ public class MoodManager {
 
     public void setHappiness(double val) {
         if (Double.isNaN(val)) {
-            Reg.LOGGER.error(this.getClass().getSimpleName() + "/setHappiness(): Val is NaN");
+            Hcs.error(this.getClass().getSimpleName() + "/setHappiness(): Val is NaN");
             return;
         }
         if (val > 1.0) val = 1.0;

@@ -1,6 +1,6 @@
 package biz.coolpage.hcs.status.manager;
 
-import biz.coolpage.hcs.Reg;
+import biz.coolpage.hcs.Hcs;
 
 public class NutritionManager {
     private double vegetable = 1.0;
@@ -14,7 +14,7 @@ public class NutritionManager {
 
     public void setVegetable(double val) {
         if (Double.isNaN(val)) {
-            Reg.LOGGER.error("{}: Val is NaN", this.getClass().getSimpleName());
+            Hcs.error("{}: Val is NaN", this.getClass().getSimpleName());
             return;
         }
         if (val > 1.0) val = 1.0;

@@ -40,7 +40,6 @@
 package biz.coolpage.hcs.util;
 
 import biz.coolpage.hcs.Hcs;
-import biz.coolpage.hcs.Reg;
 import biz.coolpage.hcs.block.torches.BurningCrudeTorchBlock;
 import biz.coolpage.hcs.status.HcsEffects;
 import biz.coolpage.hcs.status.accessor.StatAccessor;
@@ -83,7 +82,7 @@ public abstract class TemperatureHelper implements LevelReader {
                 return temp;
             }
             Holder<Biome> biomeEntry = world.getBiome(pos);
-            if (biomeEntry == null || biomeEntry.value() == null) {
+            if (biomeEntry == null || !biomeEntry.isBound()) {
                 Hcs.error("TemperatureHelper/getTemp;biomeEntry is empty");
                 return temp;
             }
@@ -136,8 +135,9 @@ public abstract class TemperatureHelper implements LevelReader {
                 }
                 //Colder in high place
                 if (y > 80) temp = Math.max(-2.0F, temp - 0.00125F * (y - 80.0F));
-                //Effect of weather on temp
-                if (world.isRaining() && biome.getDownfall() > 0.0F) {
+
+                // FIX: getDownfall() replaced with getModifiedClimateSettings().downfall()
+                if (world.isRaining() && biome.getModifiedClimateSettings().downfall() > 0.0F) {
                     dailyTempAmplitude *= 0.5F;
                     if (biomeTemp >= 0.9F || (biomeTemp > 0.0F && biomeTemp < 0.3F)) temp -= 0.06F * surfaceWeight;
                     else temp -= 0.1F * surfaceWeight;
@@ -161,7 +161,10 @@ public abstract class TemperatureHelper implements LevelReader {
 
     public static String getBiomeName(Holder<Biome> biomeEntry) {
         if (biomeEntry == null) return "null";
-        return biomeEntry.unwrapKey().map(biomeKey -> biomeKey.location().toString(), biomeName -> "[unregistered " + biomeName + "]");
+        // FIX: Optional.map simplified to handle ResourceKey
+        return biomeEntry.unwrapKey()
+                .map(biomeKey -> biomeKey.location().toString())
+                .orElse("[unregistered " + biomeEntry.value() + "]");
     }
 
     public static float transferToApparentTemp(float defaultTemp) {
@@ -233,7 +236,7 @@ public abstract class TemperatureHelper implements LevelReader {
                             temperatureManager.addAmbient(-0.06F);
                     }
                 }
-                if (block == Blocks.TORCH || block instanceof BurningCrudeTorchBlock || block == Reg.SMOLDERING_CAMPFIRE_BLOCK)
+                if (block == Blocks.TORCH || block instanceof BurningCrudeTorchBlock || block == Hcs.SMOLDERING_CAMPFIRE_BLOCK)
                     temperatureManager.addAmbient(0.05F);
                 else if (block == Blocks.CAMPFIRE && state.hasProperty(CampfireBlock.LIT) && state.getValue(CampfireBlock.LIT))
                     temperatureManager.addAmbient(0.2F);
@@ -373,11 +376,11 @@ public abstract class TemperatureHelper implements LevelReader {
         if (playerObj instanceof ServerPlayer player) {
             for (ItemStack stack : player.getArmorSlots()) {
                 if (stack.is(Items.LEATHER_BOOTS)) level += 1;
-                else if (stack.is(Items.LEATHER_HELMET) || stack.is(Items.LEATHER_LEGGINGS) || stack.is(Reg.WOOLEN_BOOTS))
+                else if (stack.is(Items.LEATHER_HELMET) || stack.is(Items.LEATHER_LEGGINGS) || stack.is(Hcs.WOOLEN_BOOTS))
                     level += 2;
                 else if (stack.is(Items.LEATHER_CHESTPLATE)) level += 3;
-                else if (stack.is(Reg.WOOLEN_HOOD) || stack.is(Reg.WOOLEN_TROUSERS)) level += 5;
-                else if (stack.is(Reg.WOOLEN_COAT)) level += 7;
+                else if (stack.is(Hcs.WOOLEN_HOOD) || stack.is(Hcs.WOOLEN_TROUSERS)) level += 5;
+                else if (stack.is(Hcs.WOOLEN_COAT)) level += 7;
             }
         }
         return level;

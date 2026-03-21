@@ -1,6 +1,6 @@
 package biz.coolpage.hcs.mixin.block;
 
-import biz.coolpage.hcs.Reg;
+import biz.coolpage.hcs.Hcs;
 import biz.coolpage.hcs.item.HotWaterBottleItem;
 import biz.coolpage.hcs.util.RotHelper;
 import net.minecraft.core.BlockPos;
@@ -22,7 +22,7 @@ public class HopperBlockMixin {
     public void getInteractionShape(BlockState state, @NotNull BlockGetter blockView, BlockPos pos, CallbackInfoReturnable<VoxelShape> cir) {
         BlockEntity entity = blockView.getBlockEntity(pos);
         if (entity == null) {
-            Reg.LOGGER.error("HopperBlockMixin/getInteractionShape;entity==null");
+            Hcs.error("HopperBlockMixin/getInteractionShape;entity==null");
         } else {
             RotHelper.update(entity.getLevel(), (Container) entity);
             HotWaterBottleItem.update(entity.getLevel(), (Container) entity);

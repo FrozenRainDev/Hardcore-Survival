@@ -1,14 +1,15 @@
 package biz.coolpage.hcs.status;
 
-import net.minecraft.nbt.NbtCompound;
-import net.minecraft.server.world.ServerWorld;
-import net.minecraft.world.PersistentState;
-import net.minecraft.world.PersistentStateManager;
-import net.minecraft.world.World;
+import biz.coolpage.hcs.Hcs;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.saveddata.SavedData;
+import net.minecraft.world.level.storage.DimensionDataStorage;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class HcsPersistentState extends PersistentState {
+public class HcsPersistentState extends SavedData {
     private boolean hasObtainedCopperPickaxe = false;
     private static final String OBTAINED_COPPER_PICK = "hcs_obtained_copper_pick";
 
@@ -21,24 +22,24 @@ public class HcsPersistentState extends PersistentState {
     }
 
     @Override
-    public NbtCompound writeNbt(@NotNull NbtCompound nbt) {
+    public @NotNull CompoundTag save(@NotNull CompoundTag nbt) {
         nbt.putBoolean(OBTAINED_COPPER_PICK, hasObtainedCopperPickaxe);
         return nbt;
     }
 
-    public static @NotNull HcsPersistentState createFromNbt(@NotNull NbtCompound nbt) {
+    public static @NotNull HcsPersistentState load(@NotNull CompoundTag nbt) {
         HcsPersistentState state = new HcsPersistentState();
         state.setHasObtainedCopperPickaxe(nbt.contains(OBTAINED_COPPER_PICK) && nbt.getBoolean(OBTAINED_COPPER_PICK));
-        state.markDirty();
+        state.setDirty();
         return state;
     }
 
-    public static @Nullable HcsPersistentState getServerState(@Nullable ServerWorld world) {
+    public static @Nullable HcsPersistentState getServerState(@Nullable ServerLevel world) {
 //        ServerWorld world = server.getWorld(World.OVERWORLD);
-        if (world == null || world.getRegistryKey() != World.OVERWORLD) return null;
-        PersistentStateManager persistentStateManager = world.getPersistentStateManager();
-        HcsPersistentState state = persistentStateManager.getOrCreate(HcsPersistentState::createFromNbt, HcsPersistentState::new, "hcs");
-        state.markDirty();
+        if (world == null || world.dimension() != Level.OVERWORLD) return null;
+        DimensionDataStorage dimensionDataStorage = world.getDataStorage();
+        HcsPersistentState state = dimensionDataStorage.computeIfAbsent(HcsPersistentState::load, HcsPersistentState::new, Hcs.MOD_ID);
+        state.setDirty();
         return state;
     }
 }

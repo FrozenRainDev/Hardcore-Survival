@@ -1,6 +1,6 @@
 package biz.coolpage.hcs.mixin.item;
 
-import biz.coolpage.hcs.Reg;
+import biz.coolpage.hcs.Hcs;
 import biz.coolpage.hcs.util.EntityHelper;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
@@ -30,10 +30,10 @@ public abstract class FishingRodItemMixin extends Item {
 
         // fishHook -> fishing (Mojang)
         if (user.fishing == null && EntityHelper.IS_SURVIVAL_LIKE.test(user)) {
-            if (offItem == Reg.WORM || offItem == Reg.ROASTED_WORM
-                    || offItem == Reg.ANIMAL_VISCERA || offItem == Reg.COOKED_ANIMAL_VISCERA
-                    || offItem == Items.WHEAT || offItem == Reg.ROASTED_SEEDS
-                    || offItem == Reg.RAW_MEAT || offItem == Reg.COOKED_MEAT
+            if (offItem == Hcs.WORM || offItem == Hcs.ROASTED_WORM
+                    || offItem == Hcs.ANIMAL_VISCERA || offItem == Hcs.COOKED_ANIMAL_VISCERA
+                    || offItem == Items.WHEAT || offItem == Hcs.ROASTED_SEEDS
+                    || offItem == Hcs.RAW_MEAT || offItem == Hcs.COOKED_MEAT
                     || offItem == Items.CHICKEN || offItem == Items.COOKED_CHICKEN
                     || offItem == Items.BEEF || offItem == Items.COOKED_BEEF
                     || offItem == Items.PORKCHOP || offItem == Items.COOKED_PORKCHOP

@@ -13,7 +13,7 @@ import static biz.coolpage.hcs.status.HcsEffects.IS_EFFECT_NAME_VARIABLE;
 import static biz.coolpage.hcs.status.HcsEffects.getEffectVarName;
 
 @Mixin(MobEffectUtil.class)
-public class StatusEffectUtilMixin {
+public class MobEffectUtilMixin { // StatusEffectUtilMixin
     @Inject(method = "formatDuration", at = @At("HEAD"), cancellable = true)
     private static void formatDuration(MobEffectInstance instance, float multiplier, CallbackInfoReturnable<Component> cir) {
         if (instance == null) return;

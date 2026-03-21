@@ -28,8 +28,8 @@ public abstract class CropBlockMixin {
     }
 
     @Inject(method = "performBonemeal", at = @At("HEAD"), cancellable = true)
-    public void performBonemeal(@NotNull Level world, @NotNull RandomSource random, @NotNull BlockPos pos, BlockState state, CallbackInfo ci) {
-        BlockState stateDown = world.getBlockState(pos.below());
+    public void performBonemeal(@NotNull ServerLevel level, RandomSource pRandom, @NotNull BlockPos pos, BlockState pState, CallbackInfo ci) {
+        BlockState stateDown = level.getBlockState(pos.below());
         if (stateDown.is(Blocks.FARMLAND) && stateDown.getValues().containsKey(WorldHelper.FERTILIZER_FREE) && !stateDown.getValue(WorldHelper.FERTILIZER_FREE))
             ci.cancel();
     }

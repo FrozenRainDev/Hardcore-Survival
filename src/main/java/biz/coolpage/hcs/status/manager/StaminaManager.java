@@ -1,18 +1,18 @@
 package biz.coolpage.hcs.status.manager;
 
-import biz.coolpage.hcs.Reg;
+import biz.coolpage.hcs.Hcs;
 import biz.coolpage.hcs.status.HcsEffectss;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.effect.StatusEffects;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.effect.MobEffects;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.phys.Vec3;
 
 import static biz.coolpage.hcs.util.EntityHelper.IS_SURVIVAL_LIKE;
 
 public class StaminaManager {
     private double stamina = 1.0;
     private int restoringCoolDown = 0;
-    private Vec3d lastVecPos = Vec3d.ZERO;
+    private Vec3 lastVecPos = Vec3.ZERO;
     public static final String STAMINA_NBT = "hcs_stamina";
 
     public double get() {
@@ -23,7 +23,7 @@ public class StaminaManager {
 
     public void set(double val) {
         if (Double.isNaN(val)) {
-            Reg.LOGGER.error(this.getClass().getSimpleName() + ": Val is NaN");
+            Hcs.error(this.getClass().getSimpleName() + ": Val is NaN");
             return;
         }
         if (val > 1.0) val = 1.0;
@@ -32,16 +32,16 @@ public class StaminaManager {
     }
 
     public void add(double val, Entity entity) {
-        if (entity instanceof PlayerEntity player) add(val, player);
+        if (entity instanceof Player player) add(val, player);
     }
 
-    public void add(double val, PlayerEntity player) {
+    public void add(double val, Player player) {
         if (!IS_SURVIVAL_LIKE.test(player)) return;
         if (val >= 0.0) {
-            if (restoringCoolDown <= 0) addDirectly(player.hasStatusEffect(HcsEffectss.COLD) ? val * 0.65 : val);
+            if (restoringCoolDown <= 0) addDirectly(player.hasEffect(HcsEffectss.COLD) ? val * 0.65 : val);
             else --restoringCoolDown;
-        } else if (!player.hasStatusEffect(StatusEffects.STRENGTH))
-            addDirectly(player.hasStatusEffect(HcsEffectss.HEAVY_LOAD) ? val * 2.0 : val);
+        } else if (!player.hasEffect(MobEffects.DAMAGE_BOOST))
+            addDirectly(player.hasEffect(HcsEffectss.HEAVY_LOAD) ? val * 2.0 : val);
     }
 
     public void addDirectly(double val) {
@@ -59,14 +59,14 @@ public class StaminaManager {
     public void reset() {
         addDirectly(1.0);
         restoringCoolDown = 0;
-        lastVecPos = Vec3d.ZERO;
+        lastVecPos = Vec3.ZERO;
     }
 
-    public Vec3d getLastVecPos() {
+    public Vec3 getLastVecPos() {
         return lastVecPos;
     }
 
-    public void setLastVecPos(Vec3d val) {
+    public void setLastVecPos(Vec3 val) {
         lastVecPos = val;
     }
 

@@ -20,7 +20,6 @@ import net.minecraft.world.level.block.*;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.IntegerProperty;
-import net.minecraft.world.level.gameevent.GameEvent;
 import net.minecraft.world.level.material.Fluids;
 import net.minecraftforge.common.ForgeHooks;
 import org.jetbrains.annotations.NotNull;
@@ -29,26 +28,19 @@ import org.jetbrains.annotations.Nullable;
 public class CombustionHelper {
     // A shared method for torches and campfires, which is used to handle initial logics.
     @SuppressWarnings("unused")
-    public static boolean onLit(@NotNull Level level, BlockPos pos, @NotNull Player player, InteractionHand hand) {
+    public static boolean onLit(@NotNull Level world, BlockPos pos, @NotNull Player player, InteractionHand hand) {
         if (!player.getAbilities().mayBuild) return false;
         ItemStack stack = player.getItemInHand(hand);
         Item item = stack.getItem();
-        final boolean isFireCharge = item == Items.FIRE_CHARGE;
-        final boolean isFlintAndSteel = item == Items.FLINT_AND_STEEL;
+        final boolean isFireCharge = item == Items.FIRE_CHARGE, isFlintAndSteel = item == Items.FLINT_AND_STEEL;
         final boolean isTorch = isTorchWithFlame(item);
-
         if (isFlintAndSteel || isFireCharge || isTorch) {
             if (!player.isCreative()) {
-                if (isFlintAndSteel) {
-                    stack.hurtAndBreak(1, player, p -> p.broadcastBreakEvent(hand));
-                } else if (isFireCharge) {
-                    stack.shrink(1);
-                }
+                if (isFlintAndSteel) stack.hurtAndBreak(1, player, p -> p.broadcastBreakEvent(hand));
+                else if (isFireCharge) stack.shrink(1);
             }
             player.awardStat(Stats.ITEM_USED.get(item));
-            level.playSound(null, pos,
-                    isFlintAndSteel ? SoundEvents.FLINTANDSTEEL_USE : SoundEvents.FIRECHARGE_USE,
-                    SoundSource.BLOCKS);
+            world.playSound(null, pos, isFlintAndSteel ? SoundEvents.FLINTANDSTEEL_USE : SoundEvents.FIRECHARGE_USE, SoundSource.BLOCKS);
             return true;
         }
         return false;
@@ -65,35 +57,22 @@ public class CombustionHelper {
         BlockPos pos = context.getClickedPos();
         BlockState state = context.getLevel().getBlockState(pos);
         Block block = state.getBlock();
-        Level level = context.getLevel();
-
-        if (state.is(BlockTags.FIRE) ||
-                state.is(BlockTags.CAMPFIRES) ||
-                isTorchWithFlame(block.asItem()) ||
-                (block instanceof AbstractFurnaceBlock &&
-                        state.getValue(BlockStateProperties.LIT) &&
-                        player.isShiftKeyDown())) {
-            litHoldingTorch(player, level, stack);
-            return InteractionResult.sidedSuccess(level.isClientSide);
+        Level world = context.getLevel();
+        if (state.is(BlockTags.FIRE) || state.is(BlockTags.CAMPFIRES) || isTorchWithFlame(block.asItem()) || (block instanceof AbstractFurnaceBlock && state.getValue(BlockStateProperties.LIT) && player.isShiftKeyDown())) {
+            litHoldingTorch(player, world, stack);
+            return InteractionResult.sidedSuccess(world.isClientSide);
         }
         return null;
     }
 
-    public static void litHoldingTorch(Player player, @NotNull Level level, @NotNull ItemStack stack) {
-        EntityHelper.dropItem(player,
-                stack.is(Hcs.CRUDE_TORCH_ITEM) ? Hcs.BURNING_CRUDE_TORCH_ITEM : Items.TORCH);
-        stack.shrink(1); // This operation must perform after the dropping item process considering condition when players holding single torch
-        level.playSound(null, player.blockPosition(), SoundEvents.FIRECHARGE_USE, SoundSource.BLOCKS);
+    public static void litHoldingTorch(Player player, @NotNull Level world, @NotNull ItemStack stack) {
+        EntityHelper.dropItem(player, stack.is(Hcs.CRUDE_TORCH_ITEM) ? Hcs.BURNING_CRUDE_TORCH_ITEM : Items.TORCH);
+        stack.shrink(1); // This operation must preform after the dropping item process considering condition when players holding single torch
+        world.playSound(null, player.blockPosition(), SoundEvents.FIRECHARGE_USE, SoundSource.BLOCKS);
     }
 
     public static boolean isTorchWithFlame(Item item) {
-        return item == Hcs.BURNING_CRUDE_TORCH_ITEM ||
-                (item instanceof BlockItem blockItem &&
-                        blockItem.getBlock() instanceof TorchBlock &&
-                        item != Items.REDSTONE_TORCH &&
-                        item != Hcs.CRUDE_TORCH_ITEM &&
-                        item != Hcs.UNLIT_TORCH_ITEM &&
-                        item != Hcs.GLOWSTONE_TORCH_ITEM);
+        return item == Hcs.BURNING_CRUDE_TORCH_ITEM || (item instanceof BlockItem blockItem && blockItem.getBlock() instanceof TorchBlock && item != Items.REDSTONE_TORCH && item != Hcs.CRUDE_TORCH_ITEM && item != Hcs.UNLIT_TORCH_ITEM && item != Hcs.GLOWSTONE_TORCH_ITEM);
     }
 
     // ***** Campfires *****
@@ -115,35 +94,28 @@ public class CombustionHelper {
     public static final int MAX_CAMPFIRE_BURNING_LENGTH = 4000;
     public static final String EXTINGUISH_TIME_NBT = "hcs_extinguish_nbt";
 
-    public static @NotNull BlockState updateCombustionState(@NotNull BlockState state, long remain) {
+    public static BlockState updateCombustionState(@NotNull BlockState state, long remain) {
         if (remain > MAX_CAMPFIRE_BURNING_LENGTH) remain = MAX_CAMPFIRE_BURNING_LENGTH;
         else if (remain < 0L) remain = 0L;
         return state.setValue(COMBUST_LUMINANCE, getLuminance(remain));
     }
 
-    public static void onServerTick(@NotNull Level level, BlockPos pos, @NotNull BlockState state, ICampfireBlockEntity campfire) {
+    public static void onServerTick(@NotNull Level world, BlockPos pos, @NotNull BlockState state, ICampfireBlockEntity campfire) {
         // Campfire extinguish: Normal -> Smoldering -> Burnt
         boolean hasFlame = !state.is(Hcs.SMOLDERING_CAMPFIRE_BLOCK);
-        if (hasFlame && level.getRandom().nextFloat() < 0.001F) // Lit inflammable blocks nearby
-            Fluids.LAVA.randomTick(level, pos, Fluids.LAVA.defaultFluidState(), level.getRandom());
-
-        long time = level.getGameTime();
-        long burnOutTime = campfire.getBurnOutTime();
-
+        if (hasFlame && world.random.nextFloat() < 0.001F) // Lit inflammable blocks nearby
+            Fluids.LAVA.tick(world, pos, Fluids.LAVA.defaultFluidState());
+        long time = world.getGameTime(), burnOutTime = campfire.getBurnOutTime();
         if (burnOutTime < time) {
-            CampfireBlock.dowse(null, level, pos, state);
-            // "setBlockState" causes automatic cooking items drop (See CampfireBlock::onRemove)
-            level.setBlock(pos,
-                    (hasFlame ? Hcs.SMOLDERING_CAMPFIRE_BLOCK : Hcs.BURNT_CAMPFIRE_BLOCK)
-                            .defaultBlockState()
-                            .setValue(CampfireBlock.FACING, state.getValue(CampfireBlock.FACING))
-                            .setValue(CampfireBlock.WATERLOGGED, state.getValue(CampfireBlock.WATERLOGGED)));
-            level.levelEvent(null, 1009, pos, 0); // FIRE_EXTINGUISH event
+            CampfireBlock.dowse(null, world, pos, state);
+            // "setBlockState" causes automatic cooking items drop (See CampfireBlock::onStateReplaced)
+            world.setBlockState(pos, (hasFlame ? Hcs.SMOLDERING_CAMPFIRE_BLOCK : Hcs.BURNT_CAMPFIRE_BLOCK).defaultBlockState().setValue(CampfireBlock.FACING, state.getValue(CampfireBlock.FACING)).setValue(BlockStateProperties.WATERLOGGED, state.getValue(BlockStateProperties.WATERLOGGED)));
+            world.levelEvent(null, 1009, pos, 0);
         } else {
             if (burnOutTime == Long.MAX_VALUE && Configs.isEnabled(Configs.BURN))
                 campfire.resetBurnOutTime();
             else if (hasFlame) {
-                level.setBlock(pos, CombustionHelper.updateCombustionState(state, burnOutTime - time));
+                world.setBlockState(pos, CombustionHelper.updateCombustionState(state, burnOutTime - time));
             }
         }
     }
@@ -153,45 +125,35 @@ public class CombustionHelper {
         return ForgeHooks.getBurnTime(stack, null);
     }
 
-    public static boolean checkAddFuel(Level level, BlockPos pos, BlockState state, ItemStack stack) {
+    public static boolean checkAddFuel(Level world, BlockPos pos, BlockState state, ItemStack stack) {
         int fuelDur = getFuelDuration(stack) * 2;
         if (fuelDur == 0) return false;
-        if (CommUtil.hasNull(level, pos, state)) return false;
-
-        if (level.getBlockEntity(pos) instanceof ICampfireBlockEntity campfire) {
-            if (state.is(Hcs.BURNT_CAMPFIRE_BLOCK) ||
-                    !state.hasProperty(CampfireBlock.LIT) ||
-                    !state.getValue(CampfireBlock.LIT))
+        if (CommUtil.hasNull(world, pos, state)) return false;
+        if (world.getBlockEntity(pos) instanceof ICampfireBlockEntity campfire) {
+            if (state.is(Hcs.BURNT_CAMPFIRE_BLOCK) || !state.hasProperty(BlockStateProperties.LIT) || !state.getValue(BlockStateProperties.LIT))
                 return false;
-
-            if (addFuel(level, pos, state, campfire, stack, fuelDur)) {
-                level.playSound(null, pos, SoundEvents.FIRECHARGE_USE, SoundSource.BLOCKS);
+            if (addFuel(world, pos, state, campfire, stack, fuelDur)) {
+                world.playSound(null, pos, SoundEvents.FIRECHARGE_USE, SoundSource.BLOCKS);
                 return true;
             }
         }
         return false;
     }
 
-    private static boolean addFuel(Level level, BlockPos pos, @NotNull BlockState state,
-                                   ICampfireBlockEntity campfire, @NotNull ItemStack fuel, int fuelDur) {
+    private static boolean addFuel(Level world, BlockPos pos, @NotNull BlockState state, ICampfireBlockEntity campfire, @NotNull ItemStack fuel, int fuelDur) {
         if (state.is(Hcs.SMOLDERING_CAMPFIRE_BLOCK)) {
             fuelDur = (int) (fuelDur * 1.5); // Burning Duration↑
-            level.setBlockState(pos,
-                    Blocks.CAMPFIRE.defaultBlockState()
-                            .setValue(CampfireBlock.FACING, state.getValue(CampfireBlock.FACING))
-                            .setValue(CampfireBlock.WATERLOGGED, state.getValue(CampfireBlock.WATERLOGGED)));
-
-            if (level.getBlockEntity(pos) instanceof ICampfireBlockEntity camp)
-                if (camp.setBurnOutTime(level.getGameTime() + fuelDur)) {
+            world.setBlockState(pos, Blocks.CAMPFIRE.defaultBlockState().setValue(CampfireBlock.FACING, state.getValue(CampfireBlock.FACING)).setValue(BlockStateProperties.WATERLOGGED, state.getValue(BlockStateProperties.WATERLOGGED)));
+            if (world.getBlockEntity(pos) instanceof ICampfireBlockEntity camp)
+                if (camp.setBurnOutTime(world.getGameTime() + fuelDur)) {
                     fuel.shrink(1);
                     return true;
                 }
-        } else { // Hcsular campfires
+        } else  // Regular campfires
             if (campfire.setBurnOutTime(campfire.getBurnOutTime() + fuelDur)) {
                 fuel.shrink(1);
                 return true;
             }
-        }
         return false;
     }
 
@@ -202,33 +164,23 @@ public class CombustionHelper {
 
     public static void inventoryTick(boolean isSubmerged, Container inv, Player player) {
         if (inv == null) return;
-
         for (int i = 0; i < inv.getContainerSize(); ++i) {
             ItemStack stack = inv.getItem(i);
             Item item = stack.getItem();
 
-            boolean isTorch = item == Items.TORCH;
-            boolean isBurningCrudeTorch = item == Hcs.BURNING_CRUDE_TORCH_ITEM;
-            boolean isFuelableCampfire = CombustionHelper.isFuelableCampfire(item);
-
-            if ((isSubmerged ||
-                    ((isBurningCrudeTorch || isFuelableCampfire) && BurningCrudeTorchItem.shouldExtinguish(stack)))
+            boolean isTorch = item == Items.TORCH, isBurningCrudeTorch = item == Hcs.BURNING_CRUDE_TORCH_ITEM, isFuelableCampfire = CombustionHelper.isFuelableCampfire(item);
+            if ((isSubmerged || ((isBurningCrudeTorch || isFuelableCampfire) && BurningCrudeTorchItem.shouldExtinguish(stack)))
                     && (isTorch || isBurningCrudeTorch || isFuelableCampfire)) {
-
                 Item extinguishedItem = Items.AIR;
                 int extinguishCount = stack.getCount();
-
-                if (isTorch) {
-                    extinguishedItem = Hcs.UNLIT_TORCH_ITEM;
-                } else if (isFuelableCampfire) {
+                if (isTorch) extinguishedItem = Hcs.UNLIT_TORCH_ITEM;
+                else if (isFuelableCampfire) {
                     extinguishedItem = Hcs.ASHES;
                     extinguishCount = 6;
                 }
-
                 inv.setItem(i, new ItemStack(extinguishedItem, extinguishCount));
                 if (player != null)
-                    player.level().playSound(null, player.blockPosition(),
-                            SoundEvents.FIRE_EXTINGUISH, SoundSource.BLOCKS);
+                    player.level().playSound(null, player.blockPosition(), SoundEvents.FIRE_EXTINGUISH, SoundSource.BLOCKS);
             }
         }
     }

@@ -3,9 +3,6 @@ package biz.coolpage.hcs.mixin.entity;
 import biz.coolpage.hcs.config.Configs;
 import biz.coolpage.hcs.status.accessor.IKickCoolDown;
 import biz.coolpage.hcs.util.EntityHelper;
-import net.minecraft.sounds.SoundEvents;
-import net.minecraft.world.InteractionHand;
-import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
@@ -13,6 +10,9 @@ import net.minecraft.world.entity.animal.Animal;
 import net.minecraft.world.entity.animal.Cow;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Items;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.InteractionHand;
 import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.NotNull;
 import org.spongepowered.asm.mixin.Mixin;
@@ -60,14 +60,19 @@ public abstract class CowEntityMixin extends Animal implements IKickCoolDown {
     }
 
     @Inject(method = "createAttributes", at = @At("RETURN"), cancellable = true)
-    private static void createAttributes(@NotNull CallbackInfoReturnable<AttributeSupplier.Builder> cir) {
+    private static void createCowAttributes(@NotNull CallbackInfoReturnable<AttributeSupplier.Builder> cir) {
         cir.setReturnValue(cir.getReturnValue().add(Attributes.MAX_HEALTH, 20.0));
     }
 
+//    @Inject(method = "initGoals", at = @At("TAIL"))
+//    protected void initGoals(CallbackInfo ci) {
+//        this.goalSelector.add(1 /* priority 0 causes entity immobility when ending escaping danger goal*/, new CowKickRevengeGoal(this));
+//    }
+
     @Inject(method = "mobInteract", at = @At("HEAD"), cancellable = true)
-    public void mobInteract(@NotNull Player player, InteractionHand hand, @NotNull CallbackInfoReturnable<InteractionResult> cir) {
-        //  NOT SOLELY `ServerPlayer` -- Both server and client side need the interaction
-        boolean isMilking = player.getMainHandItem().is(Items.BUCKET) && !this.isBaby();
+    public void interactMob(@NotNull Player player, InteractionHand hand, @NotNull CallbackInfoReturnable<InteractionResult> cir) {
+        //  NOT SOLELY `ServerPlayerEntity` -- Both server and client side need the interaction
+        boolean isMilking = player.getItemInHand(InteractionHand.MAIN_HAND).is(Items.BUCKET) && !this.isBaby();
         if (isMilking && EntityHelper.IS_SURVIVAL_AND_SERVER.test(player)) {
             if (isInLeather(player) || !Configs.isEnabled(player, HOSTILE_COW)) {
                 long time = this.level().getGameTime();
@@ -78,8 +83,7 @@ public abstract class CowEntityMixin extends Animal implements IKickCoolDown {
                     cir.setReturnValue(InteractionResult.FAIL);
                 } else this.entityData.set(EntityHelper.MILKED_TIME, time);
             } else { // Rebel and become panic when someone milking without any leather clothing
-                this.setLastHurtByMob(player); // Set relevant data as same as being attacked
-                this.lastHurtByMobTimestamp = this.tickCount;
+                this.setLastHurtByMob(player); // It will automatically set this.lastHurtByMobTimestamp
                 cir.setReturnValue(InteractionResult.FAIL);
             }
         }

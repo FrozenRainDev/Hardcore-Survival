@@ -1,8 +1,8 @@
 package biz.coolpage.hcs.status.manager.disabled;
 
 import biz.coolpage.hcs.status.manager.SanityManager;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Player;
 
 public class DisabledSanityManager extends SanityManager {
     @Override
@@ -36,7 +36,7 @@ public class DisabledSanityManager extends SanityManager {
     }
 
     @Override
-    public void tickEnemies(PlayerEntity player) {
+    public void tickEnemies(Player player) {
     }
 
     @Override

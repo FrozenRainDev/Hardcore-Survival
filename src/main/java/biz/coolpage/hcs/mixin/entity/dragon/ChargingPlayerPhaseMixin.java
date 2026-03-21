@@ -10,10 +10,11 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(DragonChargePlayerPhase.class)
 public class ChargingPlayerPhaseMixin {
     @Shadow
-    private int chargingTime;
+    private int timeSinceCharge;
 
     @Inject(method = "begin", at = @At("TAIL"))
     public void begin(CallbackInfo ci) {
-        this.chargingTime = -300; //Enable prolonged charging time length
+        // Set timeSinceCharge to a negative value to extend charge preparation/duration
+        this.timeSinceCharge = -300;
     }
 }

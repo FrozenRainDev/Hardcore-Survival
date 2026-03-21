@@ -1,6 +1,6 @@
 package biz.coolpage.hcs.status.manager;
 
-import biz.coolpage.hcs.Reg;
+import biz.coolpage.hcs.Hcs;
 
 public class WetnessManager {
     private double wetness = 0.0;
@@ -14,7 +14,7 @@ public class WetnessManager {
 
     public void set(double val) {
         if (Double.isNaN(val)) {
-            Reg.LOGGER.error(this.getClass().getSimpleName() + ": Val is NaN");
+            Hcs.error(this.getClass().getSimpleName() + ": Val is NaN");
             return;
         }
         if (val > 1.0) val = 1.0;

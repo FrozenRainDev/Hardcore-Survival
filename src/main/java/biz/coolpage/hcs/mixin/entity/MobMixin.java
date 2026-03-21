@@ -23,11 +23,11 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(Mob.class)
 @SuppressWarnings("ConstantValue")
-public abstract class MobEntityMixin extends LivingEntity {
+public abstract class MobMixin extends LivingEntity { // MobEntityMixin
     @Shadow
     public abstract @Nullable LivingEntity getTarget();
 
-    protected MobEntityMixin(EntityType<? extends LivingEntity> entityType, Level world) {
+    protected MobMixin(EntityType<? extends LivingEntity> entityType, Level world) {
         super(entityType, world);
     }
 

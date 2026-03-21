@@ -13,49 +13,51 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(ShapelessRecipe.class)
-public class ShapelessRecipeMixin {
+public abstract class ShapelessRecipeMixin {
     @Mutable
     @Final
     @Shadow
-    ItemStack result;
+    private ItemStack result;
 
     @Unique
-    private static Level theLevel = null;
+    private static Level theWorld = null;
     @Unique
     private static float freshSum = 0.0F;
     @Unique
     private static int freshCou = 0;
 
+    // 尊重原有代码结构，保留构造函数（注：在Mixin中此类构造函数通常仅用于Shadow模拟）
+    public ShapelessRecipeMixin(ItemStack result) {
+        this.result = result;
+    }
+
+    // TODO test whether works
     @Inject(at = @At("HEAD"), method = "matches(Lnet/minecraft/world/inventory/CraftingContainer;Lnet/minecraft/world/level/Level;)Z")
-    private void matches(@NotNull CraftingContainer container, Level level, CallbackInfoReturnable<Boolean> cir) {
-        theLevel = level;
+    private void matches(@NotNull CraftingContainer inventory, Level world, CallbackInfoReturnable<Boolean> cir) {
+        theWorld = world;
         freshSum = 0.0F;
         freshCou = 0;
-        for (int i = 0; i < container.getContainerSize(); ++i) {
-            ItemStack stack = container.getItem(i);
+        for (int i = 0; i < inventory.getContainerSize(); ++i) {
+            ItemStack stack = inventory.getItem(i);
             if (RotHelper.canRot(stack.getItem())) {
-                freshSum += RotHelper.getFresh(level, stack);
+                freshSum += RotHelper.getFresh(world, stack);
                 ++freshCou;
             }
         }
     }
 
-    @Inject(at = @At("HEAD"), method = "getResultItem", cancellable = true)
-    private void getResultItemInject(RegistryAccess registryAccess, CallbackInfoReturnable<ItemStack> cir) {
-        applyRotLogic(cir);
-    }
-
-    @Inject(at = @At("HEAD"), method = "assemble", cancellable = true)
-    private void assembleInject(CraftingContainer container, RegistryAccess registryAccess, CallbackInfoReturnable<ItemStack> cir) {
-        applyRotLogic(cir);
-    }
-
-    @Unique
-    private void applyRotLogic(CallbackInfoReturnable<ItemStack> cir) {
+    @Inject(at = @At("HEAD"), method = "getResultItem(Lnet/minecraft/core/RegistryAccess;)Lnet/minecraft/world/item/ItemStack;", cancellable = true)
+    private void getOutPut(RegistryAccess registryAccess, CallbackInfoReturnable<ItemStack> cir) {
         ItemStack stackOut = this.result.copy();
-        if (RotHelper.canRot(stackOut.getItem()) && theLevel != null && freshCou > 0) {
-            RotHelper.setFresh(theLevel, stackOut, Math.max(freshSum / freshCou, 0.1F));
+        if (RotHelper.canRot(stackOut.getItem()) && theWorld != null && freshCou > 0) {
+            RotHelper.setFresh(theWorld, stackOut, Math.max(freshSum / freshCou, 0.1F));
             cir.setReturnValue(stackOut);
         }
     }
+
+    @Inject(at = @At("HEAD"), method = "assemble(Lnet/minecraft/world/inventory/CraftingContainer;Lnet/minecraft/core/RegistryAccess;)Lnet/minecraft/world/item/ItemStack;", cancellable = true)
+    private void craft(CraftingContainer inventory, RegistryAccess registryAccess, CallbackInfoReturnable<ItemStack> cir) {
+        getOutPut(registryAccess, cir);
+    }
+
 }

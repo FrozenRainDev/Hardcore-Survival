@@ -14,7 +14,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import java.util.Collection;
 
 @Mixin(PotionUtils.class)
-public class PotionUtilMixin {
+public class PotionUtilsMixin {
     @Inject(at = @At("HEAD"), method = "getColor(Ljava/util/Collection;)I", cancellable = true)
     private static void getColor(@NotNull Collection<MobEffectInstance> effects, CallbackInfoReturnable<Integer> cir) {
         if (effects.size() == 1) {

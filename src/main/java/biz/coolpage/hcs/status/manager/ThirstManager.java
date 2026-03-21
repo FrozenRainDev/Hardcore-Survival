@@ -1,6 +1,6 @@
 package biz.coolpage.hcs.status.manager;
 
-import biz.coolpage.hcs.Reg;
+import biz.coolpage.hcs.Hcs;
 
 @SuppressWarnings("LoggingSimilarMessage")
 public class ThirstManager {
@@ -19,7 +19,7 @@ public class ThirstManager {
 
     public void set(double val) {
         if (Double.isNaN(val)) {
-            Reg.LOGGER.error("{}: Val is NaN", this.getClass().getSimpleName());
+            Hcs.error("{}: Val is NaN", this.getClass().getSimpleName());
             return;
         }
         if (val > 1.0F) val = 1.0F;
@@ -29,7 +29,7 @@ public class ThirstManager {
 
     public void add(double val) {
         if (Double.isNaN(val)) {
-            Reg.LOGGER.error("{}: Val is NaN", this.getClass().getSimpleName());
+            Hcs.error("{}: Val is NaN", this.getClass().getSimpleName());
             return;
         }
         if (val < 0.01F) {
@@ -59,7 +59,7 @@ public class ThirstManager {
 
     public void setSaturation(float val) {
         if (Float.isNaN(val)) {
-            Reg.LOGGER.error("{}/setSaturation(): Val is NaN", this.getClass().getSimpleName());
+            Hcs.error("{}/setSaturation(): Val is NaN", this.getClass().getSimpleName());
             return;
         }
         saturation = val;

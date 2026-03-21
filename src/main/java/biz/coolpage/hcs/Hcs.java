@@ -51,8 +51,6 @@ public final class Hcs {
         MinecraftForge.EVENT_BUS.register(this);
         // Config
         context.registerConfig(ModConfig.Type.COMMON, Config.CFG_SPEC);
-        // todo test
-        info(LivingEntity.SLOW_FALLING_ID);
     }
 
     private void commonSetup(final FMLCommonSetupEvent event) {

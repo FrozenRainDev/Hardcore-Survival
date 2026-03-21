@@ -17,7 +17,8 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(TargetGoal.class)
-public abstract class TrackTargetGoalMixin {
+// TrackTargetGoalMixin
+public abstract class TargetGoalMixin {
     @Shadow
     @Mutable
     @Final
@@ -30,7 +31,7 @@ public abstract class TrackTargetGoalMixin {
     @Shadow
     public abstract void stop();
 
-    public TrackTargetGoalMixin(Mob mob) {
+    public TargetGoalMixin(Mob mob) {
         this.mob = mob;
     }
 

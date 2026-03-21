@@ -14,6 +14,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(EndCrystal.class)
 public class EndCrystalEntityMixin {
+    // Need netherite pickaxe to break end crystal
     @Inject(method = "hurt", at = @At("HEAD"), cancellable = true)
     public void hurt(@NotNull DamageSource source, float amount, CallbackInfoReturnable<Boolean> cir) {
         if (source.getEntity() instanceof ServerPlayer player) {

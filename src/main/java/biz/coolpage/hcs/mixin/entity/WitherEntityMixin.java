@@ -2,6 +2,7 @@ package biz.coolpage.hcs.mixin.entity;
 
 import biz.coolpage.hcs.entity.goal.ChargingAtPlayerGoal;
 import net.minecraft.core.BlockPos;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.Entity;
@@ -11,8 +12,7 @@ import net.minecraft.world.entity.boss.wither.WitherBoss;
 import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.LevelEvent;
-import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.level.block.LevelEvent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;
@@ -51,7 +51,7 @@ public abstract class WitherEntityMixin extends Monster {
                     var pos1 = BlockPos.of(pos.asLong()); // Clone
                     for (int j = 0; j < 21; ++j) {
                         if (!serverWorld.isOutsideBuildHeight(pos1.getY())) {
-                            if (serverWorld.getBlockState(pos1).isAir() && serverWorld.getBlockState(pos1.below()).isSolidRender(serverWorld, pos1.below())) {
+                            if (serverWorld.getBlockState(pos1).isAir() && serverWorld.getBlockState(pos1.below()).canOcclude()) {
                                 if (results.size() < 4) results.add(pos1);
                                 else return results;
                             }
@@ -65,18 +65,18 @@ public abstract class WitherEntityMixin extends Monster {
     }
 
     @Inject(method = "registerGoals", at = @At("HEAD"))
-    protected void registerGoals(CallbackInfo ci) {
+    protected void initGoals(CallbackInfo ci) {
         if ((Object) this instanceof WitherBoss wither)
             this.targetSelector.addGoal(1, new ChargingAtPlayerGoal<>(wither, w -> w.isPowered() && w.getTarget() instanceof Player));
     }
 
     @Inject(method = "aiStep", at = @At("HEAD"))
-    public void aiStep(CallbackInfo ci) {
+    public void tickMovement(CallbackInfo ci) {
         if (this.level() instanceof ServerLevel serverWorld) {
-            boolean shouldRenderOverlay = this.isPowered();
+            boolean isPowered = this.isPowered();
             if (this.summonSkeletonCooldown > 0) --this.summonSkeletonCooldown;
-            else if (!shouldRenderOverlay) {
-                if (this.getLastHurtByMob() instanceof Player) {
+            else if (!isPowered) {
+                if (this.getLastAttacker() instanceof Player) {
                     this.summonSkeletonCooldown = 400;
                     this.locateSummonPosForSkeletons().forEach(pos -> {
                         this.level().levelEvent(LevelEvent.SOUND_EXTINGUISH_FIRE, pos, 0);
@@ -84,9 +84,9 @@ public abstract class WitherEntityMixin extends Monster {
                     });
                 }
             }
-            if (shouldRenderOverlay) {
-                this.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SPEED, 5, 1, false, false, false));
-                this.addEffect(new MobEffectInstance(MobEffects.DAMAGE_RESISTANCE, 5, 1, false, false, false));
+            if (isPowered) {
+                this.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SPEED, 5, 1, false, false, false), (Entity)null);
+                this.addEffect(new MobEffectInstance(MobEffects.DAMAGE_RESISTANCE, 5, 1, false, false, false), (Entity)null);
             }
         }
     }

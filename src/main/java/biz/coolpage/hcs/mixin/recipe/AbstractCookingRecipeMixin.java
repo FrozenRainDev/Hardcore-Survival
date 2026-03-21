@@ -1,6 +1,6 @@
 package biz.coolpage.hcs.mixin.recipe;
 
-import biz.coolpage.hcs.Reg;
+import biz.coolpage.hcs.Hcs;
 import biz.coolpage.hcs.item.HotWaterBottleItem;
 import biz.coolpage.hcs.util.RotHelper;
 import biz.coolpage.hcs.util.WorldHelper;
@@ -55,12 +55,12 @@ public abstract class AbstractCookingRecipeMixin {
 
     @Unique
     private void modifyResult(ItemStack stackOut, CallbackInfoReturnable<ItemStack> cir) {
-        if (stackOut.is(Items.DRIED_KELP)) stackOut = Reg.COOKED_KELP.get().getDefaultInstance();
+        if (stackOut.is(Items.DRIED_KELP)) stackOut = Hcs.COOKED_KELP.get().getDefaultInstance();
         if (RotHelper.canRot(stackOut.getItem()) && theLevel != null && stackIn != null) {
             RotHelper.setFresh(theLevel, stackOut, RotHelper.getFreshCooked(RotHelper.getFresh(theLevel, stackIn)));
             cir.setReturnValue(stackOut);
         }
-        if (stackOut.is(Reg.HOT_WATER_BOTTLE.get())) {
+        if (stackOut.is(Hcs.HOT_WATER_BOTTLE.get())) {
             int stat = 1;
             CompoundTag nbt = stackOut.getOrCreateTag();
             if (!WorldHelper.cannotGetServerWorld())

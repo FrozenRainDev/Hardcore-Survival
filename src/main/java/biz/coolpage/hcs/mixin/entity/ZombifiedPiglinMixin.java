@@ -12,8 +12,8 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(ZombifiedPiglin.class)
-public abstract class ZombifiedPiglinEntityMixin extends Zombie implements NeutralMob {
-    public ZombifiedPiglinEntityMixin(EntityType<? extends Zombie> entityType, Level world) {
+public abstract class ZombifiedPiglinMixin extends Zombie implements NeutralMob { // ZombifiedPiglinEntityMixin
+    public ZombifiedPiglinMixin(EntityType<? extends Zombie> entityType, Level world) {
         super(entityType, world);
     }
 

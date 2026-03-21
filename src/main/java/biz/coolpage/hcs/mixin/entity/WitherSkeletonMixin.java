@@ -18,8 +18,8 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import static biz.coolpage.hcs.util.CommUtil.applyNullable;
 
 @Mixin(WitherSkeleton.class)
-public abstract class WitherSkeletonEntityMixin extends AbstractSkeleton {
-    protected WitherSkeletonEntityMixin(EntityType<? extends AbstractSkeleton> entityType, Level world) {
+public abstract class WitherSkeletonMixin extends AbstractSkeleton { // WitherSkeletonEntityMixin
+    protected WitherSkeletonMixin(EntityType<? extends AbstractSkeleton> entityType, Level world) {
         super(entityType, world);
     }
 

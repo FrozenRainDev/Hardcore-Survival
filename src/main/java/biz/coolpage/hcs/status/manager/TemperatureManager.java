@@ -1,6 +1,6 @@
 package biz.coolpage.hcs.status.manager;
 
-import biz.coolpage.hcs.Reg;
+import biz.coolpage.hcs.Hcs;
 
 public class TemperatureManager {
     public static final String TEMPERATURE_NBT = "hcs_temperature";
@@ -28,7 +28,7 @@ public class TemperatureManager {
 
     public void set(double val) {
         if (Double.isNaN(val)) {
-            Reg.LOGGER.error("{}/setRealPain(): Val is NaN", this.getClass().getSimpleName());
+            Hcs.error("{}/setRealPain(): Val is NaN", this.getClass().getSimpleName());
             return;
         }
         if (val > 1.0F) val = 1.0F;
@@ -38,7 +38,7 @@ public class TemperatureManager {
 
     public void add(double val) {
         if (Double.isNaN(val)) {
-            Reg.LOGGER.error("{}/addRawPain(): Val is NaN", this.getClass().getSimpleName());
+            Hcs.error("{}/addRawPain(): Val is NaN", this.getClass().getSimpleName());
             return;
         }
         double expected = temperature + val;
@@ -69,7 +69,7 @@ public class TemperatureManager {
 
     public void addAmbient(float val) {
         if (Float.isNaN(val)) {
-            Reg.LOGGER.error("{}/addAmbient(): Val is NaN", this.getClass().getSimpleName());
+            Hcs.error("{}/addAmbient(): Val is NaN", this.getClass().getSimpleName());
             return;
         }
         if (val > 0.0F) {
@@ -95,7 +95,7 @@ public class TemperatureManager {
 
     public void setEnvTempCache(float val) {
         if (Float.isNaN(val)) {
-            Reg.LOGGER.error("{}/setEnvTempCache(): Val is NaN", this.getClass().getSimpleName());
+            Hcs.error("{}/setEnvTempCache(): Val is NaN", this.getClass().getSimpleName());
             return;
         }
         envTempCache = val;
@@ -118,7 +118,7 @@ public class TemperatureManager {
 
     public void addSaturation(float val) {
         if (Float.isNaN(val)) {
-            Reg.LOGGER.error("{}/addSaturation(): Val is NaN", this.getClass().getSimpleName());
+            Hcs.error("{}/addSaturation(): Val is NaN", this.getClass().getSimpleName());
             return;
         }
         saturation += val;
@@ -128,7 +128,7 @@ public class TemperatureManager {
 
     public void setSaturation(float val) {
         if (Float.isNaN(val)) {
-            Reg.LOGGER.error("{}/setSaturation(): Val is NaN", this.getClass().getSimpleName());
+            Hcs.error("{}/setSaturation(): Val is NaN", this.getClass().getSimpleName());
             return;
         }
         saturation = val;

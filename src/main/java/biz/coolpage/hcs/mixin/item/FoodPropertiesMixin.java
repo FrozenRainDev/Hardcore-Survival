@@ -18,7 +18,7 @@ import static biz.coolpage.hcs.config.Configs.*;
 
 // FoodComponent -> FoodProperties (Mojang)
 @Mixin(FoodProperties.class)
-public class FoodComponentMixin {
+public class FoodPropertiesMixin {
 
     // isAlwaysEdible -> canAlwaysEat (Mojang)
     @Inject(method = "canAlwaysEat", at = @At("HEAD"), cancellable = true)

@@ -19,12 +19,12 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(Animal.class)
 @SuppressWarnings("ConstantValue")
-public abstract class AnimalEntityMixin extends AgeableMob {
+public abstract class AnimalMixin extends AgeableMob { // AnimalEntityMixin
     //See damage mixin in LivingEntityMixin
     @Unique
     private static String MILKED_NBT = "hcs_milked";
 
-    protected AnimalEntityMixin(EntityType<? extends AgeableMob> entityType, Level world) {
+    protected AnimalMixin(EntityType<? extends AgeableMob> entityType, Level world) {
         super(entityType, world);
     }
 

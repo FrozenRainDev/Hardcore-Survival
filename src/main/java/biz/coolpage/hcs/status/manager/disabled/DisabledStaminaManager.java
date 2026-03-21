@@ -1,8 +1,8 @@
 package biz.coolpage.hcs.status.manager.disabled;
 
 import biz.coolpage.hcs.status.manager.StaminaManager;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.player.Player;
 
 public class DisabledStaminaManager extends StaminaManager {
     @Override
@@ -19,7 +19,7 @@ public class DisabledStaminaManager extends StaminaManager {
     }
 
     @Override
-    public void add(double val, PlayerEntity player) {
+    public void add(double val, Player player) {
     }
 
     @Override

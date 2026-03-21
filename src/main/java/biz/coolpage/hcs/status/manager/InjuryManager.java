@@ -1,6 +1,6 @@
 package biz.coolpage.hcs.status.manager;
 
-import biz.coolpage.hcs.Reg;
+import biz.coolpage.hcs.Hcs;
 import biz.coolpage.hcs.util.EntityHelper;
 
 public class InjuryManager {
@@ -52,7 +52,7 @@ public class InjuryManager {
 
     public void setRawPain(double val) {
         if (Double.isNaN(val)) {
-            Reg.LOGGER.error("{}/setParasite(): Val is NaN", this.getClass().getSimpleName());
+            Hcs.error("{}/setParasite(): Val is NaN", this.getClass().getSimpleName());
             return;
         }
         if (val > 4.0) val = 4.0;
@@ -68,7 +68,7 @@ public class InjuryManager {
 
     public void setAlleviationCache(double val) {
         if (Double.isNaN(val)) {
-            Reg.LOGGER.error("{}/setAlleviationCache(): Val is NaN", this.getClass().getSimpleName());
+            Hcs.error("{}/setAlleviationCache(): Val is NaN", this.getClass().getSimpleName());
             return;
         }
         if (val > 4.0) val = 4.0;
@@ -104,7 +104,7 @@ public class InjuryManager {
 
     public void setBleeding(double val) {
         if (Double.isNaN(val)) {
-            Reg.LOGGER.error("{}/setBleeding(): Val is NaN", this.getClass().getSimpleName());
+            Hcs.error("{}/setBleeding(): Val is NaN", this.getClass().getSimpleName());
             return;
         }
         if (val > 5.0) val = 5.0;
@@ -125,7 +125,7 @@ public class InjuryManager {
 
     public void setFracture(double val) {
         if (Double.isNaN(val)) {
-            Reg.LOGGER.error("{}/setFracture(): Val is NaN", this.getClass().getSimpleName());
+            Hcs.error("{}/setFracture(): Val is NaN", this.getClass().getSimpleName());
             return;
         }
         if (val > 1.0) val = 1.0;

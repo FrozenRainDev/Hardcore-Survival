@@ -1,6 +1,6 @@
 package biz.coolpage.hcs.mixin.entity;
 
-import biz.coolpage.hcs.Reg;
+import biz.coolpage.hcs.Hcs;
 import biz.coolpage.hcs.status.accessor.ILivingEntity;
 import biz.coolpage.hcs.status.accessor.StatAccessor;
 import biz.coolpage.hcs.util.ArmorHelper;
@@ -16,9 +16,13 @@ import net.minecraft.world.entity.animal.axolotl.Axolotl;
 import net.minecraft.world.entity.animal.frog.Frog;
 import net.minecraft.world.entity.animal.frog.Tadpole;
 import net.minecraft.world.entity.animal.horse.AbstractHorse;
+import net.minecraft.world.entity.animal.horse.SkeletonHorse;
+import net.minecraft.world.entity.animal.horse.ZombieHorse;
 import net.minecraft.world.entity.boss.enderdragon.EnderDragon;
 import net.minecraft.world.entity.boss.wither.WitherBoss;
-import net.minecraft.world.entity.monster.*;
+import net.minecraft.world.entity.monster.EnderMan;
+import net.minecraft.world.entity.monster.Monster;
+import net.minecraft.world.entity.monster.Spider;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
@@ -34,6 +38,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(LivingEntity.class)
+@SuppressWarnings({"ConstantValue", "AddedMixinMembersNamePattern"})
 public abstract class LivingEntityMixin extends Entity implements ILivingEntity {
     @Shadow
     private int lastHurtByMobTimestamp;
@@ -59,20 +64,24 @@ public abstract class LivingEntityMixin extends Entity implements ILivingEntity 
     }
 
     @Inject(method = "baseTick", at = @At("HEAD"))
-    public void baseTick(CallbackInfo ci) {
+    public void baseTick(CallbackInfo cir) {
+        //Enable prolonged panic caused by being attacked
         if (this.getLastHurtByMob() != null) this.hcsLastAttacker = this.getLastHurtByMob();
-        if (this.hcsLastAttacker != null && !this.hcsLastAttacker.isAlive()) this.hcsLastAttacker = null;
-        if ((Object) this instanceof Animal animal
+        if (this.hcsLastAttacker != null && this.hcsLastAttacker.isRemoved()) this.hcsLastAttacker = null;
+        if ((Object) this instanceof Animal animal // && this.tickCount % 6 != 0
                 && this.hcsLastAttacker != null && animal.distanceTo(this.hcsLastAttacker) < 48)
             ++this.lastHurtByMobTimestamp;
     }
 
-    @Inject(method = "increaseAirSupply", at = @At("RETURN"), cancellable = true)
-    protected void increaseAirSupply(int air, @NotNull CallbackInfoReturnable<Integer> cir) {
+    // Yarn getNextAirOnLand = Mojang increaseAirSupply
+    @Inject(method = "increaseAirSupply", at = @At("HEAD"), cancellable = true)
+    protected void increaseAirSupply(int pCurrentAir, @NotNull CallbackInfoReturnable<Integer> cir) {
         if ((Object) this instanceof Player player) {
             int lvl = ((StatAccessor) player).getOxygenManager().getFinalOxygenLackLevel();
             if (lvl > 0 && !player.hasEffect(MobEffects.WATER_BREATHING)) {
-                cir.setReturnValue(air + ((air + 1 >= this.getMaxAirSupply()) ? 0 : (lvl == 1 ? 1 : 0)));
+                // Original logic: Increase based on level on top of the current air recovery
+                int recovery = (lvl == 1) ? 1 : 0;
+                cir.setReturnValue(Math.min(pCurrentAir + recovery, this.getMaxAirSupply()));
             }
         }
     }
@@ -81,16 +90,15 @@ public abstract class LivingEntityMixin extends Entity implements ILivingEntity 
     public void hurt(DamageSource source, float amount, CallbackInfoReturnable<Boolean> cir) {
         Object victim = this;
         if (source != null && source.getEntity() instanceof LivingEntity attacker) {
-            if (victim instanceof Player player && attacker instanceof Enemy)
-                ((StatAccessor) player).getSanityManager().add(attacker instanceof Enderman ? -0.08 : -0.005);
+            if (victim instanceof Player player && attacker instanceof Monster)
+                ((StatAccessor) player).getSanityManager().add(attacker instanceof EnderMan ? -0.08 : -0.005);
             if (victim instanceof Animal animal) {
                 EntityHelper.getOthersEntitiesInRange(animal, Animal.class, 1.0).stream()
                         .filter(entity -> entity != null && entity != animal)
-                        .forEach(entity -> {
-                            entity.setLastHurtByMob(animal.getLastHurtByMob());
-                            entity.lastHurtByMobTimestamp = entity.tickCount;
-                        });
-                if (victim instanceof Chicken) EntityHelper.dropItem(this, Items.FEATHER, 1);
+                        .forEach(entity -> entity.setLastHurtByMob(animal.getLastHurtByMob()));
+                if (victim instanceof Animal) {
+                    if (victim instanceof Chicken) EntityHelper.dropItem(this, Items.FEATHER, 1);
+                }
             }
         }
     }
@@ -99,10 +107,11 @@ public abstract class LivingEntityMixin extends Entity implements ILivingEntity 
     public void die(@NotNull DamageSource source, CallbackInfo ci) {
         if (EntityHelper.SHOULD_DROP_AFTER_DEATH.test(this, source)) return;
         Object ent = this;
-        Item meat = this.getRemainingFireTicks() > 0 ? Reg.COOKED_MEAT : Reg.RAW_MEAT;
+        Item meat = this.getRemainingFireTicks() > 0 ? Hcs.COOKED_MEAT : Hcs.RAW_MEAT;
         if (ent instanceof Chicken || ent instanceof Cow || ent instanceof Pig || ent instanceof Sheep) {
             if (!(ent instanceof Chicken)) {
-                EntityHelper.dropItem(this, Reg.ANIMAL_VISCERA);
+                //EntityHelper.dropItem(this, Items.BONE, 2);
+                EntityHelper.dropItem(this, Hcs.ANIMAL_VISCERA);
                 if (ent instanceof Sheep && Math.random() < 0.3) EntityHelper.dropItem(this, Items.LEATHER);
             }
             if (this.isBaby()) EntityHelper.dropItem(this, meat);
@@ -112,10 +121,11 @@ public abstract class LivingEntityMixin extends Entity implements ILivingEntity 
             if (ent instanceof AbstractHorse)
                 EntityHelper.dropItem(this, this.getRemainingFireTicks() > 0 ? Items.COOKED_BEEF : Items.BEEF, (int) (Math.random() * 3) + 1);
             else EntityHelper.dropItem(this, meat, (int) (Math.random() * 3) + 1);
-            EntityHelper.dropItem(this, Reg.ANIMAL_VISCERA);
-        } else if (ent instanceof Spider && Math.random() < 0.33) EntityHelper.dropItem(this, Reg.SPIDER_GLAND);
+            // EntityHelper.dropItem(this, Items.BONE, 2);
+            EntityHelper.dropItem(this, Hcs.ANIMAL_VISCERA);
+        } else if (ent instanceof Spider && Math.random() < 0.33) EntityHelper.dropItem(this, Hcs.SPIDER_GLAND);
         else if (ent instanceof Bat)
-            EntityHelper.dropItem(this, this.getRemainingFireTicks() > 0 ? Reg.ROASTED_BAT_WINGS : Reg.BAT_WINGS);
+            EntityHelper.dropItem(this, this.getRemainingFireTicks() > 0 ? Hcs.ROASTED_BAT_WINGS : Hcs.BAT_WINGS);
         else if (ent instanceof WitherBoss) {
             EntityHelper.dropItem(this, Items.NETHERITE_INGOT, 2 + (int) (Math.random() * 2));
             EntityHelper.dropItem(this, Items.DIAMOND, 12 + (int) (Math.random() * 6));
@@ -126,14 +136,15 @@ public abstract class LivingEntityMixin extends Entity implements ILivingEntity 
         }
     }
 
-    @Inject(method = "dropAllDeathLoot", at = @At("HEAD"), cancellable = true)
-    protected void dropAllDeathLoot(DamageSource source, CallbackInfo ci) {
+    @Inject(method = "dropFromLootTable", at = @At("HEAD"), cancellable = true)
+    protected void dropFromLootTable(DamageSource source, boolean causedByPlayer, CallbackInfo ci) {
         if (EntityHelper.SHOULD_DROP_AFTER_DEATH.test(this, source)) ci.cancel();
     }
 
-    @Inject(method = "getDamageAfterArmorAbsorb", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/DamageUtil;getDamageLeft(FFF)F"), cancellable = true)
+    @Inject(method = "getDamageAfterArmorAbsorb", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/damagesource/CombatRules;getDamageAfterAbsorb(FFF)F"), cancellable = true)
     protected void getDamageAfterArmorAbsorb(DamageSource source, float amount, @NotNull CallbackInfoReturnable<Float> cir) {
         if (((Object) this) instanceof Player player)
             cir.setReturnValue(ArmorHelper.getDamageLeft(player, amount));
     }
+
 }

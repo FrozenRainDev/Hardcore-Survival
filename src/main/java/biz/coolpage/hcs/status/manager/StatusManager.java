@@ -2,8 +2,8 @@ package biz.coolpage.hcs.status.manager;
 
 import biz.coolpage.hcs.config.HcsDifficulty;
 import biz.coolpage.hcs.status.accessor.StatAccessor;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Player;
 import org.jetbrains.annotations.Nullable;
 
 import static biz.coolpage.hcs.config.Configs.*;
@@ -42,7 +42,7 @@ public class StatusManager {
     private int returnEffectAwaitTicks = 0; //Server side only
 
     public static int getMaxSoulImpaired(@Nullable LivingEntity entity) {
-        PlayerEntity player = toPlayer(entity);
+        Player player = toPlayer(entity);
         if (player == null) return 0;
         var config = ((StatAccessor) player).getConfigManager();
         if (config != null && !config.get(SOUL_IMPAIR)) return 0;

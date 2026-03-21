@@ -9,7 +9,7 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(ExplosionCondition.class)
-public class SurvivesExplosionLootConditionMixin {
+public class ExplosionConditionMixin { // SurvivesExplosionLootConditionMixin
     @Inject(at = @At("HEAD"), method = "test(Lnet/minecraft/world/level/storage/loot/LootContext;)Z", cancellable = true)
     public void test(LootContext lootContext, CallbackInfoReturnable<Boolean> cir) {
         LootHelper.delSpecificLoot(lootContext, cir, false);

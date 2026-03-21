@@ -5,7 +5,6 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.boss.enderdragon.EnderDragon;
 import net.minecraft.world.entity.boss.wither.WitherBoss;
 import net.minecraft.world.entity.monster.EnderMan;
-import net.minecraft.world.entity.monster.Enderman;
 import net.minecraft.world.entity.monster.WitherSkeleton;
 import net.minecraft.tags.DamageTypeTags;
 import org.spongepowered.asm.mixin.Mixin;

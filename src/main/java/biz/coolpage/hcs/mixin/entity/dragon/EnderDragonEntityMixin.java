@@ -2,6 +2,7 @@ package biz.coolpage.hcs.mixin.entity.dragon;
 
 import biz.coolpage.hcs.util.EntityHelper;
 import net.minecraft.core.BlockPos;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
@@ -10,14 +11,13 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.ai.targeting.TargetingConditions;
-import net.minecraft.world.entity.boss.enderdragon.EnderDragon;
 import net.minecraft.world.entity.boss.enderdragon.EndCrystal;
-import net.minecraft.world.entity.monster.Enderman;
+import net.minecraft.world.entity.boss.enderdragon.EnderDragon;
+import net.minecraft.world.entity.monster.EnderMan;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Items;
-import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.LevelEvent;
+import net.minecraft.world.level.block.LevelEvent;
 import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
@@ -43,7 +43,7 @@ public abstract class EnderDragonEntityMixin extends Mob {
     public EndCrystal nearestCrystal;
 
     @Unique
-    private static boolean isDragonInSecondStage(LivingEntity entity) {
+    private static boolean hcs$isDragonInSecondStage(LivingEntity entity) {
         if (entity instanceof EnderDragon dragon) return dragon.getHealth() / dragon.getMaxHealth() < 0.2F;
         return false;
     }
@@ -53,15 +53,15 @@ public abstract class EnderDragonEntityMixin extends Mob {
 
     @Shadow
     @Final
-    private static TargetingConditions NEAR_PLAYER_TARGETING;
+    private static TargetingConditions CRYSTAL_DESTROY_TARGETING;
 
     @Unique
-    public void addBuffWithoutChecking(MobEffectInstance effect) {
+    public void hcs$addBuffWithoutChecking(MobEffectInstance effect) {
         this.getActiveEffectsMap().put(effect.getEffect(), effect);
     }
 
     @Unique
-    private static void disableShield(List<Entity> entities) {
+    private static void hcs$disableShield(List<Entity> entities) {
         applyNullable(entities, es -> es.forEach(e -> {
             if (e instanceof ServerPlayer player && player.getUseItem().is(Items.SHIELD))
                 player.getCooldowns().addCooldown(Items.SHIELD, 200);
@@ -73,33 +73,34 @@ public abstract class EnderDragonEntityMixin extends Mob {
         EntityHelper.letEnderDragonChargeAtTheClosestPlayer(this);
     }
 
+    // The private method in the source code that handles wing collisions
     @Inject(method = "knockBack", at = @At("HEAD"))
-    private void knockBack(List<Entity> entities, CallbackInfo ci) {
-        disableShield(entities);
+    private void hcs$knockBack(List<Entity> entities, CallbackInfo ci) {
+        hcs$disableShield(entities);
     }
 
     @ModifyArg(method = "knockBack", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/Entity;hurt(Lnet/minecraft/world/damagesource/DamageSource;F)Z"), index = 1)
-    private float knockBackDamage(float amount) {
+    private float hcs$modifyKnockBackDamage(float amount) {
         return amount * 1.7F;
     }
 
     @ModifyArg(method = "checkCrystals", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/phys/AABB;inflate(D)Lnet/minecraft/world/phys/AABB;"), index = 0)
-    private double checkCrystals(double value) {
+    private double hcs$modifyCrystalCheckRange(double value) {
         return 256.0;
     }
 
     @Inject(method = "aiStep", at = @At("HEAD"))
-    public void aiStep(CallbackInfo ci) {
+    public void hcs$aiStep(CallbackInfo ci) {
         if (this.nearestCrystal == null) {
-            boolean isInSecondStage = isDragonInSecondStage(this);
-            this.addBuffWithoutChecking(new MobEffectInstance(MobEffects.MOVEMENT_SPEED, 5, isInSecondStage ? 2 : 1, false, false, false));
-            this.addBuffWithoutChecking(new MobEffectInstance(MobEffects.DAMAGE_RESISTANCE, 5, 1, false, false, false));
+            boolean isInSecondStage = hcs$isDragonInSecondStage(this);
+            this.hcs$addBuffWithoutChecking(new MobEffectInstance(MobEffects.MOVEMENT_SPEED, 5, isInSecondStage ? 2 : 1, false, false, false));
+            this.hcs$addBuffWithoutChecking(new MobEffectInstance(MobEffects.DAMAGE_RESISTANCE, 5, 1, false, false, false));
             if (isInSecondStage) {
                 for (int i = 0; i < 4; ++i)
                     this.level().levelEvent(LevelEvent.PARTICLES_ELECTRIC_SPARK, this.blockPosition().above(i), 0);
-                applyNullable(EntityHelper.getOthersEntitiesInRange(this, Enderman.class, 8.0),
+                applyNullable(EntityHelper.getOthersEntitiesInRange(this, EnderMan.class, 8.0),
                         entities -> {
-                            var targetPlayer = this.level().getNearestPlayer(NEAR_PLAYER_TARGETING, this.getX(), this.getY(), this.getZ());
+                            var targetPlayer = this.level().getNearestPlayer(CRYSTAL_DESTROY_TARGETING, this.getX(), this.getY(), this.getZ());
                             if (targetPlayer != null) {
                                 entities.forEach(entity -> {
                                     if (entity.distanceTo(this) < 10) entity.setTarget(targetPlayer);
@@ -112,13 +113,14 @@ public abstract class EnderDragonEntityMixin extends Mob {
         }
     }
 
-    @Inject(method = "bite", at = @At("HEAD"))
-    private void bite(List<Entity> entities, CallbackInfo ci) {
-        disableShield(entities);
+    // Private method in the corresponding source code that handles head/neck collisions (hurt with List parameter)
+    @Inject(method = "hurt(Ljava/util/List;)V", at = @At("HEAD"))
+    private void hcs$hurtEntities(List<Entity> entities, CallbackInfo ci) {
+        hcs$disableShield(entities);
     }
 
-    @ModifyArg(method = "bite", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/Entity;hurt(Lnet/minecraft/world/damagesource/DamageSource;F)Z"), index = 1)
-    private float biteDamage(float amount) {
+    @ModifyArg(method = "hurt(Ljava/util/List;)V", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/Entity;hurt(Lnet/minecraft/world/damagesource/DamageSource;F)Z"), index = 1)
+    private float hcs$modifyHurtDamage(float amount) {
         return amount * 2.5F;
     }
 }

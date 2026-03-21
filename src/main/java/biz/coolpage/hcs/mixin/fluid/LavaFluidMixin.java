@@ -16,13 +16,12 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(LavaFluid.class)
 public class LavaFluidMixin {
-    // Yarn onRandomTick -> Mojang tick (Fluid 类的随机刻方法)
-    @Inject(method = "tick", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/block/state/BlockState;isAir()Z"))
-    public void onRandomTick(Level world, @NotNull BlockPos pos, FluidState state, RandomSource random, CallbackInfo ci) {
+    @Inject(method = "randomTick", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/block/state/BlockState;isAir()Z"))
+    public void randomTick(Level level, @NotNull BlockPos pos, FluidState state, RandomSource random, CallbackInfo ci) {
         for (BlockPos p : new BlockPos[]{pos.east(), pos.west(), pos.south(), pos.north()}) {
-            BlockState stat = world.getBlockState(p);
+            BlockState stat = level.getBlockState(p);
             if (stat.is(BlockTags.CAMPFIRES) && stat.hasProperty(CampfireBlock.LIT) && !stat.getValue(CampfireBlock.LIT)) {
-                world.setBlockAndUpdate(p, stat.setValue(CampfireBlock.LIT, true));
+                level.setBlock(p, stat.setValue(CampfireBlock.LIT, true), 3);
                 break;
             }
         }

@@ -1,6 +1,6 @@
 package biz.coolpage.hcs.mixin.block;
 
-import biz.coolpage.hcs.Reg;
+import biz.coolpage.hcs.Hcs;
 import biz.coolpage.hcs.item.HotWaterBottleItem;
 import biz.coolpage.hcs.util.EntityHelper;
 import biz.coolpage.hcs.util.RotHelper;
@@ -84,7 +84,7 @@ public class ChestBlockMixin {
         if (!world.isClientSide()) {
             ChestBlock chestBlock = (ChestBlock) state.getBlock();
             Container inv = ChestBlock.getContainer(chestBlock, state, world, pos, true);
-            if (!state.is(Reg.ICEBOX)) {
+            if (!state.is(Hcs.ICEBOX)) {
                 RotHelper.update(world, inv);
                 HotWaterBottleItem.update(world, inv);
             }
