@@ -16,7 +16,7 @@ import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import org.jetbrains.annotations.NotNull;
 
 // 使用 Forge 的 EventBusSubscriber 自动注册
-@Mod.EventBusSubscriber(modid = "hcs", bus = Mod.EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
+@Mod.EventBusSubscriber(modid = Hcs.MOD_ID, bus = Mod.EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
 public class Client {
 
     @SubscribeEvent

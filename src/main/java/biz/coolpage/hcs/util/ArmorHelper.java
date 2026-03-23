@@ -1,6 +1,7 @@
 package biz.coolpage.hcs.util;
 
 import biz.coolpage.hcs.Hcs;
+import biz.coolpage.hcs.item.HcsArmorMaterials;
 import biz.coolpage.hcs.status.HcsEffects;
 import biz.coolpage.hcs.status.accessor.StatAccessor;
 import biz.coolpage.hcs.status.manager.StatusManager;
