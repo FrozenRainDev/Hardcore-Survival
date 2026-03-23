@@ -32,7 +32,7 @@ public class HcsBlocks {
     }
 
     private static <T extends Block> RegistryObject<Item> registerBlockItem(String name, RegistryObject<T> block) {
-        return HcsItems.ITEMS.register(name, () -> new BlockItem(block.get(), new Item.Properties()));
+        return Hcs.ITEMS.register(name, () -> new BlockItem(block.get(), new Item.Properties()));
     }
 
     // todo add creative tab

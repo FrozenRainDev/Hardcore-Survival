@@ -1,7 +1,6 @@
 package biz.coolpage.hcs.data;
 
 import biz.coolpage.hcs.Hcs;
-import biz.coolpage.hcs.item.HcsItems;
 import net.minecraft.data.PackOutput;
 import net.minecraft.world.item.Item;
 import net.minecraftforge.client.model.generators.ItemModelBuilder;
@@ -22,7 +21,7 @@ public class HcsItemModelProvider extends ItemModelProvider {
 
     @Override
     protected void registerModels() {
-        for (var entry : HcsItems.ITEMS.getEntries()) {
+        for (var entry : Hcs.ITEMS.getEntries()) {
             if (isTool(entry.get())) registerItemModel("handheld", entry);
             else registerItemModel(entry);
         }

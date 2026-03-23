@@ -1,7 +1,6 @@
 package biz.coolpage.hcs.util;
 
 import biz.coolpage.hcs.Hcs;
-import biz.coolpage.hcs.Hcs;
 import net.minecraft.world.level.block.*;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
