@@ -1,5 +1,6 @@
 package biz.coolpage.hcs.item;
 
+import biz.coolpage.hcs.Hcs;
 import biz.coolpage.hcs.util.HcsFactory;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.world.item.Items;

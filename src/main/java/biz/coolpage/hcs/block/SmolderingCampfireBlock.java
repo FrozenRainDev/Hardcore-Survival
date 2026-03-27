@@ -56,7 +56,7 @@ public class SmolderingCampfireBlock extends CampfireBlock {
         return (world1, pos1, state1, blockEntity) -> {
             if (blockEntity instanceof SmolderingOrBurntCampfireBlockEntity campfire) { // TODO test carefully here; compare with other similar code
                 if (state.hasProperty(BlockStateProperties.LIT) && !state.getValue(BlockStateProperties.LIT))
-                    world1.setBlockState(pos1, Hcs.BURNT_CAMPFIRE_BLOCK.defaultBlockState());
+                    world1.setBlock(pos1, Hcs.BURNT_CAMPFIRE_BLOCK.defaultBlockState(), 3); // Parameter 3 is the most commonly used flag, equivalent to Block.UPDATE_ALL (update neighboring blocks and send to the client).
                 else
                     SmolderingOrBurntCampfireBlockEntity.litServerTick(world1, pos1, state1, campfire);
             }

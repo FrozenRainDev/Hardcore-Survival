@@ -7,6 +7,8 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.Nullable;
 
+import static biz.coolpage.hcs.Hcs.HCS_DIFFICULTY;
+
 public class HcsDifficulty {
     // CreativeModeTab.builder().title(Component.translatable("itemGroup.hcsurvival.main")).icon(() -> new ItemStack(FLINT_HATCHET)).build();
     public static final String HCS_DIFFICULTY_NAME = "hcsDifficulty";
@@ -20,7 +22,10 @@ public class HcsDifficulty {
             Hcs.warn("{}: Invalid level or game rules", HcsDifficulty.class.getSimpleName());
             return HcsDifficultyEnum.standard;
         }
-        return level.getGameRules().getRule(HCS_DIFFICULTY).get();
+        int id = level.getGameRules().getRule(HCS_DIFFICULTY).get();
+        HcsDifficultyEnum[] vals = HcsDifficultyEnum.values();
+        if (id < 0 || id >= vals.length) return HcsDifficultyEnum.standard;
+        return HcsDifficultyEnum.values()[id];
     }
 
     public static Enum<HcsDifficultyEnum> getDifficulty(@Nullable Player player) {

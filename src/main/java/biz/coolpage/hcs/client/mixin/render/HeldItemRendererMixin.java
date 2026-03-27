@@ -35,7 +35,7 @@ public class HeldItemRendererMixin {
         // Debug for NBT change for hot water bottle
         if (this.minecraft.player == null) return;
         ItemStack mainStack = this.minecraft.player.getMainHandItem();
-        ItemStack offStack = this.minecraft.player.getOffHandItem();
+        ItemStack offStack = this.minecraft.player.getOffhandItem();
         if (mainStack.isEmpty() && this.minecraft.player != null && this.minecraft.player.hasEffect(HcsEffects.INSANITY) && ((StatAccessor) this.minecraft.player).getSanityManager().get() < 0.05)
             this.mainHandHeight = 0.0F;
         else if (mainStack.is(Hcs.HOT_WATER_BOTTLE) && this.mainHandItem.is(Hcs.HOT_WATER_BOTTLE)) {
@@ -46,7 +46,7 @@ public class HeldItemRendererMixin {
         if (offStack.is(Hcs.HOT_WATER_BOTTLE) && this.offHandItem.is(Hcs.HOT_WATER_BOTTLE)) {
             this.offHandHeight = 1.0F;
             assert this.minecraft.player != null;
-            this.offHandItem = this.minecraft.player.getOffHandItem();
+            this.offHandItem = this.minecraft.player.getOffhandItem();
         }
     }
 }

@@ -1,6 +1,6 @@
 package biz.coolpage.hcs.event;
 
-import biz.coolpage.hcs.Hcs; // Reg -> Hcs
+import biz.coolpage.hcs.Hcs;
 import biz.coolpage.hcs.util.EntityHelper;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;

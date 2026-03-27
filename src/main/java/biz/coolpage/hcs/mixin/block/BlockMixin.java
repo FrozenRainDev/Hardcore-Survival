@@ -102,7 +102,7 @@ public class BlockMixin {
                 if (entity instanceof ServerPlayer player && EntityHelper.IS_SURVIVAL_LIKE.test(player) && fallDistance > 9.0F && (player.calculateFallDamage(exaggeratedFallDistance, multiplier) / player.getMaxHealth()) > 0.5F) {
                     AtomicBoolean hasFF = new AtomicBoolean(false);
                     player.getArmorSlots().forEach(armorStack -> hasFF.set(hasFF.get() || EnchantmentHelper.getItemEnchantmentLevel(Enchantments.FALL_PROTECTION, CommUtil.optElse(armorStack, ItemStack.EMPTY)) > 0));
-                    if (!hasFF.get()) { //If player does NOT wear armor with feather falling enchantment, then apply fracture effect
+                    if (!hasFF.get()) { // If player does NOT wear armor with feather falling enchantment, then apply fracture effect
                         InjuryManager injuryManager = ((StatAccessor) player).getInjuryManager();
                         injuryManager.addFracture(1.0);
                         injuryManager.addBleeding(1.6);

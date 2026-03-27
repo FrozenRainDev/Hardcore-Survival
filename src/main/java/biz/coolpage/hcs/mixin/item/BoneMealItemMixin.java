@@ -21,7 +21,20 @@ import static biz.coolpage.hcs.util.WorldHelper.FERTILIZER_FREE;
 
 @Mixin(BoneMealItem.class)
 public class BoneMealItemMixin {
-    @Inject(method = "applyBonemeal", at = @At("RETURN"))
+    /*
+    The case of abusing bone meals
+    Also see:
+        WorldHelper.FERTILIZER_FREE     - A block property indicates whether a crop was fertilized
+        FarmlandBlockMixin              - Farmland blocks stores the FERTILIZER_FREE property (Give up to onInteract CropBlock, as it has more frequent block tick and sophisticated links, and it also has many subclasses(include other mods) that override too many methods)
+        CropBlockMixin/applyGrowth()    - Prevent block tick when the crop needs to wither (If not, world.breakBlock becomes invalid as updating will regenerate that block)
+    */
+
+    // 关键点：添加 remap = false，因为 Forge 修改了该方法的参数列表（增加了 Player），这在原版混淆表中不存在
+    @Inject(
+            method = "applyBonemeal(Lnet/minecraft/world/item/ItemStack;Lnet/minecraft/world/level/Level;Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/entity/player/Player;)Z",
+            at = @At("RETURN"),
+            remap = false
+    )
     private static void useOnFertilizable(ItemStack stack, @NotNull Level level, BlockPos pos, Player player, CallbackInfoReturnable<Boolean> cir) {
         BlockState state = level.getBlockState(pos);
         if (state.getBlock() instanceof CropBlock && cir.getReturnValue()) {
@@ -31,13 +44,6 @@ public class BoneMealItemMixin {
                 if (stateDown.getValue(FERTILIZER_FREE))
                     level.setBlock(posDown, stateDown.setValue(FERTILIZER_FREE, false), 3);
                 else {
-                    /*
-                    The case of abusing bone meals
-                    Also see:
-                        WorldHelper.FERTILIZER_FREE     - A block property indicates whether a crop was fertilized
-                        FarmlandBlockMixin              - Farmland blocks stores the FERTILIZER_FREE property (Give up to onInteract CropBlock, as it has more frequent block tick and sophisticated links, and it also has many subclasses(include other mods) that override too many methods)
-                        CropBlockMixin/applyGrowth()    - Prevent block tick when the crop needs to wither (If not, world.breakBlock becomes invalid as updating will regenerate that block)
-                    */
                     level.destroyBlock(pos, false);
                     if (level instanceof ServerLevel serverLevel)
                         LootHelper.modifyDroppedStacksForCrops(state, serverLevel, pos, null);

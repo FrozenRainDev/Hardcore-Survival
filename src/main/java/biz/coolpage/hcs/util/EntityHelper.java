@@ -5,6 +5,9 @@ import biz.coolpage.hcs.status.accessor.StatAccessor;
 import biz.coolpage.hcs.status.manager.StatusManager;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.network.syncher.EntityDataAccessor;
+import net.minecraft.network.syncher.EntityDataSerializers;
+import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
@@ -113,8 +116,8 @@ public class EntityHelper {
             x <= 600 ? (-2.5 * Math.pow((x - 600) / 600.0, 2) + 2.5) :
                     (-2.72 / (1 + Math.pow(Math.E, (2000 - x) / 600.0)) + 2.74);
 
-    // EntityDataAccessor 需要在实体类中注册
-    // public static final EntityDataAccessor<Long> MILKED_TIME = SynchedEntityData.defineId(Cow.class, EntityDataSerializers.LONG);
+    // todo EntityDataAccessor 需要在实体类中注册 而不是mixin
+    public static final EntityDataAccessor<Long> MILKED_TIME = SynchedEntityData.defineId(Cow.class, EntityDataSerializers.LONG);
 
     public static void dropItem(@NotNull Entity entity, double x, double y, double z, Item item, int count) {
         if (entity.level() instanceof ServerLevel) {
@@ -377,12 +380,12 @@ public class EntityHelper {
         BlockPos pos = context.getClickedPos();
         Player player = context.getPlayer();
         ItemStack stack = context.getItemInHand();
+        BlockState state = level.getBlockState(pos);
         BlockPos userPos = context.getPlayer() == null ? pos : context.getPlayer().blockPosition();
         Optional<BlockState> strippedState;
 
         if (Items.IRON_AXE instanceof AxeItem axeItem) {
-            strippedState = axeItem.getToolModifiedState(level.getBlockState(pos), context,
-                    net.minecraftforge.common.ToolActions.AXE_STRIP, false);
+            strippedState = Optional.ofNullable(state.getToolModifiedState(context, net.minecraftforge.common.ToolActions.AXE_STRIP, false));
             if (strippedState.isPresent() && IS_SURVIVAL_LIKE.test(player)) {
                 // 需要自定义 WorldHelper 和 Reg 的引用
                 // if (WorldHelper.enhancedIsWaterNearby(level, pos.below()) && Math.random() < 0.5)

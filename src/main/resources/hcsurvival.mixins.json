@@ -47,6 +47,7 @@
     "entity.effect.MobEffectUtilMixin",
     "entity.effect.StatusEffectMixin",
     "entity.goal.BreakDoorGoalMixin",
+    "entity.goal.MobVisibilityCacheMixin",
     "entity.goal.PanicGoalMixin",
     "entity.goal.TargetGoalMixin",
     "entity.player.FoodDataMixin",

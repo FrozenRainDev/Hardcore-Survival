@@ -108,7 +108,7 @@ public class BreakBlockEvent {
             if (!(mainHand instanceof AxeItem)) {
                 if (block == Hcs.DRYING_RACK) dropItem(player, x, y, z, Hcs.DRYING_RACK_ITEM, 1);
             }
-            if ((block == Blocks.CACTUS || block instanceof AbstractGlassBlock || block instanceof PaneBlock) && player.getMainHandItem().isEmpty()) {
+            if ((block == Blocks.CACTUS || block instanceof AbstractGlassBlock || block instanceof IronBarsBlock/*todo pane block*/) && player.getMainHandItem().isEmpty()) {
                 player.hurt(world.damageSources().cactus(), 2f);
                 ((StatAccessor) player).getInjuryManager().addBleeding(1.2);
             } else if (block == Blocks.SWEET_BERRY_BUSH) dropItem(player, x, y, z, Hcs.BERRY_BUSH, 1);

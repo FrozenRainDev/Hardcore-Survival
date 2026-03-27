@@ -1,7 +1,6 @@
 package biz.coolpage.hcs.util;
 
 import biz.coolpage.hcs.Hcs;
-import biz.coolpage.hcs.Reg;
 import biz.coolpage.hcs.config.Configs;
 import biz.coolpage.hcs.entity.DryingRackBlockEntity;
 import biz.coolpage.hcs.status.HcsEffects;

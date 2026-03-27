@@ -2,7 +2,7 @@ package biz.coolpage.hcs.status.manager;
 
 import biz.coolpage.hcs.Hcs;
 import biz.coolpage.hcs.config.Configs;
-import biz.coolpage.hcs.status.HcsEffectss;
+import biz.coolpage.hcs.status.HcsEffects;
 import biz.coolpage.hcs.status.accessor.StatAccessor;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
@@ -27,7 +27,7 @@ public class DiseaseManager {
             if (Math.random() < (poss * 0.5))
                 (((StatAccessor) player)).getDiseaseManager().addParasite(0.12);
             if (Math.random() < (poss * 4) || isFoodPoisonous(item.getFoodProperties()))
-                player.addEffect(new MobEffectInstance(HcsEffectss.FOOD_POISONING, 1200, 0, false, false, true));
+                player.addEffect(new MobEffectInstance(HcsEffects.FOOD_POISONING, 1200, 0, false, false, true));
         }
     }
 

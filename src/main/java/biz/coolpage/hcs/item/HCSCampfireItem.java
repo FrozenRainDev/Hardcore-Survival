@@ -2,48 +2,48 @@ package biz.coolpage.hcs.item;
 
 import biz.coolpage.hcs.util.EntityHelper;
 import biz.coolpage.hcs.util.WorldHelper;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.Blocks;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemUsageContext;
-import net.minecraft.util.ActionResult;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.context.UseOnContext;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.NotNull;
 
 public class HCSCampfireItem extends Item {
     private final BlockState defaultBlockState;
 
     public HCSCampfireItem(BlockState defaultBlockState) {
-        super(new Settings());
+        super(new Item.Properties());
         this.defaultBlockState = defaultBlockState;
     }
 
     @Override
-    public ActionResult useOnBlock(@NotNull ItemUsageContext context) {
-        World world = context.getWorld();
+    @NotNull
+    public InteractionResult useOn(@NotNull UseOnContext context) {
+        Level world = context.getLevel();
         if (world != null) {
-            BlockPos pos = context.getBlockPos(), placePos = WorldHelper.getPosByDirection(pos, context.getSide());
+            BlockPos pos = context.getClickedPos(), placePos = WorldHelper.getPosByDirection(pos, context.getClickedFace());
             if (canPlaceCampfire(world, pos)) return placeCampfire(world, pos, context);
             if (canPlaceCampfire(world, placePos)) return placeCampfire(world, placePos, context);
         }
-        return ActionResult.FAIL;
+        return InteractionResult.FAIL;
     }
 
-    private boolean canPlaceCampfire(@NotNull World world, BlockPos placePos) {
+    private boolean canPlaceCampfire(@NotNull Level world, BlockPos placePos) {
         return isReplaceableBlock(world.getBlockState(placePos))
-                && !isReplaceableBlock(world.getBlockState(placePos.down()));
+                && !isReplaceableBlock(world.getBlockState(placePos.below()));
     }
 
     private boolean isReplaceableBlock(@NotNull BlockState state) {
-        return state.isOf(Blocks.AIR) || state.isOf(Blocks.CAVE_AIR) || state.isReplaceable();
+        return state.is(Blocks.AIR) || state.is(Blocks.CAVE_AIR) || state.canBeReplaced();
     }
 
-    private ActionResult placeCampfire(@NotNull World world, BlockPos pos, @NotNull ItemUsageContext context) {
-        world.setBlockState(pos, this.defaultBlockState);
+    private InteractionResult placeCampfire(@NotNull Level world, BlockPos pos, @NotNull UseOnContext context) {
+        world.setBlock(pos, this.defaultBlockState, 3);
         if (EntityHelper.IS_SURVIVAL_AND_SERVER.test(context.getPlayer()))
-            context.getStack().decrement(1);
-        return ActionResult.success(world.isClient());
+            context.getItemInHand().shrink(1);
+        return InteractionResult.sidedSuccess(world.isClientSide());
     }
-
 }

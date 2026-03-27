@@ -6,7 +6,6 @@ import net.minecraft.client.renderer.ItemBlockRenderTypes;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.entity.ThrownItemRenderer;
 import net.minecraft.client.renderer.item.ItemProperties;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.block.Block;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.EntityRenderersEvent;
@@ -27,25 +26,25 @@ public class Client {
             ClientS2C.init();
             ClientPlayConnectionEvent.init();
 
-            // 在 1.20.1 中虽然建议在 JSON 中配置 render_type，但保留原代码逻辑
+            // todo 在 1.20.1 中虽然建议在 JSON 中配置 render_type，但保留原代码逻辑
             initBlockRenderLayerMap(
-                    Hcs.ICEBOX.get(),
-                    Hcs.DRYING_RACK.get(),
-                    Hcs.CRUDE_TORCH_BLOCK.get(),
-                    Hcs.WALL_CRUDE_TORCH_BLOCK.get(),
-                    Hcs.BURNING_CRUDE_TORCH_BLOCK.get(),
-                    Hcs.WALL_BURNING_CRUDE_TORCH_BLOCK.get(),
-                    Hcs.UNLIT_TORCH_BLOCK.get(),
-                    Hcs.WALL_UNLIT_TORCH_BLOCK.get(),
-                    Hcs.BURNT_TORCH_BLOCK.get(),
-                    Hcs.WALL_BURNT_TORCH_BLOCK.get(),
-                    Hcs.GLOWSTONE_TORCH_BLOCK.get(),
-                    Hcs.WALL_GLOWSTONE_TORCH_BLOCK.get(),
-                    Hcs.SMOLDERING_CAMPFIRE_BLOCK.get()
+                    Hcs.ICEBOX,
+                    Hcs.DRYING_RACK,
+                    Hcs.CRUDE_TORCH_BLOCK,
+                    Hcs.WALL_CRUDE_TORCH_BLOCK,
+                    Hcs.BURNING_CRUDE_TORCH_BLOCK,
+                    Hcs.WALL_BURNING_CRUDE_TORCH_BLOCK,
+                    Hcs.UNLIT_TORCH_BLOCK,
+                    Hcs.WALL_UNLIT_TORCH_BLOCK,
+                    Hcs.BURNT_TORCH_BLOCK,
+                    Hcs.WALL_BURNT_TORCH_BLOCK,
+                    Hcs.GLOWSTONE_TORCH_BLOCK,
+                    Hcs.WALL_GLOWSTONE_TORCH_BLOCK,
+                    Hcs.SMOLDERING_CAMPFIRE_BLOCK
             );
 
             // ModelPredicateProviderRegistry -> ItemProperties
-            ItemProperties.register(Hcs.IMPROVISED_SHIELD.get(), HcsFactory.createPathResourceLocation("blocking"), // todo check prev:new ResourceLocation("blocking")
+            ItemProperties.register(Hcs.IMPROVISED_SHIELD, HcsFactory.createPathResourceLocation("blocking"), // todo check prev:new ResourceLocation("blocking")
                     (stack, world, entity, seed) -> entity != null && entity.isUsingItem() && entity.getUseItem() == stack ? 1.0F : 0.0F);
         });
     }
@@ -54,11 +53,11 @@ public class Client {
     public static void registerRenderers(EntityRenderersEvent.RegisterRenderers event) {
         // EntityRendererRegistry -> event.registerEntityRenderer
         // FlyingItemEntityRenderer (Fabric) -> ThrownItemRenderer (Mojang/Forge)
-        event.registerEntityRenderer(Hcs.ROCK_PROJECTILE_ENTITY.get(), ThrownItemRenderer::new);
-        event.registerEntityRenderer(Hcs.FLINT_PROJECTILE_ENTITY.get(), ThrownItemRenderer::new);
+        event.registerEntityRenderer(Hcs.ROCK_PROJECTILE_ENTITY, ThrownItemRenderer::new);
+        event.registerEntityRenderer(Hcs.FLINT_PROJECTILE_ENTITY, ThrownItemRenderer::new);
 
         // BlockEntityRendererFactories -> event.registerBlockEntityRenderer
-        event.registerBlockEntityRenderer(Hcs.DRYING_RACK_BLOCK_ENTITY.get(), DryingRackBlockEntityRenderer::new);
+        event.registerBlockEntityRenderer(Hcs.DRYING_RACK_BLOCK_ENTITY, DryingRackBlockEntityRenderer::new);
     }
 
     // That's so sad :( , ALWAYS needs to call me, LOL

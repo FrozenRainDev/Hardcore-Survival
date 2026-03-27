@@ -94,7 +94,7 @@ public class CombustionHelper {
     public static final int MAX_CAMPFIRE_BURNING_LENGTH = 4000;
     public static final String EXTINGUISH_TIME_NBT = "hcs_extinguish_nbt";
 
-    public static BlockState updateCombustionState(@NotNull BlockState state, long remain) {
+    public static @NotNull BlockState updateCombustionState(@NotNull BlockState state, long remain) {
         if (remain > MAX_CAMPFIRE_BURNING_LENGTH) remain = MAX_CAMPFIRE_BURNING_LENGTH;
         else if (remain < 0L) remain = 0L;
         return state.setValue(COMBUST_LUMINANCE, getLuminance(remain));
@@ -108,14 +108,15 @@ public class CombustionHelper {
         long time = world.getGameTime(), burnOutTime = campfire.getBurnOutTime();
         if (burnOutTime < time) {
             CampfireBlock.dowse(null, world, pos, state);
-            // "setBlockState" causes automatic cooking items drop (See CampfireBlock::onStateReplaced)
-            world.setBlockState(pos, (hasFlame ? Hcs.SMOLDERING_CAMPFIRE_BLOCK : Hcs.BURNT_CAMPFIRE_BLOCK).defaultBlockState().setValue(CampfireBlock.FACING, state.getValue(CampfireBlock.FACING)).setValue(BlockStateProperties.WATERLOGGED, state.getValue(BlockStateProperties.WATERLOGGED)));
+            // "setBlock" causes automatic cooking items drop (See CampfireBlock::onStateReplaced)
+            // Modified: setBlockState -> setBlock (Mojang Mapping)
+            world.setBlock(pos, (hasFlame ? Hcs.SMOLDERING_CAMPFIRE_BLOCK : Hcs.BURNT_CAMPFIRE_BLOCK).defaultBlockState().setValue(CampfireBlock.FACING, state.getValue(CampfireBlock.FACING)).setValue(BlockStateProperties.WATERLOGGED, state.getValue(BlockStateProperties.WATERLOGGED)), 3);
             world.levelEvent(null, 1009, pos, 0);
         } else {
             if (burnOutTime == Long.MAX_VALUE && Configs.isEnabled(Configs.BURN))
                 campfire.resetBurnOutTime();
             else if (hasFlame) {
-                world.setBlockState(pos, CombustionHelper.updateCombustionState(state, burnOutTime - time));
+                world.setBlock(pos, CombustionHelper.updateCombustionState(state, burnOutTime - time), 3);
             }
         }
     }
@@ -143,7 +144,8 @@ public class CombustionHelper {
     private static boolean addFuel(Level world, BlockPos pos, @NotNull BlockState state, ICampfireBlockEntity campfire, @NotNull ItemStack fuel, int fuelDur) {
         if (state.is(Hcs.SMOLDERING_CAMPFIRE_BLOCK)) {
             fuelDur = (int) (fuelDur * 1.5); // Burning Duration↑
-            world.setBlockState(pos, Blocks.CAMPFIRE.defaultBlockState().setValue(CampfireBlock.FACING, state.getValue(CampfireBlock.FACING)).setValue(BlockStateProperties.WATERLOGGED, state.getValue(BlockStateProperties.WATERLOGGED)));
+            // Modified: setBlockState -> setBlock (Mojang Mapping)
+            world.setBlock(pos, Blocks.CAMPFIRE.defaultBlockState().setValue(CampfireBlock.FACING, state.getValue(CampfireBlock.FACING)).setValue(BlockStateProperties.WATERLOGGED, state.getValue(BlockStateProperties.WATERLOGGED)), 3);
             if (world.getBlockEntity(pos) instanceof ICampfireBlockEntity camp)
                 if (camp.setBurnOutTime(world.getGameTime() + fuelDur)) {
                     fuel.shrink(1);

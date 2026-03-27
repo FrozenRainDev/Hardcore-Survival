@@ -1,42 +1,32 @@
 package biz.coolpage.hcs.client;
 
 import biz.coolpage.hcs.status.ServerC2S;
-import io.netty.buffer.Unpooled;
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
-import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
-import net.minecraft.client.network.ClientPlayerEntity;
-import net.minecraft.network.PacketByteBuf;
-import net.minecraft.sound.SoundCategory;
+import net.minecraft.client.player.LocalPlayer;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 
-import static net.minecraft.sound.SoundEvents.ENTITY_GENERIC_DRINK;
-
-@Environment(EnvType.CLIENT)
+@OnlyIn(Dist.CLIENT)
 public class ClientC2S {
     public static void writeC2SPacketOnDrinkWater(Object playerObj, int x, int y, int z) {
-        if (playerObj instanceof ClientPlayerEntity player) {
-            if (player.getWorld() != null && player.isSneaking() && player.getMainHandStack().isEmpty() && player.getOffHandStack().isEmpty())
-                player.getWorld().playSound(x, y, z, ENTITY_GENERIC_DRINK, SoundCategory.PLAYERS, 10, 1, true);
-            PacketByteBuf buf1 = new PacketByteBuf(Unpooled.buffer());
-            buf1.writeIntArray(new int[]{player.getId(), x, y, z});
-            ClientPlayNetworking.send(ServerC2S.DRINK_WATER_WITH_BARE_HAND, buf1);
+        if (playerObj instanceof LocalPlayer player) {
+            if (player.level() != null && player.isShiftKeyDown() && player.getMainHandItem().isEmpty() && player.getOffhandItem().isEmpty())
+                player.level().playLocalSound(x, y, z, SoundEvents.GENERIC_DRINK, SoundSource.PLAYERS, 10.0F, 1.0F, true);
+
+            ServerC2S.CHANNEL.sendToServer(new ServerC2S.DrinkWaterPacket(new int[]{player.getId(), x, y, z}));
         }
     }
 
     public static void writeC2SPacketOnPlayerEnter(Object playerObj) {
-        if (playerObj instanceof ClientPlayerEntity player) {
-            PacketByteBuf buf1 = new PacketByteBuf(Unpooled.buffer());
-            buf1.writeIntArray(new int[]{player.getId()});
-            ClientPlayNetworking.send(ServerC2S.ON_PLAYER_ENTER, buf1);
+        if (playerObj instanceof LocalPlayer player) {
+            ServerC2S.CHANNEL.sendToServer(new ServerC2S.PlayerEnterPacket(new int[]{player.getId()}));
         }
     }
 
     public static void writeC2SPacketOnLitHoldingTorchInLava(Object playerObj, int hand) {
-        if (playerObj instanceof ClientPlayerEntity player) {
-            PacketByteBuf buf = new PacketByteBuf(Unpooled.buffer());
-            buf.writeIntArray(new int[]{player.getId(), hand});
-            ClientPlayNetworking.send(ServerC2S.LIT_HOLDING_TORCH_IN_LAVA, buf);
+        if (playerObj instanceof LocalPlayer player) {
+            ServerC2S.CHANNEL.sendToServer(new ServerC2S.LitTorchPacket(new int[]{player.getId(), hand}));
         }
     }
-
 }

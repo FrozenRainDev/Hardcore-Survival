@@ -1,7 +1,7 @@
 package biz.coolpage.hcs.status.manager;
 
 import biz.coolpage.hcs.Hcs;
-import biz.coolpage.hcs.status.HcsEffectss;
+import biz.coolpage.hcs.status.HcsEffects;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.player.Player;
@@ -38,10 +38,10 @@ public class StaminaManager {
     public void add(double val, Player player) {
         if (!IS_SURVIVAL_LIKE.test(player)) return;
         if (val >= 0.0) {
-            if (restoringCoolDown <= 0) addDirectly(player.hasEffect(HcsEffectss.COLD) ? val * 0.65 : val);
+            if (restoringCoolDown <= 0) addDirectly(player.hasEffect(HcsEffects.COLD) ? val * 0.65 : val);
             else --restoringCoolDown;
         } else if (!player.hasEffect(MobEffects.DAMAGE_BOOST))
-            addDirectly(player.hasEffect(HcsEffectss.HEAVY_LOAD) ? val * 2.0 : val);
+            addDirectly(player.hasEffect(HcsEffects.HEAVY_LOAD) ? val * 2.0 : val);
     }
 
     public void addDirectly(double val) {

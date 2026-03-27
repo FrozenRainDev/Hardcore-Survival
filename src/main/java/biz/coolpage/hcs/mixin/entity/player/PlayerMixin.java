@@ -320,7 +320,7 @@ public abstract class PlayerMixin extends LivingEntity implements StatAccessor {
             if (EntityHelper.getEffectAmplifier(this, HcsEffects.PARASITE_INFECTION) > 0) speed /= 1.5F;
             speed /= (float) Math.max(1.0, Math.pow(1.15, (EntityHelper.getEffectAmplifier(this, HcsEffects.PAIN) + 1) + (EntityHelper.getEffectAmplifier(this, HcsEffects.INJURY) + 1)));
             if (DigRestrictHelper.Predicates.IS_BREAKABLE_FUNCTIONAL.test(block))
-                speed *= (block instanceof BaseFurnaceBlock || block == Blocks.ENDER_CHEST) ? 16.0F : 4.0F;
+                speed *= (block instanceof AbstractFurnaceBlock || block == Blocks.ENDER_CHEST) ? 16.0F : 4.0F;
             else if (block == Blocks.OBSIDIAN || block == Blocks.CRYING_OBSIDIAN) speed *= 3.0F;
             else if ((block == Blocks.CLAY && !isShovelMineable)) speed /= 9.0F;
             else if (block instanceof LeavesBlock && !isSword && !isAxe) speed /= 10.0F;
