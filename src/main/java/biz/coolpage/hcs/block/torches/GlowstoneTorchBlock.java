@@ -20,12 +20,12 @@ public class GlowstoneTorchBlock extends TorchBlock {
 
     @Override
     public Item asItem() {
-        return Hcs.GLOWSTONE_TORCH_ITEM;
+        return Hcs.GLOWSTONE_TORCH_ITEM.get();
     }
 
     @Override
     protected Block asBlock() {
-        return Hcs.GLOWSTONE_TORCH_BLOCK;
+        return Hcs.GLOWSTONE_TORCH_BLOCK.get();
     }
 
     @Override

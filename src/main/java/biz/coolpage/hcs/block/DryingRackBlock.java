@@ -71,12 +71,12 @@ public class DryingRackBlock extends BaseEntityBlock implements SimpleWaterlogge
 
     @Override
     public Item asItem() {
-        return Hcs.DRYING_RACK_ITEM;
+        return Hcs.DRYING_RACK_ITEM.get();
     }
 
     @Override
     protected Block asBlock() {
-        return Hcs.DRYING_RACK;
+        return Hcs.DRYING_RACK.get();
     }
 
     @Override

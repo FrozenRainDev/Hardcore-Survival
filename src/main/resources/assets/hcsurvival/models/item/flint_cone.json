@@ -1,7 +1,7 @@
 {
   "parent": "minecraft:item/generated",
   "textures": {
-    "layer0": "hcs:item/flint_cone"
+    "layer0": "hcsurvival:item/flint_cone"
   },
   "display": {
     "thirdperson_righthand": {

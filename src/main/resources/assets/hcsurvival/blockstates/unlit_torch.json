@@ -1,7 +1,7 @@
 {
   "variants": {
     "": {
-      "model": "hcs:block/unlit_torch"
+      "model": "hcsurvival:block/unlit_torch"
     }
   }
 }

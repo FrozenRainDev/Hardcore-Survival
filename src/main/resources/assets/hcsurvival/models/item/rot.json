@@ -1,6 +1,6 @@
 {
   "parent": "minecraft:item/generated",
   "textures": {
-    "layer0": "hcs:item/rot"
+    "layer0": "hcsurvival:item/rot"
   }
 }

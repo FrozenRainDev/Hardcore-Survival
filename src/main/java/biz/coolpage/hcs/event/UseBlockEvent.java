@@ -46,7 +46,7 @@ public class UseBlockEvent {
             ItemStack mainHandStack = serverPlayer.getMainHandItem();
             Item mainHand = mainHandStack.getItem();
 
-            if ((block == Blocks.DIRT || block == Blocks.GRASS_BLOCK || state.canBeReplaced()) && (stateUp.canBeReplaced() || blockUp == Blocks.AIR || blockUp == Blocks.CAVE_AIR) && mainHand == Hcs.BERRY_BUSH) {
+            if ((block == Blocks.DIRT || block == Blocks.GRASS_BLOCK || state.canBeReplaced()) && (stateUp.canBeReplaced() || blockUp == Blocks.AIR || blockUp == Blocks.CAVE_AIR) && mainHand == Hcs.BERRY_BUSH.get()) {
                 if (!serverPlayer.isCreative()) mainHandStack.shrink(1);
                 world.setBlockAndUpdate(state.canBeReplaced() ? (world.getBlockState(pos.below(1)).canBeReplaced() ? pos.below(1) : pos) : posUp, Blocks.SWEET_BERRY_BUSH.defaultBlockState());
             }
@@ -55,7 +55,7 @@ public class UseBlockEvent {
                 if (!serverPlayer.isCreative()) mainHandStack.shrink(1);
             }
             if (block instanceof BedBlock && applyNullable(world.dimensionType(), d -> d.bedWorks(), false)) {
-                boolean b1 = EntityHelper.getEffectAmplifier(serverPlayer, HcsEffects.PAIN) > 0;
+                boolean b1 = EntityHelper.getEffectAmplifier(serverPlayer, HcsEffects.PAIN.get()) > 0;
                 boolean b2 = ((StatAccessor) serverPlayer).getSanityManager().get() < 0.15;
                 int hour = WorldHelper.getTimeAsReal(world)[0];
                 boolean b3 = hour > 6 && hour < 21 && world.isNight();
@@ -82,14 +82,14 @@ public class UseBlockEvent {
             TemperatureManager temperatureManager = ((StatAccessor) player).getTemperatureManager();
             if (temperatureManager.get() > 0.8) temperatureManager.add(-0.005);
             if (WorldHelper.IS_SALTY_WATER_BIOME.test(player.level().getBiome(pos))) {
-                if (player.hasEffect(HcsEffects.THIRST))
-                    player.addEffect(new MobEffectInstance(HcsEffects.THIRST, Math.min(Objects.requireNonNull(player.getEffect(HcsEffects.THIRST)).getDuration() + 200, 9600), 0, false, false, true));
+                if (player.hasEffect(HcsEffects.THIRST.get()))
+                    player.addEffect(new MobEffectInstance(HcsEffects.THIRST.get(), Math.min(Objects.requireNonNull(player.getEffect(HcsEffects.THIRST.get())).getDuration() + 200, 9600), 0, false, false, true));
                 else
-                    player.addEffect(new MobEffectInstance(HcsEffects.THIRST, 1200, 0, false, false, true));
+                    player.addEffect(new MobEffectInstance(HcsEffects.THIRST.get(), 1200, 0, false, false, true));
             } else {
                 double rand = Math.random();
                 if (rand < 0.0001) ((StatAccessor) player).getDiseaseManager().addParasite(0.12);
-                else player.addEffect(new MobEffectInstance(HcsEffects.DIARRHEA, 600, 0, false, false, true));
+                else player.addEffect(new MobEffectInstance(HcsEffects.DIARRHEA.get(), 600, 0, false, false, true));
             }
         }
     }

@@ -70,7 +70,7 @@ public class ItemMixin {
     @Unique
     private static final FoodProperties SEA_PICKLE = new FoodProperties.Builder().nutrition(0).saturationMod(1.0f).build();
     @Unique
-    private static final FoodProperties ROTTEN_FLESH = new FoodProperties.Builder().nutrition(1).saturationMod(1.0f).effect(new MobEffectInstance(MobEffects.CONFUSION, 200), 1).effect(new MobEffectInstance(MobEffects.POISON, 300), 1).effect(new MobEffectInstance(MobEffects.HUNGER, 600), 1).effect(new MobEffectInstance(HcsEffects.DIARRHEA, 600, 1), 1).effect(new MobEffectInstance(HcsEffects.FOOD_POISONING, 1200), 1).build();
+    private static FoodProperties rottenFlesh; // 修改为非final的懒加载变量
     @Unique
     private static final FoodProperties COOKED_BEEF = new FoodProperties.Builder().nutrition(10).saturationMod(0.8f).meat().build();
     @Unique
@@ -82,6 +82,14 @@ public class ItemMixin {
     @Unique
     private static final FoodProperties CHICKEN = new FoodProperties.Builder().nutrition(2).saturationMod(0.3f).meat().build(); // Deleted hunger debuff; Use food poisoning instead
 
+    // 懒加载腐肉属性，避免 RegistryObject 导致的提前调用NPE崩溃
+    @Unique
+    private static FoodProperties getRottenFlesh() {
+        if (rottenFlesh == null) {
+            rottenFlesh = new FoodProperties.Builder().nutrition(1).saturationMod(1.0f).effect(new MobEffectInstance(MobEffects.CONFUSION, 200), 1).effect(new MobEffectInstance(MobEffects.POISON, 300), 1).effect(new MobEffectInstance(MobEffects.HUNGER, 600), 1).effect(new MobEffectInstance(HcsEffects.DIARRHEA.get(), 600, 1), 1).effect(new MobEffectInstance(HcsEffects.FOOD_POISONING.get(), 1200), 1).build();
+        }
+        return rottenFlesh;
+    }
 
     @SuppressWarnings("SameReturnValue")
     @Shadow
@@ -106,7 +114,7 @@ public class ItemMixin {
         else if (item == Items.KELP) cir.setReturnValue(KELP);
         else if (item == Items.SEAGRASS) cir.setReturnValue(SEAGRASS);
         else if (item == Items.SEA_PICKLE) cir.setReturnValue(SEA_PICKLE);
-        else if (item == Items.ROTTEN_FLESH) cir.setReturnValue(ROTTEN_FLESH);
+        else if (item == Items.ROTTEN_FLESH) cir.setReturnValue(getRottenFlesh()); // 使用懒加载的方法
         else if (item == Items.COOKED_BEEF) cir.setReturnValue(COOKED_BEEF);
         else if (item == Items.NETHER_WART) cir.setReturnValue(NETHER_WART);
         else if (item == Items.SWEET_BERRIES || item == Items.GLOW_BERRIES) cir.setReturnValue(SWEET_BERRIES);
@@ -116,12 +124,10 @@ public class ItemMixin {
         else if (item == Items.CHICKEN) cir.setReturnValue(CHICKEN);
     }
 
-
     @Inject(method = "isEdible", at = @At("RETURN"), cancellable = true)
     public void isEdible(@NotNull CallbackInfoReturnable<Boolean> cir) {
         cir.setReturnValue(getFoodProperties() != null);
     }
-
 
     @Inject(method = "appendHoverText", at = @At("TAIL"))
     public void appendHoverText(ItemStack stack, @Nullable Level world, List<Component> tooltip, TooltipFlag context, CallbackInfo ci) {
@@ -144,7 +150,7 @@ public class ItemMixin {
     @Inject(method = "use", at = @At("HEAD"), cancellable = true)
     public void use(Level world, Player user, InteractionHand hand, CallbackInfoReturnable<InteractionResultHolder<ItemStack>> cir) {
         if (((Object) this) instanceof Item item) {
-            if (item.isEdible() && IS_SURVIVAL_LIKE.test(user)/*Both S C sides needed*/ && (user.hasEffect(HcsEffects.FOOD_POISONING) || EntityHelper.getEffectAmplifier(user, HcsEffects.OVEREATEN) > 0)) {
+            if (item.isEdible() && IS_SURVIVAL_LIKE.test(user)/*Both S C sides needed*/ && (user.hasEffect(HcsEffects.FOOD_POISONING.get()) || EntityHelper.getEffectAmplifier(user, HcsEffects.OVEREATEN.get()) > 0)) {
                 world.playSound(null, user.getX(), user.getY(), user.getZ(), SoundEvents.PLAYER_BURP, SoundSource.PLAYERS, 0.5f, world.random.nextFloat() * 0.1f + 0.9f);
                 user.getCooldowns().addCooldown(item, 60);
                 cir.setReturnValue(InteractionResultHolder.fail(user.getItemInHand(hand)));
@@ -164,18 +170,18 @@ public class ItemMixin {
     @Inject(method = "isBarVisible", at = @At("HEAD"), cancellable = true)
     public void isBarVisible(@NotNull ItemStack stack, CallbackInfoReturnable<Boolean> cir) {
         if (CombustionHelper.isFuelableCampfire(stack.getItem()))
-            cir.setReturnValue(Hcs.BURNING_CRUDE_TORCH_ITEM.isBarVisible(stack));
+            cir.setReturnValue(Hcs.BURNING_CRUDE_TORCH_ITEM.get().isBarVisible(stack));
     }
 
     @Inject(method = "getBarWidth", at = @At("HEAD"), cancellable = true)
     public void getBarWidth(@NotNull ItemStack stack, CallbackInfoReturnable<Integer> cir) {
         if (CombustionHelper.isFuelableCampfire(stack.getItem()))
-            cir.setReturnValue(Hcs.BURNING_CRUDE_TORCH_ITEM.getBarWidth(stack));
+            cir.setReturnValue(Hcs.BURNING_CRUDE_TORCH_ITEM.get().getBarWidth(stack));
     }
 
     @Inject(method = "getBarColor", at = @At("HEAD"), cancellable = true)
     public void getBarColor(@NotNull ItemStack stack, CallbackInfoReturnable<Integer> cir) {
         if (CombustionHelper.isFuelableCampfire(stack.getItem()))
-            cir.setReturnValue(Hcs.BURNING_CRUDE_TORCH_ITEM.getBarColor(stack));
+            cir.setReturnValue(Hcs.BURNING_CRUDE_TORCH_ITEM.get().getBarColor(stack));
     }
 }

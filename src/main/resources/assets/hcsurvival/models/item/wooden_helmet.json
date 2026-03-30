@@ -1,6 +1,6 @@
 {
   "parent": "minecraft:item/generated",
   "textures": {
-    "layer0": "hcs:item/wooden_helmet"
+    "layer0": "hcsurvival:item/wooden_helmet"
   }
 }

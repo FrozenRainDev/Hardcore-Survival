@@ -91,8 +91,8 @@ public abstract class ServerPlayerMixin extends Player {
 
         if (!EntityHelper.IS_SURVIVAL_LIKE.test(this)) return;
 
-        if (this.hasEffect(HcsEffects.OVEREATEN) && this.getFoodData().getFoodLevel() < 20)
-            this.removeEffect(HcsEffects.OVEREATEN);
+        if (this.hasEffect(HcsEffects.OVEREATEN.get()) && this.getFoodData().getFoodLevel() < 20)
+            this.removeEffect(HcsEffects.OVEREATEN.get());
 
         Holder<Biome> biomeEntry = this.level().getBiome(this.blockPosition());
         Biome biome = biomeEntry.value();
@@ -145,37 +145,37 @@ public abstract class ServerPlayerMixin extends Player {
         }
 
         thirstManager.updateThirstRateAffectedByTemp(envTemp, (float) playerTemp);
-        if (thirstManager.get() <= 0.3) EntityHelper.addHcsDebuff(this, HcsEffects.DEHYDRATED);
-        if (this.getFoodData().getFoodLevel() <= 6) EntityHelper.addHcsDebuff(this, HcsEffects.STARVING);
-        if (currStamina <= 0.3) EntityHelper.addHcsDebuff(this, HcsEffects.EXHAUSTED, currStamina < 0.1 ? 1 : 0);
-        if (playerTemp >= 1.0) EntityHelper.addHcsDebuff(this, HcsEffects.HEATSTROKE, (int) tempSatuPercent);
-        else if (playerTemp <= 0.0) EntityHelper.addHcsDebuff(this, HcsEffects.HYPOTHERMIA, (int) tempSatuPercent);
+        if (thirstManager.get() <= 0.3) EntityHelper.addHcsDebuff(this, HcsEffects.DEHYDRATED.get());
+        if (this.getFoodData().getFoodLevel() <= 6) EntityHelper.addHcsDebuff(this, HcsEffects.STARVING.get());
+        if (currStamina <= 0.3) EntityHelper.addHcsDebuff(this, HcsEffects.EXHAUSTED.get(), currStamina < 0.1 ? 1 : 0);
+        if (playerTemp >= 1.0) EntityHelper.addHcsDebuff(this, HcsEffects.HEATSTROKE.get(), (int) tempSatuPercent);
+        else if (playerTemp <= 0.0) EntityHelper.addHcsDebuff(this, HcsEffects.HYPOTHERMIA.get(), (int) tempSatuPercent);
 
         if (this.isUsingItem() && (this.getMainHandItem().getItem() instanceof ShieldItem || this.getOffhandItem().getItem() instanceof ShieldItem))
             staminaManager.pauseRestoring();
 
         if (biome.getModifiedClimateSettings().downfall() <= 0.0F || TemperatureHelper.isSpecialSunshineArea(biomeName)) {
             if (sunshineIntensity > 0 && skyLightLevel >= 15)
-                EntityHelper.addHcsDebuff(this, HcsEffects.STRONG_SUN, Math.max(0, sunshineIntensity - 1));
+                EntityHelper.addHcsDebuff(this, HcsEffects.STRONG_SUN.get(), Math.max(0, sunshineIntensity - 1));
         }
         if (biome.coldEnoughToSnow(this.blockPosition()) && windchillLevel > 0)
-            EntityHelper.addHcsDebuff(this, HcsEffects.CHILLY_WIND, windchillLevel - 1);
+            EntityHelper.addHcsDebuff(this, HcsEffects.CHILLY_WIND.get(), windchillLevel - 1);
 
         SanityManager sanityManager = ((StatAccessor) this).getSanityManager();
         final double currSan = sanityManager.get();
         if (currSan < 0.3) {
-            EntityHelper.addHcsDebuff(this, HcsEffects.INSANITY, currSan < 0.15 ? (currSan < 0.1 ? (currSan < 0.05 ? 3 : 2) : 1) : 0);
+            EntityHelper.addHcsDebuff(this, HcsEffects.INSANITY.get(), currSan < 0.15 ? (currSan < 0.1 ? (currSan < 0.05 ? 3 : 2) : 1) : 0);
             if (currSan < 0.05)
                 this.addEffect(new MobEffectInstance(MobEffects.DARKNESS, 50, 0, false, false, false));
         }
 
         double vegetable = ((StatAccessor) this).getNutritionManager().getVegetable();
-        if (vegetable < 0.00001) EntityHelper.addHcsDebuff(this, HcsEffects.MALNUTRITION);
+        if (vegetable < 0.00001) EntityHelper.addHcsDebuff(this, HcsEffects.MALNUTRITION.get());
 
         double wet = ((StatAccessor) this).getWetnessManager().get();
-        if (wet > 0.72) EntityHelper.addHcsDebuff(this, HcsEffects.WET, 2);
-        else if (wet > 0.4) EntityHelper.addHcsDebuff(this, HcsEffects.WET, 1);
-        else if (wet > 0.1) EntityHelper.addHcsDebuff(this, HcsEffects.WET, 0);
+        if (wet > 0.72) EntityHelper.addHcsDebuff(this, HcsEffects.WET.get(), 2);
+        else if (wet > 0.4) EntityHelper.addHcsDebuff(this, HcsEffects.WET.get(), 1);
+        else if (wet > 0.1) EntityHelper.addHcsDebuff(this, HcsEffects.WET.get(), 0);
 
         InjuryManager injuryManager = ((StatAccessor) this).getInjuryManager();
         MoodManager moodManager = ((StatAccessor) this).getMoodManager();
@@ -184,35 +184,35 @@ public abstract class ServerPlayerMixin extends Player {
             int soulImpairedStat = statusManager.getSoulImpairedStat();
             if (soulImpairedStat > 0) {
                 if (this.getHealth() > this.getMaxHealth()) this.setHealth(this.getMaxHealth());
-                EntityHelper.addHcsDebuff(this, HcsEffects.SOUL_IMPAIRED, soulImpairedStat - 1);
+                EntityHelper.addHcsDebuff(this, HcsEffects.SOUL_IMPAIRED.get(), soulImpairedStat - 1);
             }
 
             if (((StatAccessor) this).getConfigManager().get(Configs.INJURY)) {
                 float hpPercent = this.getHealth() / this.getMaxHealth();
-                if (hpPercent < 0.1F) EntityHelper.addHcsDebuff(this, HcsEffects.INJURY, 3);
-                else if (hpPercent < 0.25F) EntityHelper.addHcsDebuff(this, HcsEffects.INJURY, 2);
-                else if (hpPercent < 0.45F) EntityHelper.addHcsDebuff(this, HcsEffects.INJURY, 1);
-                else if (hpPercent < 0.7F) EntityHelper.addHcsDebuff(this, HcsEffects.INJURY, 0);
+                if (hpPercent < 0.1F) EntityHelper.addHcsDebuff(this, HcsEffects.INJURY.get(), 3);
+                else if (hpPercent < 0.25F) EntityHelper.addHcsDebuff(this, HcsEffects.INJURY.get(), 2);
+                else if (hpPercent < 0.45F) EntityHelper.addHcsDebuff(this, HcsEffects.INJURY.get(), 1);
+                else if (hpPercent < 0.7F) EntityHelper.addHcsDebuff(this, HcsEffects.INJURY.get(), 0);
             }
 
             final double pain = injuryManager.getRealPain();
-            if (pain > 0.0) EntityHelper.addHcsDebuff(this, HcsEffects.PAIN, Mth.clamp((int) pain, 0, 3));
+            if (pain > 0.0) EntityHelper.addHcsDebuff(this, HcsEffects.PAIN.get(), Mth.clamp((int) pain, 0, 3));
             injuryManager.tick();
             sanityManager.tickEnemies(this);
 
             final double bleeding = injuryManager.getBleeding() - 0.5;
             if (bleeding > 0.0)
-                EntityHelper.addHcsDebuff(this, HcsEffects.BLEEDING, Mth.clamp((int) bleeding, 0, 3));
+                EntityHelper.addHcsDebuff(this, HcsEffects.BLEEDING.get(), Mth.clamp((int) bleeding, 0, 3));
 
             // Panic
-            final boolean isDarkEnv = this.hasEffect(HcsEffects.DARKNESS_ENVELOPED);
+            final boolean isDarkEnv = this.hasEffect(HcsEffects.DARKNESS_ENVELOPED.get());
             AtomicBoolean canSeeWither = new AtomicBoolean(false);
             EntityHelper.getOthersEntitiesInRange(this, WitherBoss.class, 3.0).forEach(wither -> canSeeWither.set(this.hasLineOfSight(wither)));
             final boolean shouldInExtremePanic = isDarkEnv || canSeeWither.get();
             final double currRawPanic = moodManager.getRawPanic();
             final double currRealPanic = moodManager.getRealPanic();
             final double expectedRawPanic;
-            if (this.hasEffect(HcsEffects.FEARLESSNESS)) expectedRawPanic = 0.0;
+            if (this.hasEffect(HcsEffects.FEARLESSNESS.get())) expectedRawPanic = 0.0;
             else expectedRawPanic = shouldInExtremePanic ? 4 : Mth.clamp(sanityManager.countEnemies() * 0.5, 0.0, 4);
 
             final double panicDiff = Math.abs(currRawPanic - expectedRawPanic);
@@ -225,21 +225,21 @@ public abstract class ServerPlayerMixin extends Player {
                         sanityManager.add(-Mth.clamp(0.00003 * finalPanic, 0.000008, 0.0001));
                 }
                 if (finalPanic > 0.0)
-                    EntityHelper.addHcsDebuff(this, HcsEffects.PANIC, Mth.clamp((int) finalPanic, 0, 3));
+                    EntityHelper.addHcsDebuff(this, HcsEffects.PANIC.get(), Mth.clamp((int) finalPanic, 0, 3));
             }
         }
 
-        if (injuryManager.getFracture() > 0.0) EntityHelper.addHcsDebuff(this, HcsEffects.FRACTURE);
+        if (injuryManager.getFracture() > 0.0) EntityHelper.addHcsDebuff(this, HcsEffects.FRACTURE.get());
 
         DiseaseManager diseaseManager = ((StatAccessor) this).getDiseaseManager();
         final double currParasite = diseaseManager.getParasite(), currCold = diseaseManager.getCold();
         if (currParasite > 0.1)
-            EntityHelper.addHcsDebuff(this, HcsEffects.PARASITE_INFECTION, Mth.clamp((int) currParasite, 0, 2));
-        if (currCold > 1.0) EntityHelper.addHcsDebuff(this, HcsEffects.COLD);
+            EntityHelper.addHcsDebuff(this, HcsEffects.PARASITE_INFECTION.get(), Mth.clamp((int) currParasite, 0, 2));
+        if (currCold > 1.0) EntityHelper.addHcsDebuff(this, HcsEffects.COLD.get());
 
-        if (moodManager.getHappiness() < 0.5) EntityHelper.addHcsDebuff(this, HcsEffects.UNHAPPY);
-        if (statusManager.hasDarknessEnvelopedDebuff()) EntityHelper.addHcsDebuff(this, HcsEffects.DARKNESS_ENVELOPED);
+        if (moodManager.getHappiness() < 0.5) EntityHelper.addHcsDebuff(this, HcsEffects.UNHAPPY.get());
+        if (statusManager.hasDarknessEnvelopedDebuff()) EntityHelper.addHcsDebuff(this, HcsEffects.DARKNESS_ENVELOPED.get());
         if (statusManager.hasHeavyLoadDebuff() && configs.get(Configs.HEAVY_LOAD))
-            EntityHelper.addHcsDebuff(this, HcsEffects.HEAVY_LOAD);
+            EntityHelper.addHcsDebuff(this, HcsEffects.HEAVY_LOAD.get());
     }
 }

@@ -23,7 +23,7 @@ public class CrudeTorchBlock extends TorchBlock {
     }
 
     protected BlockState getLitBlockStateForUpdate(BlockState prevStat) {
-        return Hcs.BURNING_CRUDE_TORCH_BLOCK.defaultBlockState();
+        return Hcs.BURNING_CRUDE_TORCH_BLOCK.get().defaultBlockState();
     }
 
     @SuppressWarnings("deprecation")
@@ -40,12 +40,12 @@ public class CrudeTorchBlock extends TorchBlock {
 
     @Override
     public Item asItem() {
-        return Hcs.CRUDE_TORCH_ITEM;
+        return Hcs.CRUDE_TORCH_ITEM.get();
     }
 
     @Override
     protected Block asBlock() {
-        return Hcs.CRUDE_TORCH_BLOCK;
+        return Hcs.CRUDE_TORCH_BLOCK.get();
     }
 
     @Override

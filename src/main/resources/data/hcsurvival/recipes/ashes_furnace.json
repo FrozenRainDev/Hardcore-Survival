@@ -1,0 +1,13 @@
+{
+  "type": "minecraft:smelting",
+  "category": "misc",
+  "show_notification": true,
+  "ingredient": [
+    {
+      "item": "hcs:tinder"
+    }
+  ],
+  "result": "hcs:ashes",
+  "experience": 0.0,
+  "cookingtime": 50
+}

@@ -33,7 +33,7 @@ public class PourOutContentRecipe extends CustomRecipe {
             if (RotHelper.canRot(item)) {
                 if (RotHelper.getFresh(world, stack) <= 0.0001F && RotHelper.getPackageType(name) == 1 && (name.contains("stew") || name.contains("salad") || name.contains("soup") || name.contains("bucket") || name.contains("bottle") || name.contains("juice")))
                     hasItemMatch = true;
-            } else if (item == Hcs.SALTWATER_BOTTLE) hasItemMatch = true;
+            } else if (item == Hcs.SALTWATER_BOTTLE.get()) hasItemMatch = true;
         }
         return count == 1 && hasItemMatch;
     }
@@ -67,6 +67,6 @@ public class PourOutContentRecipe extends CustomRecipe {
 
     @Override
     public RecipeSerializer<?> getSerializer() {
-        return Hcs.POUR_OUT_CONTENT_RECIPE;
+        return Hcs.POUR_OUT_CONTENT_RECIPE.get();
     }
 }

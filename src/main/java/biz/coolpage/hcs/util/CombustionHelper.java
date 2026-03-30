@@ -66,13 +66,13 @@ public class CombustionHelper {
     }
 
     public static void litHoldingTorch(Player player, @NotNull Level world, @NotNull ItemStack stack) {
-        EntityHelper.dropItem(player, stack.is(Hcs.CRUDE_TORCH_ITEM) ? Hcs.BURNING_CRUDE_TORCH_ITEM : Items.TORCH);
+        EntityHelper.dropItem(player, stack.is(Hcs.CRUDE_TORCH_ITEM.get()) ? Hcs.BURNING_CRUDE_TORCH_ITEM.get() : Items.TORCH);
         stack.shrink(1); // This operation must preform after the dropping item process considering condition when players holding single torch
         world.playSound(null, player.blockPosition(), SoundEvents.FIRECHARGE_USE, SoundSource.BLOCKS);
     }
 
     public static boolean isTorchWithFlame(Item item) {
-        return item == Hcs.BURNING_CRUDE_TORCH_ITEM || (item instanceof BlockItem blockItem && blockItem.getBlock() instanceof TorchBlock && item != Items.REDSTONE_TORCH && item != Hcs.CRUDE_TORCH_ITEM && item != Hcs.UNLIT_TORCH_ITEM && item != Hcs.GLOWSTONE_TORCH_ITEM);
+        return item == Hcs.BURNING_CRUDE_TORCH_ITEM.get() || (item instanceof BlockItem blockItem && blockItem.getBlock() instanceof TorchBlock && item != Items.REDSTONE_TORCH && item != Hcs.CRUDE_TORCH_ITEM.get() && item != Hcs.UNLIT_TORCH_ITEM.get() && item != Hcs.GLOWSTONE_TORCH_ITEM.get());
     }
 
     // ***** Campfires *****
@@ -102,7 +102,7 @@ public class CombustionHelper {
 
     public static void onServerTick(@NotNull Level world, BlockPos pos, @NotNull BlockState state, ICampfireBlockEntity campfire) {
         // Campfire extinguish: Normal -> Smoldering -> Burnt
-        boolean hasFlame = !state.is(Hcs.SMOLDERING_CAMPFIRE_BLOCK);
+        boolean hasFlame = !state.is(Hcs.SMOLDERING_CAMPFIRE_BLOCK.get());
         if (hasFlame && world.random.nextFloat() < 0.001F) // Lit inflammable blocks nearby
             Fluids.LAVA.tick(world, pos, Fluids.LAVA.defaultFluidState());
         long time = world.getGameTime(), burnOutTime = campfire.getBurnOutTime();
@@ -110,7 +110,7 @@ public class CombustionHelper {
             CampfireBlock.dowse(null, world, pos, state);
             // "setBlock" causes automatic cooking items drop (See CampfireBlock::onStateReplaced)
             // Modified: setBlockState -> setBlock (Mojang Mapping)
-            world.setBlock(pos, (hasFlame ? Hcs.SMOLDERING_CAMPFIRE_BLOCK : Hcs.BURNT_CAMPFIRE_BLOCK).defaultBlockState().setValue(CampfireBlock.FACING, state.getValue(CampfireBlock.FACING)).setValue(BlockStateProperties.WATERLOGGED, state.getValue(BlockStateProperties.WATERLOGGED)), 3);
+            world.setBlock(pos, (hasFlame ? Hcs.SMOLDERING_CAMPFIRE_BLOCK : Hcs.BURNT_CAMPFIRE_BLOCK).get().defaultBlockState().setValue(CampfireBlock.FACING, state.getValue(CampfireBlock.FACING)).setValue(BlockStateProperties.WATERLOGGED, state.getValue(BlockStateProperties.WATERLOGGED)), 3);
             world.levelEvent(null, 1009, pos, 0);
         } else {
             if (burnOutTime == Long.MAX_VALUE && Configs.isEnabled(Configs.BURN))
@@ -131,7 +131,7 @@ public class CombustionHelper {
         if (fuelDur == 0) return false;
         if (CommUtil.hasNull(world, pos, state)) return false;
         if (world.getBlockEntity(pos) instanceof ICampfireBlockEntity campfire) {
-            if (state.is(Hcs.BURNT_CAMPFIRE_BLOCK) || !state.hasProperty(BlockStateProperties.LIT) || !state.getValue(BlockStateProperties.LIT))
+            if (state.is(Hcs.BURNT_CAMPFIRE_BLOCK.get()) || !state.hasProperty(BlockStateProperties.LIT) || !state.getValue(BlockStateProperties.LIT))
                 return false;
             if (addFuel(world, pos, state, campfire, stack, fuelDur)) {
                 world.playSound(null, pos, SoundEvents.FIRECHARGE_USE, SoundSource.BLOCKS);
@@ -142,7 +142,7 @@ public class CombustionHelper {
     }
 
     private static boolean addFuel(Level world, BlockPos pos, @NotNull BlockState state, ICampfireBlockEntity campfire, @NotNull ItemStack fuel, int fuelDur) {
-        if (state.is(Hcs.SMOLDERING_CAMPFIRE_BLOCK)) {
+        if (state.is(Hcs.SMOLDERING_CAMPFIRE_BLOCK.get())) {
             fuelDur = (int) (fuelDur * 1.5); // Burning Duration↑
             // Modified: setBlockState -> setBlock (Mojang Mapping)
             world.setBlock(pos, Blocks.CAMPFIRE.defaultBlockState().setValue(CampfireBlock.FACING, state.getValue(CampfireBlock.FACING)).setValue(BlockStateProperties.WATERLOGGED, state.getValue(BlockStateProperties.WATERLOGGED)), 3);
@@ -170,14 +170,14 @@ public class CombustionHelper {
             ItemStack stack = inv.getItem(i);
             Item item = stack.getItem();
 
-            boolean isTorch = item == Items.TORCH, isBurningCrudeTorch = item == Hcs.BURNING_CRUDE_TORCH_ITEM, isFuelableCampfire = CombustionHelper.isFuelableCampfire(item);
+            boolean isTorch = item == Items.TORCH, isBurningCrudeTorch = item == Hcs.BURNING_CRUDE_TORCH_ITEM.get(), isFuelableCampfire = CombustionHelper.isFuelableCampfire(item);
             if ((isSubmerged || ((isBurningCrudeTorch || isFuelableCampfire) && BurningCrudeTorchItem.shouldExtinguish(stack)))
                     && (isTorch || isBurningCrudeTorch || isFuelableCampfire)) {
                 Item extinguishedItem = Items.AIR;
                 int extinguishCount = stack.getCount();
-                if (isTorch) extinguishedItem = Hcs.UNLIT_TORCH_ITEM;
+                if (isTorch) extinguishedItem = Hcs.UNLIT_TORCH_ITEM.get();
                 else if (isFuelableCampfire) {
-                    extinguishedItem = Hcs.ASHES;
+                    extinguishedItem = Hcs.ASHES.get();
                     extinguishCount = 6;
                 }
                 inv.setItem(i, new ItemStack(extinguishedItem, extinguishCount));

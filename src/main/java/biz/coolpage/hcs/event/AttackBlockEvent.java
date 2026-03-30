@@ -52,7 +52,7 @@ public class AttackBlockEvent {
                     world.levelEvent(2001, pos, Block.getId(state));
                     mainHandStack.shrink(1);
                     EntityHelper.msgById(player, "hcs.tip.chip_succeed");
-                    EntityHelper.dropItem(player, Hcs.SHARP_BROKEN_BONE);
+                    EntityHelper.dropItem(player, Hcs.SHARP_BROKEN_BONE.get());
                 }
             }
         }

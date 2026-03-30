@@ -46,8 +46,8 @@ public class BottleItem extends PotionItem {
                 if (IS_SURVIVAL_LIKE.test(player)) {
                     ((StatAccessor) serverPlayer).getThirstManager().add(0.3);
                     if (this.effectInstance != null) {
-                        if (this.effectInstance.getEffect() == HcsEffects.THIRST) {
-                            livingEntity.addEffect(livingEntity.hasEffect(HcsEffects.THIRST) ? new MobEffectInstance(HcsEffects.THIRST, Math.min(Objects.requireNonNull(livingEntity.getEffect(HcsEffects.THIRST)).getDuration() + 1200, 9600), 0, false, false, true) : new MobEffectInstance(this.effectInstance));
+                        if (this.effectInstance.getEffect() == HcsEffects.THIRST.get()) {
+                            livingEntity.addEffect(livingEntity.hasEffect(HcsEffects.THIRST.get()) ? new MobEffectInstance(HcsEffects.THIRST.get(), Math.min(Objects.requireNonNull(livingEntity.getEffect(HcsEffects.THIRST.get())).getDuration() + 1200, 9600), 0, false, false, true) : new MobEffectInstance(this.effectInstance));
                         } else serverPlayer.addEffect(new MobEffectInstance(this.effectInstance));
                     }
                     //Must new() to duplicate an effect to clone in case of invalid repeat adding

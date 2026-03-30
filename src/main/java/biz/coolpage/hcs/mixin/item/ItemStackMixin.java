@@ -75,7 +75,8 @@ public abstract class ItemStackMixin {
 
     @Inject(at = @At("HEAD"), method = "is(Lnet/minecraft/world/item/Item;)Z", cancellable = true)
     public void isOf(Item item, CallbackInfoReturnable<Boolean> cir) {
-        if (this.getItem() == Hcs.IMPROVISED_SHIELD && item == Items.SHIELD) cir.setReturnValue(true);
+        if (Hcs.IMPROVISED_SHIELD.isPresent() && this.getItem() == Hcs.IMPROVISED_SHIELD.get() && item == Items.SHIELD)
+            cir.setReturnValue(true);
     }
 
     //Modify stacks tooltips for armors and tools

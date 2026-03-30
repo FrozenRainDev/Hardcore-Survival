@@ -39,7 +39,7 @@ public class HotWaterBottleItem extends Item {
 
     public static boolean isChangeable(@NotNull ItemStack stack) {
         CompoundTag nbt = stack.getOrCreateTag();
-        return stack.is(Hcs.HOT_WATER_BOTTLE) && nbt.contains(HHS) && nbt.getInt(HHS) != 0;
+        return stack.is(Hcs.HOT_WATER_BOTTLE.get()) && nbt.contains(HHS) && nbt.getInt(HHS) != 0;
     }
 
     public static @NotNull ItemStack setStatus(@NotNull ItemStack stack, int statId) {
@@ -130,7 +130,7 @@ public class HotWaterBottleItem extends Item {
         }
         for (int i = 0; i < inv.getContainerSize(); ++i) {
             ItemStack stack = inv.getItem(i);
-            if (!stack.is(Hcs.HOT_WATER_BOTTLE)) continue;
+            if (!stack.is(Hcs.HOT_WATER_BOTTLE.get())) continue;
             CompoundTag nbt = stack.getOrCreateTag();
             if (nbt.contains(HHCI)) {
                 if (inv instanceof IceboxBlockEntity) {

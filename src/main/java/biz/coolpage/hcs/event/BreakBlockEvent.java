@@ -42,7 +42,7 @@ public class BreakBlockEvent {
 
             // Before logic
             if (state.is(Blocks.BAMBOO) && world.getBlockState(pos.below()).is(BlockTags.BAMBOO_PLANTABLE_ON) && world.getBlockState(pos.above(10)).is(Blocks.BAMBOO) && world.getBlockState(pos.east()).is(Blocks.BAMBOO) && world.getBlockState(pos.west()).is(Blocks.BAMBOO) && world.getBlockState(pos.south()).is(Blocks.BAMBOO) && world.getBlockState(pos.north()).is(Blocks.BAMBOO))
-                Containers.dropItemStack(world, x, y, z, Hcs.BAMBOO_SHOOT.getDefaultInstance());
+                Containers.dropItemStack(world, x, y, z, Hcs.BAMBOO_SHOOT.get().getDefaultInstance());
 
             boolean isBurningCrudeTorch = block instanceof BurningCrudeTorchBlock, isBurnt = block instanceof BurntTorchBlock || block instanceof WallBurntTorchBlock;
             if (!isBurnt && (block instanceof CrudeTorchBlock || isBurningCrudeTorch || block instanceof GlowstoneTorchBlock)) {
@@ -65,36 +65,36 @@ public class BreakBlockEvent {
             Item mainHand = player.getMainHandItem().getItem();
             if (mainHand != Items.SHEARS) {
                 if (block == Blocks.GRASS) {
-                    if (rand < 0.007) dropItem(player, x, y, z, Hcs.FEARLESSNESS_HERB, 1);
-                    else if (rand < 0.012) dropItem(player, x, y, z, Hcs.WORM, 1);
-                    else if (rand < 0.02) dropItem(player, x, y, z, Hcs.POTHERB, 1);
-                    else if (rand < 0.35) dropItem(player, x, y, z, Hcs.ROCK, 1);
-                    else if (rand < 0.55) dropItem(player, x, y, z, Hcs.GRASS_FIBER, 1);
+                    if (rand < 0.007) dropItem(player, x, y, z, Hcs.FEARLESSNESS_HERB.get(), 1);
+                    else if (rand < 0.012) dropItem(player, x, y, z, Hcs.WORM.get(), 1);
+                    else if (rand < 0.02) dropItem(player, x, y, z, Hcs.POTHERB.get(), 1);
+                    else if (rand < 0.35) dropItem(player, x, y, z, Hcs.ROCK.get(), 1);
+                    else if (rand < 0.55) dropItem(player, x, y, z, Hcs.GRASS_FIBER.get(), 1);
                     else if (rand < 0.7) dropItem(player, x, y, z, Items.STICK, 1);
-                    else if (rand < 0.7009) dropItem(player, x, y, z, Hcs.SELAGINELLA, 1);
-                    else if (rand < 0.7083) dropItem(player, x, y, z, Hcs.GINGER, 1);
+                    else if (rand < 0.7009) dropItem(player, x, y, z, Hcs.SELAGINELLA.get(), 1);
+                    else if (rand < 0.7083) dropItem(player, x, y, z, Hcs.GINGER.get(), 1);
                     else if (player.getMainHandItem().getItem() instanceof KnifeItem)
-                        dropItem(player, x, y, z, Hcs.GRASS_FIBER, 1);
+                        dropItem(player, x, y, z, Hcs.GRASS_FIBER.get(), 1);
                 } else if (block == Blocks.TALL_GRASS) {
-                    if (rand < 0.007) dropItem(player, x, y, z, Hcs.FEARLESSNESS_HERB, 2);
-                    else if (rand < 0.012) dropItem(player, x, y, z, Hcs.WORM, 2);
-                    else if (rand < 0.02) dropItem(player, x, y, z, Hcs.POTHERB, 2);
-                    else if (rand < 0.35) dropItem(player, x, y, z, Hcs.ROCK, 2);
-                    else if (rand < 0.55) dropItem(player, x, y, z, Hcs.GRASS_FIBER, 2);
+                    if (rand < 0.007) dropItem(player, x, y, z, Hcs.FEARLESSNESS_HERB.get(), 2);
+                    else if (rand < 0.012) dropItem(player, x, y, z, Hcs.WORM.get(), 2);
+                    else if (rand < 0.02) dropItem(player, x, y, z, Hcs.POTHERB.get(), 2);
+                    else if (rand < 0.35) dropItem(player, x, y, z, Hcs.ROCK.get(), 2);
+                    else if (rand < 0.55) dropItem(player, x, y, z, Hcs.GRASS_FIBER.get(), 2);
                     else if (rand < 0.7) dropItem(player, x, y, z, Items.STICK, 2);
-                    else if (rand < 0.7009) dropItem(player, x, y, z, Hcs.SELAGINELLA, 2);
-                    else if (rand < 0.7083) dropItem(player, x, y, z, Hcs.GINGER, 2);
+                    else if (rand < 0.7009) dropItem(player, x, y, z, Hcs.SELAGINELLA.get(), 2);
+                    else if (rand < 0.7083) dropItem(player, x, y, z, Hcs.GINGER.get(), 2);
                     else if (player.getMainHandItem().getItem() instanceof KnifeItem)
-                        dropItem(player, x, y, z, Hcs.GRASS_FIBER, 2);
+                        dropItem(player, x, y, z, Hcs.GRASS_FIBER.get(), 2);
                 } else if (block == Blocks.VINE)
-                    dropItem(player, x, y, z, Hcs.FIBER_STRING, 1);
+                    dropItem(player, x, y, z, Hcs.FIBER_STRING.get(), 1);
                 else if (block instanceof LeavesBlock) {
                     if (mainHand instanceof SwordItem)
                         dropItem(player, x, y, z, Items.STICK, 1);
                 }
             }
             if (mainHand == Items.WOODEN_SHOVEL && block == Blocks.GRAVEL && rand < 0.02)
-                Containers.dropItemStack(world, x + 0.5, y + 0.5, z + 0.5, Hcs.RAW_COPPER_POWDER.getDefaultInstance());
+                Containers.dropItemStack(world, x + 0.5, y + 0.5, z + 0.5, Hcs.RAW_COPPER_POWDER.get().getDefaultInstance());
 
             if (!(mainHand instanceof ShovelItem)) {
                 if (block == Blocks.SNOW || block == Blocks.POWDER_SNOW)
@@ -102,16 +102,16 @@ public class BreakBlockEvent {
                 else if (block == Blocks.SNOW_BLOCK) dropItem(player, x, y, z, Items.SNOWBALL, 4);
             }
             if (!(mainHand instanceof PickaxeItem)) {
-                if (block instanceof AbstractFurnaceBlock || block == Hcs.ICEBOX || block instanceof BrewingStandBlock || block instanceof AnvilBlock || (block instanceof CraftingTableBlock && state.requiresCorrectToolForDrops()))
+                if (block instanceof AbstractFurnaceBlock || block == Hcs.ICEBOX.get() || block instanceof BrewingStandBlock || block instanceof AnvilBlock || (block instanceof CraftingTableBlock && state.requiresCorrectToolForDrops()))
                     dropItem(player, x, y, z, block.asItem(), 1);
             }
             if (!(mainHand instanceof AxeItem)) {
-                if (block == Hcs.DRYING_RACK) dropItem(player, x, y, z, Hcs.DRYING_RACK_ITEM, 1);
+                if (block == Hcs.DRYING_RACK.get()) dropItem(player, x, y, z, Hcs.DRYING_RACK_ITEM.get(), 1);
             }
             if ((block == Blocks.CACTUS || block instanceof AbstractGlassBlock || block instanceof IronBarsBlock/*todo pane block*/) && player.getMainHandItem().isEmpty()) {
                 player.hurt(world.damageSources().cactus(), 2f);
                 ((StatAccessor) player).getInjuryManager().addBleeding(1.2);
-            } else if (block == Blocks.SWEET_BERRY_BUSH) dropItem(player, x, y, z, Hcs.BERRY_BUSH, 1);
+            } else if (block == Blocks.SWEET_BERRY_BUSH) dropItem(player, x, y, z, Hcs.BERRY_BUSH.get(), 1);
             else if (block == Blocks.CAMPFIRE) {
                 if (silkTouch == 0 && state.hasProperty(CombustionHelper.COMBUST_LUMINANCE)) {
                     int stage = state.getValue(CombustionHelper.COMBUST_LUMINANCE),
@@ -120,10 +120,10 @@ public class BreakBlockEvent {
                     if (stickCount > 0)
                         Containers.dropItemStack(world, x + 0.5, y + 0.5, z + 0.5, new ItemStack(Items.STICK, stickCount));
                     if (ashCount > 0)
-                        Containers.dropItemStack(world, x + 0.5, y + 0.5, z + 0.5, new ItemStack(Hcs.ASHES, ashCount));
+                        Containers.dropItemStack(world, x + 0.5, y + 0.5, z + 0.5, new ItemStack(Hcs.ASHES.get(), ashCount));
                 }
-            } else if (block == Hcs.SMOLDERING_CAMPFIRE_BLOCK || block == Hcs.BURNT_CAMPFIRE_BLOCK) {
-                Containers.dropItemStack(world, x + 0.5, y + 0.5, z + 0.5, new ItemStack(Hcs.ASHES, 6));
+            } else if (block == Hcs.SMOLDERING_CAMPFIRE_BLOCK.get() || block == Hcs.BURNT_CAMPFIRE_BLOCK.get()) {
+                Containers.dropItemStack(world, x + 0.5, y + 0.5, z + 0.5, new ItemStack(Hcs.ASHES.get(), 6));
             }
         }
     }

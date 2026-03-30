@@ -1,0 +1,13 @@
+{
+  "type": "minecraft:smelting",
+  "category": "misc",
+  "show_notification": true,
+  "ingredient": [
+    {
+      "item": "minecraft:melon_seeds"
+    }
+  ],
+  "result": "hcs:roasted_seeds",
+  "experience": 0.1,
+  "cookingtime": 100
+}

@@ -34,8 +34,8 @@ public class TorchIgniteRecipe extends CustomRecipe {
                 ++flintSteel;
                 this.flintSteelDamage = stack.getDamageValue() + 1;
                 this.flintSteelSlot = i;
-            } else if (stack.is(Hcs.UNLIT_TORCH_ITEM) || stack.is(Hcs.CRUDE_TORCH_ITEM)) {
-                this.isCrudeTorch = stack.is(Hcs.CRUDE_TORCH_ITEM);
+            } else if (stack.is(Hcs.UNLIT_TORCH_ITEM.get()) || stack.is(Hcs.CRUDE_TORCH_ITEM.get())) {
+                this.isCrudeTorch = stack.is(Hcs.CRUDE_TORCH_ITEM.get());
                 ++unlitTorch;
             } else if (!stack.isEmpty()) ++others;
         }
@@ -45,7 +45,7 @@ public class TorchIgniteRecipe extends CustomRecipe {
     @Override
     public ItemStack assemble(CraftingContainer inventory, RegistryAccess dynamicRegistryManager) {
         if (isCrudeTorch && !WorldHelper.cannotGetServerWorld()) {
-            ItemStack stack = Hcs.BURNING_CRUDE_TORCH_ITEM.getDefaultInstance();
+            ItemStack stack = Hcs.BURNING_CRUDE_TORCH_ITEM.get().getDefaultInstance();
             BurningCrudeTorchItem.initDurData(WorldHelper.getServerWorld(), stack);
             return stack;
         }
@@ -70,6 +70,6 @@ public class TorchIgniteRecipe extends CustomRecipe {
 
     @Override
     public RecipeSerializer<?> getSerializer() {
-        return Hcs.TORCH_IGNITE_RECIPE;
+        return Hcs.TORCH_IGNITE_RECIPE.get();
     }
 }

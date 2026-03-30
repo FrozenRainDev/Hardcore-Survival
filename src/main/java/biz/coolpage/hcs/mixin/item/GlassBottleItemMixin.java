@@ -38,7 +38,7 @@ public abstract class GlassBottleItemMixin {
                 level.playSound(user, user.getX(), user.getY(), user.getZ(), SoundEvents.BOTTLE_FILL, SoundSource.NEUTRAL, 1.0f, 1.0f);
                 level.gameEvent(user, GameEvent.FLUID_PICKUP, blockPos);
                 // 修复点：将 InteractionResultHolder.success 改为 InteractionResultHolder.sidedSuccess
-                cir.setReturnValue(InteractionResultHolder.sidedSuccess(this.turnBottleIntoItem(itemStack, user, Hcs.SALTWATER_BOTTLE.getDefaultInstance()), level.isClientSide()));
+                cir.setReturnValue(InteractionResultHolder.sidedSuccess(this.turnBottleIntoItem(itemStack, user, Hcs.SALTWATER_BOTTLE.get().getDefaultInstance()), level.isClientSide()));
                 cir.cancel();
             }
         }

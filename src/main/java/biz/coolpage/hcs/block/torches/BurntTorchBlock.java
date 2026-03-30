@@ -30,7 +30,7 @@ public class BurntTorchBlock extends CrudeTorchBlock {
 
     @Override
     protected Block asBlock() {
-        return Hcs.BURNT_TORCH_BLOCK;
+        return Hcs.BURNT_TORCH_BLOCK.get();
     }
 
 }

@@ -1,6 +1,6 @@
 {
   "parent": "minecraft:item/generated",
   "textures": {
-    "layer0": "hcs:item/pumpkin_slice"
+    "layer0": "hcsurvival:item/pumpkin_slice"
   }
 }

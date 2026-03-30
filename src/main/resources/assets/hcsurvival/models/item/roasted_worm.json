@@ -1,6 +1,6 @@
 {
   "parent": "minecraft:item/generated",
   "textures": {
-    "layer0": "hcs:item/roasted_worm"
+    "layer0": "hcsurvival:item/roasted_worm"
   }
 }

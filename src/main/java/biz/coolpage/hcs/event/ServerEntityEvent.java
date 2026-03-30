@@ -20,10 +20,10 @@ public class ServerEntityEvent {
             if (player.getLastDeathLocation().isEmpty() && player.getFoodData().getFoodLevel() == 20 && player.getFoodData().getExhaustionLevel() == 0.0F && ((StatAccessor) player).getThirstManager().get() == 1.0 && player.getScore() == 0 && player.totalExperience == 0 && player.getInventory().isEmpty()) {
                 // Novice gift
                 player.getFoodData().addExhaustion(2.0F);
-                EntityHelper.dropItem(player, Hcs.STONE_CONE);
-                EntityHelper.dropItem(player, Hcs.PURIFIED_WATER_BOTTLE, 3);
-                EntityHelper.dropItem(player, Hcs.BANDAGE, 3);
-                EntityHelper.dropItem(player, PotionUtils.setPotion(new ItemStack(Items.POTION), Hcs.LONG_CONSTANT_TEMPERATURE_POTION));
+                EntityHelper.dropItem(player, Hcs.STONE_CONE.get());
+                EntityHelper.dropItem(player, Hcs.PURIFIED_WATER_BOTTLE.get(), 3);
+                EntityHelper.dropItem(player, Hcs.BANDAGE.get(), 3);
+                EntityHelper.dropItem(player, PotionUtils.setPotion(new ItemStack(Items.POTION), Hcs.LONG_CONSTANT_TEMPERATURE_POTION.get()));
             }
         }
     }

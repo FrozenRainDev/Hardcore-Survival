@@ -15,7 +15,7 @@ import static biz.coolpage.hcs.util.CombustionHelper.*;
 
 public class BurningCrudeTorchItem extends StandingAndWallBlockItem {
     public BurningCrudeTorchItem() {
-        super(Hcs.BURNING_CRUDE_TORCH_BLOCK, Hcs.WALL_BURNING_CRUDE_TORCH_BLOCK, new Properties().stacksTo(1), Direction.DOWN);
+        super(Hcs.BURNING_CRUDE_TORCH_BLOCK.get(), Hcs.WALL_BURNING_CRUDE_TORCH_BLOCK.get(), new Properties().stacksTo(1), Direction.DOWN);
     }
 
     public static final String EXTINGUISH_NBT = "hcs_torch_extinguish";

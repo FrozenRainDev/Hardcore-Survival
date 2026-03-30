@@ -1,6 +1,6 @@
 {
   "parent": "minecraft:item/handheld",
   "textures": {
-    "layer0": "hcs:item/flint_knife"
+    "layer0": "hcsurvival:item/flint_knife"
   }
 }

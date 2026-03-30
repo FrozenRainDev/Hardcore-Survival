@@ -84,7 +84,7 @@ public class ChestBlockMixin {
         if (!world.isClientSide()) {
             ChestBlock chestBlock = (ChestBlock) state.getBlock();
             Container inv = ChestBlock.getContainer(chestBlock, state, world, pos, true);
-            if (!state.is(Hcs.ICEBOX)) {
+            if (!state.is(Hcs.ICEBOX.get())) {
                 RotHelper.update(world, inv);
                 HotWaterBottleItem.update(world, inv);
             }

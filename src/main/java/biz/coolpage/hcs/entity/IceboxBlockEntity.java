@@ -22,7 +22,7 @@ import org.jetbrains.annotations.Nullable;
 
 public class IceboxBlockEntity extends RandomizableContainerBlockEntity implements EntityBlock {
     public IceboxBlockEntity(BlockPos pos, BlockState state) {
-        super(Hcs.ICEBOX_BLOCK_ENTITY, pos, state);
+        super(Hcs.ICEBOX_BLOCK_ENTITY.get(), pos, state);
     }
 
     public static final int INV_SIZE = 18;

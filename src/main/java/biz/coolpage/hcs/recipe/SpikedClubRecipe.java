@@ -32,7 +32,7 @@ public class SpikedClubRecipe extends CustomRecipe {
                     ++club;
                     this.nbt = stack.getOrCreateTag();
                 }
-                if (stack.is(Hcs.SHARP_BROKEN_BONE) || stack.is(Hcs.SHARP_FLINT)) ++spike;
+                if (stack.is(Hcs.SHARP_BROKEN_BONE.get()) || stack.is(Hcs.SHARP_FLINT.get())) ++spike;
             }
         }
         return club == 1 && spike == 1 && count == 2;
@@ -40,7 +40,7 @@ public class SpikedClubRecipe extends CustomRecipe {
 
     @Override
     public ItemStack assemble(CraftingContainer craftingInventory, RegistryAccess dynamicRegistryManager) {
-        ItemStack output = Hcs.SPIKED_CLUB.getDefaultInstance();
+        ItemStack output = Hcs.SPIKED_CLUB.get().getDefaultInstance();
         output.setTag(this.nbt);
         return output;
     }
@@ -57,6 +57,6 @@ public class SpikedClubRecipe extends CustomRecipe {
 
     @Override
     public RecipeSerializer<?> getSerializer() {
-        return Hcs.SPIKED_CLUB_RECIPE;
+        return Hcs.SPIKED_CLUB_RECIPE.get();
     }
 }

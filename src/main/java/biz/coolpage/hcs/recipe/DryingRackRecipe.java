@@ -41,11 +41,11 @@ public class DryingRackRecipe {
         FoodProperties cookedComponent = cookedItem.getFoodProperties();
         boolean isSmall = CommUtil.optElse(cookedComponent, Foods.COOKED_CHICKEN).getNutrition() < 6 || cookedItem == Items.COOKED_SALMON;
         if (isCooked) {
-            if (isSmall) return Hcs.SMALL_JERKY;
-            return Hcs.JERKY;
+            if (isSmall) return Hcs.SMALL_JERKY.get();
+            return Hcs.JERKY.get();
         } else {
-            if (isSmall) return Hcs.RAW_SMALL_JERKY;
-            return Hcs.RAW_JERKY;
+            if (isSmall) return Hcs.RAW_SMALL_JERKY.get();
+            return Hcs.RAW_JERKY.get();
         }
     }
 

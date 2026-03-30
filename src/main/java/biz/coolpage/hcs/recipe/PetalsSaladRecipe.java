@@ -35,7 +35,7 @@ public class PetalsSaladRecipe extends CustomRecipe {
 
     @Override
     public ItemStack assemble(CraftingContainer inventory, RegistryAccess dynamicRegistryManager) {
-        return Hcs.PETALS_SALAD.getDefaultInstance();
+        return Hcs.PETALS_SALAD.get().getDefaultInstance();
     }
 
     @Override
@@ -50,6 +50,6 @@ public class PetalsSaladRecipe extends CustomRecipe {
 
     @Override
     public RecipeSerializer<?> getSerializer() {
-        return Hcs.PETALS_SALAD_RECIPE;
+        return Hcs.PETALS_SALAD_RECIPE.get();
     }
 }

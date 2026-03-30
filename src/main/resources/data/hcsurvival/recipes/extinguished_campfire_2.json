@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "show_notification": true,
+  "ingredients": [
+    {
+      "item": "hcs:tinder"
+    },
+    {
+      "tag": "minecraft:planks",
+      "count": 6
+    }
+  ],
+  "result": {
+    "item": "hcs:extinguished_campfire"
+  }
+}

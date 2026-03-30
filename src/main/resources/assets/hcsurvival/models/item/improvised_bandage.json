@@ -1,6 +1,6 @@
 {
   "parent": "minecraft:item/generated",
   "textures": {
-    "layer0": "hcs:item/improvised_bandage"
+    "layer0": "hcsurvival:item/improvised_bandage"
   }
 }

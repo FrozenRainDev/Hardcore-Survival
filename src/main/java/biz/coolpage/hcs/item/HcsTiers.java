@@ -51,13 +51,13 @@ public final class HcsTiers { // HcsArmorMaterials
 
     STONE_CONE = TierSortingRegistry.registerTier(
             new ForgeTier(0, 8, 0.5F, 0.0F, 0,
-                    BlockTags.NEEDS_STONE_TOOL, () -> Ingredient.of(Hcs.ROCK)),
+                    BlockTags.NEEDS_STONE_TOOL, () -> Ingredient.of(Hcs.ROCK.get())),
             HcsFactory.createResourceLocation("stone_cone"),
             List.of(Tiers.WOOD), List.of(Tiers.STONE)),
 
     STONE_WEAPON = TierSortingRegistry.registerTier(
             new ForgeTier(0, 16, 0.0F, 0.0F, 0,
-                    BlockTags.NEEDS_STONE_TOOL, () -> Ingredient.of(Hcs.ROCK)),
+                    BlockTags.NEEDS_STONE_TOOL, () -> Ingredient.of(Hcs.ROCK.get())),
             HcsFactory.createResourceLocation("stone_weapon"),
             List.of(Tiers.WOOD), List.of(Tiers.STONE));
 }

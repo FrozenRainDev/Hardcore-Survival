@@ -41,12 +41,12 @@ public class BurningCrudeTorchBlock extends BaseEntityBlock {
 
     @Override
     public Item asItem() {
-        return Hcs.BURNING_CRUDE_TORCH_ITEM;
+        return Hcs.BURNING_CRUDE_TORCH_ITEM.get();
     }
 
     @Override
     protected Block asBlock() {
-        return Hcs.BURNING_CRUDE_TORCH_BLOCK;
+        return Hcs.BURNING_CRUDE_TORCH_BLOCK.get();
     }
 
     @Override
@@ -90,12 +90,12 @@ public class BurningCrudeTorchBlock extends BaseEntityBlock {
                     && world1 instanceof ServerLevel serverWorld) {
                 if (torch.shouldExtinguish()) {
                     world1.playSound(null, pos1, SoundEvents.FIRE_EXTINGUISH, SoundSource.BLOCKS, 1.0F, 1.0F);
-                    if (state1.is(Hcs.WALL_BURNING_CRUDE_TORCH_BLOCK)) {
-                        BlockState result = Hcs.WALL_BURNT_TORCH_BLOCK.defaultBlockState();
+                    if (state1.is(Hcs.WALL_BURNING_CRUDE_TORCH_BLOCK.get())) {
+                        BlockState result = Hcs.WALL_BURNT_TORCH_BLOCK.get().defaultBlockState();
                         if (state1.hasProperty(FACING)) result = result.setValue(FACING, state1.getValue(FACING));
                         world1.setBlock(pos1, result, 3);
                     } else {
-                        world1.setBlock(pos1, Hcs.BURNT_TORCH_BLOCK.defaultBlockState(), 3);
+                        world1.setBlock(pos1, Hcs.BURNT_TORCH_BLOCK.get().defaultBlockState(), 3);
                     }
                     serverWorld.getChunkSource().blockChanged(pos1);
                 } else if (world1.isRaining() && world1.canSeeSky(pos1))
@@ -107,7 +107,7 @@ public class BurningCrudeTorchBlock extends BaseEntityBlock {
     @Override
     public void setPlacedBy(Level world, BlockPos pos, BlockState state, @Nullable LivingEntity placer, ItemStack stack) {
         super.setPlacedBy(world, pos, state, placer, stack);
-        if (stack.is(Hcs.BURNING_CRUDE_TORCH_ITEM) && world.getBlockEntity(pos) instanceof BurningCrudeTorchBlockEntity torch) {
+        if (stack.is(Hcs.BURNING_CRUDE_TORCH_ITEM.get()) && world.getBlockEntity(pos) instanceof BurningCrudeTorchBlockEntity torch) {
             CompoundTag nbt = stack.getOrCreateTag();
             if (nbt.contains(BurningCrudeTorchItem.EXTINGUISH_NBT, Tag.TAG_LONG))
                 torch.setExtinguishTime(nbt.getLong(BurningCrudeTorchItem.EXTINGUISH_NBT));

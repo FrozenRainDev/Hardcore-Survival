@@ -1,0 +1,13 @@
+{
+  "type": "minecraft:smelting",
+  "category": "misc",
+  "show_notification": true,
+  "ingredient": [
+    {
+      "item": "hcs:bat_wings"
+    }
+  ],
+  "result": "hcs:roasted_bat_wings",
+  "experience": 0.35,
+  "cookingtime": 200
+}

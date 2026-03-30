@@ -1,0 +1,13 @@
+{
+  "type": "minecraft:smelting",
+  "category": "misc",
+  "show_notification": true,
+  "ingredient": [
+    {
+      "item": "hcs:hot_water_bottle"
+    }
+  ],
+  "result": "hcs:hot_water_bottle",
+  "experience": 0.0,
+  "cookingtime": 200
+}

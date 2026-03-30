@@ -1,6 +1,6 @@
 {
   "parent": "minecraft:item/generated",
   "textures": {
-    "layer0": "hcs:item/fire_plough"
+    "layer0": "hcsurvival:item/fire_plough"
   }
 }

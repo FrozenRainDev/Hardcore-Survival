@@ -19,7 +19,7 @@ public class PotionUtilsMixin {
     private static void getColor(@NotNull Collection<MobEffectInstance> effects, CallbackInfoReturnable<Integer> cir) {
         if (effects.size() == 1) {
             MobEffect effect = effects.iterator().next().getEffect();
-            if (effect == HcsEffects.RETURN)
+            if (effect == HcsEffects.RETURN.get())
                 cir.setReturnValue(0x22d3f6);
             else if (effect == MobEffects.DIG_SPEED)
                 cir.setReturnValue(0x968f00);

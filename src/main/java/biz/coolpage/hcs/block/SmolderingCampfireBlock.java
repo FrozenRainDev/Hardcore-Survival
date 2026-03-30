@@ -38,12 +38,12 @@ public class SmolderingCampfireBlock extends CampfireBlock {
 
     @Override
     protected Block asBlock() {
-        return Hcs.SMOLDERING_CAMPFIRE_BLOCK;
+        return Hcs.SMOLDERING_CAMPFIRE_BLOCK.get();
     }
 
     @Override
     public Item asItem() {
-        return Hcs.SMOLDERING_CAMPFIRE;
+        return Hcs.SMOLDERING_CAMPFIRE.get();
     }
 
     @Override
@@ -56,7 +56,7 @@ public class SmolderingCampfireBlock extends CampfireBlock {
         return (world1, pos1, state1, blockEntity) -> {
             if (blockEntity instanceof SmolderingOrBurntCampfireBlockEntity campfire) { // TODO test carefully here; compare with other similar code
                 if (state.hasProperty(BlockStateProperties.LIT) && !state.getValue(BlockStateProperties.LIT))
-                    world1.setBlock(pos1, Hcs.BURNT_CAMPFIRE_BLOCK.defaultBlockState(), 3); // Parameter 3 is the most commonly used flag, equivalent to Block.UPDATE_ALL (update neighboring blocks and send to the client).
+                    world1.setBlock(pos1, Hcs.BURNT_CAMPFIRE_BLOCK.get().defaultBlockState(), 3); // Parameter 3 is the most commonly used flag, equivalent to Block.UPDATE_ALL (update neighboring blocks and send to the client).
                 else
                     SmolderingOrBurntCampfireBlockEntity.litServerTick(world1, pos1, state1, campfire);
             }

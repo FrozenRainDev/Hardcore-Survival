@@ -32,7 +32,7 @@ public class ExtractWaterFromBambooRecipe extends CustomRecipe {
                 ++count;
                 if (stack.getItem() == Items.BAMBOO) b1 = true;
                 else if (item == Items.GLASS_BOTTLE) b2 = true;
-                else if (item == Hcs.FLINT_KNIFE || item == Hcs.STONE_KNIFE) b3 = true;
+                else if (item == Hcs.FLINT_KNIFE.get() || item == Hcs.STONE_KNIFE.get()) b3 = true;
             }
         }
         return b1 && b2 && b3 && count == 3;
@@ -51,13 +51,13 @@ public class ExtractWaterFromBambooRecipe extends CustomRecipe {
     @Override
     public NonNullList<ItemStack> getRemainingItems(@NotNull CraftingContainer inventory) {
         NonNullList<ItemStack> list = NonNullList.withSize(inventory.getContainerSize(), ItemStack.EMPTY);
-        list.set(slotBamboo, new ItemStack(Hcs.WORM, 1));
+        list.set(slotBamboo, new ItemStack(Hcs.WORM.get(), 1));
         return list;
     }
 
 
     @Override
     public RecipeSerializer<?> getSerializer() {
-        return Hcs.EXTRACT_WATER_FROM_BAMBOO_RECIPE;
+        return Hcs.EXTRACT_WATER_FROM_BAMBOO_RECIPE.get();
     }
 }

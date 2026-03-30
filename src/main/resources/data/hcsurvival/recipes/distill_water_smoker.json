@@ -1,0 +1,13 @@
+{
+  "type": "minecraft:smoking",
+  "category": "misc",
+  "show_notification": true,
+  "ingredient": [
+    {
+      "item": "hcs:saltwater_bottle"
+    }
+  ],
+  "result": "hcs:purified_water_bottle",
+  "experience": 0.35,
+  "cookingtime": 100
+}

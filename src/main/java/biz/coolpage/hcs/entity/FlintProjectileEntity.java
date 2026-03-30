@@ -27,7 +27,7 @@ public class FlintProjectileEntity extends ThrowableItemProjectile {
     }
 
     public FlintProjectileEntity(LivingEntity owner, Level world) {
-        super(Hcs.FLINT_PROJECTILE_ENTITY, owner, world);
+        super(Hcs.FLINT_PROJECTILE_ENTITY.get(), owner, world);
     }
 
     @Override
@@ -46,7 +46,7 @@ public class FlintProjectileEntity extends ThrowableItemProjectile {
         super.onHit(hitResult);
         if (!this.level().isClientSide) {
             if (Math.random() < 0.8) EntityHelper.dropItem(this, Items.FLINT);
-            else EntityHelper.dropItem(this, Hcs.SHARP_FLINT);
+            else EntityHelper.dropItem(this, Hcs.SHARP_FLINT.get());
             this.playSound(SoundEvents.STONE_HIT, 2.0F, 1.0F);
             this.level().broadcastEntityEvent(this, (byte) 3);
             this.discard();

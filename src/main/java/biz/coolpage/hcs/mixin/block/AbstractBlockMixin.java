@@ -28,7 +28,7 @@ public class AbstractBlockMixin {
     @Inject(at = @At("RETURN"), method = "canSurvive", cancellable = true)
     public void canPlaceAt(BlockState state, @NotNull LevelReader world, @NotNull BlockPos pos, CallbackInfoReturnable<Boolean> cir) {
         //Drying rack should occupy 2 height, while it only consist of 1 block, so it is forbidden to place any upper block
-        if (world.getBlockState(pos.below()).is(Hcs.DRYING_RACK)) cir.setReturnValue(false);
+        if (world.getBlockState(pos.below()).is(Hcs.DRYING_RACK.get())) cir.setReturnValue(false);
     }
 
     @Inject(at = @At("HEAD"), method = "getDestroyProgress", cancellable = true)

@@ -1,0 +1,13 @@
+{
+  "type": "minecraft:smoking",
+  "category": "misc",
+  "show_notification": true,
+  "ingredient": [
+    {
+      "item": "hcs:raw_small_jerky"
+    }
+  ],
+  "result": "hcs:small_jerky",
+  "experience": 0.35,
+  "cookingtime": 100
+}

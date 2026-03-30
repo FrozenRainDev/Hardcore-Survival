@@ -1,6 +1,6 @@
 {
   "parent": "minecraft:item/handheld",
   "textures": {
-    "layer0": "hcs:item/spiked_club"
+    "layer0": "hcsurvival:item/spiked_club"
   }
 }

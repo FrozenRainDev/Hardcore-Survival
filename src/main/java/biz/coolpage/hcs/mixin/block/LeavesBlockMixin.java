@@ -32,7 +32,7 @@ public abstract class LeavesBlockMixin {
         if (dropItem > 0) {
             BlockPos pos1 = dropItem == 2 ? pos.below() : pos;
             if (Math.random() < 0.008 && temp >= 0.8)
-                EntityHelper.dropItem(world, pos1, Hcs.ORANGE); // Reg -> Hcs
+                EntityHelper.dropItem(world, pos1, Hcs.ORANGE.get()); // Reg -> Hcs
             else if (Math.random() < 0.003) EntityHelper.dropItem(world, pos1, Items.APPLE);
             else if (Math.random() < 0.005) EntityHelper.dropItem(world, pos1, Items.STICK);
         }

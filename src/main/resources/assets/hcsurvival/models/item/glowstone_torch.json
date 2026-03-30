@@ -1,6 +1,6 @@
 {
   "parent": "minecraft:item/generated",
   "textures": {
-    "layer0": "hcs:block/glowstone_torch"
+    "layer0": "hcsurvival:block/glowstone_torch"
   }
 }

@@ -1,6 +1,6 @@
 {
   "parent": "minecraft:item/generated",
   "textures": {
-    "layer0": "hcs:item/grass_fiber"
+    "layer0": "hcsurvival:item/grass_fiber"
   }
 }

@@ -53,6 +53,6 @@ public class ExtractWaterFromSnowRecipe extends CustomRecipe {
 
     @Override
     public RecipeSerializer<?> getSerializer() {
-        return Hcs.EXTRACT_WATER_FROM_SNOW_RECIPE;
+        return Hcs.EXTRACT_WATER_FROM_SNOW_RECIPE.get();
     }
 }

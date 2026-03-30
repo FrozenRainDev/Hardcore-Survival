@@ -38,7 +38,7 @@ public class DigRestrictHelper {
             return false;
         };
 
-        public static final Predicate<Block> IS_BREAKABLE_FUNCTIONAL = block -> (block instanceof BaseEntityBlock || block instanceof CraftingTableBlock || block instanceof AnvilBlock) && block.defaultDestroyTime() >= 0 || block == Hcs.ICEBOX || block == Hcs.DRYING_RACK;
+        public static final Predicate<Block> IS_BREAKABLE_FUNCTIONAL = block -> (block instanceof BaseEntityBlock || block instanceof CraftingTableBlock || block instanceof AnvilBlock) && block.defaultDestroyTime() >= 0 || block == Hcs.ICEBOX.get() || block == Hcs.DRYING_RACK.get();
         public static final Predicate<Block> IS_PLANT = block -> block instanceof BushBlock || block instanceof LeavesBlock || block instanceof VineBlock;
     }
 
@@ -56,9 +56,9 @@ public class DigRestrictHelper {
             boolean isPlant = IS_PLANT.test(block);
             if (mainHand instanceof SwordItem)
                 return isPlant || block instanceof WebBlock;
-            if (mainHand == Hcs.STONE_CONE || mainHand == Hcs.FLINT_CONE || mainHand == Hcs.SHARP_BROKEN_BONE || mainHand == Items.WOODEN_SHOVEL)
+            if (mainHand == Hcs.STONE_CONE.get() || mainHand == Hcs.FLINT_CONE.get() || mainHand == Hcs.SHARP_BROKEN_BONE.get() || mainHand == Items.WOODEN_SHOVEL)
                 return isPlant || state.is(BlockTags.MINEABLE_WITH_SHOVEL);
-            if (mainHand == Hcs.FLINT_HATCHET)
+            if (mainHand == Hcs.FLINT_HATCHET.get())
                 return isPlant || state.is(BlockTags.MINEABLE_WITH_AXE);
             return true;
         }

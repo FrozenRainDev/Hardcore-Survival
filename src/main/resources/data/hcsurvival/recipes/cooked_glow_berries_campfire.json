@@ -1,0 +1,13 @@
+{
+  "type": "minecraft:campfire_cooking",
+  "category": "misc",
+  "show_notification": true,
+  "ingredient": [
+    {
+      "item": "minecraft:glow_berries"
+    }
+  ],
+  "result": "hcs:cooked_sweet_berries",
+  "experience": 0.35,
+  "cookingtime": 400
+}

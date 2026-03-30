@@ -1,6 +1,6 @@
 {
   "parent": "minecraft:item/generated",
   "textures": {
-    "layer0": "hcs:item/fearlessness_herb"
+    "layer0": "hcsurvival:item/fearlessness_herb"
   }
 }

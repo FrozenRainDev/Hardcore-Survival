@@ -107,11 +107,11 @@ public abstract class LivingEntityMixin extends Entity implements ILivingEntity 
     public void die(@NotNull DamageSource source, CallbackInfo ci) {
         if (EntityHelper.SHOULD_DROP_AFTER_DEATH.test(this, source)) return;
         Object ent = this;
-        Item meat = this.getRemainingFireTicks() > 0 ? Hcs.COOKED_MEAT : Hcs.RAW_MEAT;
+        Item meat = this.getRemainingFireTicks() > 0 ? Hcs.COOKED_MEAT.get() : Hcs.RAW_MEAT.get();
         if (ent instanceof Chicken || ent instanceof Cow || ent instanceof Pig || ent instanceof Sheep) {
             if (!(ent instanceof Chicken)) {
                 //EntityHelper.dropItem(this, Items.BONE, 2);
-                EntityHelper.dropItem(this, Hcs.ANIMAL_VISCERA);
+                EntityHelper.dropItem(this, Hcs.ANIMAL_VISCERA.get());
                 if (ent instanceof Sheep && Math.random() < 0.3) EntityHelper.dropItem(this, Items.LEATHER);
             }
             if (this.isBaby()) EntityHelper.dropItem(this, meat);
@@ -122,10 +122,10 @@ public abstract class LivingEntityMixin extends Entity implements ILivingEntity 
                 EntityHelper.dropItem(this, this.getRemainingFireTicks() > 0 ? Items.COOKED_BEEF : Items.BEEF, (int) (Math.random() * 3) + 1);
             else EntityHelper.dropItem(this, meat, (int) (Math.random() * 3) + 1);
             // EntityHelper.dropItem(this, Items.BONE, 2);
-            EntityHelper.dropItem(this, Hcs.ANIMAL_VISCERA);
-        } else if (ent instanceof Spider && Math.random() < 0.33) EntityHelper.dropItem(this, Hcs.SPIDER_GLAND);
+            EntityHelper.dropItem(this, Hcs.ANIMAL_VISCERA.get());
+        } else if (ent instanceof Spider && Math.random() < 0.33) EntityHelper.dropItem(this, Hcs.SPIDER_GLAND.get());
         else if (ent instanceof Bat)
-            EntityHelper.dropItem(this, this.getRemainingFireTicks() > 0 ? Hcs.ROASTED_BAT_WINGS : Hcs.BAT_WINGS);
+            EntityHelper.dropItem(this, this.getRemainingFireTicks() > 0 ? Hcs.ROASTED_BAT_WINGS.get() : Hcs.BAT_WINGS.get());
         else if (ent instanceof WitherBoss) {
             EntityHelper.dropItem(this, Items.NETHERITE_INGOT, 2 + (int) (Math.random() * 2));
             EntityHelper.dropItem(this, Items.DIAMOND, 12 + (int) (Math.random() * 6));

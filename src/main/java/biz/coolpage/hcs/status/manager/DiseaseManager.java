@@ -27,13 +27,13 @@ public class DiseaseManager {
             if (Math.random() < (poss * 0.5))
                 (((StatAccessor) player)).getDiseaseManager().addParasite(0.12);
             if (Math.random() < (poss * 4) || isFoodPoisonous(item.getFoodProperties()))
-                player.addEffect(new MobEffectInstance(HcsEffects.FOOD_POISONING, 1200, 0, false, false, true));
+                player.addEffect(new MobEffectInstance(HcsEffects.FOOD_POISONING.get(), 1200, 0, false, false, true));
         }
     }
 
     private static double getBasicPoisonPoss(Item item) {
-        if (item == Items.PORKCHOP || item == Hcs.ANIMAL_VISCERA) return 0.22;
-        if (item == Items.ROTTEN_FLESH || item == Hcs.ROT || item == Hcs.BAT_WINGS) return 0.26;
+        if (item == Items.PORKCHOP || item == Hcs.ANIMAL_VISCERA.get()) return 0.22;
+        if (item == Items.ROTTEN_FLESH || item == Hcs.ROT.get() || item == Hcs.BAT_WINGS.get()) return 0.26;
         if (IS_RAW_MEAT.test(item)) return 0.17;
         return -1.0;
     }

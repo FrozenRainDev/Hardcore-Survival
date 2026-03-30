@@ -32,7 +32,7 @@ public class FoodPropertiesMixin {
         // getEffectType -> getEffect (Mojang)
         var type = effect.getEffect();
         return type == MobEffects.POISON || type == MobEffects.CONFUSION
-                || type == HcsEffects.FOOD_POISONING || type == HcsEffects.DIARRHEA;
+                || type == HcsEffects.FOOD_POISONING.get() || type == HcsEffects.DIARRHEA.get();
     }
 
     // getStatusEffects -> getEffects (Mojang)

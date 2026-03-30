@@ -1,7 +1,7 @@
 {
   "parent": "minecraft:item/generated",
   "textures": {
-    "layer0": "hcs:item/stone_cone"
+    "layer0": "hcsurvival:item/stone_cone"
   },
   "display": {
     "thirdperson_righthand": {

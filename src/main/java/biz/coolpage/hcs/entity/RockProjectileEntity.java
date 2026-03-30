@@ -25,17 +25,17 @@ public class RockProjectileEntity extends ThrowableItemProjectile {
     }
 
     public RockProjectileEntity(LivingEntity owner, Level world) {
-        super(Hcs.ROCK_PROJECTILE_ENTITY, owner, world);
+        super(Hcs.ROCK_PROJECTILE_ENTITY.get(), owner, world);
     }
 
     @Deprecated
     public RockProjectileEntity(Level world, double x, double y, double z) {
-        super(Hcs.ROCK_PROJECTILE_ENTITY, x, y, z, world);
+        super(Hcs.ROCK_PROJECTILE_ENTITY.get(), x, y, z, world);
     }
 
     @Override
     protected Item getDefaultItem() {
-        return Hcs.ROCK;
+        return Hcs.ROCK.get();
     }
 
     protected void onHitEntity(EntityHitResult entityHitResult) {
@@ -48,8 +48,8 @@ public class RockProjectileEntity extends ThrowableItemProjectile {
     protected void onHit(HitResult hitResult) {
         super.onHit(hitResult);
         if (!this.level().isClientSide) {
-            if (Math.random() < 0.8) EntityHelper.dropItem(this, Hcs.ROCK);
-            else EntityHelper.dropItem(this, Hcs.SHARP_ROCK);
+            if (Math.random() < 0.8) EntityHelper.dropItem(this, Hcs.ROCK.get());
+            else EntityHelper.dropItem(this, Hcs.SHARP_ROCK.get());
             this.playSound(SoundEvents.STONE_HIT, 2.0F, 1.0F);
             this.level().broadcastEntityEvent(this, (byte) 3);
             this.discard();
@@ -61,7 +61,7 @@ public class RockProjectileEntity extends ThrowableItemProjectile {
     public void handleEntityEvent(byte id) {//Particles rendering needs client world
         if (id == 3)
             for (int i = 0; i < 8; ++i)
-                this.level().addParticle(new ItemParticleOption(ParticleTypes.ITEM, new ItemStack(Hcs.ROCK)), this.getX(), this.getY(), this.getZ(), 0.0D, 0.0D, 0.0D);
+                this.level().addParticle(new ItemParticleOption(ParticleTypes.ITEM, new ItemStack(Hcs.ROCK.get())), this.getX(), this.getY(), this.getZ(), 0.0D, 0.0D, 0.0D);
     }
 
     @Override

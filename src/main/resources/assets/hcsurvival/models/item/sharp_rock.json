@@ -1,6 +1,6 @@
 {
   "parent": "minecraft:item/generated",
   "textures": {
-    "layer0": "hcs:item/sharp_rock"
+    "layer0": "hcsurvival:item/sharp_rock"
   }
 }

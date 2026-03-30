@@ -1,0 +1,23 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "show_notification": true,
+  "pattern": [
+    "A ",
+    "BC"
+  ],
+  "key": {
+    "A": {
+      "item": "hcs:sharp_flint"
+    },
+    "B": {
+      "item": "hcs:short_stick"
+    },
+    "C": {
+      "item": "hcs:fiber_string"
+    }
+  },
+  "result": {
+    "item": "hcs:flint_knife"
+  }
+}

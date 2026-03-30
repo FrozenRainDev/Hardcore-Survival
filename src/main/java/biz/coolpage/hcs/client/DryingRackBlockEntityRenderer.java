@@ -36,7 +36,7 @@ public class DryingRackBlockEntityRenderer implements BlockEntityRenderer<Drying
         String name = stack.getItem().getDescriptionId();
         boolean isRabbit = name.contains("rabbit");
         boolean isFishOrKelp = (stack.is(ItemTags.FISHES) || stack.is(Items.KELP));
-        boolean isMorsel = (stack.is(Hcs.RAW_MEAT) || stack.is(Hcs.COOKED_MEAT));
+        boolean isMorsel = (stack.is(Hcs.RAW_MEAT.get()) || stack.is(Hcs.COOKED_MEAT.get()));
         boolean isOfAxisX = (direction.getAxis() == Direction.Axis.X);
         boolean isOnPositiveAxis = (direction == Direction.EAST || direction == Direction.NORTH);
         float horizontalTranslation = (0.5F + (isRabbit ? 0.02F : (isFishOrKelp ? 0.005F : (isMorsel ? -0.04F : 0.03F))) * (isOnPositiveAxis ? 1.0F : -1.0F));

@@ -66,12 +66,12 @@ public class IceboxBlock extends BaseEntityBlock implements SimpleWaterloggedBlo
 
     @Override
     public Item asItem() {
-        return Hcs.ICEBOX_ITEM;
+        return Hcs.ICEBOX_ITEM.get();
     }
 
     @Override
     protected Block asBlock() {
-        return Hcs.ICEBOX;
+        return Hcs.ICEBOX.get();
     }
 
     @Override

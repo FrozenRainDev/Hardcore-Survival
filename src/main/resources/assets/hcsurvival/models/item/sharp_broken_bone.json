@@ -1,6 +1,6 @@
 {
   "parent": "minecraft:item/handheld",
   "textures": {
-    "layer0": "hcs:item/sharp_broken_bone"
+    "layer0": "hcsurvival:item/sharp_broken_bone"
   }
 }

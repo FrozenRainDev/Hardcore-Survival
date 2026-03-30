@@ -16,7 +16,7 @@ import org.spongepowered.asm.mixin.Unique;
 @SuppressWarnings("CommentedOutCode")
 public class SmolderingOrBurntCampfireBlockEntity extends BlockEntity implements EntityBlock, ICampfireBlockEntity {
     public SmolderingOrBurntCampfireBlockEntity(BlockPos pos, BlockState state) {
-        super(Hcs.SMOLDERING_OR_BURNT_CAMPFIRE_BLOCK_ENTITY_BLOCK_ENTITY_TYPE, pos, state);
+        super(Hcs.SMOLDERING_OR_BURNT_CAMPFIRE_BLOCK_ENTITY.get(), pos, state);
     }
 
     private static final long CAMPFIRE_MAX_BURNING_LENGTH = CombustionHelper.MAX_CAMPFIRE_BURNING_LENGTH * 2L;
@@ -49,7 +49,7 @@ public class SmolderingOrBurntCampfireBlockEntity extends BlockEntity implements
 
     @SuppressWarnings({"unused", "GrazieInspection"})
     public static void litServerTick(@NotNull Level world, BlockPos pos, @NotNull BlockState state, SmolderingOrBurntCampfireBlockEntity campfire) {
-        if (state.is(Hcs.BURNT_CAMPFIRE_BLOCK)) return;
+        if (state.is(Hcs.BURNT_CAMPFIRE_BLOCK.get())) return;
         CombustionHelper.onServerTick(world, pos, state, campfire);
         /*
         if (world.getTime() % 2 == 0) return; // Halve the speed of charcoal grilling

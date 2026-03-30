@@ -49,7 +49,7 @@ public abstract class PlayerInventoryMixin {
 
             if (item instanceof BlockItem blockItem && !(blockItem.getBlock() instanceof TorchBlock))
                 blocksCount += stack.getCount();
-            else if ((stack.is(Hcs.COPPER_PICKAXE) || stack.is(Items.IRON_PICKAXE)) && player.level() instanceof ServerLevel serverLevel)
+            else if ((stack.is(Hcs.COPPER_PICKAXE.get()) || stack.is(Items.IRON_PICKAXE)) && player.level() instanceof ServerLevel serverLevel)
                 applyNullable(HcsPersistentState.getServerState(serverLevel), state -> {
                     state.setHasObtainedCopperPickaxe(true);
                     state.setDirty();
@@ -57,7 +57,7 @@ public abstract class PlayerInventoryMixin {
 
             if (stack.getDamageValue() > stack.getMaxDamage()) stack.setDamageValue(stack.getMaxDamage() - 1);
 
-            boolean isBurningCrudeTorch = item == Hcs.BURNING_CRUDE_TORCH_ITEM, isFuelableCampfire = CombustionHelper.isFuelableCampfire(item);
+            boolean isBurningCrudeTorch = item == Hcs.BURNING_CRUDE_TORCH_ITEM.get(), isFuelableCampfire = CombustionHelper.isFuelableCampfire(item);
             if ((isBurningCrudeTorch || isFuelableCampfire) && !stack.getOrCreateTag().contains(BurningCrudeTorchItem.EXTINGUISH_NBT))
                 BurningCrudeTorchItem.initDurData(player.level(), stack);
             // Also see CombustionHelper::inventoryTick

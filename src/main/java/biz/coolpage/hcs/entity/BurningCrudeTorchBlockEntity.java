@@ -23,7 +23,7 @@ public class BurningCrudeTorchBlockEntity extends BlockEntity implements EntityB
     private long extinguishTime;
 
     public BurningCrudeTorchBlockEntity(BlockPos pos, BlockState state) {
-        super(Hcs.BURNING_CRUDE_TORCH_BLOCK_ENTITY, pos, state);
+        super(Hcs.BURNING_CRUDE_TORCH_BLOCK_ENTITY.get(), pos, state);
     }
 
     public long getExtinguishTime() {

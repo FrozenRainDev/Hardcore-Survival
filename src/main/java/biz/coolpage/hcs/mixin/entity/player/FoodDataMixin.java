@@ -36,8 +36,8 @@ public abstract class FoodDataMixin {
 
     @Unique
     private static float adjustHealingAmount(@NotNull Player player, float f) {
-        if (player.hasEffect(HcsEffects.COLD)) f *= 0.65F;
-        if (player.hasEffect(HcsEffects.UNHAPPY)) f *= 0.75F;
+        if (player.hasEffect(HcsEffects.COLD.get())) f *= 0.65F;
+        if (player.hasEffect(HcsEffects.UNHAPPY.get())) f *= 0.75F;
         // bad code; malnutrition see method "update"
         StatusManager statusManager = ((StatAccessor) player).getStatusManager();
         if (statusManager.getBandageWorkTicks() > 0) f *= 1.5F;
@@ -64,7 +64,7 @@ public abstract class FoodDataMixin {
             Difficulty difficulty = player.level().getDifficulty();
             this.lastFoodLevel = this.foodLevel;
             double thirst = ((StatAccessor) player).getThirstManager().get();
-            boolean malnutrition = player.hasEffect(HcsEffects.MALNUTRITION);
+            boolean malnutrition = player.hasEffect(HcsEffects.MALNUTRITION.get());
             if (difficulty == Difficulty.PEACEFUL) {
                 ((StatAccessor) player).getThirstManager().addDirectly(0.01);
                 ((StatAccessor) player).getSanityManager().add(0.01);
@@ -80,7 +80,7 @@ public abstract class FoodDataMixin {
             }
             boolean bl = player.level().getGameRules().getBoolean(GameRules.RULE_NATURAL_REGENERATION);
             // 修正点：player.canFoodHeal() -> player.isHurt()
-            if (bl && this.saturationLevel >= 0.0F && player.isHurt() && this.foodLevel >= 19 && thirst >= 0.8 && !player.hasEffect(HcsEffects.BLEEDING)) {
+            if (bl && this.saturationLevel >= 0.0F && player.isHurt() && this.foodLevel >= 19 && thirst >= 0.8 && !player.hasEffect(HcsEffects.BLEEDING.get())) {
                 if (!malnutrition || Math.random() < 0.5) ++this.tickTimer;
                 if (this.tickTimer >= 10) {
                     float f = Math.min(1.0F + this.saturationLevel / 6.0F, 2.0F) / 100.0F;

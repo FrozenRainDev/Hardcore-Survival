@@ -106,7 +106,7 @@ public class ArmorHelper {
         if (player != null) {
             var armors = player.getArmorSlots();
             if (armors != null) armors.forEach(stack -> eachArmorDeltaProcess(stack, delta));
-            int ironskin = EntityHelper.getEffectAmplifier(player, HcsEffects.IRONSKIN);
+            int ironskin = EntityHelper.getEffectAmplifier(player, HcsEffects.IRONSKIN.get());
             if (ironskin > -1) delta.add(ironskin > 0 ? 1.6F : 1.2F);
         }
         return delta.getValue();

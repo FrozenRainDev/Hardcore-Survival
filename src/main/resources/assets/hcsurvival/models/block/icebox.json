@@ -2,8 +2,8 @@
 	"parent": "minecraft:block/block",
 	"texture_size": [64, 64],
 	"textures": {
-		"0": "hcs:block/icebox",
-		"particle": "hcs:block/icebox"
+		"0": "hcsurvival:block/icebox",
+		"particle": "hcsurvival:block/icebox"
 	},
 	"elements": [
 		{

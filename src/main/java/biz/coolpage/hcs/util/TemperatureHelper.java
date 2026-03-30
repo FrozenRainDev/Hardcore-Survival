@@ -236,7 +236,7 @@ public abstract class TemperatureHelper implements LevelReader {
                             temperatureManager.addAmbient(-0.06F);
                     }
                 }
-                if (block == Blocks.TORCH || block instanceof BurningCrudeTorchBlock || block == Hcs.SMOLDERING_CAMPFIRE_BLOCK)
+                if (block == Blocks.TORCH || block instanceof BurningCrudeTorchBlock || block == Hcs.SMOLDERING_CAMPFIRE_BLOCK.get())
                     temperatureManager.addAmbient(0.05F);
                 else if (block == Blocks.CAMPFIRE && state.hasProperty(CampfireBlock.LIT) && state.getValue(CampfireBlock.LIT))
                     temperatureManager.addAmbient(0.2F);
@@ -274,7 +274,7 @@ public abstract class TemperatureHelper implements LevelReader {
     public static float getFeelingTemp(Object playerObj, float envTemp, String biomeName, int skyLightLevel) {
         float x = envTemp;
         if (playerObj instanceof ServerPlayer player) {
-            MobEffectInstance chillyWindEffect = player.getEffect(HcsEffects.CHILLY_WIND), strongSunEffect = player.getEffect(HcsEffects.STRONG_SUN);
+            MobEffectInstance chillyWindEffect = player.getEffect(HcsEffects.CHILLY_WIND.get()), strongSunEffect = player.getEffect(HcsEffects.STRONG_SUN.get());
             StatusManager statusManager = ((StatAccessor) player).getStatusManager();
             float insulationLevel = (float) getClothingInsulationLevel(player), insulation = insulationLevel * 0.025F;
             if (strongSunEffect != null) x += (strongSunEffect.getAmplifier() + 1) * 0.05F;
@@ -313,7 +313,7 @@ public abstract class TemperatureHelper implements LevelReader {
             }
             if (player.isSprinting() || statusManager.getRecentAttackTicks() > 0) { //Heat from doing sport
                 if (x <= 0.0F) {
-                    if (player.hasEffect(HcsEffects.CHILLY_WIND) || player.hasEffect(HcsEffects.COLD))
+                    if (player.hasEffect(HcsEffects.CHILLY_WIND.get()) || player.hasEffect(HcsEffects.COLD.get()))
                         x += 0.1F;
                     else x += 0.2F;
                 } else if (x <= 1.0F)
@@ -376,11 +376,11 @@ public abstract class TemperatureHelper implements LevelReader {
         if (playerObj instanceof ServerPlayer player) {
             for (ItemStack stack : player.getArmorSlots()) {
                 if (stack.is(Items.LEATHER_BOOTS)) level += 1;
-                else if (stack.is(Items.LEATHER_HELMET) || stack.is(Items.LEATHER_LEGGINGS) || stack.is(Hcs.WOOLEN_BOOTS))
+                else if (stack.is(Items.LEATHER_HELMET) || stack.is(Items.LEATHER_LEGGINGS) || stack.is(Hcs.WOOLEN_BOOTS.get()))
                     level += 2;
                 else if (stack.is(Items.LEATHER_CHESTPLATE)) level += 3;
-                else if (stack.is(Hcs.WOOLEN_HOOD) || stack.is(Hcs.WOOLEN_TROUSERS)) level += 5;
-                else if (stack.is(Hcs.WOOLEN_COAT)) level += 7;
+                else if (stack.is(Hcs.WOOLEN_HOOD.get()) || stack.is(Hcs.WOOLEN_TROUSERS.get())) level += 5;
+                else if (stack.is(Hcs.WOOLEN_COAT.get())) level += 7;
             }
         }
         return level;

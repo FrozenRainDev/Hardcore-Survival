@@ -1,0 +1,22 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "show_notification": true,
+  "ingredients": [
+    {
+      "item": "hcs:spider_gland"
+    },
+    {
+      "item": "minecraft:bowl"
+    },
+    {
+      "item": "hcs:ashes"
+    },
+    {
+      "item": "hcs:flint_cone"
+    }
+  ],
+  "result": {
+    "item": "hcs:healing_salve"
+  }
+}

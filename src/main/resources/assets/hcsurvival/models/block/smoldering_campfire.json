@@ -1,8 +1,8 @@
 {
-  "parent": "hcs:block/template_burnt_campfire",
+  "parent": "hcsurvival:block/template_burnt_campfire",
   "textures": {
-    "log_base": "hcs:block/smoldering_campfire_base",
-    "log": "hcs:block/smoldering_campfire",
-    "particle": "hcs:block/smoldering_campfire_base"
+    "log_base": "hcsurvival:block/smoldering_campfire_base",
+    "log": "hcsurvival:block/smoldering_campfire",
+    "particle": "hcsurvival:block/smoldering_campfire_base"
   }
 }

@@ -26,12 +26,12 @@ public class BurntCampfireBlock extends CampfireBlock {
 
     @Override
     protected Block asBlock() {
-        return Hcs.BURNT_CAMPFIRE_BLOCK;
+        return Hcs.BURNT_CAMPFIRE_BLOCK.get();
     }
 
     @Override
     public Item asItem() {
-        return Hcs.BURNT_CAMPFIRE;
+        return Hcs.BURNT_CAMPFIRE.get();
     }
 
     @Override

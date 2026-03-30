@@ -1,7 +1,7 @@
 {
   "variants": {
     "": {
-      "model": "hcs:block/burnt_torch"
+      "model": "hcsurvival:block/burnt_torch"
     }
   }
 }

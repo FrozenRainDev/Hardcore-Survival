@@ -1,0 +1,13 @@
+{
+  "type": "minecraft:campfire_cooking",
+  "category": "misc",
+  "show_notification": true,
+  "ingredient": [
+    {
+      "item": "hcs:raw_jerky"
+    }
+  ],
+  "result": "hcs:jerky",
+  "experience": 0.35,
+  "cookingtime": 400
+}

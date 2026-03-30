@@ -1,0 +1,13 @@
+{
+  "type": "minecraft:smoking",
+  "category": "misc",
+  "show_notification": true,
+  "ingredient": [
+    {
+      "item": "minecraft:carrot"
+    }
+  ],
+  "result": "hcs:cooked_carrot",
+  "experience": 0.35,
+  "cookingtime": 100
+}

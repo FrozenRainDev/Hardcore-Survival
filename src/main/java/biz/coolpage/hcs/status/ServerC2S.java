@@ -40,11 +40,14 @@ public class ServerC2S {
 
     public static void init() {
         int id = 0;
+        // 注册 C2S 数据包
         CHANNEL.registerMessage(id++, DrinkWaterPacket.class, DrinkWaterPacket::encode, DrinkWaterPacket::new, DrinkWaterPacket::handle);
         CHANNEL.registerMessage(id++, PlayerEnterPacket.class, PlayerEnterPacket::encode, PlayerEnterPacket::new, PlayerEnterPacket::handle);
         CHANNEL.registerMessage(id++, LitTorchPacket.class, LitTorchPacket::encode, LitTorchPacket::new, LitTorchPacket::handle);
-    }
 
+        // 必须注册 S2C 数据包，否则无法从服务端发往客户端
+        CHANNEL.registerMessage(id++, ServerS2C.GenericS2CPacket.class, ServerS2C.GenericS2CPacket::encode, ServerS2C.GenericS2CPacket::new, ServerS2C.GenericS2CPacket::handle);
+    }
     // --- 辅助工具：手动读写 int 数组 ---
     private static void writeIntArray(FriendlyByteBuf buf, int[] arr) {
         buf.writeVarInt(arr.length);

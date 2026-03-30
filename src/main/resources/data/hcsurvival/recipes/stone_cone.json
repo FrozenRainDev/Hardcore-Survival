@@ -1,0 +1,13 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "equipment",
+  "show_notification": true,
+  "ingredients": [
+    {
+      "item": "hcs:sharp_rock"
+    }
+  ],
+  "result": {
+    "item": "hcs:stone_cone"
+  }
+}

@@ -40,7 +40,7 @@ public class ColdWaterBottleRecipe extends CustomRecipe {
 
     @Override
     public ItemStack assemble(CraftingContainer inventory, RegistryAccess dynamicRegistryManager) {
-        return Hcs.COLD_WATER_BOTTLE.getDefaultInstance();
+        return Hcs.COLD_WATER_BOTTLE.get().getDefaultInstance();
     }
 
     @Override
@@ -55,6 +55,6 @@ public class ColdWaterBottleRecipe extends CustomRecipe {
 
     @Override
     public RecipeSerializer<?> getSerializer() {
-        return Hcs.COLD_WATER_BOTTLE_RECIPE;
+        return Hcs.COLD_WATER_BOTTLE_RECIPE.get();
     }
 }

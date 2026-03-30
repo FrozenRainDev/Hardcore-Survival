@@ -1,7 +1,7 @@
 {
   "variants": {
     "": {
-      "model": "hcs:block/crude_torch"
+      "model": "hcsurvival:block/crude_torch"
     }
   }
 }

@@ -54,6 +54,6 @@ public class SaplingToStickRecipe extends CustomRecipe {
 
     @Override
     public RecipeSerializer<?> getSerializer() {
-        return Hcs.SAPLING_TO_STICK_RECIPE;
+        return Hcs.SAPLING_TO_STICK_RECIPE.get();
     }
 }

@@ -25,7 +25,7 @@ public class DryingRackBlockEntity extends BlockEntity implements EntityBlock {
     public static final long DRYING_LENGTH = 24000 * 2; // 2 days
 
     public DryingRackBlockEntity(BlockPos pos, BlockState state) {
-        super(Hcs.DRYING_RACK_BLOCK_ENTITY, pos, state);
+        super(Hcs.DRYING_RACK_BLOCK_ENTITY.get(), pos, state);
     }
 
     private final NonNullList<ItemStack> inventory = NonNullList.withSize(1, ItemStack.EMPTY);

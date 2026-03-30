@@ -1,5 +1,5 @@
 {
-	"parent": "hcs:block/drying_rack",
+	"parent": "hcsurvival:block/drying_rack",
 	"gui_light": "front",
 	"display": {
 		"thirdperson_righthand": {

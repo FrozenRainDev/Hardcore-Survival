@@ -1,0 +1,22 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "show_notification": true,
+  "ingredients": [
+    {
+      "item": "hcs:grass_fiber"
+    },
+    {
+      "item": "hcs:grass_fiber"
+    },
+    {
+      "item": "hcs:grass_fiber"
+    },
+    {
+      "item": "hcs:fiber_string"
+    }
+  ],
+  "result": {
+    "item": "hcs:improvised_bandage"
+  }
+}

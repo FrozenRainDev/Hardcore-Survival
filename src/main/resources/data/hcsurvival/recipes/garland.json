@@ -1,0 +1,18 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "show_notification": true,
+  "pattern": [
+    "FFF",
+    "F F",
+    "FFF"
+  ],
+  "key": {
+    "F": {
+      "tag": "minecraft:flowers"
+    }
+  },
+  "result": {
+    "item": "hcs:garland"
+  }
+}

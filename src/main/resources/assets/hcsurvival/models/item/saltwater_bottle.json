@@ -1,6 +1,6 @@
 {
   "parent": "minecraft:item/generated",
   "textures": {
-    "layer0": "hcs:item/saltwater_bottle"
+    "layer0": "hcsurvival:item/saltwater_bottle"
   }
 }

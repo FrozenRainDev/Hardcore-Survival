@@ -1,0 +1,13 @@
+{
+  "type": "minecraft:campfire_cooking",
+  "category": "misc",
+  "show_notification": true,
+  "ingredient": [
+    {
+      "item": "minecraft:clay_ball"
+    }
+  ],
+  "result": "minecraft:brick",
+  "experience": 0.35,
+  "cookingtime": 1200
+}

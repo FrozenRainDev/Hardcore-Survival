@@ -19,11 +19,11 @@ public class UnlitTorchBlock extends CrudeTorchBlock {
 
     @Override
     public Item asItem() {
-        return Hcs.UNLIT_TORCH_ITEM;
+        return Hcs.UNLIT_TORCH_ITEM.get();
     }
 
     @Override
     protected Block asBlock() {
-        return Hcs.UNLIT_TORCH_BLOCK;
+        return Hcs.UNLIT_TORCH_BLOCK.get();
     }
 }

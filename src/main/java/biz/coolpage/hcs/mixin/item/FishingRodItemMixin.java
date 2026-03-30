@@ -30,10 +30,10 @@ public abstract class FishingRodItemMixin extends Item {
 
         // fishHook -> fishing (Mojang)
         if (user.fishing == null && EntityHelper.IS_SURVIVAL_LIKE.test(user)) {
-            if (offItem == Hcs.WORM || offItem == Hcs.ROASTED_WORM
-                    || offItem == Hcs.ANIMAL_VISCERA || offItem == Hcs.COOKED_ANIMAL_VISCERA
-                    || offItem == Items.WHEAT || offItem == Hcs.ROASTED_SEEDS
-                    || offItem == Hcs.RAW_MEAT || offItem == Hcs.COOKED_MEAT
+            if (offItem == Hcs.WORM.get() || offItem == Hcs.ROASTED_WORM.get()
+                    || offItem == Hcs.ANIMAL_VISCERA.get() || offItem == Hcs.COOKED_ANIMAL_VISCERA.get()
+                    || offItem == Items.WHEAT || offItem == Hcs.ROASTED_SEEDS.get()
+                    || offItem == Hcs.RAW_MEAT.get() || offItem == Hcs.COOKED_MEAT.get()
                     || offItem == Items.CHICKEN || offItem == Items.COOKED_CHICKEN
                     || offItem == Items.BEEF || offItem == Items.COOKED_BEEF
                     || offItem == Items.PORKCHOP || offItem == Items.COOKED_PORKCHOP

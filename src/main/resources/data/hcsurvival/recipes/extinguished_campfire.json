@@ -1,0 +1,19 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "show_notification": true,
+  "ingredients": [
+    {
+      "item": "hcs:firewood"
+    },
+    {
+      "item": "hcs:firewood"
+    },
+    {
+      "item": "hcs:tinder"
+    }
+  ],
+  "result": {
+    "item": "hcs:extinguished_campfire"
+  }
+}

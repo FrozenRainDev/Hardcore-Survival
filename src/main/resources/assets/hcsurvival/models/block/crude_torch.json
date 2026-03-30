@@ -1,6 +1,6 @@
 {
   "parent": "minecraft:block/template_torch",
   "textures": {
-    "torch": "hcs:block/crude_torch"
+    "torch": "hcsurvival:block/crude_torch"
   }
 }

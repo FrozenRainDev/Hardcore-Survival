@@ -86,6 +86,25 @@
     "structure.RuinedPortalPieceMixin",
     "world.ServerChunkCacheMixin"
   ],
+  "client": [
+    "client.ClientPlayerInteractionManagerMixin",
+    "client.GameOptionsMixin",
+    "client.MinecraftClientMixin",
+    "client.MouseMixin",
+    "client.SoundSystemMixin",
+    "client.gui.AbstractInventoryScreenMixin",
+    "client.gui.DebugHudMixin",
+    "client.gui.InGameHudMixin",
+    "client.gui.InventoryScreenMixin",
+    "client.gui.ScreenMixin",
+    "client.gui.SubtitlesHudMixin",
+    "client.gui.VideoOptionsScreenMixin",
+    "client.render.BuiltinModelItemRendererMixin",
+    "client.render.HeldItemRendererMixin",
+    "client.render.PlayerEntityRendererMixin",
+    "client.render.WorldRendererMixin",
+    "client.ClientPlayerEntityMixin"
+  ],
   "server": [
   ],
   "injectors": {

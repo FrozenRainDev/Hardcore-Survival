@@ -1,6 +1,6 @@
 {
   "parent": "minecraft:item/generated",
   "textures": {
-    "layer0": "hcs:item/spider_gland"
+    "layer0": "hcsurvival:item/spider_gland"
   }
 }

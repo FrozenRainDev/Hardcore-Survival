@@ -25,7 +25,7 @@ public class WallCrudeTorchBlock extends CrudeTorchBlock {
 
     @Override
     protected BlockState getLitBlockStateForUpdate(@NotNull BlockState prevStat) {
-        return Hcs.WALL_BURNING_CRUDE_TORCH_BLOCK.defaultBlockState().setValue(FACING, prevStat.getValue(FACING));
+        return Hcs.WALL_BURNING_CRUDE_TORCH_BLOCK.get().defaultBlockState().setValue(FACING, prevStat.getValue(FACING));
     }
 
     @Override

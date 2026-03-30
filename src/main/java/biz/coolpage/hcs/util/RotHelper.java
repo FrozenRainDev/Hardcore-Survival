@@ -63,10 +63,10 @@ public class RotHelper {
         // Check food spoil enabling config
         if (!Configs.isEnabled(Configs.FOOD_SPOIL)) return false;
         // Check special food types
-        if (item == Hcs.ROT || item == Hcs.WORM || item == Items.ROTTEN_FLESH || item == Items.GOLDEN_APPLE || item == Items.ENCHANTED_GOLDEN_APPLE || item == Items.GOLDEN_CARROT || item == Items.GLISTERING_MELON_SLICE || Hcs.IS_BARK.test(item))
+        if (item == Hcs.ROT.get() || item == Hcs.WORM.get() || item == Items.ROTTEN_FLESH || item == Items.GOLDEN_APPLE || item == Items.ENCHANTED_GOLDEN_APPLE || item == Items.GOLDEN_CARROT || item == Items.GLISTERING_MELON_SLICE || Hcs.IS_BARK.test(item))
             return false;
         String name = item.getDescriptionId();
-        if (item == Hcs.SELAGINELLA || item == Items.SUGAR || item == Items.EGG || item == Items.TURTLE_EGG || item == Items.MILK_BUCKET || item == Items.FERMENTED_SPIDER_EYE || item == Hcs.CACTUS_JUICE || item == Items.CAKE || item == Items.RABBIT_FOOT || item.getDescriptionId().contains("seeds") || name.contains("pumpkin") || name.contains("melon"))
+        if (item == Hcs.SELAGINELLA.get() || item == Items.SUGAR || item == Items.EGG || item == Items.TURTLE_EGG || item == Items.MILK_BUCKET || item == Items.FERMENTED_SPIDER_EYE || item == Hcs.CACTUS_JUICE.get() || item == Items.CAKE || item == Items.RABBIT_FOOT || item.getDescriptionId().contains("seeds") || name.contains("pumpkin") || name.contains("melon"))
             return true;
         return item.isEdible() && item.getFoodProperties() != null && !item.getDefaultInstance().is(ItemTags.FLOWERS);
     }
@@ -86,17 +86,17 @@ public class RotHelper {
         if (item == null) return 7;
         String name = item.getDescriptionId(); // item.getName().toString();
         int packageType = getPackageType(name);
-        if (item == Hcs.POTHERB || item == Hcs.FEARLESSNESS_HERB || item == Hcs.ROASTED_SEEDS || item == Items.PUMPKIN_PIE || item == Items.KELP)
+        if (item == Hcs.POTHERB.get() || item == Hcs.FEARLESSNESS_HERB.get() || item == Hcs.ROASTED_SEEDS.get() || item == Items.PUMPKIN_PIE || item == Items.KELP)
             return 10;
         if (item == Items.WHEAT || name.contains("seeds")) return 500;
-        if (item == Items.MILK_BUCKET || item == Hcs.CACTUS_JUICE) return 2.5F;
+        if (item == Items.MILK_BUCKET || item == Hcs.CACTUS_JUICE.get()) return 2.5F;
         if (item == Items.MELON_SLICE) return 2;
         if (name.contains("_slice")) return 3;
-        if (item == Hcs.ANIMAL_VISCERA || item.getDefaultInstance().is(ItemTags.FISHES)) return 4;
+        if (item == Hcs.ANIMAL_VISCERA.get() || item.getDefaultInstance().is(ItemTags.FISHES)) return 4;
         if (item == Items.APPLE || item == Items.SUGAR_CANE || item == Items.POISONOUS_POTATO || name.contains("melon"))
             return 20;
         if (item == Items.CARROT || item == Items.BEETROOT) return 30;
-        if (item == Items.EGG || item == Items.TURTLE_EGG || item == Hcs.CACTUS_FLESH || item == Hcs.ORANGE || item == Items.POTATO || item == Hcs.GINGER)
+        if (item == Items.EGG || item == Items.TURTLE_EGG || item == Hcs.CACTUS_FLESH.get() || item == Hcs.ORANGE.get() || item == Items.POTATO || item == Hcs.GINGER.get())
             return 45;
         if (name.contains("jerky") || item == Items.COOKIE || item == Items.DRIED_KELP || item == Items.FERMENTED_SPIDER_EYE)
             return 60;
@@ -105,10 +105,10 @@ public class RotHelper {
             return 1000;
         if (packageType == 1 || name.contains("cooked_") || name.contains("baked_") || name.contains("roasted_") || name.contains("steamed_") || name.contains("fried_"))
             return 5;
-        if (item == Items.COCOA_BEANS || item == Items.NETHER_WART || name.contains("pumpkin") || item == Hcs.SELAGINELLA)
+        if (item == Items.COCOA_BEANS || item == Items.NETHER_WART || name.contains("pumpkin") || item == Hcs.SELAGINELLA.get())
             return 80;
         if (!item.isEdible() || item.getFoodProperties() == null) return 7;
-        if (item.getFoodProperties().isMeat() || item == Items.RABBIT_FOOT || item == Hcs.BAT_WINGS) return 5;
+        if (item.getFoodProperties().isMeat() || item == Items.RABBIT_FOOT || item == Hcs.BAT_WINGS.get()) return 5;
         return 7;
     }
 
@@ -222,7 +222,7 @@ public class RotHelper {
                 }
                 if (nbt.contains(isInIcebox ? HFI : HFE)) {
                     if (getExp(stack, isInIcebox) <= level.getGameTime() && getPackageType(item) != 1) {
-                        inv.setItem(i, new ItemStack(Hcs.ROT, stack.getCount()));
+                        inv.setItem(i, new ItemStack(Hcs.ROT.get(), stack.getCount()));
                     }
                 } else createExp(level, stack, isInIcebox);
                 if (nbt.contains(isInIcebox ? HFE : HFI)) {
@@ -293,7 +293,7 @@ public class RotHelper {
         Item item = stack.getItem();
         FoodProperties food = item.getFoodProperties();
         freshLevel = getFreshLevel(getFresh(level, stack));
-        boolean isRot = item == Hcs.ROT;
+        boolean isRot = item == Hcs.ROT.get();
         if (canRot(item) || isRot) {
             switch (isRot ? 0 : freshLevel) {
                 case 0 -> {
@@ -302,16 +302,16 @@ public class RotHelper {
                     if (food != null) foodData.setFoodLevel(foodData.getFoodLevel() - food.getNutrition() + 1);
                     player.addEffect(new MobEffectInstance(MobEffects.CONFUSION, 200));
                     player.addEffect(new MobEffectInstance(MobEffects.POISON, 100));
-                    player.addEffect(new MobEffectInstance(HcsEffects.FOOD_POISONING, 1200));
-                    player.addEffect(new MobEffectInstance(HcsEffects.DIARRHEA, 600));
+                    player.addEffect(new MobEffectInstance(HcsEffects.FOOD_POISONING.get(), 1200));
+                    player.addEffect(new MobEffectInstance(HcsEffects.DIARRHEA.get(), 600));
                 }
                 case 1 -> {
                     sanityManager.add(-0.07);
                     if (food != null)
                         foodData.setFoodLevel(foodData.getFoodLevel() - (int) (Math.min(food.getNutrition() - 1, food.getNutrition() * 0.7)));
-                    player.addEffect(new MobEffectInstance(HcsEffects.FOOD_POISONING, 600));
+                    player.addEffect(new MobEffectInstance(HcsEffects.FOOD_POISONING.get(), 600));
                     player.addEffect(new MobEffectInstance(MobEffects.CONFUSION, 200));
-                    player.addEffect(new MobEffectInstance(HcsEffects.DIARRHEA, 600));
+                    player.addEffect(new MobEffectInstance(HcsEffects.DIARRHEA.get(), 600));
                 }
                 case 2 -> {
                     if (food != null)

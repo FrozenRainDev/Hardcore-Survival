@@ -1,6 +1,6 @@
 {
   "parent": "minecraft:item/generated",
   "textures": {
-    "layer0": "hcs:item/petals_salad"
+    "layer0": "hcsurvival:item/petals_salad"
   }
 }

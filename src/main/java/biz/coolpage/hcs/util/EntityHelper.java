@@ -198,7 +198,7 @@ public class EntityHelper {
             EntityHelper.msgById(player, "hcs.tip.return_failed_interdimention");
             return;
         }
-        player.removeEffect(HcsEffects.RETURN);
+        player.removeEffect(HcsEffects.RETURN.get());
         var spawnPointDimension = ((ServerPlayer) player).getRespawnDimension();
         Level targetLevel = level;
         if (targetLevel.dimension() != spawnPointDimension) {
@@ -346,14 +346,14 @@ public class EntityHelper {
             StatusManager statusManager = ((StatAccessor) player).getStatusManager();
             statusManager.setHasDecimalFoodLevel(false);
             if (statusManager.getRecentLittleOvereatenTicks() > 0) {
-                boolean hasOvereatenEffect = player.hasEffect(HcsEffects.OVEREATEN);
+                boolean hasOvereatenEffect = player.hasEffect(HcsEffects.OVEREATEN.get());
                 int duration = 600;
-                MobEffectInstance overeatenEffect = player.getEffect(HcsEffects.OVEREATEN);
+                MobEffectInstance overeatenEffect = player.getEffect(HcsEffects.OVEREATEN.get());
                 if (overeatenEffect != null) {
                     int sumDur = duration + overeatenEffect.getDuration();
                     duration = Math.min(sumDur, 1200);
                 }
-                player.addEffect(new MobEffectInstance(HcsEffects.OVEREATEN, duration,
+                player.addEffect(new MobEffectInstance(HcsEffects.OVEREATEN.get(), duration,
                         hasOvereatenEffect ? 1 : 0, false, false, true));
             } else statusManager.setRecentLittleOvereatenTicks(1200);
         }
@@ -361,7 +361,7 @@ public class EntityHelper {
 
     public static LivingEntity getHallucinationEntityForPlayer(Level level, LivingEntity originalEntity) {
         if (originalEntity instanceof Player player) {
-            if (level != null && player.hasEffect(HcsEffects.INSANITY) &&
+            if (level != null && player.hasEffect(HcsEffects.INSANITY.get()) &&
                     ((StatAccessor) player).getSanityManager().get() < 0.05) {
                 LivingEntity hallucinationEntity = EntityType.SKELETON.create(level);
                 if (hallucinationEntity != null) {

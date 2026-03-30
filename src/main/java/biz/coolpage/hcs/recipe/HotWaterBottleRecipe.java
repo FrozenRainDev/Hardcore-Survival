@@ -28,7 +28,7 @@ public class HotWaterBottleRecipe extends CustomRecipe {
                 case 0, 2 ->
                         stack.getItem().getDescriptionId().contains(".string") || stack.getItem().getDescriptionId().contains("_string");
                 case 1, 4, 7 ->
-                        (stack.getItem() == Items.POTION && stack.getOrCreateTag().equals(Items.POTION.getDefaultInstance().getOrCreateTag())) || stack.is(Hcs.COLD_WATER_BOTTLE) || stack.is(Hcs.PURIFIED_WATER_BOTTLE);
+                        (stack.getItem() == Items.POTION && stack.getOrCreateTag().equals(Items.POTION.getDefaultInstance().getOrCreateTag())) || stack.is(Hcs.COLD_WATER_BOTTLE.get()) || stack.is(Hcs.PURIFIED_WATER_BOTTLE.get());
                 case 3, 5, 6, 8 -> stack.is(Items.LEATHER);
                 default -> true;
             });
@@ -43,7 +43,7 @@ public class HotWaterBottleRecipe extends CustomRecipe {
 
     @Override
     public ItemStack assemble(CraftingContainer craftingInventory, RegistryAccess dynamicRegistryManager) {
-        return Hcs.HOT_WATER_BOTTLE.getDefaultInstance();
+        return Hcs.HOT_WATER_BOTTLE.get().getDefaultInstance();
     }
 
     @Override
@@ -61,6 +61,6 @@ public class HotWaterBottleRecipe extends CustomRecipe {
 
     @Override
     public RecipeSerializer<?> getSerializer() {
-        return Hcs.HOT_WATER_BOTTLE_RECIPE;
+        return Hcs.HOT_WATER_BOTTLE_RECIPE.get();
     }
 }
