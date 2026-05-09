@@ -11,5 +11,4 @@ public class LargeFireballMixin { // FireballEntityMixin
     protected float onCollision(float power) {
         return power * 2.0F;
     }
-
 }

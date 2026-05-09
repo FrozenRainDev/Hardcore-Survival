@@ -1,5 +1,6 @@
 package biz.coolpage.hcs.mixin.entity.effect;
 
+import biz.coolpage.hcs.Hcs;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.world.effect.MobEffectInstance;
@@ -18,7 +19,7 @@ public class MobEffectUtilMixin { // StatusEffectUtilMixin
     private static void formatDuration(MobEffectInstance instance, float multiplier, CallbackInfoReturnable<Component> cir) {
         if (instance == null) return;
         String key = instance.getDescriptionId();
-        if (key.contains("effect.hcs.") && instance.getDuration() <= 210 && instance.getDuration() > 201) {
+        if (key.contains(Hcs.MOD_ID) && instance.getDuration() <= 210 && instance.getDuration() > 201) {
             String descriptionKey;
             if (IS_EFFECT_NAME_VARIABLE.test(instance.getEffect()))
                 descriptionKey = getEffectVarName(key, instance.getAmplifier());

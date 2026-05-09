@@ -146,7 +146,7 @@ public abstract class PlayerMixin extends LivingEntity implements StatAccessor {
     private static void quitReturnTeleport(@Nullable Entity entity) {
         if (toPlayer(entity) instanceof ServerPlayer player && player.hasEffect(HcsEffects.RETURN.get())) {
             StatusManager statusManager1 = ((StatAccessor) player).getStatusManager();
-            if (statusManager1.getReturnEffectAwaitTicks() > 0) EntityHelper.msgById(player, "hcs.tip.return_failed");
+            if (statusManager1.getReturnEffectAwaitTicks() > 0) EntityHelper.msgById(player, "tip.hcsurvival.return_failed");
             statusManager1.setReturnEffectAwaitTicks(0);
         }
     }
@@ -285,8 +285,14 @@ public abstract class PlayerMixin extends LivingEntity implements StatAccessor {
         nbt.putInt(StatusManager.ENTER_TIMES_NBT, this.statusManager.getEnterCurrWldTimes() + 1);
     }
 
-    @Inject(method = "getDestroySpeed", at = @At("RETURN"), cancellable = true)
-    public void getDestroySpeed(@NotNull BlockState state, @NotNull CallbackInfoReturnable<Float> cir) {
+    // getDestroySpeed is deprecated
+    @Inject(
+            method = "getDigSpeed",
+            at = @At("RETURN"),
+            cancellable = true,
+            remap = false
+    )
+    public void getDigSpeedMix(@NotNull BlockState state, @Nullable BlockPos pos, @NotNull CallbackInfoReturnable<Float> cir) {
         this.statusManager.setRecentMiningTicks(200);
         this.staminaManager.add(-0.00035, this);
         this.staminaManager.pauseRestoring();
@@ -294,10 +300,10 @@ public abstract class PlayerMixin extends LivingEntity implements StatAccessor {
         Item mainHand = this.getMainHandItem().getItem();
         final boolean isShovelMineable = state.is(BlockTags.MINEABLE_WITH_SHOVEL);
         final boolean isKnife = mainHand instanceof KnifeItem, isSword = mainHand instanceof SwordItem, isAxe = mainHand instanceof AxeItem;
-        final boolean digRestrict = this.configManager.get(DIG_CONSTRAIN);
+        final boolean hasDigRestrict = this.configManager.get(DIG_CONSTRAIN);
         Block block = state.getBlock();
 
-        if (digRestrict) {
+        if (hasDigRestrict) {
             if (!DigRestrictHelper.canBreakExceptShovel(mainHand, state)) {
                 if (isShovelMineable) speed /= 30.0F;
                 else speed = -1.0F;
@@ -327,9 +333,9 @@ public abstract class PlayerMixin extends LivingEntity implements StatAccessor {
         }
         boolean shouldBreakInstantly = block instanceof TorchBlock || block instanceof BurningCrudeTorchBlock || (state.is(BlockTags.FLOWERS) && !(block instanceof LeavesBlock));
         boolean shouldVanillaBreakInstantly = Float.compare(block.getExplosionResistance(), 0.060114F) == 0;
-        if (shouldBreakInstantly || (!digRestrict && shouldVanillaBreakInstantly))
+        if (shouldBreakInstantly || (!hasDigRestrict && shouldVanillaBreakInstantly))
             speed = 9999999F;
-        if (digRestrict || shouldVanillaBreakInstantly) cir.setReturnValue(speed);
+        if (hasDigRestrict || shouldVanillaBreakInstantly) cir.setReturnValue(speed);
     }
 
     @Inject(method = "hurt", at = @At("HEAD"))
@@ -532,11 +538,11 @@ public abstract class PlayerMixin extends LivingEntity implements StatAccessor {
                     sanDecrement = 0.00006;
                     hasDarkDebuff = true;
                     final int currDarkTicks = this.statusManager.getInDarknessTicks();
-                    if (currDarkTicks == 60) EntityHelper.msgById(this, "hcs.tip.dark.warn");
+                    if (currDarkTicks == 60) EntityHelper.msgById(this, "tip.hcsurvival.dark.warn");
                     else if (currDarkTicks > 60) {
                         sanDecrement = 0.0002;
                         this.moodManager.setPanic(4.0);
-                        if (currDarkTicks == 340) EntityHelper.msgById(this, "hcs.tip.dark.closer");
+                        if (currDarkTicks == 340) EntityHelper.msgById(this, "tip.hcsurvival.dark.closer");
                         else if (currDarkTicks > 720) {
                             sanDecrement = 0.1;
                             if (currDarkTicks > 800 && currDarkTicks % 10 == 0)
@@ -556,7 +562,7 @@ public abstract class PlayerMixin extends LivingEntity implements StatAccessor {
         }
         if (outOfDarkness) {
             this.statusManager.setInDarknessTicks(0);
-            if (this.statusManager.getLastInDarknessTicks() >= 60) EntityHelper.msgById(this, "hcs.tip.dark.fade");
+            if (this.statusManager.getLastInDarknessTicks() >= 60) EntityHelper.msgById(this, "tip.hcsurvival.dark.fade");
         }
         if (this.hasEffect(MobEffects.DAMAGE_BOOST)) this.staminaManager.reset();
         this.staminaManager.setLastVecPos(this.position());

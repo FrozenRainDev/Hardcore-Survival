@@ -4,10 +4,10 @@
   "show_notification": true,
   "ingredient": [
     {
-      "item": "hcs:tinder"
+      "item": "hcsurvival:tinder"
     }
   ],
-  "result": "hcs:ashes",
+  "result": "hcsurvival:ashes",
   "experience": 0.0,
   "cookingtime": 50
 }

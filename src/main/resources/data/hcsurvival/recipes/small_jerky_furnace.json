@@ -4,10 +4,10 @@
   "show_notification": true,
   "ingredient": [
     {
-      "item": "hcs:raw_small_jerky"
+      "item": "hcsurvival:raw_small_jerky"
     }
   ],
-  "result": "hcs:small_jerky",
+  "result": "hcsurvival:small_jerky",
   "experience": 0.35,
   "cookingtime": 200
 }

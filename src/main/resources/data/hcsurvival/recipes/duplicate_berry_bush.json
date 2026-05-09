@@ -4,7 +4,7 @@
   "show_notification": true,
   "ingredients": [
     {
-      "item": "hcs:berry_bush"
+      "item": "hcsurvival:berry_bush"
     },
     {
       "item": "minecraft:bone_meal"
@@ -32,7 +32,7 @@
     }
   ],
   "result": {
-    "item": "hcs:berry_bush",
+    "item": "hcsurvival:berry_bush",
     "count": 2
   }
 }

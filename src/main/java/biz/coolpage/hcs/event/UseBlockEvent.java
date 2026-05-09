@@ -60,9 +60,9 @@ public class UseBlockEvent {
                 int hour = WorldHelper.getTimeAsReal(world)[0];
                 boolean b3 = hour > 6 && hour < 21 && world.isNight();
                 if (b1 || b2 || b3) {
-                    if (b1) EntityHelper.msgById(serverPlayer, "hcs.tip.too_pain_to_sleep");
-                    else if (b2) EntityHelper.msgById(serverPlayer, "hcs.tip.insanity_insomnia");
-                    else EntityHelper.msgById(serverPlayer, "hcs.tip.too_early_to_sleep");
+                    if (b1) EntityHelper.msgById(serverPlayer, "tip.hcsurvival.too_pain_to_sleep");
+                    else if (b2) EntityHelper.msgById(serverPlayer, "tip.hcsurvival.insanity_insomnia");
+                    else EntityHelper.msgById(serverPlayer, "tip.hcsurvival.too_early_to_sleep");
                     serverPlayer.setRespawnPosition(world.dimension(), pos, 0.0f, false, true);
                     EntityHelper.msgById(serverPlayer, "block.minecraft.set_spawn", false);
                     event.setCanceled(true);

@@ -4,7 +4,7 @@
   "show_notification": true,
   "ingredients": [
     {
-      "item": "hcs:tinder"
+      "item": "hcsurvival:tinder"
     },
     {
       "tag": "minecraft:planks",
@@ -12,6 +12,6 @@
     }
   ],
   "result": {
-    "item": "hcs:extinguished_campfire"
+    "item": "hcsurvival:extinguished_campfire"
   }
 }

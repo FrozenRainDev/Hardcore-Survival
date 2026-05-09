@@ -4,10 +4,10 @@
   "show_notification": true,
   "ingredient": [
     {
-      "item": "hcs:animal_viscera"
+      "item": "hcsurvival:animal_viscera"
     }
   ],
-  "result": "hcs:cooked_animal_viscera",
+  "result": "hcsurvival:cooked_animal_viscera",
   "experience": 0.35,
   "cookingtime": 100
 }

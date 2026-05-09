@@ -30,6 +30,7 @@ import net.minecraft.world.item.ShieldItem;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LightLayer;
 import net.minecraft.world.level.biome.Biome;
+import org.jetbrains.annotations.NotNull;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -52,7 +53,7 @@ public abstract class ServerPlayerMixin extends Player {
     private static final String SPONSOR_URL = "https://hcs.coolpage.biz/sponsorship.html";
 
     @Shadow
-    public abstract boolean hurt(DamageSource source, float amount);
+    public abstract boolean hurt(@NotNull DamageSource source, float amount);
 
     @Shadow
     public abstract boolean isCreative();
@@ -82,8 +83,8 @@ public abstract class ServerPlayerMixin extends Player {
             int enterWorldTimes = statusManager.getEnterCurrWldTimes();
             if (enterWorldTimes > 0 && enterWorldTimes % 5 == 0)
                 this.sendSystemMessage(Component.literal("\n")
-                        .append(Component.translatable("hcs.tip.sponsor", enterWorldTimes))
-                        .append(Component.translatable("hcs.tip.sponsor_link")
+                        .append(Component.translatable("tip.hcsurvival.sponsor", enterWorldTimes))
+                        .append(Component.translatable("tip.hcsurvival.sponsor_link")
                                 .withStyle(style -> style.withUnderlined(true).withColor(ChatFormatting.AQUA)
                                         .withClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, SPONSOR_URL)))));
             statusManager.setHasCheckInitTips(true);
@@ -165,8 +166,8 @@ public abstract class ServerPlayerMixin extends Player {
         final double currSan = sanityManager.get();
         if (currSan < 0.3) {
             EntityHelper.addHcsDebuff(this, HcsEffects.INSANITY.get(), currSan < 0.15 ? (currSan < 0.1 ? (currSan < 0.05 ? 3 : 2) : 1) : 0);
-            if (currSan < 0.05)
-                this.addEffect(new MobEffectInstance(MobEffects.DARKNESS, 50, 0, false, false, false));
+//            if (currSan < 0.05)
+//                this.addEffect(new MobEffectInstance(MobEffects.DARKNESS, 50, 0, false, false, false));
         }
 
         double vegetable = ((StatAccessor) this).getNutritionManager().getVegetable();

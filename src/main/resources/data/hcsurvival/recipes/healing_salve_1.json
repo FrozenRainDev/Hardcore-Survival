@@ -4,19 +4,19 @@
   "show_notification": true,
   "ingredients": [
     {
-      "item": "hcs:spider_gland"
+      "item": "hcsurvival:spider_gland"
     },
     {
       "item": "minecraft:bowl"
     },
     {
-      "item": "hcs:ashes"
+      "item": "hcsurvival:ashes"
     },
     {
-      "item": "hcs:stone_cone"
+      "item": "hcsurvival:stone_cone"
     }
   ],
   "result": {
-    "item": "hcs:healing_salve"
+    "item": "hcsurvival:healing_salve"
   }
 }

@@ -67,9 +67,9 @@ public class ChestBlockMixin {
             if (isNaturallyGen(state)) {
                 cir.setReturnValue(InteractionResult.SUCCESS);
                 if (mainHand instanceof PickaxeItem) {
-                    EntityHelper.msgById(player, "hcs.tip.unlocked");
+                    EntityHelper.msgById(player, "tip.hcsurvival.unlocked");
                     world.setBlock(pos, state.setValue(NATURALLY_GENERATED, false), 3);
-                } else EntityHelper.msgById(player, "hcs.tip.need_unlock");
+                } else EntityHelper.msgById(player, "tip.hcsurvival.need_unlock");
             }
         }
     }

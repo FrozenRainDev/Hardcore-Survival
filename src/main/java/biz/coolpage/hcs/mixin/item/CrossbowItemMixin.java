@@ -29,7 +29,7 @@ public abstract class CrossbowItemMixin extends ProjectileWeaponItem {
         if (reachRangeAddition > 0.0F) {
             // Text.translatable -> Component.translatable
             // Formatting -> ChatFormatting
-            tooltip.add(Component.translatable(Component.translatable("hcs.tip.reach_range_addition").getString() + reachRangeAddition).withStyle(ChatFormatting.DARK_GREEN));
+            tooltip.add(Component.translatable(Component.translatable("tip.hcsurvival.reach_range_addition").getString() + reachRangeAddition).withStyle(ChatFormatting.DARK_GREEN));
         }
     }
 }

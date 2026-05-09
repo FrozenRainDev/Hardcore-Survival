@@ -4,7 +4,7 @@
   "show_notification": true,
   "ingredients": [
     {
-      "item": "hcs:pumpkin_slice"
+      "item": "hcsurvival:pumpkin_slice"
     }
   ],
   "result": {

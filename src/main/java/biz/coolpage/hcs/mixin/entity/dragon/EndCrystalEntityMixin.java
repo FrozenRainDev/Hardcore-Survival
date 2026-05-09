@@ -19,7 +19,7 @@ public class EndCrystalEntityMixin {
     public void hurt(@NotNull DamageSource source, float amount, CallbackInfoReturnable<Boolean> cir) {
         if (source.getEntity() instanceof ServerPlayer player) {
             if (!player.getMainHandItem().is(Items.NETHERITE_PICKAXE)) {
-                EntityHelper.msgById(player, "hcs.tip.need_netherite_pickaxe");
+                EntityHelper.msgById(player, "tip.hcsurvival.need_netherite_pickaxe");
                 cir.setReturnValue(false);
             } else EntityHelper.lightningStrike(player);
         } else cir.setReturnValue(false);

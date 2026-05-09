@@ -4,13 +4,13 @@
   "show_notification": true,
   "ingredients": [
     {
-      "item": "hcs:rock"
+      "item": "hcsurvival:rock"
     },
     {
-      "item": "hcs:rock"
+      "item": "hcsurvival:rock"
     }
   ],
   "result": {
-    "item": "hcs:sharp_rock"
+    "item": "hcsurvival:sharp_rock"
   }
 }

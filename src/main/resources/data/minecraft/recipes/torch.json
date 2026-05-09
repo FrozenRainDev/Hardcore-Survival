@@ -1,5 +1,5 @@
 {
-  "type": "hcs:torch_ignite",
+  "type": "hcsurvival:torch_ignite",
   "category": "misc",
   "show_notification": true,
   "ingredients": [
@@ -7,7 +7,7 @@
       "item": "minecraft:flint_and_steel"
     },
     {
-      "item": "hcs:unlit_torch"
+      "item": "hcsurvival:unlit_torch"
     }
   ],
   "result": {

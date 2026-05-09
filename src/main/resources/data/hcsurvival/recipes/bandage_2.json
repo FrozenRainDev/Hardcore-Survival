@@ -7,14 +7,14 @@
       "tag": "minecraft:wool"
     },
     "S": {
-      "item": "hcs:fiber_string"
+      "item": "hcsurvival:fiber_string"
     }
   },
   "pattern": [
     "SWS"
   ],
   "result": {
-    "item": "hcs:bandage",
+    "item": "hcsurvival:bandage",
     "count": 8
   }
 }

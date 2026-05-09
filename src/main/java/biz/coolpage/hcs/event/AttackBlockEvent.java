@@ -39,7 +39,7 @@ public class AttackBlockEvent {
             if (blockEntity instanceof ChestBlockEntity) {
                 ChestBlock chestBlock = (ChestBlock) state.getBlock();
                 if (!Objects.requireNonNull(ChestBlock.getContainer(chestBlock, state, world, pos, true)).isEmpty()) {
-                    EntityHelper.msgById(player, "hcs.tip.cant_break_chest");
+                    EntityHelper.msgById(player, "tip.hcsurvival.cant_break_chest");
                     Hcs.info("Don't worry when the mismatch warning comes out. It is just a normal result after prevent player from attacking a nonempty chest.");
                     event.setCanceled(true);
                     event.setCancellationResult(InteractionResult.SUCCESS);
@@ -51,7 +51,7 @@ public class AttackBlockEvent {
                 if (mainHand == Items.BONE) {
                     world.levelEvent(2001, pos, Block.getId(state));
                     mainHandStack.shrink(1);
-                    EntityHelper.msgById(player, "hcs.tip.chip_succeed");
+                    EntityHelper.msgById(player, "tip.hcsurvival.chip_succeed");
                     EntityHelper.dropItem(player, Hcs.SHARP_BROKEN_BONE.get());
                 }
             }

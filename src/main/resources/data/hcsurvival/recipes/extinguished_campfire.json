@@ -4,16 +4,16 @@
   "show_notification": true,
   "ingredients": [
     {
-      "item": "hcs:firewood"
+      "item": "hcsurvival:firewood"
     },
     {
-      "item": "hcs:firewood"
+      "item": "hcsurvival:firewood"
     },
     {
-      "item": "hcs:tinder"
+      "item": "hcsurvival:tinder"
     }
   ],
   "result": {
-    "item": "hcs:extinguished_campfire"
+    "item": "hcsurvival:extinguished_campfire"
   }
 }

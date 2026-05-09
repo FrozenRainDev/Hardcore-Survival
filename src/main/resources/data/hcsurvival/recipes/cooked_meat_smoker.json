@@ -4,10 +4,10 @@
   "show_notification": true,
   "ingredient": [
     {
-      "item": "hcs:raw_meat"
+      "item": "hcsurvival:raw_meat"
     }
   ],
-  "result": "hcs:cooked_meat",
+  "result": "hcsurvival:cooked_meat",
   "experience": 0.35,
   "cookingtime": 100
 }

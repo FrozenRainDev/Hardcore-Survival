@@ -78,6 +78,6 @@ public class BandageItem extends Item {
     @Override
     public void appendHoverText(ItemStack stack, @Nullable Level world, List<Component> tooltip, TooltipFlag context) {
         super.appendHoverText(stack, world, tooltip, context);
-        tooltip.add(Component.translatable("hcs.tip.bandage_heal").withStyle(ChatFormatting.GRAY));
+        tooltip.add(Component.translatable("tip.hcsurvival.bandage_heal").withStyle(ChatFormatting.GRAY));
     }
 }

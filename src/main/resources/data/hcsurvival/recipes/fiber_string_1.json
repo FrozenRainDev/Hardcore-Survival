@@ -4,16 +4,16 @@
   "show_notification": true,
   "ingredients": [
     {
-      "item": "hcs:grass_fiber"
+      "item": "hcsurvival:grass_fiber"
     },
     {
-      "item": "hcs:grass_fiber"
+      "item": "hcsurvival:grass_fiber"
     },
     {
-      "item": "hcs:grass_fiber"
+      "item": "hcsurvival:grass_fiber"
     }
   ],
   "result": {
-    "item": "hcs:fiber_string"
+    "item": "hcsurvival:fiber_string"
   }
 }

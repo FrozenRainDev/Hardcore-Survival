@@ -58,7 +58,7 @@ public class EntityHelper {
     public static double ZOMBIE_SENSING_RANGE = 40.0;
     public static final float HOLDING_BLOCK_REACHING_RANGE_ADDITION = 1.0F;
 
-    // 注意：DamageTypes 需要根据实际的 damage type tags 进行调整
+    // Note: DamageTypes need to be adjusted according to the actual damage type tags
     public static final Predicate<DamageSource> IS_PHYSICAL_DAMAGE = damageSource ->
             !damageSource.is(net.minecraft.tags.DamageTypeTags.IS_DROWNING) &&
                     !damageSource.is(net.minecraft.tags.DamageTypeTags.BYPASSES_ARMOR) &&
@@ -195,7 +195,7 @@ public class EntityHelper {
     public static void teleportPlayerToSpawn(@NotNull Level level, Player player, boolean allowInterdimensional) {
         if (level.isClientSide) return;
         if (!canDoTeleport(level, player, allowInterdimensional)) {
-            EntityHelper.msgById(player, "hcs.tip.return_failed_interdimention");
+            EntityHelper.msgById(player, "tip.hcsurvival.return_failed_interdimention");
             return;
         }
         player.removeEffect(HcsEffects.RETURN.get());

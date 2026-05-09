@@ -15,10 +15,10 @@
       "item": "minecraft:glass_pane"
     },
     "R": {
-      "item": "hcs:rot"
+      "item": "hcsurvival:rot"
     }
   },
   "result": {
-    "item": "hcs:booster_shot"
+    "item": "hcsurvival:booster_shot"
   }
 }

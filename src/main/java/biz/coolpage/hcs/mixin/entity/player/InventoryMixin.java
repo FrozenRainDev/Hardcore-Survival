@@ -29,7 +29,7 @@ import static biz.coolpage.hcs.util.CommUtil.applyNullable;
 import static biz.coolpage.hcs.util.EntityHelper.IS_SURVIVAL_AND_SERVER;
 
 @Mixin(Inventory.class)
-public abstract class PlayerInventoryMixin {
+public abstract class InventoryMixin {
     @Final
     @Shadow
     public Player player;

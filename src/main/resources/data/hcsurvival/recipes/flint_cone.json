@@ -4,10 +4,10 @@
   "show_notification": true,
   "ingredients": [
     {
-      "item": "hcs:sharp_flint"
+      "item": "hcsurvival:sharp_flint"
     }
   ],
   "result": {
-    "item": "hcs:flint_cone"
+    "item": "hcsurvival:flint_cone"
   }
 }

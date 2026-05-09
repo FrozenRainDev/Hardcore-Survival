@@ -43,7 +43,7 @@ public class IceboxBlockEntity extends RandomizableContainerBlockEntity implemen
 
     @Override
     protected Component getDefaultName() {
-        return Component.translatable("block.hcs.icebox");
+        return Component.translatable("block.hcsurvival.icebox");
     }
 
     @Override

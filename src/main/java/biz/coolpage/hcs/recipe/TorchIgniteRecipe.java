@@ -24,7 +24,7 @@ public class TorchIgniteRecipe extends CustomRecipe {
     }
 
     @Override
-    public boolean matches(@NotNull CraftingContainer inventory, Level world) {
+    public boolean matches(@NotNull CraftingContainer inventory, @NotNull Level world) {
         int flintSteel = 0, unlitTorch = 0, others = 0;
         this.isCrudeTorch = false;
         this.flintSteelDamage = 0;
@@ -43,7 +43,7 @@ public class TorchIgniteRecipe extends CustomRecipe {
     }
 
     @Override
-    public ItemStack assemble(CraftingContainer inventory, RegistryAccess dynamicRegistryManager) {
+    public @NotNull ItemStack assemble(@NotNull CraftingContainer inventory, @NotNull RegistryAccess dynamicRegistryManager) {
         if (isCrudeTorch && !WorldHelper.cannotGetServerWorld()) {
             ItemStack stack = Hcs.BURNING_CRUDE_TORCH_ITEM.get().getDefaultInstance();
             BurningCrudeTorchItem.initDurData(WorldHelper.getServerWorld(), stack);
@@ -58,7 +58,7 @@ public class TorchIgniteRecipe extends CustomRecipe {
     }
 
     @Override
-    public NonNullList<ItemStack> getRemainingItems(@NotNull CraftingContainer inventory) {
+    public @NotNull NonNullList<ItemStack> getRemainingItems(@NotNull CraftingContainer inventory) {
         NonNullList<ItemStack> list = NonNullList.withSize(inventory.getContainerSize(), ItemStack.EMPTY);
         if (this.flintSteelDamage <= Items.FLINT_AND_STEEL.getMaxDamage()) {
             ItemStack stack = new ItemStack(Items.FLINT_AND_STEEL);
@@ -69,7 +69,7 @@ public class TorchIgniteRecipe extends CustomRecipe {
     }
 
     @Override
-    public RecipeSerializer<?> getSerializer() {
+    public @NotNull RecipeSerializer<?> getSerializer() {
         return Hcs.TORCH_IGNITE_RECIPE.get();
     }
 }

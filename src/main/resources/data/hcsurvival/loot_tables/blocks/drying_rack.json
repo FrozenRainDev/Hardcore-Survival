@@ -6,7 +6,7 @@
       "entries": [
         {
           "type": "minecraft:item",
-          "name": "hcs:drying_rack"
+          "name": "hcsurvival:drying_rack"
         }
       ],
       "conditions": [

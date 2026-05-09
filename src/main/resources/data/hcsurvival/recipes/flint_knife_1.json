@@ -8,16 +8,16 @@
   ],
   "key": {
     "A": {
-      "item": "hcs:sharp_flint"
+      "item": "hcsurvival:sharp_flint"
     },
     "B": {
-      "item": "hcs:short_stick"
+      "item": "hcsurvival:short_stick"
     },
     "C": {
-      "item": "hcs:fiber_string"
+      "item": "hcsurvival:fiber_string"
     }
   },
   "result": {
-    "item": "hcs:flint_knife"
+    "item": "hcsurvival:flint_knife"
   }
 }

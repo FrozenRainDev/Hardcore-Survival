@@ -7,7 +7,7 @@
       "item": "minecraft:carrot"
     }
   ],
-  "result": "hcs:cooked_carrot",
+  "result": "hcsurvival:cooked_carrot",
   "experience": 0.35,
   "cookingtime": 400
 }

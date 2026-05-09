@@ -4,10 +4,10 @@
   "show_notification": true,
   "ingredients": [
     {
-      "item": "hcs:willow_bark"
+      "item": "hcsurvival:willow_bark"
     }
   ],
   "result": {
-    "item": "hcs:tinder"
+    "item": "hcsurvival:tinder"
   }
 }

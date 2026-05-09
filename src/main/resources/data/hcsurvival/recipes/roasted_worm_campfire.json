@@ -4,10 +4,10 @@
   "show_notification": true,
   "ingredient": [
     {
-      "item": "hcs:worm"
+      "item": "hcsurvival:worm"
     }
   ],
-  "result": "hcs:roasted_worm",
+  "result": "hcsurvival:roasted_worm",
   "experience": 0.35,
   "cookingtime": 400
 }

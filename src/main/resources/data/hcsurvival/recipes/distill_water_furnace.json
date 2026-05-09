@@ -4,10 +4,10 @@
   "show_notification": true,
   "ingredient": [
     {
-      "item": "hcs:saltwater_bottle"
+      "item": "hcsurvival:saltwater_bottle"
     }
   ],
-  "result": "hcs:purified_water_bottle",
+  "result": "hcsurvival:purified_water_bottle",
   "experience": 0.35,
   "cookingtime": 200
 }

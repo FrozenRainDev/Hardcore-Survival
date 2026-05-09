@@ -8,16 +8,16 @@
   ],
   "key": {
     "A": {
-      "item": "hcs:sharp_flint"
+      "item": "hcsurvival:sharp_flint"
     },
     "B": {
       "item": "minecraft:stick"
     },
     "C": {
-      "item": "hcs:fiber_string"
+      "item": "hcsurvival:fiber_string"
     }
   },
   "result": {
-    "item": "hcs:flint_spear"
+    "item": "hcsurvival:flint_spear"
   }
 }

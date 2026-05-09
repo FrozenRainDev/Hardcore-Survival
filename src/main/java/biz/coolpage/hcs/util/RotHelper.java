@@ -255,21 +255,21 @@ public class RotHelper {
     public static MutableComponent getModifierText(Level level, @NotNull ItemStack stack) {
         boolean isInIcebox = stack.getOrCreateTag().contains(HFI);
         if (level == null || (!stack.getOrCreateTag().contains(HFE) && !isInIcebox))
-            return Component.translatable("hcs.food_info.fresh").withStyle(ChatFormatting.DARK_GREEN);
+            return Component.translatable("tip.hcsurvival.food.fresh").withStyle(ChatFormatting.DARK_GREEN);
         float fresh = getFresh(level, stack, isInIcebox);
         int freshLv = getFreshLevel(fresh);
         MutableComponent modifier = Component.empty();
         if (freshLv >= 3)
-            modifier.append(Component.translatable("hcs.food_info.fresh").withStyle(ChatFormatting.DARK_GREEN));
-        else if (freshLv == 2) modifier.append(Component.translatable("hcs.food_info.stale").withStyle(ChatFormatting.YELLOW));
-        else if (freshLv == 1) modifier.append(Component.translatable("hcs.food_info.spoiled").withStyle(ChatFormatting.RED));
+            modifier.append(Component.translatable("tip.hcsurvival.food.fresh").withStyle(ChatFormatting.DARK_GREEN));
+        else if (freshLv == 2) modifier.append(Component.translatable("tip.hcsurvival.food.stale").withStyle(ChatFormatting.YELLOW));
+        else if (freshLv == 1) modifier.append(Component.translatable("tip.hcsurvival.food.spoiled").withStyle(ChatFormatting.RED));
         else {
-            modifier.append(Component.translatable("hcs.food_info.rotten").withStyle(ChatFormatting.DARK_RED));
+            modifier.append(Component.translatable("tip.hcsurvival.food.rotten").withStyle(ChatFormatting.DARK_RED));
             if (getPackageType(stack.getItem()) == 1)
-                modifier.append(Component.translatable("hcs.food_info.pour").withStyle(ChatFormatting.GRAY));
+                modifier.append(Component.translatable("tip.hcsurvival.food.pour").withStyle(ChatFormatting.GRAY));
             return modifier;
         }
-//        modifier.append(Component.translatable("hcs.food_info.expiry", (int) Math.ceil(Math.max(getExpDate(stack.getItem()) * fresh * (isInIcebox ? 3 : 1), 0.1F))).withStyle(ChatFormatting.GRAY));
+//        modifier.append(Component.translatable("tip.hcsurvival.food.expiry", (int) Math.ceil(Math.max(getExpDate(stack.getItem()) * fresh * (isInIcebox ? 3 : 1), 0.1F))).withStyle(ChatFormatting.GRAY));
         return modifier;
     }
 

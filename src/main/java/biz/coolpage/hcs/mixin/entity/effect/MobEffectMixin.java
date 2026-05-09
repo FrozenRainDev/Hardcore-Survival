@@ -8,7 +8,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Redirect;
 
 @Mixin(MobEffect.class)
-public class StatusEffectMixin {
+public class MobEffectMixin {
     @Redirect(method = "applyEffectTick", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/player/Player;causeFoodExhaustion(F)V"))
     private void applyEffectTick(@NotNull Player player, float exhaustion) {
         player.getFoodData().addExhaustion(exhaustion);

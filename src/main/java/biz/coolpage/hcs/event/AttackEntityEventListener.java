@@ -40,13 +40,13 @@ public class AttackEntityEventListener { // 修改了类名，避免冲突
 
             int panic = EntityHelper.getEffectAmplifier(player, HcsEffects.PANIC.get());
             if (panic > -1 && rand < Math.min(0.6, (panic + 1) / HcsDifficulty.chooseVal(player, -1.0, 15.0, 9.0))) {
-                EntityHelper.msgById(player, "hcs.tip.attack_failed");
+                EntityHelper.msgById(player, "tip.hcsurvival.attack_failed");
                 event.setCanceled(true); // 现在可以正确识别该方法
                 return;
             }
 
             if (EntityHelper.IS_BAREHANDED.and(IS_SURVIVAL_AND_SERVER).test(player) && rand < 0.3) {
-                EntityHelper.msgById(player, "hcs.tip.hurt_hand_attack");
+                EntityHelper.msgById(player, "tip.hcsurvival.hurt_hand_attack");
                 player.hurt(player.level().damageSources().generic(), 0.3F);
             }
         }

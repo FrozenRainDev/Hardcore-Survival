@@ -9,13 +9,13 @@
   ],
   "key": {
     "F": {
-      "item": "hcs:fiber_string"
+      "item": "hcsurvival:fiber_string"
     },
     "S": {
       "item": "minecraft:stick"
     }
   },
   "result": {
-    "item": "hcs:drying_rack"
+    "item": "hcsurvival:drying_rack"
   }
 }

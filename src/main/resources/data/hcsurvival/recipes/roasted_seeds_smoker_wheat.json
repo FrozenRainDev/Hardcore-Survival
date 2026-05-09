@@ -7,7 +7,7 @@
       "item": "minecraft:wheat_seeds"
     }
   ],
-  "result": "hcs:roasted_seeds",
+  "result": "hcsurvival:roasted_seeds",
   "experience": 0.1,
   "cookingtime": 50
 }

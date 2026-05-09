@@ -4,10 +4,10 @@
   "show_notification": true,
   "ingredient": [
     {
-      "item": "hcs:cactus_flesh"
+      "item": "hcsurvival:cactus_flesh"
     }
   ],
-  "result": "hcs:cooked_cactus_flesh",
+  "result": "hcsurvival:cooked_cactus_flesh",
   "experience": 0.35,
   "cookingtime": 200
 }

@@ -4,31 +4,31 @@
   "show_notification": true,
   "ingredients": [
     {
-      "item": "hcs:raw_copper_powder"
+      "item": "hcsurvival:raw_copper_powder"
     },
     {
-      "item": "hcs:raw_copper_powder"
+      "item": "hcsurvival:raw_copper_powder"
     },
     {
-      "item": "hcs:raw_copper_powder"
+      "item": "hcsurvival:raw_copper_powder"
     },
     {
-      "item": "hcs:raw_copper_powder"
+      "item": "hcsurvival:raw_copper_powder"
     },
     {
-      "item": "hcs:raw_copper_powder"
+      "item": "hcsurvival:raw_copper_powder"
     },
     {
-      "item": "hcs:raw_copper_powder"
+      "item": "hcsurvival:raw_copper_powder"
     },
     {
-      "item": "hcs:raw_copper_powder"
+      "item": "hcsurvival:raw_copper_powder"
     },
     {
-      "item": "hcs:raw_copper_powder"
+      "item": "hcsurvival:raw_copper_powder"
     },
     {
-      "item": "hcs:raw_copper_powder"
+      "item": "hcsurvival:raw_copper_powder"
     }
   ],
   "result": {

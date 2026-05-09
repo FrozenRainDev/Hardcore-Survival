@@ -4,10 +4,10 @@
   "show_notification": true,
   "ingredients": [
     {
-      "item": "hcs:sharp_rock"
+      "item": "hcsurvival:sharp_rock"
     }
   ],
   "result": {
-    "item": "hcs:stone_cone"
+    "item": "hcsurvival:stone_cone"
   }
 }

@@ -47,7 +47,6 @@ import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.material.MapColor;
-import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.brewing.BrewingRecipeRegistry;
 import net.minecraftforge.event.BuildCreativeModeTabContentsEvent;
@@ -58,7 +57,6 @@ import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.config.ModConfig;
-import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.registries.DeferredRegister;
@@ -225,7 +223,7 @@ public final class Hcs {
                 @Contract(pure = true)
                 @Override
                 public @NotNull String getDescriptionId(@NotNull ItemStack stack) {
-                    return "item.hcs.improvised_shield";
+                    return "item.hcsurvival.improvised_shield";
                 }
             }),
             BAT_WINGS = ITEMS.register("bat_wings", () -> new EffectiveFoodItem(new Item.Properties().food(new FoodProperties.Builder().nutrition(1).saturationMod(1.0f).effect(() -> new MobEffectInstance(MobEffects.CONFUSION, 200), 1).effect(() -> new MobEffectInstance(HcsEffects.DIARRHEA.get(), 200), 0.7F).build()), 0.0F, -0.06)),
@@ -288,14 +286,14 @@ public final class Hcs {
 
     // --- Recipe Serializers ---
     public static final RegistryObject<RecipeSerializer<?>>
-            EXTRACT_WATER_FROM_BAMBOO_RECIPE = RECIPE_SERIALIZERS.register("hcs_extract_water_from_bamboo", () -> new SimpleCraftingRecipeSerializer<>(ExtractWaterFromBambooRecipe::new)),
-            EXTRACT_WATER_FROM_SNOW_RECIPE = RECIPE_SERIALIZERS.register("hcs_extract_water_from_snow", () -> new SimpleCraftingRecipeSerializer<>(ExtractWaterFromSnowRecipe::new)),
-            PETALS_SALAD_RECIPE = RECIPE_SERIALIZERS.register("hcs_petals_salad", () -> new SimpleCraftingRecipeSerializer<>(PetalsSaladRecipe::new)),
-            SPIKED_CLUB_RECIPE = RECIPE_SERIALIZERS.register("hcs_spiked_club_recipe", () -> new SimpleCraftingRecipeSerializer<>(SpikedClubRecipe::new)),
-            COLD_WATER_BOTTLE_RECIPE = RECIPE_SERIALIZERS.register("hcs_cold_water_bottle_recipe", () -> new SimpleCraftingRecipeSerializer<>(ColdWaterBottleRecipe::new)),
-            HOT_WATER_BOTTLE_RECIPE = RECIPE_SERIALIZERS.register("hcs_hot_water_bottle_recipe", () -> new SimpleCraftingRecipeSerializer<>(HotWaterBottleRecipe::new)),
-            SAPLING_TO_STICK_RECIPE = RECIPE_SERIALIZERS.register("hcs_sapling_to_stick_recipe", () -> new SimpleCraftingRecipeSerializer<>(SaplingToStickRecipe::new)),
-            POUR_OUT_CONTENT_RECIPE = RECIPE_SERIALIZERS.register("hcs_pour_out_content_recipe", () -> new SimpleCraftingRecipeSerializer<>(PourOutContentRecipe::new)),
+            EXTRACT_WATER_FROM_BAMBOO_RECIPE = RECIPE_SERIALIZERS.register("extract_water_from_bamboo", () -> new SimpleCraftingRecipeSerializer<>(ExtractWaterFromBambooRecipe::new)),
+            EXTRACT_WATER_FROM_SNOW_RECIPE = RECIPE_SERIALIZERS.register("extract_water_from_snow", () -> new SimpleCraftingRecipeSerializer<>(ExtractWaterFromSnowRecipe::new)),
+            PETALS_SALAD_RECIPE = RECIPE_SERIALIZERS.register("petals_salad", () -> new SimpleCraftingRecipeSerializer<>(PetalsSaladRecipe::new)),
+            SPIKED_CLUB_RECIPE = RECIPE_SERIALIZERS.register("spiked_club_recipe", () -> new SimpleCraftingRecipeSerializer<>(SpikedClubRecipe::new)),
+            COLD_WATER_BOTTLE_RECIPE = RECIPE_SERIALIZERS.register("cold_water_bottle_recipe", () -> new SimpleCraftingRecipeSerializer<>(ColdWaterBottleRecipe::new)),
+            HOT_WATER_BOTTLE_RECIPE = RECIPE_SERIALIZERS.register("hot_water_bottle_recipe", () -> new SimpleCraftingRecipeSerializer<>(HotWaterBottleRecipe::new)),
+            SAPLING_TO_STICK_RECIPE = RECIPE_SERIALIZERS.register("sapling_to_stick_recipe", () -> new SimpleCraftingRecipeSerializer<>(SaplingToStickRecipe::new)),
+            POUR_OUT_CONTENT_RECIPE = RECIPE_SERIALIZERS.register("pour_out_content_recipe", () -> new SimpleCraftingRecipeSerializer<>(PourOutContentRecipe::new)),
             TORCH_IGNITE_RECIPE = RECIPE_SERIALIZERS.register("torch_ignite", () -> new SimpleCraftingRecipeSerializer<>(TorchIgniteRecipe::new));
 
 
@@ -305,6 +303,7 @@ public final class Hcs {
     public static final Predicate<Item> IS_BARK = item -> item == BARK.get() || item == WILLOW_BARK.get();
 
     // Creative Tab
+    @SuppressWarnings("unused")
     public static final RegistryObject<CreativeModeTab> HCS_TAB = CREATIVE_MODE_TABS.register(MOD_ID, () -> CreativeModeTab.builder()
             .withTabsBefore(CreativeModeTabs.COMBAT)
             .title(Component.translatable("itemGroup.hcsurvival.main"))
@@ -428,7 +427,7 @@ public final class Hcs {
     }
 
     public static void register(IEventBus bus) {
-        Object dummy = HcsEffects.BLEEDING;
+        HcsEffects.init();
         MOB_EFFECTS.register(bus);
         BLOCKS.register(bus);
         ITEMS.register(bus);
@@ -486,7 +485,7 @@ public final class Hcs {
     }
 
     @SubscribeEvent
-    public void onFuelBurnTime(FurnaceFuelBurnTimeEvent event) {
+    public void onFuelBurnTime(@NotNull FurnaceFuelBurnTimeEvent event) {
         Item item = event.getItemStack().getItem();
         if (item == GRASS_FIBER.get()) event.setBurnTime(50);
         else if (item == FIBER_STRING.get()) event.setBurnTime(100);
@@ -506,9 +505,9 @@ public final class Hcs {
         else if (item == WOOLEN_BOOTS.get() || item == WOODEN_BOOTS.get()) event.setBurnTime(120);
     }
 
-    private void onRegisterCommands(RegisterCommandsEvent event) {
+    private void onRegisterCommands(@NotNull RegisterCommandsEvent event) {
         event.getDispatcher().register(literal("village").executes(context -> {
-            context.getSource().sendSuccess(() -> Component.translatable(WorldHelper.shouldGenerateVillages() ? "hcs.tip.can_gen_village" : "hcs.tip.cant_gen_village"), false);
+            context.getSource().sendSuccess(() -> Component.translatable(WorldHelper.shouldGenerateVillages() ? "tip.hcsurvival.can_gen_village" : "tip.hcsurvival.cant_gen_village"), false);
             return 1;
         }));
     }
@@ -518,13 +517,6 @@ public final class Hcs {
 
     @SubscribeEvent
     public void onServerStarting(ServerStartingEvent event) {
-    }
-
-    @Mod.EventBusSubscriber(modid = MOD_ID, bus = Mod.EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
-    public static class ClientModEvents {
-        @SubscribeEvent
-        public static void onClientSetup(FMLClientSetupEvent event) {
-        }
     }
 
     // Loggers

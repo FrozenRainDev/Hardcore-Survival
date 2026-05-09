@@ -64,7 +64,7 @@ public abstract class CampfireBlockMixin extends BaseEntityBlock {
             if (result.isPresent() && RotHelper.isMeat(result.get().getResultItem(world.registryAccess())))
                 for (ItemStack cooking : campfire.getItems())
                     if (RotHelper.isMeat(cooking)) {
-                        EntityHelper.msgById(player, "hcs.tip.cannot_cook_more_meat");
+                        EntityHelper.msgById(player, "tip.hcsurvival.cannot_cook_more_meat");
                         cir.setReturnValue(InteractionResult.PASS);
                     }
         }

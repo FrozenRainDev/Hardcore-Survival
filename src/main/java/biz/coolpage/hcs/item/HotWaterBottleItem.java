@@ -190,12 +190,12 @@ public class HotWaterBottleItem extends Item {
     }
 
     @Override
-    public ItemStack getDefaultInstance() {
+    public @NotNull ItemStack getDefaultInstance() {
         return setStatus(super.getDefaultInstance(), 0);
     }
 
     @Override
-    public void appendHoverText(@NotNull ItemStack stack, @Nullable Level world, List<Component> tooltip, TooltipFlag context) {
+    public void appendHoverText(@NotNull ItemStack stack, @Nullable Level world, @NotNull List<Component> tooltip, @NotNull TooltipFlag context) {
         super.appendHoverText(stack, world, tooltip, context);
         CompoundTag nbt = stack.getOrCreateTag();
         int tempId = 0;
@@ -215,8 +215,8 @@ public class HotWaterBottleItem extends Item {
             else if (percent < 0.8F) tempId = 4;
             else tempId = 5;
         }
-        tooltip.add(Component.translatable("item.hcs.hot_water_bottle.description.temp").withStyle(ChatFormatting.GRAY)
-                .append(Component.translatable("item.hcs.hot_water_bottle.description.temp." + tempId).withStyle(switch (tempId) {
+        tooltip.add(Component.translatable("item.hcsurvival.hot_water_bottle.description.temp").withStyle(ChatFormatting.GRAY)
+                .append(Component.translatable("item.hcsurvival.hot_water_bottle.description.temp." + tempId).withStyle(switch (tempId) {
                     case -5 -> ChatFormatting.DARK_BLUE;
                     case -4 -> ChatFormatting.BLUE;
                     case -3 -> ChatFormatting.DARK_AQUA;
@@ -227,12 +227,12 @@ public class HotWaterBottleItem extends Item {
                     case 5 -> ChatFormatting.DARK_RED;
                     default -> ChatFormatting.WHITE;
                 })));
-        tooltip.add(Component.translatable("item.hcs.hot_water_bottle.description1").withStyle(ChatFormatting.DARK_GRAY));
-        tooltip.add(Component.translatable("item.hcs.hot_water_bottle.description2").withStyle(ChatFormatting.DARK_GRAY));
+        tooltip.add(Component.translatable("item.hcsurvival.hot_water_bottle.description1").withStyle(ChatFormatting.DARK_GRAY));
+        tooltip.add(Component.translatable("item.hcsurvival.hot_water_bottle.description2").withStyle(ChatFormatting.DARK_GRAY));
     }
 
     @Override
-    public void inventoryTick(ItemStack stack, Level world, Entity entity, int slot, boolean selected) {
+    public void inventoryTick(@NotNull ItemStack stack, @NotNull Level world, @NotNull Entity entity, int slot, boolean selected) {
         if (world instanceof ServerLevel && entity instanceof ServerPlayer player) {
             StatusManager statusManager = ((StatAccessor) player).getStatusManager();
             CompoundTag nbt = stack.getOrCreateTag();
@@ -250,8 +250,8 @@ public class HotWaterBottleItem extends Item {
     }
 
     @Override
-    public int getBarWidth(ItemStack stack) {
-        if (stack == null || cannotGetServerWorld()) return super.getBarWidth(stack);
+    public int getBarWidth(@NotNull ItemStack stack) {
+        if (cannotGetServerWorld()) return super.getBarWidth(stack);
         CompoundTag nbt = stack.getOrCreateTag();
         return Math.round(13.0F * (nbt.contains(HHCI) ? getUnsignedPercentByInitTimeAdvanced(WorldHelper.getServerWorld(), stack) : getExpPercent(WorldHelper.getServerWorld(), stack, stack.getOrCreateTag().contains(HHES))));
     }

@@ -100,7 +100,7 @@ public abstract class ItemStackMixin {
                     return text;
                 });
                 if (armor.getMaterial() == ArmorMaterials.LEATHER)
-                    texts.add(Component.translatable("hcs.tip.when_in_leather").withStyle(ChatFormatting.GRAY));
+                    texts.add(Component.translatable("tip.hcsurvival.when_in_leather").withStyle(ChatFormatting.GRAY));
             }
             float reachRangeAddition = EntityHelper.getReachRangeAddition(stack);
             if (reachRangeAddition > 0.0F && !(stack.getItem() instanceof BlockItem)) shouldAppendToolInfo = true;
@@ -114,7 +114,7 @@ public abstract class ItemStackMixin {
                             if (noArmorPlusModifier.get() && this.getItem() instanceof ArmorItem)
                                 texts.add(i + 1, Component.translatable("attribute.modifier.plus.0", getProtectionAmount(stack), Component.translatable(Attributes.ARMOR.getDescriptionId())).withStyle(ChatFormatting.BLUE));
                             else if (shouldAppendToolInfo) // Also see ItemMixin/appendTooltip()V
-                                texts.add(i + 1, Component.translatable("hcs.tip.reach_range_addition", reachRangeAddition).withStyle(ChatFormatting.DARK_GREEN));
+                                texts.add(i + 1, Component.translatable("tip.hcsurvival.reach_range_addition", reachRangeAddition).withStyle(ChatFormatting.DARK_GREEN));
                         }
                     }
                 }

@@ -4,19 +4,19 @@
   "show_notification": true,
   "ingredients": [
     {
-      "item": "hcs:grass_fiber"
+      "item": "hcsurvival:grass_fiber"
     },
     {
-      "item": "hcs:grass_fiber"
+      "item": "hcsurvival:grass_fiber"
     },
     {
-      "item": "hcs:grass_fiber"
+      "item": "hcsurvival:grass_fiber"
     },
     {
-      "item": "hcs:fiber_string"
+      "item": "hcsurvival:fiber_string"
     }
   ],
   "result": {
-    "item": "hcs:improvised_bandage"
+    "item": "hcsurvival:improvised_bandage"
   }
 }

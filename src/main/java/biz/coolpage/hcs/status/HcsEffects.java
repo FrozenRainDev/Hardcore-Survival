@@ -26,6 +26,7 @@ import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraftforge.registries.RegistryObject;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.HashSet;
 import java.util.Map;
@@ -41,13 +42,13 @@ public class HcsEffects {
         }
 
         @Override
-        public void addAttributeModifiers(LivingEntity entity, AttributeMap attributes, int amplifier) {
+        public void addAttributeModifiers(@NotNull LivingEntity entity, @NotNull AttributeMap attributes, int amplifier) {
             if (entity instanceof ServerPlayer player && !entity.isSpectator())
-                EntityHelper.msgById(player, "hcs.tip.return_wait");
+                EntityHelper.msgById(player, "tip.hcsurvival.return_wait");
         }
 
         @Override
-        public void applyEffectTick(LivingEntity entity, int amplifier) {
+        public void applyEffectTick(@NotNull LivingEntity entity, int amplifier) {
             if (entity instanceof ServerPlayer player && !player.isSpectator()) {
                 StatusManager statusManager = ((StatAccessor) player).getStatusManager();
                 if (statusManager.getReturnEffectAwaitTicks() > 100) {
@@ -71,7 +72,7 @@ public class HcsEffects {
         }
 
         @Override
-        public void applyEffectTick(LivingEntity entity, int amplifier) {
+        public void applyEffectTick(@NotNull LivingEntity entity, int amplifier) {
             if (entity instanceof ServerPlayer && !entity.isSpectator())
                 ((StatAccessor) entity).getThirstManager().add(-0.00045 * (amplifier + 1));
         }
@@ -84,7 +85,7 @@ public class HcsEffects {
         }
 
         @Override
-        public void applyEffectTick(LivingEntity entity, int amplifier) {
+        public void applyEffectTick(@NotNull LivingEntity entity, int amplifier) {
             if (entity instanceof ServerPlayer player && !entity.isSpectator()) {
                 player.getFoodData().addExhaustion(0.01F * (amplifier + 1));
                 ((StatAccessor) player).getThirstManager().add(-0.00015 * (amplifier + 1));
@@ -99,7 +100,7 @@ public class HcsEffects {
         }
 
         @Override
-        public void applyEffectTick(LivingEntity entity, int amplifier) {
+        public void applyEffectTick(@NotNull LivingEntity entity, int amplifier) {
             if (entity instanceof ServerPlayer player && !entity.isInvisible()) {
                 entity.setSprinting(false);
                 ((StatAccessor) player).getSanityManager().add(-0.00001 * (amplifier + 1));
@@ -117,7 +118,7 @@ public class HcsEffects {
         }
 
         @Override
-        public void applyEffectTick(LivingEntity entity, int amplifier) {
+        public void applyEffectTick(@NotNull LivingEntity entity, int amplifier) {
             if (entity instanceof ServerPlayer && !entity.isSpectator()) entity.setSprinting(false);
         }
     }.addAttributeModifier(Attributes.MOVEMENT_SPEED, "14A47B9E-D4A3-4964-BDA2-CAFB774D60D6", -0.15f, AttributeModifier.Operation.MULTIPLY_TOTAL)
@@ -132,7 +133,7 @@ public class HcsEffects {
         }
 
         @Override
-        public void applyEffectTick(LivingEntity entity, int amplifier) {
+        public void applyEffectTick(@NotNull LivingEntity entity, int amplifier) {
             if (entity instanceof ServerPlayer && amplifier > 0) entity.setSprinting(false);
         }
     }.addAttributeModifier(Attributes.ATTACK_DAMAGE, "DC32D347-22EC-4B12-9E50-035302B760F0", -0.5F, AttributeModifier.Operation.MULTIPLY_TOTAL)
@@ -147,7 +148,7 @@ public class HcsEffects {
         }
 
         @Override
-        public void applyEffectTick(LivingEntity entity, int amplifier) {
+        public void applyEffectTick(@NotNull LivingEntity entity, int amplifier) {
             if (entity instanceof ServerPlayer player && !entity.isSpectator() && IS_SURVIVAL_AND_SERVER.test(player)) {
                 ((StatAccessor) player).getDiseaseManager().addCold(0.0005);
                 if (amplifier > 0) {
@@ -169,7 +170,7 @@ public class HcsEffects {
         }
 
         @Override
-        public void applyEffectTick(LivingEntity entity, int amplifier) {
+        public void applyEffectTick(@NotNull LivingEntity entity, int amplifier) {
             if (entity instanceof ServerPlayer player && !entity.isInvulnerable()) {
                 ((StatAccessor) player).getThirstManager().add(-0.0001 * (amplifier + 1));
                 ((StatAccessor) player).getSanityManager().add(-0.00003 * (amplifier + 1));
@@ -210,7 +211,7 @@ public class HcsEffects {
         }
 
         @Override
-        public void applyEffectTick(LivingEntity entity, int amplifier) {
+        public void applyEffectTick(@NotNull LivingEntity entity, int amplifier) {
             if (entity instanceof ServerPlayer player && !player.isInWater() && amplifier > 0 && ((StatAccessor) player).getTemperatureManager().getEnvTempCache() < 0.6)
                 ((StatAccessor) player).getDiseaseManager().addCold(0.00002 * (amplifier + 1) * net.minecraft.util.Mth.clamp(2 * (1 - ((StatAccessor) player).getTemperatureManager().getEnvTempCache()), 0.01, 2.0));
         }
@@ -223,7 +224,7 @@ public class HcsEffects {
         }
 
         @Override
-        public void applyEffectTick(LivingEntity entity, int amplifier) {
+        public void applyEffectTick(@NotNull LivingEntity entity, int amplifier) {
             if (entity instanceof ServerPlayer player && !player.isSpectator())
                 ((StatAccessor) player).getTemperatureManager().reset();
         }
@@ -237,7 +238,7 @@ public class HcsEffects {
         final Multimap<Attribute, AttributeModifier> customAttributeModifiers = Multimaps.synchronizedMultimap(ArrayListMultimap.create());
 
         @Override
-        public void addAttributeModifiers(LivingEntity entity, AttributeMap attributes, int amplifier) {
+        public void addAttributeModifiers(@NotNull LivingEntity entity, @NotNull AttributeMap attributes, int amplifier) {
             if (entity == null) return;
             switch (amplifier) {
                 default -> {
@@ -270,7 +271,7 @@ public class HcsEffects {
         }
 
         @Override
-        public void removeAttributeModifiers(LivingEntity entity, AttributeMap attributes, int amplifier) {
+        public void removeAttributeModifiers(@NotNull LivingEntity entity, @NotNull AttributeMap attributes, int amplifier) {
             if (entity == null) return;
             removeTempAttributes(attributes, this.customAttributeModifiers);
             super.removeAttributeModifiers(entity, attributes, amplifier);
@@ -281,7 +282,7 @@ public class HcsEffects {
         final Multimap<Attribute, AttributeModifier> customAttributeModifiers = Multimaps.synchronizedMultimap(ArrayListMultimap.create());
 
         @Override
-        public void addAttributeModifiers(LivingEntity entity, AttributeMap attributes, int amplifier) {
+        public void addAttributeModifiers(@NotNull LivingEntity entity, @NotNull AttributeMap attributes, int amplifier) {
             if (entity == null) return;
             switch (amplifier) {
                 default -> {
@@ -313,7 +314,7 @@ public class HcsEffects {
         }
 
         @Override
-        public void removeAttributeModifiers(LivingEntity entity, AttributeMap attributes, int amplifier) {
+        public void removeAttributeModifiers(@NotNull LivingEntity entity, @NotNull AttributeMap attributes, int amplifier) {
             if (entity == null) return;
             removeTempAttributes(attributes, this.customAttributeModifiers);
             super.removeAttributeModifiers(entity, attributes, amplifier);
@@ -330,7 +331,7 @@ public class HcsEffects {
         }
 
         @Override
-        public void applyEffectTick(LivingEntity entity, int amplifier) {
+        public void applyEffectTick(@Nullable LivingEntity entity, int amplifier) {
             if (entity != null && entity.level() != null && !entity.isInvulnerable() && amplifier > 0)
                 if (entity.level().getGameTime() % (switch (amplifier) {
                     case 1 -> 300L;
@@ -352,7 +353,7 @@ public class HcsEffects {
         }
 
         @Override
-        public void applyEffectTick(LivingEntity entity, int amplifier) {
+        public void applyEffectTick(@NotNull LivingEntity entity, int amplifier) {
             if (entity instanceof ServerPlayer player && IS_SURVIVAL_LIKE.test(player) && amplifier > 0) {
                 entity.setSprinting(false);
                 InjuryManager injuryManager = ((StatAccessor) player).getInjuryManager();
@@ -368,7 +369,7 @@ public class HcsEffects {
         }
 
         @Override
-        public void applyEffectTick(LivingEntity entity, int amplifier) {
+        public void applyEffectTick(@NotNull LivingEntity entity, int amplifier) {
             if (entity instanceof ServerPlayer player && IS_SURVIVAL_LIKE.test(player)) {
                 ((StatAccessor) player).getThirstManager().add(-0.0001 * (amplifier + 1));
                 player.getFoodData().addExhaustion(0.007F * (amplifier + 1));
@@ -406,7 +407,7 @@ public class HcsEffects {
         }
 
         @Override
-        public void applyEffectTick(LivingEntity entity, int amplifier) {
+        public void applyEffectTick(@NotNull LivingEntity entity, int amplifier) {
             if (entity instanceof ServerPlayer player) ((StatAccessor) player).getInjuryManager().setRawPain(0.0);
         }
     });
@@ -421,7 +422,7 @@ public class HcsEffects {
         }
 
         @Override
-        public void applyEffectTick(LivingEntity entity, int amplifier) {
+        public void applyEffectTick(@NotNull LivingEntity entity, int amplifier) {
             if (entity instanceof ServerPlayer player && IS_SURVIVAL_LIKE.test(player)) {
                 ((StatAccessor) player).getThirstManager().add(-0.0003 * (amplifier + 1));
                 player.getFoodData().addExhaustion(0.025F * (amplifier + 1));
@@ -438,12 +439,12 @@ public class HcsEffects {
         }
 
         @Override
-        public void applyEffectTick(LivingEntity entity, int amplifier) {
+        public void applyEffectTick(@NotNull LivingEntity entity, int amplifier) {
             if (entity instanceof ServerPlayer player) ((StatAccessor) player).getMoodManager().setPanic(0.0);
         }
     });
 
-    // 修复变量集合以兼容 RegistryObject
+    // Fix variables set for compatibility with RegistryObject
     private static final HashSet<RegistryObject<MobEffect>> VARIABLE_EFFECTS = Util.make(new HashSet<>(), set -> {
         set.add(PAIN);
         set.add(INJURY);
@@ -452,7 +453,7 @@ public class HcsEffects {
         set.add(WET);
     });
 
-    // Predicate 现在需要检查 get() 的值
+    // Now predicate needs to check the value of get()
     public static final Predicate<MobEffect> IS_EFFECT_NAME_VARIABLE = effect ->
             VARIABLE_EFFECTS.stream().anyMatch(reg -> reg.get() == effect);
 
@@ -473,10 +474,15 @@ public class HcsEffects {
         customAttributeModifiers.clear();
     }
 
-    private static Predicate<ServerPlayer> IS_SURVIVAL_AND_SERVER = player -> !player.isSpectator() && !player.isCreative();
-    private static Predicate<ServerPlayer> IS_SURVIVAL_LIKE = player -> !player.isSpectator() && !player.isCreative();
+    private static final Predicate<ServerPlayer> IS_SURVIVAL_AND_SERVER = player -> !player.isSpectator() && !player.isCreative();
+    private static final Predicate<ServerPlayer> IS_SURVIVAL_LIKE = player -> !player.isSpectator() && !player.isCreative();
 
     private static ServerPlayer toPlayer(LivingEntity entity) {
         return entity instanceof ServerPlayer ? (ServerPlayer) entity : null;
+    }
+
+    public static void init() {
+        // In Java, a class's static fields (such as the various RegistryObject<MobEffect> you define) are initialized only
+        // when the class is first actively used (for example, by calling its static methods or accessing its static fields).
     }
 }

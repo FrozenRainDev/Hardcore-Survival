@@ -7,7 +7,7 @@
       "item": "minecraft:stick"
     },
     "B": {
-      "item": "hcs:fiber_string"
+      "item": "hcsurvival:fiber_string"
     }
   },
   "pattern": [
@@ -15,6 +15,6 @@
     "BA"
   ],
   "result": {
-    "item": "hcs:splint"
+    "item": "hcsurvival:splint"
   }
 }

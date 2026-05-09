@@ -11,13 +11,23 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
 // 确保这里的静态导入能找到 ServerS2C 中新定义的常量
+import java.util.Arrays;
+
 import static biz.coolpage.hcs.status.ServerS2C.*;
 
 @OnlyIn(Dist.CLIENT)
 public class ClientS2C {
-    public static float i2f(int val) { return (float) val / TRANS_MULTIPLIER; }
-    public static double i2d(int val) { return (double) val / TRANS_MULTIPLIER; }
-    public static boolean i2b(int val) { return val == 1; }
+    public static float i2f(int val) {
+        return (float) val / TRANS_MULTIPLIER;
+    }
+
+    public static double i2d(int val) {
+        return (double) val / TRANS_MULTIPLIER;
+    }
+
+    public static boolean i2b(int val) {
+        return val == 1;
+    }
 
     public static void handlePacket(ResourceLocation id, int[] bufArr) {
         Minecraft client = Minecraft.getInstance();
@@ -94,6 +104,7 @@ public class ClientS2C {
                     // todo bad here
                     ConfigManager configManager = accessor.getConfigManager();
                     for (Configs val : Configs.values()) {
+//                        System.out.println(val + "  " + i2b(bufArr[val.ordinal() + 1]));
                         configManager.set(val, i2b(bufArr[val.ordinal() + 1]));
                     }
                 }
@@ -101,5 +112,6 @@ public class ClientS2C {
         });
     }
 
-    public static void init() { }
+    public static void init() {
+    }
 }

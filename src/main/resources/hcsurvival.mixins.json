@@ -1,5 +1,6 @@
 {
   "required": true,
+  "minVersion": "0.8",
   "package": "biz.coolpage.hcs.mixin",
   "compatibilityLevel": "JAVA_17",
   "mixins": [
@@ -24,6 +25,7 @@
     "entity.AnimalMixin",
     "entity.CampfireBlockEntityMixin",
     "entity.ChickenMixin",
+    "entity.CowEntityMixin",
     "entity.EntityMixin",
     "entity.ItemEntityMixin",
     "entity.JukeboxBlockEntityMixin",
@@ -34,6 +36,7 @@
     "entity.SheepMixin",
     "entity.SpiderMixin",
     "entity.WaterAnimalMixin",
+    "entity.WitherEntityMixin",
     "entity.WitherSkeletonMixin",
     "entity.ZombieMixin",
     "entity.ZombifiedPiglinMixin",
@@ -45,12 +48,14 @@
     "entity.dragon.EnderDragonEntityMixin",
     "entity.dragon.PhaseManagerMixin",
     "entity.effect.MobEffectUtilMixin",
-    "entity.effect.StatusEffectMixin",
+    "entity.effect.MobEffectMixin",
     "entity.goal.BreakDoorGoalMixin",
+    "entity.goal.MeleeAttackGoalMixin",
     "entity.goal.MobVisibilityCacheMixin",
     "entity.goal.PanicGoalMixin",
     "entity.goal.TargetGoalMixin",
     "entity.player.FoodDataMixin",
+    "entity.player.InventoryMixin",
     "entity.player.PlayerMixin",
     "entity.player.ServerPlayerMixin",
     "fluid.LavaFluidMixin",
@@ -87,23 +92,21 @@
     "world.ServerChunkCacheMixin"
   ],
   "client": [
-    "client.ClientPlayerInteractionManagerMixin",
+//    "client.ClientPlayerEntityMixin",
     "client.GameOptionsMixin",
     "client.MinecraftClientMixin",
     "client.MouseMixin",
+    "client.MultiPlayerGameModeMixin",
     "client.SoundSystemMixin",
     "client.gui.AbstractInventoryScreenMixin",
     "client.gui.DebugHudMixin",
-    "client.gui.InGameHudMixin",
-    "client.gui.InventoryScreenMixin",
+//    "client.gui.InventoryScreenMixin",
     "client.gui.ScreenMixin",
     "client.gui.SubtitlesHudMixin",
     "client.gui.VideoOptionsScreenMixin",
     "client.render.BuiltinModelItemRendererMixin",
-    "client.render.HeldItemRendererMixin",
-    "client.render.PlayerEntityRendererMixin",
-    "client.render.WorldRendererMixin",
-    "client.ClientPlayerEntityMixin"
+    "client.render.HeldItemRendererMixin"
+//    "client.render.PlayerEntityRendererMixin"
   ],
   "server": [
   ],

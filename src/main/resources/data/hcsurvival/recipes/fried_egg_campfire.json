@@ -7,7 +7,7 @@
       "item": "minecraft:egg"
     }
   ],
-  "result": "hcs:fried_egg",
+  "result": "hcsurvival:fried_egg",
   "experience": 0.35,
   "cookingtime": 400
 }

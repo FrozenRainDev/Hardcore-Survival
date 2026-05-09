@@ -58,12 +58,12 @@ public class ClientPlayConnectionEvent {
         final String finalUrl = OFFICIAL_URL;
 
         // Fabric: sendMessage -> Forge/Mojang: displayClientMessage (带overlay参数) 或 sendSystemMessage
-        client.player.displayClientMessage(Component.translatable(combineText("itemGroup.hcs.main", " Beta %1$s "), UpdateHelper.MOD_VER)
-                        .append(Component.translatable("hcs.tip.official_link").withStyle(s -> s.withColor(ChatFormatting.AQUA).withUnderlined(true).withClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, finalUrl))))
+        client.player.displayClientMessage(Component.translatable(combineText("itemGroup.hcsurvival.main", " Beta %1$s "), UpdateHelper.MOD_VER)
+                        .append(Component.translatable("tip.hcsurvival.official_link").withStyle(s -> s.withColor(ChatFormatting.AQUA).withUnderlined(true).withClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, finalUrl))))
                         .append(Component.literal(" "))
-                        .append(Component.translatable("hcs.tip.wiki_link").withStyle(s -> s.withColor(ChatFormatting.AQUA).withUnderlined(true).withClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, WIKI_URL))))
+                        .append(Component.translatable("tip.hcsurvival.wiki_link").withStyle(s -> s.withColor(ChatFormatting.AQUA).withUnderlined(true).withClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, WIKI_URL))))
                         .append(Component.literal(" "))
-                        .append(Component.translatable("hcs.tip.config").withStyle(s -> s.withColor(ChatFormatting.AQUA).withUnderlined(true).withClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, OFFICIAL_URL + "config.html"))))
+                        .append(Component.translatable("tip.hcsurvival.config").withStyle(s -> s.withColor(ChatFormatting.AQUA).withUnderlined(true).withClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, OFFICIAL_URL + "config.html"))))
                 , false);
 
         // Check and show update message
@@ -71,9 +71,9 @@ public class ClientPlayConnectionEvent {
             try {
                 final String latestVersion = UpdateHelper.fetchLatestVersion();
                 if (!latestVersion.isEmpty() && UpdateHelper.compareVersions(UpdateHelper.MOD_VER, latestVersion) < 0) {
-                    client.player.displayClientMessage(Component.translatable("hcs.tip.update", latestVersion)
+                    client.player.displayClientMessage(Component.translatable("tip.hcsurvival.update", latestVersion)
                             .append(" ")
-                            .append(Component.translatable("hcs.tip.download_link").withStyle(s -> s.withColor(ChatFormatting.AQUA).withUnderlined(true).withClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, UPDATE_URL)))), false);
+                            .append(Component.translatable("tip.hcsurvival.download_link").withStyle(s -> s.withColor(ChatFormatting.AQUA).withUnderlined(true).withClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, UPDATE_URL)))), false);
                 }
             } catch (Exception e) {
                 Hcs.error("Failed to check for updates: " + e.getMessage());
