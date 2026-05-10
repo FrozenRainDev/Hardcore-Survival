@@ -18,6 +18,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Objects;
 
@@ -25,7 +26,7 @@ import java.util.Objects;
 public class AttackBlockEvent {
     // todo test
     @SubscribeEvent
-    public static void onLeftClickBlock(PlayerInteractEvent.LeftClickBlock event) {
+    public static void onLeftClickBlock(PlayerInteractEvent.@NotNull LeftClickBlock event) {
         Player player = event.getEntity();
         Level world = event.getLevel();
         BlockPos pos = event.getPos();

@@ -47,7 +47,6 @@
     "entity.dragon.EndCrystalEntityMixin",
     "entity.dragon.EnderDragonEntityMixin",
     "entity.dragon.PhaseManagerMixin",
-    "entity.effect.MobEffectUtilMixin",
     "entity.effect.MobEffectMixin",
     "entity.goal.BreakDoorGoalMixin",
     "entity.goal.MeleeAttackGoalMixin",
@@ -92,21 +91,17 @@
     "world.ServerChunkCacheMixin"
   ],
   "client": [
-//    "client.ClientPlayerEntityMixin",
     "client.GameOptionsMixin",
     "client.MinecraftClientMixin",
     "client.MouseMixin",
     "client.MultiPlayerGameModeMixin",
     "client.SoundSystemMixin",
     "client.gui.AbstractInventoryScreenMixin",
-    "client.gui.DebugHudMixin",
-//    "client.gui.InventoryScreenMixin",
     "client.gui.ScreenMixin",
     "client.gui.SubtitlesHudMixin",
     "client.gui.VideoOptionsScreenMixin",
     "client.render.BuiltinModelItemRendererMixin",
     "client.render.HeldItemRendererMixin"
-//    "client.render.PlayerEntityRendererMixin"
   ],
   "server": [
   ],

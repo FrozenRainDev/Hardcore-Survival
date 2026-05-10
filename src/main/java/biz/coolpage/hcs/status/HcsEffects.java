@@ -12,6 +12,12 @@ import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.Multimaps;
 import net.minecraft.Util;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.Gui;
+import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.screens.inventory.EffectRenderingInventoryScreen;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.effect.MobEffect;
@@ -24,6 +30,7 @@ import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.entity.ai.attributes.AttributeMap;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
+import net.minecraftforge.client.extensions.common.IClientMobEffectExtensions;
 import net.minecraftforge.registries.RegistryObject;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -31,11 +38,12 @@ import org.jetbrains.annotations.Nullable;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.UUID;
+import java.util.function.Consumer;
 import java.util.function.Predicate;
 
 public class HcsEffects {
 
-    public static final RegistryObject<MobEffect> RETURN = Hcs.MOB_EFFECTS.register("return", () -> new MobEffect(MobEffectCategory.NEUTRAL, 0x22d3f6) {
+    public static final RegistryObject<MobEffect> RETURN = Hcs.MOB_EFFECTS.register("return", () -> new HcsMobEffect(MobEffectCategory.NEUTRAL, 0x22d3f6) {
         @Override
         public boolean isDurationEffectTick(int duration, int amplifier) {
             return true;
@@ -65,7 +73,7 @@ public class HcsEffects {
         }
     });
 
-    public static final RegistryObject<MobEffect> THIRST = Hcs.MOB_EFFECTS.register("thirst", () -> new MobEffect(MobEffectCategory.HARMFUL, 0xb0dff4) {
+    public static final RegistryObject<MobEffect> THIRST = Hcs.MOB_EFFECTS.register("thirst", () -> new HcsMobEffect(MobEffectCategory.HARMFUL, 0xb0dff4) {
         @Override
         public boolean isDurationEffectTick(int duration, int amplifier) {
             return true;
@@ -78,7 +86,7 @@ public class HcsEffects {
         }
     });
 
-    public static final RegistryObject<MobEffect> DIARRHEA = Hcs.MOB_EFFECTS.register("diarrhea", () -> new MobEffect(MobEffectCategory.HARMFUL, 0xdbc44c) {
+    public static final RegistryObject<MobEffect> DIARRHEA = Hcs.MOB_EFFECTS.register("diarrhea", () -> new HcsMobEffect(MobEffectCategory.HARMFUL, 0xdbc44c) {
         @Override
         public boolean isDurationEffectTick(int duration, int amplifier) {
             return true;
@@ -93,7 +101,7 @@ public class HcsEffects {
         }
     });
 
-    public static final RegistryObject<MobEffect> DEHYDRATED = Hcs.MOB_EFFECTS.register("dehydrated", () -> new MobEffect(MobEffectCategory.HARMFUL, 0xe7e7e7) {
+    public static final RegistryObject<MobEffect> DEHYDRATED = Hcs.MOB_EFFECTS.register("dehydrated", () -> new HcsMobEffect(MobEffectCategory.HARMFUL, 0xe7e7e7) {
         @Override
         public boolean isDurationEffectTick(int duration, int amplifier) {
             return true;
@@ -111,7 +119,7 @@ public class HcsEffects {
             .addAttributeModifier(Attributes.ATTACK_SPEED, "726C2159-5D61-4656-8B1E-A594BC7C3E84", -0.2f, AttributeModifier.Operation.MULTIPLY_TOTAL)
             .addAttributeModifier(Attributes.ATTACK_KNOCKBACK, "F03F53E5-DC9E-4716-8248-7B13FCAFE753", -0.2f, AttributeModifier.Operation.MULTIPLY_TOTAL));
 
-    public static final RegistryObject<MobEffect> STARVING = Hcs.MOB_EFFECTS.register("starving", () -> new MobEffect(MobEffectCategory.HARMFUL, 0x646464) {
+    public static final RegistryObject<MobEffect> STARVING = Hcs.MOB_EFFECTS.register("starving", () -> new HcsMobEffect(MobEffectCategory.HARMFUL, 0x646464) {
         @Override
         public boolean isDurationEffectTick(int duration, int amplifier) {
             return true;
@@ -126,7 +134,7 @@ public class HcsEffects {
             .addAttributeModifier(Attributes.ATTACK_SPEED, "EEBB2A0F-C4E6-4E60-9BC3-B4D730C1F1F7", -0.2f, AttributeModifier.Operation.MULTIPLY_TOTAL)
             .addAttributeModifier(Attributes.ATTACK_KNOCKBACK, "D9F3A91B-915C-4E69-A03E-558D0744C7AA", -0.2f, AttributeModifier.Operation.MULTIPLY_TOTAL));
 
-    public static final RegistryObject<MobEffect> EXHAUSTED = Hcs.MOB_EFFECTS.register("exhausted", () -> new MobEffect(MobEffectCategory.HARMFUL, 0xe3e3e3) {
+    public static final RegistryObject<MobEffect> EXHAUSTED = Hcs.MOB_EFFECTS.register("exhausted", () -> new HcsMobEffect(MobEffectCategory.HARMFUL, 0xe3e3e3) {
         @Override
         public boolean isDurationEffectTick(int duration, int amplifier) {
             return true;
@@ -141,7 +149,7 @@ public class HcsEffects {
             .addAttributeModifier(Attributes.ATTACK_SPEED, "92C8EC57-582C-43C2-A8C7-F164774349D6", -0.4F, AttributeModifier.Operation.MULTIPLY_TOTAL)
             .addAttributeModifier(Attributes.ATTACK_KNOCKBACK, "6C27DCA8-9388-45EE-B6A8-33197B686DE4", -0.1f, AttributeModifier.Operation.MULTIPLY_TOTAL));
 
-    public static final RegistryObject<MobEffect> HYPOTHERMIA = Hcs.MOB_EFFECTS.register("hypothermia", () -> new MobEffect(MobEffectCategory.HARMFUL, 0x0658ff) {
+    public static final RegistryObject<MobEffect> HYPOTHERMIA = Hcs.MOB_EFFECTS.register("hypothermia", () -> new HcsMobEffect(MobEffectCategory.HARMFUL, 0x0658ff) {
         @Override
         public boolean isDurationEffectTick(int duration, int amplifier) {
             return true;
@@ -163,7 +171,7 @@ public class HcsEffects {
             .addAttributeModifier(Attributes.ATTACK_SPEED, "52520C27-F947-43A5-9E30-9FEDB3BB44DA", -0.1f, AttributeModifier.Operation.MULTIPLY_TOTAL)
             .addAttributeModifier(Attributes.ATTACK_KNOCKBACK, "8E2A9034-7593-46BD-96B1-139203DEC1A6", -0.1f, AttributeModifier.Operation.MULTIPLY_TOTAL));
 
-    public static final RegistryObject<MobEffect> HEATSTROKE = Hcs.MOB_EFFECTS.register("heatstroke", () -> new MobEffect(MobEffectCategory.HARMFUL, 0xff6113) {
+    public static final RegistryObject<MobEffect> HEATSTROKE = Hcs.MOB_EFFECTS.register("heatstroke", () -> new HcsMobEffect(MobEffectCategory.HARMFUL, 0xff6113) {
         @Override
         public boolean isDurationEffectTick(int duration, int amplifier) {
             return true;
@@ -176,6 +184,7 @@ public class HcsEffects {
                 ((StatAccessor) player).getSanityManager().add(-0.00003 * (amplifier + 1));
                 if (amplifier > 0) {
                     player.setSprinting(false);
+                    //noinspection ConstantValue
                     if (player.level() != null && player.level().getGameTime() % 60 == 0) {
                         DamageSource damageSource = ((IDamageSources) player.level().damageSources()).heatstroke();
                         if (damageSource != null) player.hurt(damageSource, 1.0F);
@@ -188,23 +197,23 @@ public class HcsEffects {
             .addAttributeModifier(Attributes.ATTACK_SPEED, "A8ED4453-B9F0-4BD5-A9E6-52F122FB07CD", -0.1f, AttributeModifier.Operation.MULTIPLY_TOTAL)
             .addAttributeModifier(Attributes.ATTACK_KNOCKBACK, "3BBDACD0-A218-4872-BC9A-C17C90E6B57D", -0.1f, AttributeModifier.Operation.MULTIPLY_TOTAL));
 
-    public static final RegistryObject<MobEffect> STRONG_SUN = Hcs.MOB_EFFECTS.register("strong_sun", () -> new MobEffect(MobEffectCategory.HARMFUL, 0xff6c00) {
+    public static final RegistryObject<MobEffect> STRONG_SUN = Hcs.MOB_EFFECTS.register("strong_sun", () -> new HcsMobEffect(MobEffectCategory.HARMFUL, 0xff6c00) {
     });
 
-    public static final RegistryObject<MobEffect> CHILLY_WIND = Hcs.MOB_EFFECTS.register("chilly_wind", () -> new MobEffect(MobEffectCategory.HARMFUL, 0xf0f0f0) {
+    public static final RegistryObject<MobEffect> CHILLY_WIND = Hcs.MOB_EFFECTS.register("chilly_wind", () -> new HcsMobEffect(MobEffectCategory.HARMFUL, 0xf0f0f0) {
     });
 
-    public static final RegistryObject<MobEffect> OVEREATEN = Hcs.MOB_EFFECTS.register("overeaten", () -> new MobEffect(MobEffectCategory.HARMFUL, 0x90514f) {
+    public static final RegistryObject<MobEffect> OVEREATEN = Hcs.MOB_EFFECTS.register("overeaten", () -> new HcsMobEffect(MobEffectCategory.HARMFUL, 0x90514f) {
     }
             .addAttributeModifier(Attributes.MOVEMENT_SPEED, "28AFE91C-13C7-4E2F-BC29-7F747282B53C", -0.07F, AttributeModifier.Operation.MULTIPLY_TOTAL));
 
-    public static final RegistryObject<MobEffect> INSANITY = Hcs.MOB_EFFECTS.register("insanity", () -> new MobEffect(MobEffectCategory.HARMFUL, 0xff6113) {
+    public static final RegistryObject<MobEffect> INSANITY = Hcs.MOB_EFFECTS.register("insanity", () -> new HcsMobEffect(MobEffectCategory.HARMFUL, 0xff6113) {
     });
 
-    public static final RegistryObject<MobEffect> MALNUTRITION = Hcs.MOB_EFFECTS.register("malnutrition", () -> new MobEffect(MobEffectCategory.HARMFUL, 0xe8e5d2) {
+    public static final RegistryObject<MobEffect> MALNUTRITION = Hcs.MOB_EFFECTS.register("malnutrition", () -> new HcsMobEffect(MobEffectCategory.HARMFUL, 0xe8e5d2) {
     });
 
-    public static final RegistryObject<MobEffect> WET = Hcs.MOB_EFFECTS.register("wet", () -> new MobEffect(MobEffectCategory.HARMFUL, 0x99a9d7) {
+    public static final RegistryObject<MobEffect> WET = Hcs.MOB_EFFECTS.register("wet", () -> new HcsMobEffect(MobEffectCategory.HARMFUL, 0x99a9d7) {
         @Override
         public boolean isDurationEffectTick(int duration, int amplifier) {
             return true;
@@ -217,7 +226,7 @@ public class HcsEffects {
         }
     });
 
-    public static final RegistryObject<MobEffect> CONSTANT_TEMPERATURE = Hcs.MOB_EFFECTS.register("constant_temperature", () -> new MobEffect(MobEffectCategory.BENEFICIAL, 0x00aa00) {
+    public static final RegistryObject<MobEffect> CONSTANT_TEMPERATURE = Hcs.MOB_EFFECTS.register("constant_temperature", () -> new HcsMobEffect(MobEffectCategory.BENEFICIAL, 0x00aa00) {
         @Override
         public boolean isDurationEffectTick(int duration, int amplifier) {
             return true;
@@ -230,15 +239,15 @@ public class HcsEffects {
         }
     });
 
-    public static final RegistryObject<MobEffect> SOUL_IMPAIRED = Hcs.MOB_EFFECTS.register("soul_impaired", () -> new MobEffect(MobEffectCategory.HARMFUL, 0xd7e4eb) {
+    public static final RegistryObject<MobEffect> SOUL_IMPAIRED = Hcs.MOB_EFFECTS.register("soul_impaired", () -> new HcsMobEffect(MobEffectCategory.HARMFUL, 0xd7e4eb) {
     }
             .addAttributeModifier(Attributes.MAX_HEALTH, "90BF8511-9818-41DC-BE0C-C7262EE79960", -0.1F, AttributeModifier.Operation.MULTIPLY_TOTAL));
 
-    public static final RegistryObject<MobEffect> INJURY = Hcs.MOB_EFFECTS.register("injury", () -> new MobEffect(MobEffectCategory.HARMFUL, 0x8c1000) {
+    public static final RegistryObject<MobEffect> INJURY = Hcs.MOB_EFFECTS.register("injury", () -> new HcsMobEffect(MobEffectCategory.HARMFUL, 0x8c1000) {
         final Multimap<Attribute, AttributeModifier> customAttributeModifiers = Multimaps.synchronizedMultimap(ArrayListMultimap.create());
 
         @Override
-        public void addAttributeModifiers(@NotNull LivingEntity entity, @NotNull AttributeMap attributes, int amplifier) {
+        public void addAttributeModifiers(@Nullable LivingEntity entity, @NotNull AttributeMap attributes, int amplifier) {
             if (entity == null) return;
             switch (amplifier) {
                 default -> {
@@ -271,18 +280,18 @@ public class HcsEffects {
         }
 
         @Override
-        public void removeAttributeModifiers(@NotNull LivingEntity entity, @NotNull AttributeMap attributes, int amplifier) {
+        public void removeAttributeModifiers(@Nullable LivingEntity entity, @NotNull AttributeMap attributes, int amplifier) {
             if (entity == null) return;
             removeTempAttributes(attributes, this.customAttributeModifiers);
             super.removeAttributeModifiers(entity, attributes, amplifier);
         }
     });
 
-    public static final RegistryObject<MobEffect> PAIN = Hcs.MOB_EFFECTS.register("pain", () -> new MobEffect(MobEffectCategory.HARMFUL, 0x421d0a) {
+    public static final RegistryObject<MobEffect> PAIN = Hcs.MOB_EFFECTS.register("pain", () -> new HcsMobEffect(MobEffectCategory.HARMFUL, 0x421d0a) {
         final Multimap<Attribute, AttributeModifier> customAttributeModifiers = Multimaps.synchronizedMultimap(ArrayListMultimap.create());
 
         @Override
-        public void addAttributeModifiers(@NotNull LivingEntity entity, @NotNull AttributeMap attributes, int amplifier) {
+        public void addAttributeModifiers(@Nullable LivingEntity entity, @NotNull AttributeMap attributes, int amplifier) {
             if (entity == null) return;
             switch (amplifier) {
                 default -> {
@@ -314,17 +323,17 @@ public class HcsEffects {
         }
 
         @Override
-        public void removeAttributeModifiers(@NotNull LivingEntity entity, @NotNull AttributeMap attributes, int amplifier) {
+        public void removeAttributeModifiers(@Nullable LivingEntity entity, @NotNull AttributeMap attributes, int amplifier) {
             if (entity == null) return;
             removeTempAttributes(attributes, this.customAttributeModifiers);
             super.removeAttributeModifiers(entity, attributes, amplifier);
         }
     });
 
-    public static final RegistryObject<MobEffect> PANIC = Hcs.MOB_EFFECTS.register("panic", () -> new MobEffect(MobEffectCategory.HARMFUL, 0xffffff) {
+    public static final RegistryObject<MobEffect> PANIC = Hcs.MOB_EFFECTS.register("panic", () -> new HcsMobEffect(MobEffectCategory.HARMFUL, 0xffffff) {
     });
 
-    public static final RegistryObject<MobEffect> BLEEDING = Hcs.MOB_EFFECTS.register("bleeding", () -> new MobEffect(MobEffectCategory.HARMFUL, 0xcf0303) {
+    public static final RegistryObject<MobEffect> BLEEDING = Hcs.MOB_EFFECTS.register("bleeding", () -> new HcsMobEffect(MobEffectCategory.HARMFUL, 0xcf0303) {
         @Override
         public boolean isDurationEffectTick(int duration, int amplifier) {
             return true;
@@ -332,6 +341,7 @@ public class HcsEffects {
 
         @Override
         public void applyEffectTick(@Nullable LivingEntity entity, int amplifier) {
+            //noinspection ConstantValue
             if (entity != null && entity.level() != null && !entity.isInvulnerable() && amplifier > 0)
                 if (entity.level().getGameTime() % (switch (amplifier) {
                     case 1 -> 300L;
@@ -342,11 +352,11 @@ public class HcsEffects {
         }
     });
 
-    public static final RegistryObject<MobEffect> DARKNESS_ENVELOPED = Hcs.MOB_EFFECTS.register("darkness_enveloped", () -> new MobEffect(MobEffectCategory.HARMFUL, 0x000000) {
+    public static final RegistryObject<MobEffect> DARKNESS_ENVELOPED = Hcs.MOB_EFFECTS.register("darkness_enveloped", () -> new HcsMobEffect(MobEffectCategory.HARMFUL, 0x000000) {
     }
             .addAttributeModifier(Attributes.MOVEMENT_SPEED, "75AD9D60-968B-4788-8B9F-3A545D3534E7", -0.6F, AttributeModifier.Operation.MULTIPLY_TOTAL));
 
-    public static final RegistryObject<MobEffect> FRACTURE = Hcs.MOB_EFFECTS.register("fracture", () -> new MobEffect(MobEffectCategory.HARMFUL, 0xe8e5d2) {
+    public static final RegistryObject<MobEffect> FRACTURE = Hcs.MOB_EFFECTS.register("fracture", () -> new HcsMobEffect(MobEffectCategory.HARMFUL, 0xe8e5d2) {
         @Override
         public boolean isDurationEffectTick(int duration, int amplifier) {
             return true;
@@ -362,7 +372,7 @@ public class HcsEffects {
         }
     }.addAttributeModifier(Attributes.MOVEMENT_SPEED, "FFEFDCF8-49B1-4CC7-B6D7-4E07D7F936CA", -0.7F, AttributeModifier.Operation.MULTIPLY_TOTAL));
 
-    public static final RegistryObject<MobEffect> PARASITE_INFECTION = Hcs.MOB_EFFECTS.register("parasite_infection", () -> new MobEffect(MobEffectCategory.HARMFUL, 0xe2bc8a) {
+    public static final RegistryObject<MobEffect> PARASITE_INFECTION = Hcs.MOB_EFFECTS.register("parasite_infection", () -> new HcsMobEffect(MobEffectCategory.HARMFUL, 0xe2bc8a) {
         @Override
         public boolean isDurationEffectTick(int duration, int amplifier) {
             return true;
@@ -388,19 +398,19 @@ public class HcsEffects {
         }
     });
 
-    public static final RegistryObject<MobEffect> UNHAPPY = Hcs.MOB_EFFECTS.register("unhappy", () -> new MobEffect(MobEffectCategory.HARMFUL, 0x71c5db) {
+    public static final RegistryObject<MobEffect> UNHAPPY = Hcs.MOB_EFFECTS.register("unhappy", () -> new HcsMobEffect(MobEffectCategory.HARMFUL, 0x71c5db) {
     });
 
-    public static final RegistryObject<MobEffect> COLD = Hcs.MOB_EFFECTS.register("cold", () -> new MobEffect(MobEffectCategory.HARMFUL, 0xf0c1ba) {
+    public static final RegistryObject<MobEffect> COLD = Hcs.MOB_EFFECTS.register("cold", () -> new HcsMobEffect(MobEffectCategory.HARMFUL, 0xf0c1ba) {
     }
             .addAttributeModifier(Attributes.ATTACK_DAMAGE, "008C8E27-DE78-4072-BF58-AC0B3CFBF2AF", -0.07F, AttributeModifier.Operation.MULTIPLY_TOTAL)
             .addAttributeModifier(Attributes.ATTACK_SPEED, "EEBB2A0F-C4E6-4E60-9BC3-B4D730C1F1F7", -0.1F, AttributeModifier.Operation.MULTIPLY_TOTAL)
             .addAttributeModifier(Attributes.ATTACK_KNOCKBACK, "D9F3A91B-915C-4E69-A03E-558D0744C7AA", -0.2F, AttributeModifier.Operation.MULTIPLY_TOTAL));
 
-    public static final RegistryObject<MobEffect> HEAVY_LOAD = Hcs.MOB_EFFECTS.register("heavy_load", () -> new MobEffect(MobEffectCategory.HARMFUL, 0xfed93f) {
+    public static final RegistryObject<MobEffect> HEAVY_LOAD = Hcs.MOB_EFFECTS.register("heavy_load", () -> new HcsMobEffect(MobEffectCategory.HARMFUL, 0xfed93f) {
     });
 
-    public static final RegistryObject<MobEffect> PAIN_KILLING = Hcs.MOB_EFFECTS.register("pain_killing", () -> new MobEffect(MobEffectCategory.BENEFICIAL, 0x858585) {
+    public static final RegistryObject<MobEffect> PAIN_KILLING = Hcs.MOB_EFFECTS.register("pain_killing", () -> new HcsMobEffect(MobEffectCategory.BENEFICIAL, 0x858585) {
         @Override
         public boolean isDurationEffectTick(int duration, int amplifier) {
             return true;
@@ -412,10 +422,10 @@ public class HcsEffects {
         }
     });
 
-    public static final RegistryObject<MobEffect> IRONSKIN = Hcs.MOB_EFFECTS.register("ironskin", () -> new MobEffect(MobEffectCategory.BENEFICIAL, 0xe6de0a) {
+    public static final RegistryObject<MobEffect> IRONSKIN = Hcs.MOB_EFFECTS.register("ironskin", () -> new HcsMobEffect(MobEffectCategory.BENEFICIAL, 0xe6de0a) {
     });
 
-    public static final RegistryObject<MobEffect> FOOD_POISONING = Hcs.MOB_EFFECTS.register("food_poisoning", () -> new MobEffect(MobEffectCategory.HARMFUL, 0xb3c17b) {
+    public static final RegistryObject<MobEffect> FOOD_POISONING = Hcs.MOB_EFFECTS.register("food_poisoning", () -> new HcsMobEffect(MobEffectCategory.HARMFUL, 0xb3c17b) {
         @Override
         public boolean isDurationEffectTick(int duration, int amplifier) {
             return true;
@@ -432,7 +442,7 @@ public class HcsEffects {
         }
     });
 
-    public static final RegistryObject<MobEffect> FEARLESSNESS = Hcs.MOB_EFFECTS.register("fearlessness", () -> new MobEffect(MobEffectCategory.BENEFICIAL, 0x7e7e7e) {
+    public static final RegistryObject<MobEffect> FEARLESSNESS = Hcs.MOB_EFFECTS.register("fearlessness", () -> new HcsMobEffect(MobEffectCategory.BENEFICIAL, 0x7e7e7e) {
         @Override
         public boolean isDurationEffectTick(int duration, int amplifier) {
             return true;
@@ -484,5 +494,127 @@ public class HcsEffects {
     public static void init() {
         // In Java, a class's static fields (such as the various RegistryObject<MobEffect> you define) are initialized only
         // when the class is first actively used (for example, by calling its static methods or accessing its static fields).
+    }
+
+    // --- Custom Base Effect Class for HCS to handle client rendering ---
+    public static class HcsMobEffect extends MobEffect {
+        protected HcsMobEffect(MobEffectCategory category, int color) {
+            super(category, color);
+        }
+
+        @Override
+        public void initializeClient(@NotNull Consumer<IClientMobEffectExtensions> consumer) {
+            consumer.accept(new IClientMobEffectExtensions() {
+
+                // 1. Override HUD icon rendering to prevent the flashing animation.
+                @Override
+                public boolean renderGuiIcon(MobEffectInstance instance, Gui gui, GuiGraphics guiGraphics, int x, int y, float z, float alpha) {
+                    net.minecraft.client.renderer.texture.TextureAtlasSprite sprite = Minecraft.getInstance().getMobEffectTextures().get(instance.getEffect());
+
+                    // Force alpha to 1.0F to completely bypass the vanilla flashing animation (which happens < 200 ticks)
+                    guiGraphics.setColor(1.0F, 1.0F, 1.0F, 1.0F);
+                    guiGraphics.blit(x + 3, y + 3, 0, 18, 18, sprite);
+                    guiGraphics.setColor(1.0F, 1.0F, 1.0F, 1.0F); // Reset color to prevent affecting other GUI elements
+
+                    // Return true to indicate we have handled the icon drawing, skipping vanilla's flashing logic
+                    return true;
+                }
+
+                // 2. Override inventory text rendering to show description instead of duration.
+                @Override
+                public boolean renderInventoryText(MobEffectInstance instance, EffectRenderingInventoryScreen<?> screen, GuiGraphics guiGraphics, int x, int y, int blitOffset) {
+                    MobEffect effect = instance.getEffect();
+                    String baseKey = effect.getDescriptionId();
+
+                    // 检查并获取特定等级的动态名称 (例如 "重伤" injury.3)
+                    String nameKey = baseKey;
+                    if (IS_EFFECT_NAME_VARIABLE.test(effect)) {
+                        nameKey = getEffectVarName(baseKey, instance.getAmplifier());
+                    }
+
+                    // --- 渲染标题文本 --- (坐标 x + 28, y + 6)
+                    MutableComponent nameText = Component.translatable(nameKey);
+                    if (!IS_EFFECT_NAME_VARIABLE.test(effect) && instance.getAmplifier() > 0 && instance.getAmplifier() <= 9) {
+                        nameText.append(Component.literal(" ")).append(Component.translatable("enchantment.level." + (instance.getAmplifier() + 1)));
+                    }
+                    guiGraphics.drawString(Minecraft.getInstance().font, nameText, x + 28, y + 6, 0xFFFFFF);
+
+                    // --- 渲染描述文本 --- (坐标 x + 28, y + 16)
+                    String descriptionKey = nameKey + ".description";
+                    MutableComponent description = Component.translatable(descriptionKey);
+
+                    if (!description.getString().equals(descriptionKey)) {
+                        var font = Minecraft.getInstance().font;
+                        int maxWidth = 88; // 原版黑框留给文字的物理宽度
+                        int textWidth = font.width(description);
+
+                        if (textWidth > maxWidth) {
+                            // 【文字过长，开启跑马灯滚动模式】
+                            // 开启裁剪(Scissor)遮罩，限制渲染区域，超出 maxWidth 的部分直接切掉不显示
+                            guiGraphics.enableScissor(x + 28, y + 16, x + 28 + maxWidth, y + 16 + 10);
+
+                            // 利用系统时间计算滚动偏移量
+                            long time = Util.getMillis();
+                            int pauseDuration = 1500; // 头尾停顿时间 (毫秒)
+                            int speed = 30; // 滚动速度，每 30 毫秒移动 1 像素 (越小越快)
+
+                            int maxScroll = textWidth - maxWidth; // 需要滚动的总距离
+                            int cycleTime = pauseDuration * 2 + maxScroll * speed; // 一个完整循环所需的总时间
+                            long currentCycle = time % cycleTime;
+
+                            int offset = 0;
+                            if (currentCycle > pauseDuration) {
+                                if (currentCycle < pauseDuration + maxScroll * speed) {
+                                    // 处于滚动阶段
+                                    offset = (int) ((currentCycle - pauseDuration) / speed);
+                                } else {
+                                    // 处于末尾停顿阶段
+                                    offset = maxScroll;
+                                }
+                            }
+
+                            // 绘制带有负数偏移量的文字，实现向左移动的视觉效果
+                            guiGraphics.drawString(font, description, x + 28 - offset, y + 16, 8355711, false);
+
+                            // ★ 必须关闭裁剪遮罩，否则会影响整个游戏后续的画面渲染！
+                            guiGraphics.disableScissor();
+                        } else {
+                            // 【文字较短，无需滚动，正常渲染】
+                            guiGraphics.drawString(font, description, x + 28, y + 16, 8355711, false);
+                        }
+                    } else {
+                        // --- 没有描述文本，回退显示时间 (例如：恒温) ---
+                        int ticks = instance.getDuration();
+                        String durationText;
+                        if (instance.isInfiniteDuration()) {
+                            durationText = "**:**";
+                        } else {
+                            int seconds = ticks / 20;
+                            int minutes = seconds / 60;
+                            seconds %= 60;
+                            durationText = String.format("%02d:%02d", minutes, seconds);
+                        }
+                        guiGraphics.drawString(Minecraft.getInstance().font, durationText, x + 28, y + 16, 8355711);
+                    }
+
+                    // 返回 true 彻底接管原版持续时间的渲染逻辑
+                    return true;
+                }
+
+                private static @NotNull String getDurationText(@NotNull MobEffectInstance instance) {
+                    int ticks = instance.getDuration();
+                    String durationText;
+                    if (instance.isInfiniteDuration()) {
+                        durationText = "**:**";
+                    } else {
+                        int seconds = ticks / 20;
+                        int minutes = seconds / 60;
+                        seconds %= 60;
+                        durationText = String.format("%02d:%02d", minutes, seconds);
+                    }
+                    return durationText;
+                }
+            });
+        }
     }
 }

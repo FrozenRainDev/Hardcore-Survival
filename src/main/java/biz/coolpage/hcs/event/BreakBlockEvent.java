@@ -24,13 +24,14 @@ import net.minecraft.world.Containers;
 import net.minecraftforge.event.level.BlockEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
+import org.jetbrains.annotations.NotNull;
 
 import static biz.coolpage.hcs.util.EntityHelper.dropItem;
 
 @Mod.EventBusSubscriber(modid =Hcs.MOD_ID)
 public class BreakBlockEvent {
     @SubscribeEvent
-    public static void onBlockBreak(BlockEvent.BreakEvent event) {
+    public static void onBlockBreak(BlockEvent.@NotNull BreakEvent event) {
         // todo distinguish before break & after break
         Player player = event.getPlayer();
         if (EntityHelper.IS_SURVIVAL_AND_SERVER.test(player)) {

@@ -47,7 +47,7 @@ import static net.minecraft.sounds.SoundEvents.*;
 public class HallucinationEvents {
 
     private static Entity hallucinationEntity = null;
-    // 新增：记录下一次允许生成幻觉实体的游戏刻
+    // Added: Record the next game tick allowed to spawn a hallucination entity
     private static int nextSpawnTick = 0;
 
     @SubscribeEvent
@@ -65,27 +65,27 @@ public class HallucinationEvents {
             double dist;
             Vec3 playerPos = minecraft.player.position();
             double san = ((StatAccessor) minecraft.player).getSanityManager().get();
-            // 注意这里：entityPos 是在生成逻辑【之前】获取的旧位置
+            // Note: entityPos is the old position obtained BEFORE the spawning logic
             Vec3 entityPos = hallucinationEntity == null ? Vec3.ZERO : hallucinationEntity.position();
 
-            // 严格保留原有效果：距离大于16，或者离玩家较近（小于6）时，幻觉实体消失
+            // Strictly preserve original effects: entity disappears if distance > 16, or too close to player (< 4)
             if (hallucinationEntity != null && ((dist = playerPos.distanceTo(entityPos)) > 16 || dist < 4 || Double.isNaN(dist))) {
                 hallucinationEntity = null;
-                // 添加短暂的随机冷却时间：20 ~ 80 刻（即 1秒 ~ 4秒）
+                // Add a brief random cooldown: 20 ~ 80 ticks (approx. 1s ~ 4s)
                 nextSpawnTick = minecraft.player.tickCount + Mth.nextInt(RandomSource.create(), 20 + (int) (san * 150), 60 + (int) (san * 150));
             }
 
-            // 如果实体为空，并且当前时间还未达到冷却结束时间，则直接跳过后续渲染
+            // If entity is null and current time hasn't reached cooldown end, skip rendering
             if (hallucinationEntity == null && minecraft.player.tickCount < nextSpawnTick) {
                 return;
             }
 
-            // 冷却结束且实体为空时，重新在远处随机生成
+            // Re-spawn randomly at a distance when cooldown ends and entity is null
             if (hallucinationEntity == null) {
-                // 改为从注册表中动态获取所有被归类为怪物（敌对生物）的实体，包括原版和所有模组的怪物
+                // Dynamically fetch all entities categorized as monsters from registry, including vanilla and mods
                 List<EntityType<?>> monsters = ForgeRegistries.ENTITY_TYPES.getValues().stream()
                         .filter(type -> type.getCategory() == MobCategory.MONSTER)
-                        .filter(type -> type != EntityType.SHULKER && type != EntityType.ENDER_DRAGON) // 排除潜影贝、末影龙
+                        .filter(type -> type != EntityType.SHULKER && type != EntityType.ENDER_DRAGON) // Exclude Shulker and Ender Dragon
                         .toList();
 
                 if (!monsters.isEmpty()) {
@@ -93,29 +93,29 @@ public class HallucinationEvents {
                     hallucinationEntity = randomType.create(minecraft.level);
                 }
 
-                // 兜底方案：如果注册表异常或无法在客户端生成，默认退回僵尸
+                // Fallback: If registry is abnormal or fails to create, default to Zombie
                 if (hallucinationEntity == null) {
                     hallucinationEntity = new Zombie(EntityType.ZOMBIE, minecraft.level);
                 }
 
                 double newX = playerPos.x();
-                double newY = playerPos.y(); // 高度y与玩家一致
+                double newY = playerPos.y(); // Height y consistent with player
                 double newZ = playerPos.z();
                 boolean validPos = false;
 
-                // 尝试寻找玩家视野内（面前）且无遮挡的生成点，最多尝试 15 次
+                // Try to find a spawn point within player's FOV (front) with no obstruction, max 15 attempts
                 for (int i = 0; i < 15; i++) {
-                    // 在玩家面朝方向的 ±60 度范围内随机（保证在玩家视野前方）
+                    // Randomize within ±60 degrees of player's yaw (ensures it's in front)
                     float randomYaw = minecraft.player.getYRot() + Mth.nextFloat(RandomSource.create(), -60F, 60F);
                     float rad = randomYaw * ((float) Math.PI / 180F);
                     double tryDist = Mth.nextDouble(RandomSource.create(), 8D, 16D);
 
-                    // 根据偏航角和距离计算目标坐标
+                    // Calculate target coordinates based on yaw and distance
                     double tryX = playerPos.x() - Mth.sin(rad) * tryDist;
                     double tryZ = playerPos.z() + Mth.cos(rad) * tryDist;
                     double tryY = playerPos.y();
 
-                    // 视线遮挡检测（光线追踪）：从玩家眼睛到试图生成的位置的眼睛高度
+                    // Raycasting for obstruction: From player eyes to target eye height
                     Vec3 eyePos = minecraft.player.getEyePosition();
                     Vec3 targetEyePos = new Vec3(tryX, tryY + minecraft.player.getEyeHeight(), tryZ);
 
@@ -126,7 +126,7 @@ public class HallucinationEvents {
                             minecraft.player
                     ));
 
-                    // MISS表示中间没有方块遮挡
+                    // MISS indicates no blocks in between
                     if (hitResult.getType() == HitResult.Type.MISS) {
                         newX = tryX;
                         newY = tryY;
@@ -136,7 +136,7 @@ public class HallucinationEvents {
                     }
                 }
 
-                // 如果多次尝试仍未找到无遮挡位置，使用正前方距离10的位置兜底
+                // Fallback: If no unobstructed position found, use a point 10 blocks directly ahead
                 if (!validPos) {
                     float rad = minecraft.player.getYRot() * ((float) Math.PI / 180F);
                     newX = playerPos.x() - Mth.sin(rad) * 10D;
@@ -149,12 +149,12 @@ public class HallucinationEvents {
                 hallucinationEntity.zo = newZ;
             }
 
-            // 同步Tick，恢复正常模型动画，并让实体像幽灵一样缓慢向玩家飘移
+            // Sync Tick, restore model animations, and make entity drift slowly towards player like a ghost
             if (hallucinationEntity.tickCount != minecraft.player.tickCount) {
                 hallucinationEntity.tickCount = minecraft.player.tickCount;
 
-                // 【修复点】：如果是刚刚重新生成的实体，它的实际位置已经变成了 newX, newY, newZ
-                // 但上面的 entityPos 变量存的还是旧位置。所以这里必须重新获取最新位置。
+                // [Fix Point]: If entity was just re-spawned, its position is newX, newY, newZ.
+                // The 'entityPos' variable above stores the OLD position. Must re-fetch current position here.
                 Vec3 currentPos = hallucinationEntity.position();
                 Vec3 dir = playerPos.subtract(currentPos).normalize().scale(0.5);
 
@@ -168,7 +168,7 @@ public class HallucinationEvents {
                 }
             }
 
-            // 头部与身体旋转，死死盯着玩家
+            // Head and body rotation to stare directly at the player
             double dX = playerPos.x() - hallucinationEntity.getX();
             double dY = (playerPos.y() + minecraft.player.getEyeHeight()) - (hallucinationEntity.getY() + hallucinationEntity.getEyeHeight());
             double dZ = playerPos.z() - hallucinationEntity.getZ();
@@ -188,7 +188,7 @@ public class HallucinationEvents {
                 living.yBodyRotO = yaw;
             }
 
-            // 生成环境粒子效果
+            // Environment particle effects (Commented out in original)
 //            if (minecraft.level.random.nextFloat() < 0.4F) {
 //                minecraft.level.addParticle(ParticleTypes.SOUL,
 //                        hallucinationEntity.getRandomX(0.8D),
@@ -218,21 +218,21 @@ public class HallucinationEvents {
 
                 poseStack.pushPose();
 
-                // 先将矩阵平移到实体所在位置，保证后续的缩放不会导致坐标飞走
+                // Translate matrix to entity position first to ensure subsequent scaling doesn't cause drift
                 poseStack.translate(renderX, renderY, renderZ);
 
-                // --- 新增：忽大忽小的脉冲缩放效果 ---
+                // --- New: Pulsating scale effect ---
                 float time = minecraft.player.tickCount + partialTick;
-                // 利用正弦波，在 0.8x 到 1.2x 之间循环缩放
+                // Use sine wave to cycle scale between 0.8x and 1.2x (Wait, sin * 0.9 + 1.0 is 0.1 to 1.9)
                 float pulseScale = 1.0F + Mth.sin(time * 0.15F) * 0.9F;
 
-                // 将缩放原点移到实体中心位置（而非脚底）显得更自然
+                // Move scaling origin to entity center (rather than feet) for a more natural look
                 float halfHeight = hallucinationEntity.getBbHeight() / 2.0F;
                 poseStack.translate(0, halfHeight, 0);
                 poseStack.scale(pulseScale, pulseScale, pulseScale);
                 poseStack.translate(0, -halfHeight, 0);
 
-                // 视觉故障特效 (Glitch)
+                // Visual Glitch effect
                 if (minecraft.level.random.nextFloat() < 0.05F) {
                     poseStack.translate(
                             (Math.random() - 0.5) * 0.4,
@@ -246,7 +246,7 @@ public class HallucinationEvents {
                     );
                 }
 
-                // 执行渲染（因为上面已经手动平移过坐标，所以这里的偏移值传 0.0D）
+                // Execute rendering (Offset passed as 0.0D since we manually translated the poseStack)
                 dispatcher.render(
                         hallucinationEntity,
                         0.0D,
@@ -256,19 +256,19 @@ public class HallucinationEvents {
                         partialTick,
                         poseStack,
                         bufferSource,
-                        15728880 // 原为 dispatcher.getPackedLightCoords，修改为 15728880 (即最高亮度)，使其在黑夜中也能发光
+                        15728880 // Changed to 15728880 (Full Brightness) so it glows in the dark
                 );
 
                 poseStack.popPose();
             }
         } else {
             hallucinationEntity = null;
-            // 玩家理智恢复时重置冷却时间
+            // Reset spawn cooldown when sanity recovers
             nextSpawnTick = 0;
         }
     }
 
-    // --- 幻觉状态下视野缩减（自定义雾气距离） ---
+    // --- Vision reduction under hallucination (Custom Fog Distance) ---
     @SubscribeEvent
     public static void onRenderFog(ViewportEvent.RenderFog event) {
         Minecraft minecraft = Minecraft.getInstance();
@@ -279,21 +279,21 @@ public class HallucinationEvents {
         double san = ((StatAccessor) minecraft.player).getSanityManager().get();
         if (minecraft.player.hasEffect(HcsEffects.INSANITY.get()) && san < 0.15) {
             float time = minecraft.player.tickCount + (float) event.getPartialTick();
-            // 加入轻微的呼吸波动感，增加诡异氛围
+            // Add a slight "breathing" pulsation to enhance the eerie atmosphere
             float pulse = Mth.sin(time * 0.05F) * 0.15F;
 
-            float baseDistance = 32.0F + 640.0F * (float) san; // 基础视野距离，可以根据你的硬核难度调整（越小越瞎）
+            float baseDistance = 32.0F + 640.0F * (float) san; // Base view distance (smaller makes player "blinder")
             float fogEnd = baseDistance * (1.0F + pulse);
-            float fogStart = fogEnd * 0.1F; // 雾气开始渐变的距离，设置得极小能让整个屏幕笼罩在压抑感中
+            float fogStart = fogEnd * 0.1F; // Small start distance creates a heavy, oppressive fog covering the screen
 
             event.setNearPlaneDistance(fogStart);
             event.setFarPlaneDistance(fogEnd);
-            event.setFogShape(FogShape.SPHERE); // 采用球形雾气，包裹感更强，不受视角影响
-            event.setCanceled(true); // 必须取消事件以应用我们自定义的雾气距离覆盖原版
+            event.setFogShape(FogShape.SPHERE); // Spherical fog for better immersion, unaffected by view angle
+            event.setCanceled(true); // Cancel event to apply custom fog override
         }
     }
 
-    // --- 新增：幻觉状态下将雾气颜色（即背景颜色）改为纯黑色 ---
+    // --- New: Set fog color (background) to pure black during hallucinations ---
     @SubscribeEvent
     public static void onComputeFogColor(ViewportEvent.ComputeFogColor event) {
         Minecraft minecraft = Minecraft.getInstance();
@@ -302,7 +302,7 @@ public class HallucinationEvents {
         }
 
         if (minecraft.player.hasEffect(HcsEffects.INSANITY.get()) && ((StatAccessor) minecraft.player).getSanityManager().get() < 0.1) {
-            // 强制将雾气RGB颜色设置为纯黑
+            // Force fog RGB color to pure black
             event.setRed(0.0F);
             event.setGreen(0.0F);
             event.setBlue(0.0F);
@@ -311,36 +311,36 @@ public class HallucinationEvents {
 
     // Sound
 
-
-    // 状态记录变量（因为是纯客户端，直接用静态变量记录本地玩家状态即可）
+    // State recording variables (Client-only, static variables for local player state)
     private static boolean prevIsThirdPerson = false;
     private static int prevInsanityEffectId = 0;
     private static int ticks = 0;
     private static int horriblyPlayedTicks = 0;
 
-    // --- 将音效按惊悚程度分级 ---
+    // --- Categorizing sounds by horror intensity ---
 
-    // 轻度幻听（San值 0.15 ~ 0.3）：环境音、轻微破裂、蜘蛛等
+    // Mild Auditory Hallucinations (Sanity 0.15 ~ 0.3): Environment, light cracking, spiders, etc.
     private static final SoundEvent[] MILD_SOUNDS = {
             ROOTED_DIRT_BREAK, BONE_BLOCK_HIT, VINE_PLACE, SKELETON_AMBIENT, SPIDER_AMBIENT, ZOMBIE_ATTACK_WOODEN_DOOR
     };
 
-    // 中度幻听（San值 0.05 ~ 0.15）：僵尸砸铁门、苦力怕点燃、恶魂尖叫、雷声等压迫感音效
+    // Moderate Auditory Hallucinations (Sanity 0.05 ~ 0.15): Zombie breaking iron door, creeper priming, ghast scream, thunder, etc.
     private static final SoundEvent[] SCARY_SOUNDS = {
             HUSK_DEATH, ENDERMITE_DEATH, BLAZE_AMBIENT, DROWNED_DEATH, STRAY_DEATH, ZOMBIE_ATTACK_IRON_DOOR, CREEPER_PRIMED, GHAST_SCREAM, LIGHTNING_BOLT_THUNDER
     };
 
-    // 极端幻听（San值 < 0.05）：极其刺耳、爆炸、末影人尖叫
+    // Extreme Auditory Hallucinations (Sanity < 0.05): Piercing sounds, explosions, enderman screams
     private static final SoundEvent[] EXTREME_SOUNDS = {
             ENDERMAN_HURT, BLAZE_DEATH, PIG_DEATH, GENERIC_EXPLODE, ENDERMAN_SCREAM, ELDER_GUARDIAN_CURSE
     };
 
-    // 环境低频音（保持原样）
+    // Ambient low-frequency sounds
     private static final SoundEvent[] AMBIENT_SOUNDS = {
             AMBIENT_CAVE.value(), AMBIENT_UNDERWATER_LOOP_ADDITIONS_ULTRA_RARE, AMBIENT_BASALT_DELTAS_MOOD.value(), AMBIENT_WARPED_FOREST_MOOD.value(), AMBIENT_BASALT_DELTAS_MOOD.value(), AMBIENT_SOUL_SAND_VALLEY_MOOD.value(), AMBIENT_UNDERWATER_LOOP, AMBIENT_BASALT_DELTAS_ADDITIONS.value(), AMBIENT_NETHER_WASTES_LOOP.value(), AMBIENT_NETHER_WASTES_ADDITIONS.value()
     };
 
-    // --- 音效播放辅助方法 ---
+    // --- Sound playing helper methods ---
+    @SuppressWarnings("SameParameterValue")
     private static void playRandomSound(@NotNull LocalPlayer player, SoundEvent[] soundPool, float volume, float pitch) {
         if (player.level() instanceof ClientLevel clientLevel) {
             SoundEvent sound = soundPool[player.getRandom().nextInt(soundPool.length)];
@@ -356,7 +356,7 @@ public class HallucinationEvents {
 
     @SubscribeEvent
     public static void onClientPlayerTick(TickEvent.@NotNull PlayerTickEvent event) {
-        // 确保只在客户端的 Tick 结束阶段执行，且只针对当前操作的本地玩家
+        // Ensure execution only at the END phase of the client tick, and only for the local player
         if (event.side.isServer() || event.phase != TickEvent.Phase.END) return;
         Minecraft minecraft = Minecraft.getInstance();
         if (event.player != minecraft.player) return;
@@ -365,6 +365,7 @@ public class HallucinationEvents {
         ++ticks;
         if (horriblyPlayedTicks > 0) --horriblyPlayedTicks;
 
+        assert player != null;
         SanityManager sanityManager = ((StatAccessor) player).getSanityManager();
         StatusManager statusManager = ((StatAccessor) player).getStatusManager();
         double sanity = sanityManager.get();
@@ -373,7 +374,7 @@ public class HallucinationEvents {
         boolean darknessEnveloped = player.hasEffect(HcsEffects.DARKNESS_ENVELOPED.get());
         boolean hasInsanity = player.hasEffect(HcsEffects.INSANITY.get());
 
-        // 停止环境音效的逻辑
+        // Logic to stop ambient sounds
         if (!hasInsanity && !darknessEnveloped && horriblyPlayedTicks > 0) {
             minecraft.getSoundManager().stop(null, SoundSource.AMBIENT);
             horriblyPlayedTicks = 0;
@@ -381,7 +382,7 @@ public class HallucinationEvents {
 
         if (EntityHelper.IS_SURVIVAL_LIKE.test(player)) {
 
-            // 1. 保留原版的黑暗笼罩 (DARKNESS_ENVELOPED) 逻辑
+            // 1. Preserve original Darkness Enveloped logic
             if (darknessEnveloped && !HcsDifficulty.isOf(player, HcsDifficulty.HcsDifficultyEnum.relaxing)) {
                 final int darkTicks = statusManager.getInDarknessTicks();
                 if (darkTicks == 60) {
@@ -398,7 +399,7 @@ public class HallucinationEvents {
                 }
             }
 
-            // 2. 视觉扭曲效果：依然在 San值 < 0.65 时触发
+            // 2. Visual Distortion: Triggered when Sanity < 0.65
             if (sanity < 0.65) {
                 int insanityEffectId = Mth.clamp((int) (sanity * 20.0), 0, 12);
                 if (prevInsanityEffectId != insanityEffectId || isThirdPerson != prevIsThirdPerson || ticks % 20 == 0) {
@@ -410,46 +411,46 @@ public class HallucinationEvents {
                 prevInsanityEffectId = -1;
             }
 
-            // 3. 听觉幻觉逻辑：仅在 San值 < 0.3 且拥有 Insanity 效果时触发
+            // 3. Auditory Hallucination Logic: Triggered when Sanity < 0.3 AND Insanity effect is active
             if (hasInsanity && sanity < 0.3) {
 
-                // 极端情况下剥夺玩家真实的听觉
+                // Deprive player of real sounds in extreme cases
                 if (sanity < 0.15) {
                     for (SoundSource cate : new SoundSource[]{SoundSource.BLOCKS, SoundSource.HOSTILE, SoundSource.MUSIC, SoundSource.NEUTRAL, SoundSource.RECORDS, SoundSource.VOICE, SoundSource.WEATHER, SoundSource.PLAYERS}) {
                         minecraft.getSoundManager().stop(null, cate);
                     }
                 }
 
-                // 根据 San 值动态缩放幻听播放的频率（值越低，频率越高）
+                // Scale hallucination frequency based on sanity (lower sanity = higher frequency)
                 int ambientFreq = sanity <= 0.05 ? 100 : (sanity < 0.15 ? 300 : 600);
                 int hallFreq = sanity <= 0.05 ? 60 : (sanity < 0.15 ? 200 : 800);
 
-                // 播放随机背景环境音
+                // Play random ambient background sounds
                 if (player.level().getGameTime() % ambientFreq == 0) {
                     playRandomSound(player, AMBIENT_SOUNDS, 26.0F, 1.0F);
                 }
 
-                // 播放实质性幻听
+                // Play substantive auditory hallucinations
                 if (player.level().getGameTime() % hallFreq == 0) {
                     if (sanity <= 0.05) {
-                        // San < 0.05：有极高概率 (70%) 直接播放末影人死亡音效，否则播放其他极端音效
+                        // San < 0.05: High probability (70%) of Enderman stare, otherwise extreme sounds
                         if (player.getRandom().nextFloat() < 0.7F) {
                             playSpecificSound(player, ENDERMAN_STARE, 13.0F, 1.0F);
                         } else {
                             playRandomSound(player, EXTREME_SOUNDS, 13.0F, 1.0F);
                         }
                     } else if (sanity < 0.15) {
-                        // 0.05 <= San < 0.15：播放中度惊悚音效
+                        // 0.05 <= San < 0.15: Moderate horror sounds
                         playRandomSound(player, SCARY_SOUNDS, 13.0F, 1.0F);
                     } else {
-                        // 0.15 <= San < 0.30：播放轻度诡异音效
+                        // 0.15 <= San < 0.30: Mild eerie sounds
                         playRandomSound(player, MILD_SOUNDS, 13.0F, 1.0F);
                     }
                 }
             }
 
         } else if (sanity < 0.65) {
-            // 创造/旁观者模式下，且San值不足时，清除屏幕效果
+            // Clear screen effects in Creative/Spectator mode if sanity is low
             minecraft.gameRenderer.shutdownEffect();
         }
 
@@ -458,24 +459,25 @@ public class HallucinationEvents {
 
 
     // Player Entity Rendering
-// 缓存一个客户端专用的骷髅实例，避免每帧创建导致内存溢出
+    // Cache a client-side Skeleton instance to avoid per-frame creation and memory overflow
     private static Skeleton cachedHallucinationSkeleton = null;
 
+    @SuppressWarnings("ConstantValue")
     @SubscribeEvent
     public static void onRenderPlayerPre(RenderPlayerEvent.@NotNull Pre event) {
         Player player = event.getEntity();
         Level level = player.level();
 
-        // 判断是否触发极端掉San情况的幻觉替换
+        // Check for hallucination replacement under extreme low sanity
         if (level != null && player.hasEffect(HcsEffects.INSANITY.get()) &&
                 ((StatAccessor) player).getSanityManager().get() < 0.05) {
 
-            // --- 1. 初始化缓存实体（仅在第一次或切换世界时创建） ---
+            // --- 1. Initialize cached entity (Create only first time or upon world change) ---
             if (cachedHallucinationSkeleton == null || cachedHallucinationSkeleton.level() != level) {
                 cachedHallucinationSkeleton = new Skeleton(EntityType.SKELETON, level);
             }
 
-            // --- 2. 同步手持物品和装备 ---
+            // --- 2. Sync held items and equipment ---
             cachedHallucinationSkeleton.setItemInHand(InteractionHand.MAIN_HAND, player.getMainHandItem());
             cachedHallucinationSkeleton.setItemInHand(InteractionHand.OFF_HAND, player.getOffhandItem());
             cachedHallucinationSkeleton.setItemSlot(EquipmentSlot.HEAD, player.getItemBySlot(EquipmentSlot.HEAD));
@@ -483,26 +485,26 @@ public class HallucinationEvents {
             cachedHallucinationSkeleton.setItemSlot(EquipmentSlot.LEGS, player.getItemBySlot(EquipmentSlot.LEGS));
             cachedHallucinationSkeleton.setItemSlot(EquipmentSlot.FEET, player.getItemBySlot(EquipmentSlot.FEET));
 
-            // --- 3. 核心修复：同步坐标与走路动画 ---
+            // --- 3. Core Fix: Sync coordinates and walking animation ---
             cachedHallucinationSkeleton.copyPosition(player);
 
-            // 【关键】：每刻（Tick）计算一次真实移动距离，推进腿部动画
+            // [CRITICAL]: Calculate real movement distance per tick to drive leg animation
             if (cachedHallucinationSkeleton.tickCount != player.tickCount) {
                 cachedHallucinationSkeleton.tickCount = player.tickCount;
 
-                // 计算玩家这一刻在水平方向上的真实移动距离
+                // Calculate horizontal distance traveled this tick
                 double dx = player.getX() - player.xo;
                 double dz = player.getZ() - player.zo;
                 float moveDist = (float) Math.sqrt(dx * dx + dz * dz);
 
-                // 使用原版 LivingEntity 的算法，将移动距离转换为腿部摆动速度
+                // Use vanilla LivingEntity logic to convert movement distance to leg swing speed
                 float walkSpeed = Math.min(moveDist * 4.0F, 1.0F);
 
-                // 推进骷髅的内部累加器，让腿动起来！
+                // Advance skeleton's internal accumulator to animate legs
                 cachedHallucinationSkeleton.walkAnimation.update(walkSpeed, 0.4F);
             }
 
-            // --- 4. 同步身体旋转与姿态 ---
+            // --- 4. Sync body rotation and posture ---
             cachedHallucinationSkeleton.setYRot(player.getYRot());
             cachedHallucinationSkeleton.yRotO = player.yRotO;
             cachedHallucinationSkeleton.setXRot(player.getXRot());
@@ -519,10 +521,10 @@ public class HallucinationEvents {
             cachedHallucinationSkeleton.attackAnim = player.attackAnim;
             cachedHallucinationSkeleton.oAttackAnim = player.oAttackAnim;
 
-            // 修复：受伤渲染只需要 hurtTime 即可触发变红闪烁，hurtDir 客户端不需要
+            // Fix: Damage rendering only requires hurtTime to trigger red flash; hurtDir is not needed on client
             cachedHallucinationSkeleton.hurtTime = player.hurtTime;
 
-            // 修复：绕过 protected 限制，利用原生公开方法同步吃东西/拉弓动作
+            // Fix: Bypass protected restrictions using public methods to sync eating/bow drawing actions
             if (player.isUsingItem()) {
                 cachedHallucinationSkeleton.startUsingItem(player.getUsedItemHand());
             } else {
@@ -530,25 +532,25 @@ public class HallucinationEvents {
             }
 
             // ==========================================
-            // 开始执行替换渲染逻辑 (自带抽搐特效)
+            // Begin Replacement Rendering (With Jitter Effect)
             // ==========================================
 
-            // 取消原版玩家的渲染
+            // Cancel original player rendering
             event.setCanceled(true);
 
             PoseStack poseStack = event.getPoseStack();
-            poseStack.pushPose(); // 压入矩阵，保护原有的渲染上下文
+            poseStack.pushPose(); // Push matrix to protect original rendering context
 
-            // --- 视觉扭曲抽搐 (Glitch) 特效 ---
+            // --- Visual Distortion Jitter (Glitch) Effect ---
             RandomSource random = player.getRandom();
 
-            // 高频微小抖动 (模拟精神紧张发抖)
+            // High-frequency micro-jitter (Simulating nervous shaking)
             float shakeX = (random.nextFloat() - 0.5F) * 0.05F;
             float shakeY = (random.nextFloat() - 0.5F) * 0.05F;
             float shakeZ = (random.nextFloat() - 0.5F) * 0.05F;
             poseStack.translate(shakeX, shakeY, shakeZ);
 
-            // 低概率大幅度错位与扭曲 (模拟突然的神经崩溃)
+            // Low-probability large dislocation and distortion (Simulating sudden mental breakdown)
             if (random.nextFloat() < 0.15F) {
                 float glitchX = (random.nextFloat() - 0.5F) * 0.5F;
                 float glitchZ = (random.nextFloat() - 0.5F) * 0.5F;
@@ -558,7 +560,7 @@ public class HallucinationEvents {
                 poseStack.mulPose(com.mojang.math.Axis.ZP.rotationDegrees(glitchRot));
             }
 
-            // --- 5. 执行渲染 ---
+            // --- 5. Execute Rendering ---
             Minecraft.getInstance().getEntityRenderDispatcher()
                     .getRenderer(cachedHallucinationSkeleton)
                     .render(
@@ -570,7 +572,7 @@ public class HallucinationEvents {
                             event.getPackedLight()
                     );
 
-            poseStack.popPose(); // 弹出矩阵，清理现场
+            poseStack.popPose(); // Pop matrix to clean up
         }
     }
 }

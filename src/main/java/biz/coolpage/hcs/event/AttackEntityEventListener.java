@@ -11,6 +11,7 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
+import org.jetbrains.annotations.NotNull;
 
 import static biz.coolpage.hcs.util.EntityHelper.IS_SURVIVAL_AND_SERVER;
 
@@ -18,7 +19,7 @@ import static biz.coolpage.hcs.util.EntityHelper.IS_SURVIVAL_AND_SERVER;
 public class AttackEntityEventListener { // 修改了类名，避免冲突
 
     @SubscribeEvent
-    public static void onAttackEntity(net.minecraftforge.event.entity.player.AttackEntityEvent event) {
+    public static void onAttackEntity(net.minecraftforge.event.entity.player.@NotNull AttackEntityEvent event) {
         Player player = event.getEntity();
         if (event.getTarget() instanceof LivingEntity && IS_SURVIVAL_AND_SERVER.test(player)) {
             final double rand = Math.random();

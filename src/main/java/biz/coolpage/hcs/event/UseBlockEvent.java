@@ -17,9 +17,11 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.dimension.DimensionType;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Objects;
 
@@ -28,7 +30,7 @@ import static biz.coolpage.hcs.util.CommUtil.applyNullable;
 @Mod.EventBusSubscriber(modid = Hcs.MOD_ID)
 public class UseBlockEvent {
     @SubscribeEvent
-    public static void onRightClickBlock(PlayerInteractEvent.RightClickBlock event) {
+    public static void onRightClickBlock(PlayerInteractEvent.@NotNull RightClickBlock event) {
         if (event.getEntity() instanceof ServerPlayer serverPlayer && !serverPlayer.isSpectator()) {
             StaminaManager staminaManager = ((StatAccessor) serverPlayer).getStaminaManager();
             if (staminaManager.get() <= 0.005F) {
@@ -54,7 +56,7 @@ public class UseBlockEvent {
                 world.setBlockAndUpdate(posUp, Blocks.POTATOES.defaultBlockState());
                 if (!serverPlayer.isCreative()) mainHandStack.shrink(1);
             }
-            if (block instanceof BedBlock && applyNullable(world.dimensionType(), d -> d.bedWorks(), false)) {
+            if (block instanceof BedBlock && applyNullable(world.dimensionType(), DimensionType::bedWorks, false)) {
                 boolean b1 = EntityHelper.getEffectAmplifier(serverPlayer, HcsEffects.PAIN.get()) > 0;
                 boolean b2 = ((StatAccessor) serverPlayer).getSanityManager().get() < 0.15;
                 int hour = WorldHelper.getTimeAsReal(world)[0];

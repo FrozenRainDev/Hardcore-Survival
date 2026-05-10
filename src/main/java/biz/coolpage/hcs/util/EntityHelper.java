@@ -25,18 +25,15 @@ import net.minecraft.world.entity.boss.enderdragon.phases.EnderDragonPhase;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.monster.Enemy;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.entity.projectile.ThrownTrident;
 import net.minecraft.world.food.FoodData;
 import net.minecraft.world.item.*;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.ClipContext;
-import net.minecraft.world.level.GameType;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.TorchBlock;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.gameevent.GameEvent;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
@@ -303,12 +300,10 @@ public class EntityHelper {
 
     public static void addHcsDebuff(Object playerObj, MobEffect effect, int amplifier) {
         if (playerObj instanceof ServerPlayer player) {
-            player.addEffect(new MobEffectInstance(effect, 5, amplifier, false, false, true) {
-                @Override
-                public int getDuration() {
-                    return 210; // Disable icon twinkling for short duration
-                }
-            });
+            // Set ambient to 'false' (4th parameter) so vanilla draws the default grey background box.
+            // Duration is kept extremely short (2 ticks).
+            // The flashing issue will be intercepted and fixed in HcsMobEffect client extensions.
+            player.addEffect(new MobEffectInstance(effect, 2, amplifier, false, false, true));
         }
     }
 

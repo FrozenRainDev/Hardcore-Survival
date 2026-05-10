@@ -191,6 +191,49 @@ public final class HcsGuiOverlays {
         return Integer.parseInt(R + G + "00", 16);
     }
 
+    public int getTemperatureColor(double val) {
+        int r = 0, g = 0, b = 0;
+        String R, G, B;
+
+        // 限制取值范围在 0 到 1 之间
+        if (val > 1) val = 1;
+        else if (val < 0) val = 0;
+
+        if (val >= 0.5) {
+            // 后半段：绿 (0.5) -> 黄 (0.75) -> 红 (1.0)
+            double t = (val - 0.5) * 2;
+            if (t > 0.5) {
+                r = 255;
+                g = Mth.clamp((int) (((1 - t) * 2) * 255), 0, 255);
+            } else {
+                r = Mth.clamp((int) ((t * 2) * 255), 0, 255);
+                g = 255;
+            }
+        } else {
+            // 前半段：天蓝 (0.0) -> 青 (0.25) -> 绿 (0.5)
+            double t = val * 2;
+            if (t > 0.5) {
+                g = 255;
+                b = Mth.clamp((int) (((1 - t) * 2) * 255), 0, 255);
+            } else {
+                // 修改此处：最低温度时不再是纯蓝，而是给绿色打底 (128 起步)
+                // 这样 0.0 时为天蓝色 (0, 128, 255)，极其明亮清晰
+                g = Mth.clamp((int) ((t * 2) * 127) + 128, 0, 255);
+                b = 255;
+            }
+        }
+
+        // 转换为 16 进制字符串，不足两位补 0
+        R = Integer.toHexString(r);
+        G = Integer.toHexString(g);
+        B = Integer.toHexString(b);
+        if (R.length() < 2) R = "0" + R;
+        if (G.length() < 2) G = "0" + G;
+        if (B.length() < 2) B = "0" + B;
+
+        return Integer.parseInt(R + G + B, 16);
+    }
+
     public double getTempForDisplay(double x) {
         if (x <= 0.5F) return 0.5 - Math.pow(0.5 - x, 1.6) * 1.5;
         return Math.pow(x - 0.5, 1.6) * 1.5 + 0.5;
@@ -235,7 +278,7 @@ public final class HcsGuiOverlays {
             this.renderTextureOverlay(context, DARKNESS, Mth.clamp((inDarkTicks - 60) / 550.0F, 0.0F, 1.0F), screenWidth, screenHeight);
         }
 
-        if (sanityManager.get() < 0.05 && player.level().getGameTime() % 514 < 10)
+        if (sanityManager.get() < 0.05 && player.level().getGameTime() % 800 < 8)
             this.renderTextureOverlay(context, DARKNESS_JUMP_SCARE, 0.9F, screenWidth, screenHeight);
 
         if (statusManager.getRecentHurtTicks() > 0) {
@@ -509,6 +552,23 @@ public final class HcsGuiOverlays {
                 else if (temDeviation > 176) temDeviation = 176;
                 this.drawHCSTexture(ctx, xx, yy, 16 + temDeviation, 64, 16, 16);
             }
+
+            // --- ADDED FOR TEMPERATURE NUMERICAL DISPLAY ---
+            // Map [0.0, 1.0] to [-10.0, +10.0]
+            double displayTemp = (temp - 0.5) * 20.0; // 这里改成了 * 20.0
+            long roundedTemp = Math.round(displayTemp);
+            // Format text with a '+' prefix for positive values
+            String tempText = (roundedTemp > 0 ? "+" : "") + roundedTemp;
+
+            // Adjust X offset based on text length for automatic centering
+            int textOffset = 2;  // "+10", "-10"
+            if (tempText.length() == 1) textOffset = 7;      // "0"
+            else if (tempText.length() == 2) textOffset = 4; // "+5", "-6"
+
+            // Draw text with calculated color gradient
+            this.drawTextWithThickShadow(ctx, tempText, xx + textOffset, yyy + 11, getTemperatureColor(temp), 0.75F);
+            // --- END ---
+
             xx += 20;
         }
 
@@ -605,7 +665,7 @@ public final class HcsGuiOverlays {
         RenderSystem.disableBlend();
     }
 
-    // todo call me?
+    @Deprecated
     private @Nullable Player getCameraPlayer(@NotNull Minecraft minecraft) {
         return minecraft.getCameraEntity() instanceof Player player ? player : null;
     }

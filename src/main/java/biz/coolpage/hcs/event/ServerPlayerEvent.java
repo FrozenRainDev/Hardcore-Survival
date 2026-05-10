@@ -8,59 +8,58 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
+import org.jetbrains.annotations.NotNull;
 
 @Mod.EventBusSubscriber(modid = Hcs.MOD_ID)
 public class ServerPlayerEvent {
     @SubscribeEvent
-    public static void onPlayerClone(PlayerEvent.Clone event) {
+    public static void onPlayerClone(PlayerEvent.@NotNull Clone event) {
         Player oldPlayer = event.getOriginal();
         Player newPlayer = event.getEntity();
         boolean alive = !event.isWasDeath();
 
-        FoodData oldHungerManager = oldPlayer.getFoodData();
-        ThirstManager oldThirstManager = ((StatAccessor) oldPlayer).getThirstManager();
-        StaminaManager oldStaminaManager = ((StatAccessor) oldPlayer).getStaminaManager();
-        TemperatureManager oldTemperatureManager = ((StatAccessor) oldPlayer).getTemperatureManager();
-        SanityManager oldSanityManager = ((StatAccessor) oldPlayer).getSanityManager();
-        NutritionManager oldNutritionManager = ((StatAccessor) oldPlayer).getNutritionManager();
-        WetnessManager oldWetnessManager = ((StatAccessor) oldPlayer).getWetnessManager();
+        // Cast to StatAccessor once to avoid redundant casting and resolve duplication warning
+        StatAccessor oldAccessor = (StatAccessor) oldPlayer;
+        StatAccessor newAccessor = (StatAccessor) newPlayer;
 
         FoodData newHungerManager = newPlayer.getFoodData();
-        ThirstManager newThirstManager = ((StatAccessor) newPlayer).getThirstManager();
-        StaminaManager newStaminaManager = ((StatAccessor) newPlayer).getStaminaManager();
-        TemperatureManager newTemperatureManager = ((StatAccessor) newPlayer).getTemperatureManager();
-        SanityManager newSanityManager = ((StatAccessor) newPlayer).getSanityManager();
-        NutritionManager newNutritionManager = ((StatAccessor) newPlayer).getNutritionManager();
-        WetnessManager newWetnessManager = ((StatAccessor) newPlayer).getWetnessManager();
-        InjuryManager newInjuryManager = ((StatAccessor) newPlayer).getInjuryManager();
-        MoodManager newMoodManager = ((StatAccessor) newPlayer).getMoodManager();
-        DiseaseManager newDiseaseManager = ((StatAccessor) newPlayer).getDiseaseManager();
 
         if (!alive) {
             newHungerManager.setSaturation(1.0F);
-            newThirstManager.reset();
-            newStaminaManager.reset();
-            newTemperatureManager.reset();
-            newSanityManager.reset();
-            newNutritionManager.reset();
-            newWetnessManager.reset();
-            newInjuryManager.reset();
-            newMoodManager.reset();
-            newDiseaseManager.reset();
+            newAccessor.getThirstManager().reset();
+            newAccessor.getStaminaManager().reset();
+            newAccessor.getTemperatureManager().reset();
+            newAccessor.getSanityManager().reset();
+            newAccessor.getNutritionManager().reset();
+            newAccessor.getWetnessManager().reset();
+            newAccessor.getInjuryManager().reset();
+            newAccessor.getMoodManager().reset();
+            newAccessor.getDiseaseManager().reset();
         } else {
-            newHungerManager.setFoodLevel(oldHungerManager.getFoodLevel());
-            newThirstManager.set(oldThirstManager.get());
-            newStaminaManager.set(oldStaminaManager.get());
-            newTemperatureManager.set(oldTemperatureManager.get());
-            newSanityManager.set(oldSanityManager.get());
-            newNutritionManager.setVegetable(oldNutritionManager.getVegetable());
-            newWetnessManager.set(oldWetnessManager.get());
+            newHungerManager.setFoodLevel(oldPlayer.getFoodData().getFoodLevel());
+            newAccessor.getThirstManager().set(oldAccessor.getThirstManager().get());
+            newAccessor.getStaminaManager().set(oldAccessor.getStaminaManager().get());
+            newAccessor.getTemperatureManager().set(oldAccessor.getTemperatureManager().get());
+            newAccessor.getSanityManager().set(oldAccessor.getSanityManager().get());
+            // Keep original logic untouched: only set vegetable
+            newAccessor.getNutritionManager().setVegetable(oldAccessor.getNutritionManager().getVegetable());
+            newAccessor.getWetnessManager().set(oldAccessor.getWetnessManager().get());
         }
 
-        StatusManager oldStatusManager = ((StatAccessor) oldPlayer).getStatusManager();
+        StatusManager oldStatusManager = oldAccessor.getStatusManager();
         int maxSoulImpaired = StatusManager.getMaxSoulImpaired(newPlayer);
-        if (oldStatusManager.getSoulImpairedStat() > maxSoulImpaired)
+
+        if (oldStatusManager.getSoulImpairedStat() > maxSoulImpaired) {
             oldStatusManager.setSoulImpairedStat(maxSoulImpaired);
-        ((StatAccessor) newPlayer).getStatusManager().reset(oldStatusManager.getMaxExpLevelReached(), Math.min(maxSoulImpaired, oldStatusManager.getSoulImpairedStat() + (alive ? 0 : 1)), oldStatusManager.getStonesSmashed(), oldStatusManager.getHcsDifficulty(), oldStatusManager.hasShownInitTips(), oldStatusManager.getEnterCurrWldTimes());
+        }
+
+        newAccessor.getStatusManager().reset(
+                oldStatusManager.getMaxExpLevelReached(),
+                Math.min(maxSoulImpaired, oldStatusManager.getSoulImpairedStat() + (alive ? 0 : 1)),
+                oldStatusManager.getStonesSmashed(),
+                oldStatusManager.getHcsDifficulty(),
+                oldStatusManager.hasShownInitTips(),
+                oldStatusManager.getEnterCurrWldTimes()
+        );
     }
 }
