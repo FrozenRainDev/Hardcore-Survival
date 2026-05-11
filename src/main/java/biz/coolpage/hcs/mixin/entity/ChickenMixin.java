@@ -24,11 +24,6 @@ public abstract class ChickenMixin extends Animal { // ChickenEntityMixin
     @Shadow
     public int eggTime;
 
-    @Inject(method = "createAttributes", at = @At("RETURN"), cancellable = true)
-    private static void createAttributes(@NotNull CallbackInfoReturnable<AttributeSupplier.Builder> cir) {
-        cir.setReturnValue(cir.getReturnValue().add(Attributes.MAX_HEALTH, 6.0));
-    }
-
     @Inject(method = "aiStep", at = @At("HEAD"))
     public void aiStep(CallbackInfo ci) {
         if (this.eggTime == 7000 && this.level().getRandom().nextFloat() < 0.2F)

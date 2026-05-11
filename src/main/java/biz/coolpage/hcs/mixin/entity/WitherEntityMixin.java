@@ -35,7 +35,7 @@ public abstract class WitherEntityMixin extends Monster {
     public abstract boolean isPowered();
 
     @Shadow
-    public abstract boolean addEffect(MobEffectInstance effect, @Nullable Entity source);
+    public abstract boolean addEffect(@NotNull MobEffectInstance effect, @Nullable Entity source);
 
     @Unique
     private int summonSkeletonCooldown = 400;
@@ -85,8 +85,8 @@ public abstract class WitherEntityMixin extends Monster {
                 }
             }
             if (isPowered) {
-                this.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SPEED, 5, 1, false, false, false), (Entity)null);
-                this.addEffect(new MobEffectInstance(MobEffects.DAMAGE_RESISTANCE, 5, 1, false, false, false), (Entity)null);
+                this.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SPEED, 5, 1, false, false, false), null);
+                this.addEffect(new MobEffectInstance(MobEffects.DAMAGE_RESISTANCE, 5, 1, false, false, false), null);
             }
         }
     }

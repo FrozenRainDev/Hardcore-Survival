@@ -11,14 +11,12 @@ import org.spongepowered.asm.mixin.injection.ModifyArg;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(AbstractSkeleton.class)
-public class AbstractSkeletonMixin { // AbstractSkeletonEntityMixin
+public class AbstractSkeletonMixin {
     @Inject(method = "createAttributes", at = @At("RETURN"), cancellable = true)
     private static void createAttributes(@NotNull CallbackInfoReturnable<AttributeSupplier.Builder> cir) {
         cir.setReturnValue(cir.getReturnValue().add(Attributes.MAX_HEALTH, 4.0));
-        // Improvement of speed can cause bugs
     }
 
-    // Yarn getProjectile -> Mojang getArrow
     @ModifyArg(method = "performRangedAttack", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/monster/AbstractSkeleton;getArrow(Lnet/minecraft/world/item/ItemStack;F)Lnet/minecraft/world/entity/projectile/AbstractArrow;"), index = 1)
     private float injected(float damageModifier) {
         return damageModifier * 0.8F;

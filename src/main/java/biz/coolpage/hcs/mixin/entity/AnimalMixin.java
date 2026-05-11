@@ -20,10 +20,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 @Mixin(Animal.class)
 @SuppressWarnings("ConstantValue")
 public abstract class AnimalMixin extends AgeableMob { // AnimalEntityMixin
-    //See damage mixin in LivingEntityMixin
-    @Unique
-    private static String MILKED_NBT = "hcs_milked";
-
+    // See damage mixin in LivingEntityMixin
     protected AnimalMixin(EntityType<? extends AgeableMob> entityType, Level world) {
         super(entityType, world);
     }
@@ -31,20 +28,5 @@ public abstract class AnimalMixin extends AgeableMob { // AnimalEntityMixin
     @Inject(method = "getExperienceReward", at = @At("HEAD"), cancellable = true)
     public void getExperienceReward(@NotNull CallbackInfoReturnable<Integer> cir) {
         cir.setReturnValue(0);
-    }
-
-    @Inject(method = "readAdditionalSaveData", at = @At("TAIL"))
-    public void readAdditionalSaveData(CompoundTag nbt, CallbackInfo ci) {
-        if ((Object) this instanceof Cow) {
-            if (nbt.contains(MILKED_NBT, Tag.TAG_LONG))
-                this.entityData.set(EntityHelper.MILKED_TIME, nbt.getLong(MILKED_NBT));
-        }
-    }
-
-    @Inject(method = "addAdditionalSaveData", at = @At("TAIL"))
-    public void addAdditionalSaveData(@NotNull CompoundTag nbt, CallbackInfo ci) {
-        if ((Object) this instanceof Cow) {
-            nbt.putLong(MILKED_NBT, this.entityData.get(EntityHelper.MILKED_TIME));
-        }
     }
 }
