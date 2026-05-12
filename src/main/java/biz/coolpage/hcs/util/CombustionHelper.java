@@ -152,7 +152,7 @@ public class CombustionHelper {
                     return true;
                 }
         } else  // Regular campfires
-            if (campfire.setBurnOutTime(campfire.getBurnOutTime() + fuelDur)) {
+            if (campfire.setBurnOutTime(campfire.getBurnOutTime() + (int)(fuelDur * 1.5))) {
                 fuel.shrink(1);
                 return true;
             }

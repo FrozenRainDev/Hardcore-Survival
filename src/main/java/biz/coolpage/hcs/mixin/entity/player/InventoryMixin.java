@@ -2,7 +2,7 @@ package biz.coolpage.hcs.mixin.entity.player;
 
 import biz.coolpage.hcs.Hcs;
 import biz.coolpage.hcs.item.BurningCrudeTorchItem;
-import biz.coolpage.hcs.item.HotWaterBottleItem;
+import biz.coolpage.hcs.item.WaterBagItem;
 import biz.coolpage.hcs.status.HcsPersistentState;
 import biz.coolpage.hcs.status.accessor.StatAccessor;
 import biz.coolpage.hcs.status.manager.StatusManager;
@@ -40,7 +40,7 @@ public abstract class InventoryMixin {
         RotHelper.update(this.player.level(), inv);
         TemperatureManager temperatureManager = ((StatAccessor) player).getTemperatureManager();
         StatusManager statusManager = ((StatAccessor) player).getStatusManager();
-        HotWaterBottleItem.update(this.player.level(), inv, temperatureManager.getTrendType());
+        WaterBagItem.update(this.player.level(), inv, temperatureManager.getTrendType());
         int blocksCount = 0;
 
         for (int i = 0; i < inv.getContainerSize(); ++i) {

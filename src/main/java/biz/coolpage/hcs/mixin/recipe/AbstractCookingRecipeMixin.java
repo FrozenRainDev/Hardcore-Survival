@@ -1,7 +1,7 @@
 package biz.coolpage.hcs.mixin.recipe;
 
 import biz.coolpage.hcs.Hcs;
-import biz.coolpage.hcs.item.HotWaterBottleItem;
+import biz.coolpage.hcs.item.WaterBagItem;
 import biz.coolpage.hcs.util.RotHelper;
 import biz.coolpage.hcs.util.WorldHelper;
 import net.minecraft.core.NonNullList;
@@ -60,14 +60,14 @@ public abstract class AbstractCookingRecipeMixin {
             RotHelper.setFresh(theLevel, stackOut, RotHelper.getFreshCooked(RotHelper.getFresh(theLevel, stackIn)));
             cir.setReturnValue(stackOut);
         }
-        if (stackOut.is(Hcs.HOT_WATER_BOTTLE.get())) {
+        if (stackOut.is(Hcs.WATER_BAG.get())) {
             int stat = 1;
             CompoundTag nbt = stackOut.getOrCreateTag();
             if (!WorldHelper.cannotGetServerWorld())
-                HotWaterBottleItem.createExp(WorldHelper.getServerWorld(), stackOut, true);
-            if (nbt.contains(HotWaterBottleItem.HHSM) && nbt.getBoolean(HotWaterBottleItem.HHSM))
+                WaterBagItem.createExp(WorldHelper.getServerWorld(), stackOut, true);
+            if (nbt.contains(WaterBagItem.HHSM) && nbt.getBoolean(WaterBagItem.HHSM))
                 stat = -1;
-            HotWaterBottleItem.setStatus(stackOut, stat);
+            WaterBagItem.setStatus(stackOut, stat);
             cir.setReturnValue(stackOut);
         }
     }

@@ -1,7 +1,7 @@
 package biz.coolpage.hcs.mixin.block;
 
 import biz.coolpage.hcs.Hcs;
-import biz.coolpage.hcs.item.HotWaterBottleItem;
+import biz.coolpage.hcs.item.WaterBagItem;
 import biz.coolpage.hcs.util.EntityHelper;
 import biz.coolpage.hcs.util.RotHelper;
 import net.minecraft.core.BlockPos;
@@ -86,7 +86,7 @@ public class ChestBlockMixin {
             Container inv = ChestBlock.getContainer(chestBlock, state, world, pos, true);
             if (!state.is(Hcs.ICEBOX.get())) {
                 RotHelper.update(world, inv);
-                HotWaterBottleItem.update(world, inv);
+                WaterBagItem.update(world, inv);
             }
         }
     }

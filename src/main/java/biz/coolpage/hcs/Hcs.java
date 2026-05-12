@@ -195,7 +195,7 @@ public final class Hcs {
                     return super.finishUsingItem(stack, world, user);
                 }
             }),
-            HOT_WATER_BOTTLE = ITEMS.register("hot_water_bottle", HotWaterBottleItem::new),
+            WATER_BAG = ITEMS.register("water_bag", WaterBagItem::new),
             WOOLEN_HOOD = ITEMS.register("woolen_hood", () -> new ArmorItem(HcsArmorMaterials.WOOL, ArmorItem.Type.HELMET, new Item.Properties())),
             WOOLEN_COAT = ITEMS.register("woolen_coat", () -> new ArmorItem(HcsArmorMaterials.WOOL, ArmorItem.Type.CHESTPLATE, new Item.Properties())),
             WOOLEN_TROUSERS = ITEMS.register("woolen_trousers", () -> new ArmorItem(HcsArmorMaterials.WOOL, ArmorItem.Type.LEGGINGS, new Item.Properties())),
@@ -291,7 +291,7 @@ public final class Hcs {
             PETALS_SALAD_RECIPE = RECIPE_SERIALIZERS.register("petals_salad", () -> new SimpleCraftingRecipeSerializer<>(PetalsSaladRecipe::new)),
             SPIKED_CLUB_RECIPE = RECIPE_SERIALIZERS.register("spiked_club_recipe", () -> new SimpleCraftingRecipeSerializer<>(SpikedClubRecipe::new)),
             COLD_WATER_BOTTLE_RECIPE = RECIPE_SERIALIZERS.register("cold_water_bottle_recipe", () -> new SimpleCraftingRecipeSerializer<>(ColdWaterBottleRecipe::new)),
-            HOT_WATER_BOTTLE_RECIPE = RECIPE_SERIALIZERS.register("hot_water_bottle_recipe", () -> new SimpleCraftingRecipeSerializer<>(HotWaterBottleRecipe::new)),
+            HOT_WATER_BOTTLE_RECIPE = RECIPE_SERIALIZERS.register("water_bag", () -> new SimpleCraftingRecipeSerializer<>(WaterBottleRecipe::new)),
             SAPLING_TO_STICK_RECIPE = RECIPE_SERIALIZERS.register("sapling_to_stick_recipe", () -> new SimpleCraftingRecipeSerializer<>(SaplingToStickRecipe::new)),
             POUR_OUT_CONTENT_RECIPE = RECIPE_SERIALIZERS.register("pour_out_content_recipe", () -> new SimpleCraftingRecipeSerializer<>(PourOutContentRecipe::new)),
             TORCH_IGNITE_RECIPE = RECIPE_SERIALIZERS.register("torch_ignite", () -> new SimpleCraftingRecipeSerializer<>(TorchIgniteRecipe::new));
@@ -353,7 +353,7 @@ public final class Hcs {
                 output.accept(WOODEN_BOOTS.get());
                 output.accept(GARLAND.get());
                 output.accept(IMPROVISED_SHIELD.get());
-                output.accept(HOT_WATER_BOTTLE.get().getDefaultInstance());
+                output.accept(WATER_BAG.get().getDefaultInstance());
                 output.accept(WORM.get());
                 output.accept(ROASTED_WORM.get());
                 output.accept(BAT_WINGS.get());

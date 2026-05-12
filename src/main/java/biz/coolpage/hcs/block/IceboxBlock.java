@@ -2,7 +2,7 @@ package biz.coolpage.hcs.block;
 
 import biz.coolpage.hcs.Hcs;
 import biz.coolpage.hcs.entity.IceboxBlockEntity;
-import biz.coolpage.hcs.item.HotWaterBottleItem;
+import biz.coolpage.hcs.item.WaterBagItem;
 import biz.coolpage.hcs.util.RotHelper;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -111,7 +111,7 @@ public class IceboxBlock extends BaseEntityBlock implements SimpleWaterloggedBlo
     public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level world, BlockState state, BlockEntityType<T> type) {
         return (world1, pos1, state1, blockEntity) -> {
             RotHelper.update(world1, (Container) blockEntity, true);
-            HotWaterBottleItem.update(world1, (Container) blockEntity, -1);
+            WaterBagItem.update(world1, (Container) blockEntity, -1);
         };
     }
 

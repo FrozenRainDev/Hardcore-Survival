@@ -3,6 +3,7 @@
   "minVersion": "0.8",
   "package": "biz.coolpage.hcs.mixin",
   "compatibilityLevel": "JAVA_17",
+  "refmap": "hcsurvival.refmap.json",
   "mixins": [
     "block.AbstractBlockMixin",
     "block.BambooBlockMixin",

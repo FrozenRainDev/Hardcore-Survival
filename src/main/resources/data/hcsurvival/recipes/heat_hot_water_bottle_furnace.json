@@ -4,10 +4,10 @@
   "show_notification": true,
   "ingredient": [
     {
-      "item": "hcsurvival:hot_water_bottle"
+      "item": "hcsurvival:water_bag"
     }
   ],
-  "result": "hcsurvival:hot_water_bottle",
+  "result": "hcsurvival:water_bag",
   "experience": 0.0,
   "cookingtime": 200
 }

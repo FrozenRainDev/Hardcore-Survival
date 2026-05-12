@@ -1,7 +1,7 @@
 package biz.coolpage.hcs.mixin.server;
 
 import biz.coolpage.hcs.Hcs;
-import biz.coolpage.hcs.item.HotWaterBottleItem;
+import biz.coolpage.hcs.item.WaterBagItem;
 import biz.coolpage.hcs.util.RotHelper;
 import net.minecraft.server.players.PlayerList;
 import net.minecraft.server.level.ServerPlayer;
@@ -19,6 +19,6 @@ public class PlayerListMixin { // PlayerManagerMixin
             return;
         }
         RotHelper.onLeaveGame(player.level(), player.getInventory());
-        HotWaterBottleItem.onLeaveGame(player.level(), player.getInventory());
+        WaterBagItem.onLeaveGame(player.level(), player.getInventory());
     }
 }

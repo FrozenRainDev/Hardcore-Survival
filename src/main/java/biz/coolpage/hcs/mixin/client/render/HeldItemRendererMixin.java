@@ -38,12 +38,12 @@ public class HeldItemRendererMixin {
         ItemStack offStack = this.minecraft.player.getOffhandItem();
         if (mainStack.isEmpty() && this.minecraft.player != null && this.minecraft.player.hasEffect(HcsEffects.INSANITY.get()) && ((StatAccessor) this.minecraft.player).getSanityManager().get() < 0.05)
             this.mainHandHeight = 0.0F;
-        else if (mainStack.is(Hcs.HOT_WATER_BOTTLE.get()) && this.mainHandItem.is(Hcs.HOT_WATER_BOTTLE.get())) {
+        else if (mainStack.is(Hcs.WATER_BAG.get()) && this.mainHandItem.is(Hcs.WATER_BAG.get())) {
             this.mainHandHeight = 1.0F;
             assert this.minecraft.player != null;
             this.mainHandItem = this.minecraft.player.getMainHandItem();
         }
-        if (offStack.is(Hcs.HOT_WATER_BOTTLE.get()) && this.offHandItem.is(Hcs.HOT_WATER_BOTTLE.get())) {
+        if (offStack.is(Hcs.WATER_BAG.get()) && this.offHandItem.is(Hcs.WATER_BAG.get())) {
             this.offHandHeight = 1.0F;
             assert this.minecraft.player != null;
             this.offHandItem = this.minecraft.player.getOffhandItem();

@@ -13,9 +13,9 @@ import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.NotNull;
 
-public class HotWaterBottleRecipe extends CustomRecipe {
+public class WaterBottleRecipe extends CustomRecipe {
 
-    public HotWaterBottleRecipe(ResourceLocation id, CraftingBookCategory category) {
+    public WaterBottleRecipe(ResourceLocation id, CraftingBookCategory category) {
         super(id, category);
     }
 
@@ -43,7 +43,7 @@ public class HotWaterBottleRecipe extends CustomRecipe {
 
     @Override
     public ItemStack assemble(CraftingContainer craftingInventory, RegistryAccess dynamicRegistryManager) {
-        return Hcs.HOT_WATER_BOTTLE.get().getDefaultInstance();
+        return Hcs.WATER_BAG.get().getDefaultInstance();
     }
 
     @Override

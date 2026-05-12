@@ -1,7 +1,7 @@
 package biz.coolpage.hcs.mixin.block;
 
 import biz.coolpage.hcs.Hcs;
-import biz.coolpage.hcs.item.HotWaterBottleItem;
+import biz.coolpage.hcs.item.WaterBagItem;
 import biz.coolpage.hcs.util.RotHelper;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.Container;
@@ -25,7 +25,7 @@ public class HopperBlockMixin {
             Hcs.error("HopperBlockMixin/getInteractionShape;entity==null");
         } else {
             RotHelper.update(entity.getLevel(), (Container) entity);
-            HotWaterBottleItem.update(entity.getLevel(), (Container) entity);
+            WaterBagItem.update(entity.getLevel(), (Container) entity);
         }
     }
 }

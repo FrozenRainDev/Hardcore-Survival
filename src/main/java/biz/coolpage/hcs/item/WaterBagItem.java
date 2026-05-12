@@ -23,23 +23,23 @@ import java.util.List;
 
 import static biz.coolpage.hcs.util.WorldHelper.cannotGetServerWorld;
 
-public class HotWaterBottleItem extends Item {
-    public HotWaterBottleItem() {
+public class WaterBagItem extends Item {
+    public WaterBagItem() {
         super(new Properties().stacksTo(1));
     }
 
-    public static final String HHE = "hcs_hwb_exp";
-    public static final String HHES = "hcs_hwb_exp_slow";
-    public static final String HHS = "hcs_hwb_stat";
-    public static final String HHEP = "hcs_hwb_exp_percentage";
-    public static final String HHCI = "hcs_hwb_cooldown_init_time";
-    public static final String HHSM = "hcs_hwb_soul_campfire_marked";
+    public static final String HHE = "hcs_wb_exp";
+    public static final String HHES = "hcs_wb_exp_slow";
+    public static final String HHS = "hcs_wb_stat";
+    public static final String HHEP = "hcs_wb_exp_percentage";
+    public static final String HHCI = "hcs_wb_cooldown_init_time";
+    public static final String HHSM = "hcs_wb_soul_campfire_marked";
     public static final long MAX_COOL_DOWN_LENGTH = 8000;
     public static final float ICEBOX_FREEZING_RATE = 4.0F;
 
     public static boolean isChangeable(@NotNull ItemStack stack) {
         CompoundTag nbt = stack.getOrCreateTag();
-        return stack.is(Hcs.HOT_WATER_BOTTLE.get()) && nbt.contains(HHS) && nbt.getInt(HHS) != 0;
+        return stack.is(Hcs.WATER_BAG.get()) && nbt.contains(HHS) && nbt.getInt(HHS) != 0;
     }
 
     public static @NotNull ItemStack setStatus(@NotNull ItemStack stack, int statId) {
@@ -51,7 +51,7 @@ public class HotWaterBottleItem extends Item {
             } else if (statId == -2) {
                 statId = -1;
             }
-            nbt.putInt(HotWaterBottleItem.HHS, statId);
+            nbt.putInt(WaterBagItem.HHS, statId);
         }
         return stack;
     }
@@ -130,7 +130,7 @@ public class HotWaterBottleItem extends Item {
         }
         for (int i = 0; i < inv.getContainerSize(); ++i) {
             ItemStack stack = inv.getItem(i);
-            if (!stack.is(Hcs.HOT_WATER_BOTTLE.get())) continue;
+            if (!stack.is(Hcs.WATER_BAG.get())) continue;
             CompoundTag nbt = stack.getOrCreateTag();
             if (nbt.contains(HHCI)) {
                 if (inv instanceof IceboxBlockEntity) {
@@ -215,8 +215,8 @@ public class HotWaterBottleItem extends Item {
             else if (percent < 0.8F) tempId = 4;
             else tempId = 5;
         }
-        tooltip.add(Component.translatable("item.hcsurvival.hot_water_bottle.description.temp").withStyle(ChatFormatting.GRAY)
-                .append(Component.translatable("item.hcsurvival.hot_water_bottle.description.temp." + tempId).withStyle(switch (tempId) {
+        tooltip.add(Component.translatable("item.hcsurvival.water_bag.description.temp").withStyle(ChatFormatting.GRAY)
+                .append(Component.translatable("item.hcsurvival.water_bag.description.temp." + tempId).withStyle(switch (tempId) {
                     case -5 -> ChatFormatting.DARK_BLUE;
                     case -4 -> ChatFormatting.BLUE;
                     case -3 -> ChatFormatting.DARK_AQUA;
@@ -227,8 +227,8 @@ public class HotWaterBottleItem extends Item {
                     case 5 -> ChatFormatting.DARK_RED;
                     default -> ChatFormatting.WHITE;
                 })));
-        tooltip.add(Component.translatable("item.hcsurvival.hot_water_bottle.description1").withStyle(ChatFormatting.DARK_GRAY));
-        tooltip.add(Component.translatable("item.hcsurvival.hot_water_bottle.description2").withStyle(ChatFormatting.DARK_GRAY));
+        tooltip.add(Component.translatable("item.hcsurvival.water_bag.description1").withStyle(ChatFormatting.DARK_GRAY));
+        tooltip.add(Component.translatable("item.hcsurvival.water_bag.description2").withStyle(ChatFormatting.DARK_GRAY));
     }
 
     @Override

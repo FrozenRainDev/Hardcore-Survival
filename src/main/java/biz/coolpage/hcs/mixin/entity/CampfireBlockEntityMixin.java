@@ -2,7 +2,7 @@ package biz.coolpage.hcs.mixin.entity;
 
 import biz.coolpage.hcs.Hcs;
 import biz.coolpage.hcs.config.Configs;
-import biz.coolpage.hcs.item.HotWaterBottleItem;
+import biz.coolpage.hcs.item.WaterBagItem;
 import biz.coolpage.hcs.status.accessor.ICampfireBlockEntity;
 import biz.coolpage.hcs.util.CombustionHelper;
 import net.minecraft.core.BlockPos;
@@ -75,8 +75,8 @@ public abstract class CampfireBlockEntityMixin extends BlockEntity implements IC
 
     @Inject(method = "cookTick", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/Containers;dropItemStack(Lnet/minecraft/world/level/Level;DDDLnet/minecraft/world/item/ItemStack;)V"), locals = LocalCapture.CAPTURE_FAILSOFT)
     private static void litServerTickInjected2(Level world, BlockPos pos, @NotNull BlockState state, CampfireBlockEntity campfire, CallbackInfo ci, boolean bl, int i, ItemStack itemStack, Container inventory, ItemStack itemStack2) {
-        if (state.is(Blocks.SOUL_CAMPFIRE) && itemStack2.is(Hcs.HOT_WATER_BOTTLE.get()))
-            HotWaterBottleItem.setStatus(itemStack2, -1);
+        if (state.is(Blocks.SOUL_CAMPFIRE) && itemStack2.is(Hcs.WATER_BAG.get()))
+            WaterBagItem.setStatus(itemStack2, -1);
     }
 
     @Inject(method = "load", at = @At("HEAD"))
