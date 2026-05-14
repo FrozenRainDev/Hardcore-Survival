@@ -31,6 +31,8 @@ public enum Configs {
     HOSTILE_ZOMBIE("hcsZombieExtraHostility"),
     HOSTILE_COW("hcsCowKicking");
 
+    // The field 'ruleName' must be declared here to resolve the symbol in HcsServerConfig
+    public final String ruleName;
     public final GameRules.Key<GameRules.BooleanValue> gameRule;
 
     Configs(String name) {
@@ -38,15 +40,24 @@ public enum Configs {
     }
 
     Configs(String name, GameRules.Category category) {
-        // Forge/Vanilla 1.20.1 注册方式
-        this.gameRule = GameRules.register(name, category, GameRules.BooleanValue.create(true));
+        // Initialize the ruleName field
+        this.ruleName = name;
+
+        // Register way for Forge/Vanilla 1.20.1
+        // Added listener to sync GameRule changes to Forge Server Config
+        this.gameRule = GameRules.register(name, category, GameRules.BooleanValue.create(true, (server, value) -> {
+            if (HcsServerConfig.BOOLEAN_CONFIGS != null && HcsServerConfig.BOOLEAN_CONFIGS.containsKey(this)) {
+                HcsServerConfig.BOOLEAN_CONFIGS.get(this).set(value.get());
+            }
+        }));
     }
 
     public static boolean isEnabled(Configs name) {
         @Nullable ServerLevel world = WorldHelper.getServerWorld();
         if (world == null) {
             Hcs.error("{}: StatConfig:WorldHelper.getServerWorld() null", name.name());
-            return true;
+            // Fallback to reading from the Forge Server Config
+            return HcsServerConfig.BOOLEAN_CONFIGS.get(name).get();
         }
         return isEnabled(world, name);
     }
@@ -54,20 +65,22 @@ public enum Configs {
     public static boolean isEnabled(@Nullable ServerLevel world, Configs name) {
         if (world == null || world.getGameRules() == null) {
             Hcs.error("{}: StatConfig:ServerWorld Invalid world or gameRules", name.name());
-            return true;
+            return HcsServerConfig.BOOLEAN_CONFIGS.get(name).get();
         }
+
         var gameRuleValue = world.getGameRules().getRule(name.gameRule);
         if (gameRuleValue == null) {
             Hcs.error("{}: StatConfig: Invalid gameRule", name.gameRule.toString());
             return true;
         }
-        return gameRuleValue.get();
+
+        // Act as the single source of truth from Forge Config
+        return HcsServerConfig.BOOLEAN_CONFIGS.get(name).get();
     }
 
     @SuppressWarnings("BooleanMethodIsAlwaysInverted")
     public static boolean isEnabled(@Nullable Player player, Configs name) {
         if (player == null) {
-            // 注意：原代码此处使用了 warn，若需严格遵守“改为Hcs.error”指令，可统一使用 error
             Hcs.error("{}: StatConfig:ServerWorld Invalid player", name.name());
             return isEnabled(name);
         }

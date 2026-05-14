@@ -5,7 +5,7 @@ import biz.coolpage.hcs.block.DryingRackBlock;
 import biz.coolpage.hcs.block.IceboxBlock;
 import biz.coolpage.hcs.block.SmolderingCampfireBlock;
 import biz.coolpage.hcs.block.torches.*;
-import biz.coolpage.hcs.config.Config__;
+import biz.coolpage.hcs.config.HcsServerConfig;
 import biz.coolpage.hcs.entity.*;
 import biz.coolpage.hcs.item.*;
 import biz.coolpage.hcs.item.BottleItem;
@@ -72,9 +72,10 @@ import java.util.function.Predicate;
 import static biz.coolpage.hcs.config.Configs.FOOD_SPOIL;
 import static net.minecraft.commands.Commands.literal;
 
+@SuppressWarnings("deprecation")
 @Mod(Hcs.MOD_ID)
 public final class Hcs {
-    public static final String MOD_ID = "hcsurvival", MOD_NAME = "Hardcore Survival";
+    public static final String MOD_ID = "hcsurvival";
     private static final Logger LOGGER = LogUtils.getLogger();
 
     // Registers
@@ -421,7 +422,7 @@ public final class Hcs {
         MinecraftForge.EVENT_BUS.register(this);
         MinecraftForge.EVENT_BUS.addListener(this::onRegisterCommands);
         // Config
-        context.registerConfig(ModConfig.Type.COMMON, Config__.CFG_SPEC);
+        context.registerConfig(ModConfig.Type.COMMON, HcsServerConfig.SPEC);
         // Networks
         ServerC2S.init();
     }
@@ -456,6 +457,7 @@ public final class Hcs {
         registerBrewingRecipe(IRONSKIN_POTION.get(), Items.GLOWSTONE_DUST, STRONG_IRONSKIN_POTION.get());
         registerBrewingRecipe(IRONSKIN_POTION.get(), Items.REDSTONE, LONG_IRONSKIN_POTION.get());
         registerBrewingRecipe(MINING_POTION.get(), Items.GLOWSTONE_DUST, STRONG_MINING_POTION.get());
+        registerBrewingRecipe(CONSTANT_TEMPERATURE_POTION.get(), Items.REDSTONE, LONG_MINING_POTION.get());
         registerBrewingRecipe(CONSTANT_TEMPERATURE_POTION.get(), Items.REDSTONE, LONG_CONSTANT_TEMPERATURE_POTION.get());
         registerBrewingRecipe(PAIN_KILLING_POTION.get(), Items.REDSTONE, LONG_PAIN_KILLING_POTION.get());
         registerBrewingRecipe(FEARLESSNESS_POTION.get(), Items.REDSTONE, LONG_FEARLESSNESS_POTION.get());
