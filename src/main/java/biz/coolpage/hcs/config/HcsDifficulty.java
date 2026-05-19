@@ -24,7 +24,8 @@ public class HcsDifficulty {
         }
         int id = level.getGameRules().getRule(HCS_DIFFICULTY).get();
         HcsDifficultyEnum[] vals = HcsDifficultyEnum.values();
-        if (id < 0 || id >= vals.length) return HcsDifficultyEnum.standard;
+        if (id < 0) return HcsDifficultyEnum.relaxing;
+        if (id >= vals.length) return HcsDifficultyEnum.standard;
         return HcsDifficultyEnum.values()[id];
     }
 

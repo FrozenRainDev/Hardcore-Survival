@@ -1,7 +1,6 @@
 package biz.coolpage.hcs.mixin.entity;
 
 import biz.coolpage.hcs.Hcs;
-import biz.coolpage.hcs.status.accessor.ILivingEntity;
 import biz.coolpage.hcs.status.accessor.StatAccessor;
 import biz.coolpage.hcs.util.ArmorHelper;
 import biz.coolpage.hcs.util.EntityHelper;
@@ -28,10 +27,8 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
-import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
@@ -39,38 +36,12 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(LivingEntity.class)
 @SuppressWarnings({"ConstantValue", "AddedMixinMembersNamePattern"})
-public abstract class LivingEntityMixin extends Entity implements ILivingEntity {
-    @Shadow
-    private int lastHurtByMobTimestamp;
-
+public abstract class LivingEntityMixin extends Entity {
     @Shadow
     public abstract boolean isBaby();
 
-    @Shadow
-    @Nullable
-    public abstract LivingEntity getLastHurtByMob();
-
-    @Unique
-    private LivingEntity hcsLastAttacker = null;
-
-    @Unique
-    @Override
-    public LivingEntity getHcsLastAttacker() {
-        return this.hcsLastAttacker;
-    }
-
     public LivingEntityMixin(EntityType<?> type, Level world) {
         super(type, world);
-    }
-
-    @Inject(method = "baseTick", at = @At("HEAD"))
-    public void baseTick(CallbackInfo cir) {
-        //Enable prolonged panic caused by being attacked
-        if (this.getLastHurtByMob() != null) this.hcsLastAttacker = this.getLastHurtByMob();
-        if (this.hcsLastAttacker != null && this.hcsLastAttacker.isRemoved()) this.hcsLastAttacker = null;
-        if ((Object) this instanceof Animal animal // && this.tickCount % 6 != 0
-                && this.hcsLastAttacker != null && animal.distanceTo(this.hcsLastAttacker) < 48)
-            ++this.lastHurtByMobTimestamp;
     }
 
     // Yarn getNextAirOnLand = Mojang increaseAirSupply

@@ -1,5 +1,6 @@
 package biz.coolpage.hcs.client.gui;
 
+import biz.coolpage.hcs.Hcs;
 import biz.coolpage.hcs.config.Configs;
 import biz.coolpage.hcs.config.HcsDifficulty;
 import biz.coolpage.hcs.status.HcsEffects;
@@ -25,6 +26,7 @@ import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.PlayerRideableJumping;
+import net.minecraft.world.entity.animal.horse.AbstractHorse;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.food.FoodData;
 import net.minecraft.world.item.ItemStack;
@@ -278,7 +280,7 @@ public final class HcsGuiOverlays {
             this.renderTextureOverlay(context, DARKNESS, Mth.clamp((inDarkTicks - 60) / 550.0F, 0.0F, 1.0F), screenWidth, screenHeight);
         }
 
-        if (sanityManager.get() < 0.05 && player.level().getGameTime() % 800 < 8)
+        if (sanityManager.get() < 0.05 && player.level().getGameTime() % 800 < 8 && HcsDifficulty.isOf(player, HcsDifficulty.HcsDifficultyEnum.challenging))
             this.renderTextureOverlay(context, DARKNESS_JUMP_SCARE, 0.9F, screenWidth, screenHeight);
 
         if (statusManager.getRecentHurtTicks() > 0) {
@@ -319,7 +321,10 @@ public final class HcsGuiOverlays {
         LivingEntity livingEntity = this.getPlayerVehicleWithHealth(player);
         PlayerRideableJumping jumpingMount = minecraft.player.jumpableVehicle();
 
-        boolean shouldRenderMountHealth = livingEntity != null && livingEntity.getMaxHealth() > 0.0F;
+        // Fix: Hide health bar for untamed horses to follow vanilla behavior and prevent displaying bugged double health values
+        boolean isUntamedHorse = livingEntity instanceof AbstractHorse horse && !horse.isTamed();
+        boolean shouldRenderMountHealth = livingEntity != null && livingEntity.getMaxHealth() > 0.0F && !isUntamedHorse;
+
         boolean shouldRenderMountJumpBar = jumpingMount != null;
         int renderExperienceBarX = screenWidth / 2 - 91;
 

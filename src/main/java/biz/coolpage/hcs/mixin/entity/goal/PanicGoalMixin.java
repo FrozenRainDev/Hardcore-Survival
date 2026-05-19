@@ -1,7 +1,6 @@
 package biz.coolpage.hcs.mixin.entity.goal;
 
 import biz.coolpage.hcs.status.accessor.IKickCoolDown;
-import biz.coolpage.hcs.status.accessor.ILivingEntity;
 import biz.coolpage.hcs.util.EntityHelper;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.LivingEntity;
@@ -22,9 +21,6 @@ import static biz.coolpage.hcs.util.CommUtil.hasNull;
 
 @Mixin(PanicGoal.class)
 public abstract class PanicGoalMixin {
-    @Shadow
-    @Final
-    protected double speedModifier;
 
     @Shadow
     @Final
@@ -36,21 +32,6 @@ public abstract class PanicGoalMixin {
     protected double posY;
     @Shadow
     protected double posZ;
-
-    @Unique
-    private boolean hcs$isAttackerAfar() {
-        if (this.mob instanceof ILivingEntity ent) {
-            LivingEntity attacker0 = ent.getHcsLastAttacker();
-            // 使用 distanceToSqr 会比 distanceTo (开方) 效率更高，48*48=2304
-            return attacker0 != null && this.mob.distanceToSqr(attacker0) > 2304;
-        }
-        return false;
-    }
-
-    @Inject(method = "canUse", at = @At("RETURN"), cancellable = true)
-    protected void hcs$canUse(CallbackInfoReturnable<Boolean> cir) {
-        if (hcs$isAttackerAfar()) cir.setReturnValue(false);
-    }
 
     @ModifyArg(method = "start", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/ai/navigation/PathNavigation;moveTo(DDDD)Z"), index = 3)
     public double hcs$modifyEscapeSpeed(double speed) {
@@ -97,14 +78,10 @@ public abstract class PanicGoalMixin {
             if (kicker.canKick()) {
                 LivingEntity attacker = this.mob.getLastHurtByMob();
                 if (attacker != null && !EntityHelper.isInLeather(attacker) && this.mob.distanceTo(attacker) < 3.0) {
-                    EntityHelper.flyOut(this.mob, attacker, 6.0F);
+                    EntityHelper.kickedAndFly(this.mob, attacker, 6.0F);
                     kicker.notifyKick();
                 }
             }
-        }
-
-        if (hcs$isAttackerAfar()) {
-            cir.setReturnValue(false);
         }
     }
 }

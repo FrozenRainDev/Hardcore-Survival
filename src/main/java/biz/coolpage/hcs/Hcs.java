@@ -5,11 +5,13 @@ import biz.coolpage.hcs.block.DryingRackBlock;
 import biz.coolpage.hcs.block.IceboxBlock;
 import biz.coolpage.hcs.block.SmolderingCampfireBlock;
 import biz.coolpage.hcs.block.torches.*;
-import biz.coolpage.hcs.config.HcsServerConfig;
+import biz.coolpage.hcs.config.HcsConfigs;
+import biz.coolpage.hcs.config.HcsDifficulty;
 import biz.coolpage.hcs.entity.*;
 import biz.coolpage.hcs.item.*;
 import biz.coolpage.hcs.item.BottleItem;
 import biz.coolpage.hcs.recipe.*;
+import biz.coolpage.hcs.data.loot.*;
 import biz.coolpage.hcs.status.HcsEffects;
 import biz.coolpage.hcs.status.ServerC2S;
 import biz.coolpage.hcs.status.accessor.StatAccessor;
@@ -18,6 +20,8 @@ import biz.coolpage.hcs.util.CombustionHelper;
 import biz.coolpage.hcs.util.EntityHelper;
 import biz.coolpage.hcs.util.WorldHelper;
 import com.mojang.logging.LogUtils;
+import com.mojang.serialization.Codec;
+import net.minecraft.commands.Commands;
 import net.minecraft.core.Direction;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
@@ -49,6 +53,7 @@ import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.material.MapColor;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.brewing.BrewingRecipeRegistry;
+import net.minecraftforge.common.loot.IGlobalLootModifier;
 import net.minecraftforge.event.BuildCreativeModeTabContentsEvent;
 import net.minecraftforge.event.RegisterCommandsEvent;
 import net.minecraftforge.event.furnace.FurnaceFuelBurnTimeEvent;
@@ -69,9 +74,6 @@ import org.slf4j.Logger;
 
 import java.util.function.Predicate;
 
-import static biz.coolpage.hcs.config.Configs.FOOD_SPOIL;
-import static net.minecraft.commands.Commands.literal;
-
 @SuppressWarnings("deprecation")
 @Mod(Hcs.MOD_ID)
 public final class Hcs {
@@ -87,6 +89,8 @@ public final class Hcs {
     public static final DeferredRegister<EntityType<?>> ENTITIES = DeferredRegister.create(ForgeRegistries.ENTITY_TYPES, MOD_ID);
     public static final DeferredRegister<RecipeSerializer<?>> RECIPE_SERIALIZERS = DeferredRegister.create(ForgeRegistries.RECIPE_SERIALIZERS, MOD_ID);
     public static final DeferredRegister<CreativeModeTab> CREATIVE_MODE_TABS = DeferredRegister.create(Registries.CREATIVE_MODE_TAB, MOD_ID);
+    public static final DeferredRegister<Codec<? extends IGlobalLootModifier>> LOOT_MODIFIERS = DeferredRegister.create(ForgeRegistries.Keys.GLOBAL_LOOT_MODIFIER_SERIALIZERS, MOD_ID);
+
 
     // --- Blocks ---
     public static final RegistryObject<IceboxBlock> ICEBOX = BLOCKS.register("icebox", () -> new IceboxBlock(BlockBehaviour.Properties.copy(Blocks.COBBLESTONE).mapColor(MapColor.COLOR_LIGHT_GRAY).strength(2.0F, 3.0F).requiresCorrectToolForDrops().noOcclusion()));
@@ -166,17 +170,10 @@ public final class Hcs {
             COOKED_CARROT = ITEMS.register("cooked_carrot", () -> new Item(new Item.Properties().food(new FoodProperties.Builder().nutrition(4).saturationMod(2f).build()))),
             COOKED_PUMPKIN_SLICE = ITEMS.register("cooked_pumpkin_slice", () -> new Item(new Item.Properties().food(new FoodProperties.Builder().nutrition(2).saturationMod(0f).build()))),
             COOKED_SWEET_BERRIES = ITEMS.register("cooked_sweet_berries", () -> new Item(new Item.Properties().food(new FoodProperties.Builder().nutrition(1).saturationMod(1f).build()))),
-            BERRY_BUSH = ITEMS.register("berry_bush", () -> new Item(new Item.Properties())),
+            BERRY_BUSH = ITEMS.register("berry_bush", () -> new ItemNameBlockItem(Blocks.SWEET_BERRY_BUSH, new Item.Properties())),
             PETALS_SALAD = ITEMS.register("petals_salad", () -> new BowlOfFoodItem(new Item.Properties().food(new FoodProperties.Builder().nutrition(0).saturationMod(0f).build()))),
             ORANGE = ITEMS.register("orange", () -> new Item(new Item.Properties().food(new FoodProperties.Builder().nutrition(4).saturationMod(3f).build()))),
-            ROT = ITEMS.register("rot", () -> new BoneMealItem(new Item.Properties().food(new FoodProperties.Builder().nutrition(0).saturationMod(0.0f).build())) {
-                @Override
-                public @NotNull InteractionResult useOn(@NotNull UseOnContext context) {
-                    if (context.getLevel().getBlockState(context.getClickedPos()).is(Blocks.GRASS_BLOCK))
-                        return InteractionResult.PASS;
-                    return super.useOn(context);
-                }
-            }),
+            ROT = ITEMS.register("rot", () -> new Item(new Item.Properties().food(new FoodProperties.Builder().nutrition(0).saturationMod(0.0f).build()))),
             ICEBOX_ITEM = ITEMS.register("icebox", () -> new BlockItem(ICEBOX.get(), new Item.Properties())),
             DRYING_RACK_ITEM = ITEMS.register("drying_rack", () -> new BlockItem(DRYING_RACK.get(), new Item.Properties())),
             SHORT_STICK = ITEMS.register("short_stick", () -> new Item(new Item.Properties())),
@@ -279,11 +276,25 @@ public final class Hcs {
     public static final RegistryObject<EntityType<FlintProjectileEntity>> FLINT_PROJECTILE_ENTITY = ENTITIES.register("flint_projectile_entity", () -> EntityType.Builder.<FlintProjectileEntity>of(FlintProjectileEntity::new, MobCategory.MISC).sized(0.25F, 0.25F).build("flint_projectile_entity"));
 
     // --- Block Entities ---
+    @SuppressWarnings("DataFlowIssue")
     public static final RegistryObject<BlockEntityType<IceboxBlockEntity>> ICEBOX_BLOCK_ENTITY = BLOCK_ENTITIES.register("icebox_block_entity", () -> BlockEntityType.Builder.of(IceboxBlockEntity::new, ICEBOX.get()).build(null));
+    @SuppressWarnings("DataFlowIssue")
     public static final RegistryObject<BlockEntityType<DryingRackBlockEntity>> DRYING_RACK_BLOCK_ENTITY = BLOCK_ENTITIES.register("drying_rack_block_entity", () -> BlockEntityType.Builder.of(DryingRackBlockEntity::new, DRYING_RACK.get()).build(null));
+    @SuppressWarnings("DataFlowIssue")
     public static final RegistryObject<BlockEntityType<BurningCrudeTorchBlockEntity>> BURNING_CRUDE_TORCH_BLOCK_ENTITY = BLOCK_ENTITIES.register("burning_crude_torch", () -> BlockEntityType.Builder.of(BurningCrudeTorchBlockEntity::new, BURNING_CRUDE_TORCH_BLOCK.get(), WALL_BURNING_CRUDE_TORCH_BLOCK.get()).build(null));
+    @SuppressWarnings("DataFlowIssue")
     public static final RegistryObject<BlockEntityType<SmolderingOrBurntCampfireBlockEntity>> SMOLDERING_OR_BURNT_CAMPFIRE_BLOCK_ENTITY = BLOCK_ENTITIES.register("smoldering_or_burnt_campfire", () -> BlockEntityType.Builder.of(SmolderingOrBurntCampfireBlockEntity::new, SMOLDERING_CAMPFIRE_BLOCK.get(), BURNT_CAMPFIRE_BLOCK.get()).build(null));
 
+
+    // Loot
+    @SuppressWarnings("unused")
+    public static final RegistryObject<Codec<? extends IGlobalLootModifier>> GRAVEL_DROP_MODIFIER = LOOT_MODIFIERS.register("gravel_drop", () -> GravelDropModifier.CODEC);
+    @SuppressWarnings("unused")
+    public static final RegistryObject<Codec<CampfireLootModifier>> CAMPFIRE_MODIFIER = LOOT_MODIFIERS.register("campfire_modifier", CampfireLootModifier.CODEC);
+    @SuppressWarnings("unused") // Registering the modifier for the mineshaft chest
+    public static final RegistryObject<Codec<MineshaftChestModifier>> MINESHAFT_CHEST_MODIFIER = LOOT_MODIFIERS.register("mineshaft_chest_modifier", MineshaftChestModifier.CODEC);
+    @SuppressWarnings("unused")
+    public static final RegistryObject<Codec<RemoveItemsModifier>> REMOVE_ITEM_MODIFIER = LOOT_MODIFIERS.register("remove_item_modifier", RemoveItemsModifier.CODEC);
 
     // --- Recipe Serializers ---
     public static final RegistryObject<RecipeSerializer<?>>
@@ -422,7 +433,7 @@ public final class Hcs {
         MinecraftForge.EVENT_BUS.register(this);
         MinecraftForge.EVENT_BUS.addListener(this::onRegisterCommands);
         // Config
-        context.registerConfig(ModConfig.Type.COMMON, HcsServerConfig.SPEC);
+        context.registerConfig(ModConfig.Type.COMMON, HcsConfigs.SPEC);
         // Networks
         ServerC2S.init();
     }
@@ -437,6 +448,7 @@ public final class Hcs {
         ENTITIES.register(bus);
         RECIPE_SERIALIZERS.register(bus);
         CREATIVE_MODE_TABS.register(bus);
+        LOOT_MODIFIERS.register(bus);
     }
 
     private void commonSetup(final @NotNull FMLCommonSetupEvent event) {
@@ -444,7 +456,6 @@ public final class Hcs {
             registerBrewing();
             registerCompostables();
         });
-        String dummy = FOOD_SPOIL.gameRule.toString(); // must be called to ensure early initialization
     }
 
     private void registerBrewing() {
@@ -508,10 +519,29 @@ public final class Hcs {
     }
 
     private void onRegisterCommands(@NotNull RegisterCommandsEvent event) {
-        event.getDispatcher().register(literal("village").executes(context -> {
+        var hcsCommand = Commands.literal("hcs");
+
+        // /hcs village
+        var villageCommand = Commands.literal("village").executes(context -> {
             context.getSource().sendSuccess(() -> Component.translatable(WorldHelper.shouldGenerateVillages() ? "tip.hcsurvival.can_gen_village" : "tip.hcsurvival.cant_gen_village"), false);
             return 1;
-        }));
+        });
+        hcsCommand.then(villageCommand);
+
+        // /hcs difficulty <Difficulty>
+        var diffCommand = Commands.literal("difficulty");
+        for (HcsDifficulty.HcsDifficultyEnum diff : HcsDifficulty.HcsDifficultyEnum.values()) {
+            diffCommand.then(Commands.literal(diff.name()).executes(ctx -> {
+                // Note: If you have fully abandoned the GameRule approach used in the previous response, you should instead modify HcsServerConfig here.
+                ctx.getSource().getLevel().getGameRules().getRule(HCS_DIFFICULTY).set(diff.ordinal(), ctx.getSource().getServer());
+                ctx.getSource().sendSuccess(() -> Component.literal("HCS Difficulty set to: " + diff.name()), true);
+                return 1;
+            }));
+        }
+        hcsCommand.then(diffCommand);
+
+        // Finally, register the entire hcs command tree in one go
+        event.getDispatcher().register(hcsCommand);
     }
 
     private void addCreative(@NotNull BuildCreativeModeTabContentsEvent event) {

@@ -1,0 +1,12 @@
+{
+  "replace": false,
+  "entries": [
+    "hcsurvival:gravel_modifier",
+    "hcsurvival:campfire_modifier_entry",
+    "hcsurvival:mineshaft_chest_modifier_entry",
+    "hcsurvival:remove_drowned_copper",
+    "hcsurvival:remove_zombie_iron",
+    "hcsurvival:remove_husk_iron",
+    "hcsurvival:remove_zombie_villager_iron"
+  ]
+}

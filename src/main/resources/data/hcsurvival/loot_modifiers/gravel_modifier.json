@@ -1,0 +1,9 @@
+{
+  "type": "hcsurvival:gravel_drop",
+  "conditions": [
+    {
+      "condition": "minecraft:block_state_property",
+      "block": "minecraft:gravel"
+    }
+  ]
+}

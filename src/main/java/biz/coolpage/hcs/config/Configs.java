@@ -46,8 +46,8 @@ public enum Configs {
         // Register way for Forge/Vanilla 1.20.1
         // Added listener to sync GameRule changes to Forge Server Config
         this.gameRule = GameRules.register(name, category, GameRules.BooleanValue.create(true, (server, value) -> {
-            if (HcsServerConfig.BOOLEAN_CONFIGS != null && HcsServerConfig.BOOLEAN_CONFIGS.containsKey(this)) {
-                HcsServerConfig.BOOLEAN_CONFIGS.get(this).set(value.get());
+            if (HcsConfigs.BOOLEAN_CONFIGS != null && HcsConfigs.BOOLEAN_CONFIGS.containsKey(this)) {
+                HcsConfigs.BOOLEAN_CONFIGS.get(this).set(value.get());
             }
         }));
     }
@@ -57,7 +57,7 @@ public enum Configs {
         if (world == null) {
             Hcs.error("{}: StatConfig:WorldHelper.getServerWorld() null", name.name());
             // Fallback to reading from the Forge Server Config
-            return HcsServerConfig.BOOLEAN_CONFIGS.get(name).get();
+            return HcsConfigs.BOOLEAN_CONFIGS.get(name).get();
         }
         return isEnabled(world, name);
     }
@@ -65,7 +65,7 @@ public enum Configs {
     public static boolean isEnabled(@Nullable ServerLevel world, Configs name) {
         if (world == null || world.getGameRules() == null) {
             Hcs.error("{}: StatConfig:ServerWorld Invalid world or gameRules", name.name());
-            return HcsServerConfig.BOOLEAN_CONFIGS.get(name).get();
+            return HcsConfigs.BOOLEAN_CONFIGS.get(name).get();
         }
 
         var gameRuleValue = world.getGameRules().getRule(name.gameRule);
@@ -75,7 +75,7 @@ public enum Configs {
         }
 
         // Act as the single source of truth from Forge Config
-        return HcsServerConfig.BOOLEAN_CONFIGS.get(name).get();
+        return HcsConfigs.BOOLEAN_CONFIGS.get(name).get();
     }
 
     @SuppressWarnings("BooleanMethodIsAlwaysInverted")

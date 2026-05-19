@@ -35,7 +35,7 @@ public class ChargingAtPlayerGoal<T extends Mob> extends Goal {
         var target = this.mob.getTarget();
         if (target != null) {
             if (this.mob.distanceTo(this.mob.getTarget()) < 3) {
-                EntityHelper.flyOut(this.mob, target, 9.0F);
+                EntityHelper.kickedAndFly(this.mob, target, 9.0F);
             } else this.mob.setDeltaMovement(target.position().subtract(this.mob.position()).normalize().scale(0.5));
         }
     }

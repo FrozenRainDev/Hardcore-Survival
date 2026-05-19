@@ -331,7 +331,7 @@ public class HallucinationEvents {
 
     // Extreme Auditory Hallucinations (Sanity < 0.05): Piercing sounds, explosions, enderman screams
     private static final SoundEvent[] EXTREME_SOUNDS = {
-            ENDERMAN_HURT, BLAZE_DEATH, PIG_DEATH, GENERIC_EXPLODE, ENDERMAN_SCREAM, ELDER_GUARDIAN_CURSE
+            ENDERMAN_HURT, BLAZE_DEATH, PIG_DEATH, GENERIC_EXPLODE, ENDERMAN_SCREAM, ELDER_GUARDIAN_CURSE, GHAST_SCREAM, GHAST_HURT, GHAST_SHOOT
     };
 
     // Ambient low-frequency sounds
@@ -348,7 +348,7 @@ public class HallucinationEvents {
         }
     }
 
-    private static void playSpecificSound(@NotNull LocalPlayer player, SoundEvent sound, float volume, float pitch) {
+    private static void playSound(@NotNull LocalPlayer player, SoundEvent sound, float volume, float pitch) {
         if (player.level() instanceof ClientLevel clientLevel) {
             clientLevel.playLocalSound(player.getX(), player.getY(), player.getZ(), sound, SoundSource.AMBIENT, volume, pitch, false);
         }
@@ -388,14 +388,15 @@ public class HallucinationEvents {
                 if (darkTicks == 60) {
                     playRandomSound(player, AMBIENT_SOUNDS, 26.0F, 1.0F);
                 } else if (darkTicks == 580) {
-                    playSpecificSound(player, ENDERMAN_SCREAM, 26.0F, 1.0F);
-                    playSpecificSound(player, ENDERMAN_STARE, 26.0F, 1.0F);
+                    playSound(player, ENDERMAN_SCREAM, 26.0F, 1.0F);
+                    playSound(player, GHAST_HURT, 26.0F, 1.0F);
+                    playSound(player, ENDERMAN_STARE, 26.0F, 1.0F);
                 } else if (darkTicks == 720) {
-                    playSpecificSound(player, ELDER_GUARDIAN_CURSE, 1145.0F, 1.0F);
+                    playSound(player, ELDER_GUARDIAN_CURSE, 1145.0F, 1.0F);
                 } else if (darkTicks > 240 && Math.random() < 0.01) {
                     if (Math.random() < 0.5) playRandomSound(player, MILD_SOUNDS, 13.0F, 1.0F);
                     else playRandomSound(player, AMBIENT_SOUNDS, 26.0F, 1.0F);
-                    playSpecificSound(player, SoundEvents.PLAYER_BREATH, 0.5f, player.level().random.nextFloat() * 0.1f + 0.9f);
+                    playSound(player, SoundEvents.PLAYER_BREATH, 0.5f, player.level().random.nextFloat() * 0.1f + 0.9f);
                 }
             }
 
@@ -435,9 +436,10 @@ public class HallucinationEvents {
                     if (sanity <= 0.05) {
                         // San < 0.05: High probability (70%) of Enderman stare, otherwise extreme sounds
                         if (player.getRandom().nextFloat() < 0.7F) {
-                            playSpecificSound(player, ENDERMAN_STARE, 13.0F, 1.0F);
+                            playSound(player, ENDERMAN_STARE, 13.0F, 1.0F);
                         } else {
                             playRandomSound(player, EXTREME_SOUNDS, 13.0F, 1.0F);
+                            playSound(player, GHAST_HURT, 13.0F, 1.0F);
                         }
                     } else if (sanity < 0.15) {
                         // 0.05 <= San < 0.15: Moderate horror sounds

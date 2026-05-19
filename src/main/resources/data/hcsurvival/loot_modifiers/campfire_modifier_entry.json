@@ -1,0 +1,14 @@
+{
+  "type": "hcs:campfire_modifier",
+  "conditions": [
+    {
+      "condition": "minecraft:alternative",
+      "terms": [
+        {
+          "condition": "minecraft:reference",
+          "name": "minecraft:blocks/campfire"
+        }
+      ]
+    }
+  ]
+}

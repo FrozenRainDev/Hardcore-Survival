@@ -494,7 +494,7 @@ public class EntityHelper {
         return flag.get();
     }
 
-    public static void flyOut(@NotNull Mob attacker, @NotNull LivingEntity victim, float damage) {
+    public static void kickedAndFly(@NotNull Mob attacker, @NotNull LivingEntity victim, float damage) {
         Vec3 vec1 = victim.getDeltaMovement();
         Vec3 vec2 = new Vec3(victim.getX() - attacker.getX(), 0.0, victim.getZ() - attacker.getZ());
         if (vec2.lengthSqr() > 1.0E-7) vec2 = vec2.normalize().add(vec1.multiply(0.2, 0.2, 0.2));

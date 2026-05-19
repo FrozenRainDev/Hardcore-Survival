@@ -23,7 +23,8 @@ public final class HcsTiers { // HcsArmorMaterials
             new ForgeTier(2 /* absolute mining level */, 48, 4.0F, 0.0F, 10,
                     BlockTags.NEEDS_IRON_TOOL, () -> Ingredient.of(Items.COPPER_INGOT)),
             HcsFactory.createResourceLocation("copper"),
-            List.of(Tiers.STONE), List.of(Tiers.DIAMOND)),
+            List.of(Tiers.IRON)/* Putting STONE will cause the copper pickaxe to fail to drop ores when mining. */
+            , List.of(Tiers.DIAMOND)),
 
     FLINT_HATCHET = TierSortingRegistry.registerTier(
             new ForgeTier(0, 4, 0.24F, 0.0F, 0,

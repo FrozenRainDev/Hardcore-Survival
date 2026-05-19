@@ -10,7 +10,7 @@ import java.util.Map;
 // Import MOD_ID from Hcs main class
 import static biz.coolpage.hcs.Hcs.MOD_ID;
 
-public class HcsServerConfig {
+public class HcsConfigs {
     public static final ForgeConfigSpec.Builder BUILDER = new ForgeConfigSpec.Builder();
     public static final ForgeConfigSpec SPEC;
 

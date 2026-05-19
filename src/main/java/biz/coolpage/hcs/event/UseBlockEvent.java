@@ -44,14 +44,10 @@ public class UseBlockEvent {
             Block block = state.getBlock();
             BlockPos posUp = pos.above(1);
             BlockState stateUp = world.getBlockState(posUp);
-            Block blockUp = stateUp.getBlock();
+//            Block blockUp = stateUp.getBlock();
             ItemStack mainHandStack = serverPlayer.getMainHandItem();
             Item mainHand = mainHandStack.getItem();
 
-            if ((block == Blocks.DIRT || block == Blocks.GRASS_BLOCK || state.canBeReplaced()) && (stateUp.canBeReplaced() || blockUp == Blocks.AIR || blockUp == Blocks.CAVE_AIR) && mainHand == Hcs.BERRY_BUSH.get()) {
-                if (!serverPlayer.isCreative()) mainHandStack.shrink(1);
-                world.setBlockAndUpdate(state.canBeReplaced() ? (world.getBlockState(pos.below(1)).canBeReplaced() ? pos.below(1) : pos) : posUp, Blocks.SWEET_BERRY_BUSH.defaultBlockState());
-            }
             if (mainHand == Items.POISONOUS_POTATO && block == Blocks.FARMLAND) {
                 world.setBlockAndUpdate(posUp, Blocks.POTATOES.defaultBlockState());
                 if (!serverPlayer.isCreative()) mainHandStack.shrink(1);
