@@ -315,7 +315,9 @@ public class HallucinationEvents {
     private static boolean prevIsThirdPerson = false;
     private static int prevInsanityEffectId = 0;
     private static int ticks = 0;
-    private static int horriblyPlayedTicks = 0;
+    // Replacing single boolean with split logic for absolute precise sound cut-off
+    private static boolean wasSanityHallucinating = false;
+    private static boolean wasDarknessHallucinating = false;
 
     // --- Categorizing sounds by horror intensity ---
 
@@ -354,6 +356,15 @@ public class HallucinationEvents {
         }
     }
 
+    // Helper: Explicitly stop extremely long sounds entirely, bypassing category assumptions
+    private static void stopExtremeSounds(@NotNull Minecraft minecraft) {
+        minecraft.getSoundManager().stop(SoundEvents.ENDERMAN_STARE.getLocation(), null);
+        minecraft.getSoundManager().stop(SoundEvents.ELDER_GUARDIAN_CURSE.getLocation(), null);
+        minecraft.getSoundManager().stop(SoundEvents.ENDERMAN_SCREAM.getLocation(), null);
+        minecraft.getSoundManager().stop(SoundEvents.GHAST_HURT.getLocation(), null);
+        minecraft.getSoundManager().stop(SoundEvents.GHAST_SCREAM.getLocation(), null);
+    }
+
     @SubscribeEvent
     public static void onClientPlayerTick(TickEvent.@NotNull PlayerTickEvent event) {
         // Ensure execution only at the END phase of the client tick, and only for the local player
@@ -363,7 +374,6 @@ public class HallucinationEvents {
 
         LocalPlayer player = minecraft.player;
         ++ticks;
-        if (horriblyPlayedTicks > 0) --horriblyPlayedTicks;
 
         assert player != null;
         SanityManager sanityManager = ((StatAccessor) player).getSanityManager();
@@ -373,14 +383,31 @@ public class HallucinationEvents {
         boolean isThirdPerson = minecraft.gameRenderer.getMainCamera().isDetached();
         boolean darknessEnveloped = player.hasEffect(HcsEffects.DARKNESS_ENVELOPED.get());
         boolean hasInsanity = player.hasEffect(HcsEffects.INSANITY.get());
+        boolean isSurvival = EntityHelper.IS_SURVIVAL_LIKE.test(player);
 
-        // Logic to stop ambient sounds
-        if (!hasInsanity && !darknessEnveloped && horriblyPlayedTicks > 0) {
-            minecraft.getSoundManager().stop(null, SoundSource.AMBIENT);
-            horriblyPlayedTicks = 0;
+        // Calculate explicit conditions ensuring dead players immediately cancel sound loops
+        boolean isSanityActive = player.isAlive() && isSurvival && hasInsanity && sanity < 0.3;
+        boolean isDarknessActive = player.isAlive() && isSurvival && darknessEnveloped && !HcsDifficulty.isOf(player, HcsDifficulty.HcsDifficultyEnum.relaxing);
+
+        // Stop sounds independently upon their condition breaking (recovery or death)
+        if (!isSanityActive && wasSanityHallucinating) {
+            stopExtremeSounds(minecraft); // Force cut off incredibly long sounds
+            if (!isDarknessActive) minecraft.getSoundManager().stop(null, SoundSource.AMBIENT);
+            wasSanityHallucinating = false;
+        } else if (isSanityActive) {
+            wasSanityHallucinating = true;
         }
 
-        if (EntityHelper.IS_SURVIVAL_LIKE.test(player)) {
+        if (!isDarknessActive && wasDarknessHallucinating) {
+            stopExtremeSounds(minecraft);
+            if (!isSanityActive) minecraft.getSoundManager().stop(null, SoundSource.AMBIENT);
+            wasDarknessHallucinating = false;
+        } else if (isDarknessActive) {
+            wasDarknessHallucinating = true;
+        }
+
+        // Only allow logic generation when the player is ALIVE to stop dead bodies from generating hallucinations
+        if (isSurvival && player.isAlive()) {
 
             // 1. Preserve original Darkness Enveloped logic
             if (darknessEnveloped && !HcsDifficulty.isOf(player, HcsDifficulty.HcsDifficultyEnum.relaxing)) {
@@ -451,9 +478,10 @@ public class HallucinationEvents {
                 }
             }
 
-        } else if (sanity < 0.65) {
-            // Clear screen effects in Creative/Spectator mode if sanity is low
+        } else if (!player.isAlive() || sanity < 0.65) {
+            // Clear screen effects in Creative/Spectator mode or if dead
             minecraft.gameRenderer.shutdownEffect();
+            prevInsanityEffectId = -1;
         }
 
         prevIsThirdPerson = isThirdPerson;

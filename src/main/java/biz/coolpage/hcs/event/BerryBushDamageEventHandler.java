@@ -14,7 +14,7 @@ public class BerryBushDamageEventHandler {
     public static void onLivingHurt(@NotNull LivingHurtEvent event) {
         if (event.getSource().is(DamageTypes.SWEET_BERRY_BUSH)) {
             float originalDamage = event.getAmount();
-            float limitedDamage = Math.min(originalDamage, 0.2F);
+            float limitedDamage = Math.min(originalDamage, 0.1F);
             event.setAmount(limitedDamage);
         }
     }

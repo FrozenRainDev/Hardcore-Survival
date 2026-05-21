@@ -19,7 +19,7 @@ public class EnderPearlItemMixin {
     public void use(@NotNull Level level, Player user, InteractionHand hand, CallbackInfoReturnable<InteractionResultHolder<ItemStack>> cir) {
         // world.isClient -> level.isClientSide
         if (!level.isClientSide && !user.getAbilities().instabuild) {
-            ((StatAccessor) user).getSanityManager().add(-0.08);
+            ((StatAccessor) user).getSanityManager().add(-0.1);
         }
     }
 }

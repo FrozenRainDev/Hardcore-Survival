@@ -364,7 +364,7 @@ public abstract class PlayerMixin extends LivingEntity implements StatAccessor {
                     rehabPlayerStats(this);
                 } else if (item == Items.KELP || Hcs.IS_BARK.test(item)) {
                     if (item == Hcs.WILLOW_BARK.get()) this.injuryManager.applyPainkiller();
-                    this.sanityManager.add(-0.02);
+                    this.sanityManager.add(-0.04);
                 } else if (item == Hcs.FEARLESSNESS_HERB.get()) this.moodManager.applyPanicKiller();
                 else if (item == Items.POISONOUS_POTATO || item == Items.SPIDER_EYE || item == Items.CHORUS_FRUIT)
                     this.sanityManager.add(-0.07);

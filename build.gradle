@@ -137,6 +137,11 @@ repositories {
     // flatDir {
     //     dir 'libs'
     // }
+    maven {
+        // JEI repository
+        name = "Jared's maven"
+        url = "https://maven.blamejared.com/"
+    }
 }
 
 dependencies {
@@ -146,10 +151,14 @@ dependencies {
     // If the group id is "net.minecraft" and the artifact id is one of ["client", "server", "joined"],
     // then special handling is done to allow a setup of a vanilla dependency without the use of an external repository.
     minecraft "net.minecraftforge:forge:${minecraft_version}-${forge_version}"
-
     // Mixin
     annotationProcessor 'org.spongepowered:mixin:0.8.5:processor'
     implementation 'org.spongepowered:mixin:0.8.5'
+    // Compile against the JEI API but do not include it at runtime
+    compileOnly fg.deobf("mezz.jei:jei-${minecraft_version}-common-api:${jei_version}")
+    compileOnly fg.deobf("mezz.jei:jei-${minecraft_version}-forge-api:${jei_version}")
+    // At runtime, use the full JEI mod
+    runtimeOnly fg.deobf("mezz.jei:jei-${minecraft_version}-forge:${jei_version}")
 
     // Example mod dependency with JEI - using fg.deobf() ensures the dependency is remapped to your development mappings
     // The JEI API is declared for compile time use, while the full JEI artifact is used at runtime

@@ -11,7 +11,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 public class ArmorMaterialsMixin {
     @Inject(method = "getDefenseForType", at = @At("HEAD"), cancellable = true)
     public void getDefenseForType(ArmorItem.Type type, CallbackInfoReturnable<Integer> cir) {
-        // 将 Mixin 对象转回枚举常量进行判断
+        // Check by converting the Mixin object back to an enum constant
         ArmorMaterials material = (ArmorMaterials) (Object) this;
 
         if (material == ArmorMaterials.LEATHER) {

@@ -1,6 +1,7 @@
 package biz.coolpage.hcs.event;
 
 import biz.coolpage.hcs.Hcs;
+import biz.coolpage.hcs.config.Configs;
 import biz.coolpage.hcs.world.FertilizerSavedData;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
@@ -18,6 +19,8 @@ import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import org.jetbrains.annotations.NotNull;
+
+import static biz.coolpage.hcs.config.Configs.SLOW_PLANT_GROWTH;
 
 @Mod.EventBusSubscriber(modid = Hcs.MOD_ID, bus = Mod.EventBusSubscriber.Bus.FORGE)
 public class CropGrowthEventHandler {
@@ -47,6 +50,7 @@ public class CropGrowthEventHandler {
     // Slow down the growth rate of crops, but slightly speed up if fertilized
     @SubscribeEvent
     public static void onCropGrow(BlockEvent.CropGrowEvent.@NotNull Pre event) {
+        if (!Configs.isEnabled(SLOW_PLANT_GROWTH)) return;
         Block block = event.getState().getBlock();
         double rateMultiplier = 1.0;
 
@@ -55,9 +59,9 @@ public class CropGrowthEventHandler {
             if (block instanceof CropBlock) {
                 rateMultiplier = 0.06;
             } else if (block instanceof SweetBerryBushBlock || block instanceof CaveVines) {
-                rateMultiplier = 0.015;
+                rateMultiplier = 0.01;
             } else {
-                rateMultiplier = 0.06; // Default fallback for stems, saplings, etc.
+                rateMultiplier = 0.05; // Default fallback for stems, saplings, etc.
             }
 
             if (event.getLevel() instanceof ServerLevel serverLevel) {
@@ -78,6 +82,7 @@ public class CropGrowthEventHandler {
     // Remove fertilizer data when the plant reaches max age
     @SubscribeEvent
     public static void onCropGrowPost(BlockEvent.CropGrowEvent.@NotNull Post event) {
+        if (!Configs.isEnabled(SLOW_PLANT_GROWTH)) return;
         if (event.getLevel() instanceof ServerLevel serverLevel) {
             BlockState state = event.getState();
             BlockPos pos = event.getPos();
@@ -91,6 +96,7 @@ public class CropGrowthEventHandler {
     // Bone meal cannot be used repeatedly, and prevent instant maturity
     @SubscribeEvent
     public static void onBonemeal(@NotNull BonemealEvent event) {
+        if (!Configs.isEnabled(SLOW_PLANT_GROWTH)) return;
         Level level = event.getLevel();
         BlockPos pos = event.getPos();
         Block block = event.getBlock().getBlock();
@@ -120,6 +126,7 @@ public class CropGrowthEventHandler {
     // Clean up data if the plant is manually broken
     @SubscribeEvent
     public static void onBlockBreak(BlockEvent.@NotNull BreakEvent event) {
+        if (!Configs.isEnabled(SLOW_PLANT_GROWTH)) return;
         if (event.getLevel() instanceof ServerLevel serverLevel) {
             Block block = event.getState().getBlock();
             if (isApplicablePlant(block)) {

@@ -1,5 +1,7 @@
 package biz.coolpage.hcs.util;
 
+import biz.coolpage.hcs.Hcs;
+import biz.coolpage.hcs.item.KnifeItem;
 import biz.coolpage.hcs.status.HcsEffects;
 import biz.coolpage.hcs.status.accessor.StatAccessor;
 import biz.coolpage.hcs.status.manager.StatusManager;
@@ -15,6 +17,7 @@ import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.damagesource.DamageTypes;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.*;
@@ -34,6 +37,7 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.TorchBlock;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.gameevent.GameEvent;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
@@ -57,11 +61,12 @@ public class EntityHelper {
 
     // Note: DamageTypes need to be adjusted according to the actual damage type tags
     public static final Predicate<DamageSource> IS_PHYSICAL_DAMAGE = damageSource ->
-            !damageSource.is(net.minecraft.tags.DamageTypeTags.IS_DROWNING) &&
+            (!damageSource.is(net.minecraft.tags.DamageTypeTags.IS_DROWNING) &&
                     !damageSource.is(net.minecraft.tags.DamageTypeTags.BYPASSES_ARMOR) &&
                     !damageSource.getMsgId().contains("starve") &&
                     !damageSource.getMsgId().contains("magic") &&
-                    !damageSource.getMsgId().contains("wither");
+                    !damageSource.getMsgId().contains("wither"))
+                    || damageSource.is(DamageTypes.FALL);
 
     public static final Predicate<DamageSource> IS_BURNING_DAMAGE = damageSource ->
             damageSource.is(net.minecraft.tags.DamageTypeTags.IS_FIRE);
@@ -367,37 +372,6 @@ public class EntityHelper {
             }
         }
         return originalEntity;
-    }
-
-    public static InteractionResult dropBark(UseOnContext context) {
-        if (context == null) return InteractionResult.PASS;
-        Level level = context.getLevel();
-        BlockPos pos = context.getClickedPos();
-        Player player = context.getPlayer();
-        ItemStack stack = context.getItemInHand();
-        BlockState state = level.getBlockState(pos);
-        BlockPos userPos = context.getPlayer() == null ? pos : context.getPlayer().blockPosition();
-        Optional<BlockState> strippedState;
-
-        if (Items.IRON_AXE instanceof AxeItem axeItem) {
-            strippedState = Optional.ofNullable(state.getToolModifiedState(context, net.minecraftforge.common.ToolActions.AXE_STRIP, false));
-            if (strippedState.isPresent() && IS_SURVIVAL_LIKE.test(player)) {
-                // 需要自定义 WorldHelper 和 Reg 的引用
-                // if (WorldHelper.enhancedIsWaterNearby(level, pos.below()) && Math.random() < 0.5)
-                //     EntityHelper.dropItem(level, userPos, Reg.WILLOW_BARK);
-                // else EntityHelper.dropItem(level, userPos, Reg.BARK);
-
-                // if (stack.getItem() instanceof KnifeItem) { // 需要自定义 KnifeItem
-                //     if (player instanceof ServerPlayer serverPlayer)
-                //         // Trigger advancement
-                //     level.setBlock(pos, strippedState.get(), 11);
-                //     level.gameEvent(GameEvent.BLOCK_CHANGE, pos, GameEvent.Context.of(player, strippedState.get()));
-                //     if (player != null) stack.hurtAndBreak(1, player, p -> p.broadcastBreakEvent(context.getHand()));
-                //     return InteractionResult.sidedSuccess(level.isClientSide);
-                // }
-            }
-        }
-        return InteractionResult.PASS;
     }
 
     public static int getEffectAmplifier(@Nullable LivingEntity entity, @Nullable MobEffect effect) {

@@ -85,9 +85,10 @@ public class UseBlockEvent {
                 else
                     player.addEffect(new MobEffectInstance(HcsEffects.THIRST.get(), 1200, 0, false, false, true));
             } else {
-                double rand = Math.random();
-                if (rand < 0.0001) ((StatAccessor) player).getDiseaseManager().addParasite(0.12);
-                else player.addEffect(new MobEffectInstance(HcsEffects.DIARRHEA.get(), 600, 0, false, false, true));
+//                double rand = Math.random();
+//                if (rand < 0.0001) ((StatAccessor) player).getDiseaseManager().addParasite(0.12);
+//                else
+                    player.addEffect(new MobEffectInstance(HcsEffects.DIARRHEA.get(), 600, 0, false, false, true));
             }
         }
     }

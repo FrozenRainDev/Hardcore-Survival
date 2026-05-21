@@ -20,13 +20,13 @@ public enum HcsArmorMaterials implements StringRepresentable, ArmorMaterial {
         map.put(ArmorItem.Type.LEGGINGS, 1);
         map.put(ArmorItem.Type.BOOTS, 1);
     }), 9, SoundEvents.ARMOR_EQUIP_IRON, 0.0F, 0.0F, Ingredient.of(Items.COPPER_INGOT)),
-    WOOL("hcs_wool", 5, Util.make(new EnumMap<>(ArmorItem.Type.class), map -> {
+    WOOL("hcs_wool", 4, Util.make(new EnumMap<>(ArmorItem.Type.class), map -> {
         map.put(ArmorItem.Type.HELMET, 1);
         map.put(ArmorItem.Type.CHESTPLATE, 1);
         map.put(ArmorItem.Type.LEGGINGS, 0);
         map.put(ArmorItem.Type.BOOTS, 0);
     }), 15, SoundEvents.ARMOR_EQUIP_LEATHER, 0.0F, 0.0F, Ingredient.of(ItemTags.WOOL)),
-    WOOD("hcs_wood", 2, Util.make(new EnumMap<>(ArmorItem.Type.class), map -> {
+    WOOD("hcs_wood", 1, Util.make(new EnumMap<>(ArmorItem.Type.class), map -> {
         map.put(ArmorItem.Type.HELMET, 1);
         map.put(ArmorItem.Type.CHESTPLATE, 1);
         map.put(ArmorItem.Type.LEGGINGS, 1);

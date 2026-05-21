@@ -60,7 +60,6 @@ public class WorldHelper {
     }
 
     // Do not abuse
-    @SuppressWarnings({"GrazieInspection"})
     // NOTE: CLIENT SIDE ALWAYS == NULL!!!!!
     public static @Nullable ServerLevel getServerWorld() {
         if (serverWorld == null) {
@@ -136,10 +135,13 @@ public class WorldHelper {
         EntityHelper.dropItem(world, pos, stack);
     }
 
-    public static boolean enhancedIsWaterNearby(Level world, BlockPos pos) {
-        for (int i = 0; i < 5; ++i) {
-            if (FarmBlock.isNearWater(world, pos)) return true;
-            pos = pos.below();
+    @Deprecated
+    public static boolean enhancedIsWaterNearby(@Nullable Level world, BlockPos pos) {
+        if (world != null && !world.isClientSide) {
+            for (int i = 0; i < 5; ++i) {
+                if (FarmBlock.isNearWater(world, pos)) return true;
+                pos = pos.below();
+            }
         }
         return false;
     }

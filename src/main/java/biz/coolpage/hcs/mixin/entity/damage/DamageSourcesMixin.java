@@ -7,7 +7,6 @@ import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.damagesource.DamageSources;
 import net.minecraft.world.damagesource.DamageType;
 import net.minecraft.world.damagesource.DamageTypes;
-import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.Registry;
 import net.minecraft.world.entity.LivingEntity;
 import org.jetbrains.annotations.NotNull;
@@ -75,38 +74,38 @@ public abstract class DamageSourcesMixin implements IDamageSources {
             this.dehydrate = new DamageSource(this.damageTypes.getHolderOrThrow(key)) {
                 @Override
                 public @NotNull Component getLocalizedDeathMessage(@NotNull LivingEntity killed) {
-                    return Component.translatable("death.attack.hcs.dehydrate", killed.getDisplayName());
+                    return Component.translatable("death.attack.hcsurvival.dehydrate", killed.getDisplayName());
                 }
             };
             this.heatstroke = new DamageSource(this.damageTypes.getHolderOrThrow(key)) {
                 @Override
                 public @NotNull Component getLocalizedDeathMessage(@NotNull LivingEntity killed) {
-                    return Component.translatable("death.attack.hcs.heatstroke", killed.getDisplayName());
+                    return Component.translatable("death.attack.hcsurvival.heatstroke", killed.getDisplayName());
                 }
             };
             this.oxygenDeficiency = new DamageSource(this.damageTypes.getHolderOrThrow(key)) {
                 @Override
                 public @NotNull Component getLocalizedDeathMessage(@NotNull LivingEntity killed) {
-                    return Component.translatable("death.attack.hcs.oxygenDeficiency", killed.getDisplayName());
+                    return Component.translatable("death.attack.hcsurvival.oxygenDeficiency", killed.getDisplayName());
                 }
             };
             this.bleeding = new DamageSource(this.damageTypes.getHolderOrThrow(key)) {
                 @Override
                 public @NotNull Component getLocalizedDeathMessage(@NotNull LivingEntity killed) {
-                    return Component.translatable("death.attack.hcs.bleeding", killed.getDisplayName());
+                    return Component.translatable("death.attack.hcsurvival.bleeding", killed.getDisplayName());
                 }
             };
             this.parasiteInfection = new DamageSource(this.damageTypes.getHolderOrThrow(key)) {
                 @Override
                 public @NotNull Component getLocalizedDeathMessage(@NotNull LivingEntity killed) {
-                    return Component.translatable("death.attack.hcs.parasiteInfection", killed.getDisplayName());
+                    return Component.translatable("death.attack.hcsurvival.parasiteInfection", killed.getDisplayName());
                 }
             };
         } else if (key == DamageTypes.CACTUS) {
             this.darkness = new DamageSource(this.damageTypes.getHolderOrThrow(key)) {
                 @Override
                 public @NotNull Component getLocalizedDeathMessage(@NotNull LivingEntity killed) {
-                    return Component.translatable("death.attack.hcs.darkness", killed.getDisplayName());
+                    return Component.translatable("death.attack.hcsurvival.darkness", killed.getDisplayName());
                 }
             };
         }

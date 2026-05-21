@@ -37,7 +37,7 @@ public abstract class PotionItemMixin extends Item {
             Potion potion = PotionUtils.getPotion(stack);
             if (potion.getEffects().isEmpty()) {
                 player.addEffect(new MobEffectInstance(HcsEffects.DIARRHEA.get(), 600, 0, false, false, true));
-                if (Math.random() < 0.003) ((StatAccessor) player).getDiseaseManager().addParasite(0.12);
+//                if (Math.random() < 0.003) ((StatAccessor) player).getDiseaseManager().addParasite(0.12);
             }
             ((StatAccessor) player).getThirstManager().addDirectly(0.3);
             TemperatureManager temperatureManager = ((StatAccessor) player).getTemperatureManager();

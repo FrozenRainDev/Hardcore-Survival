@@ -8,6 +8,7 @@ import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.ClientGamePacketListener;
 import net.minecraft.network.protocol.game.ClientboundAddEntityPacket;
 import net.minecraft.sounds.SoundEvents;
+import net.minecraft.tags.BlockTags;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
@@ -15,9 +16,10 @@ import net.minecraft.world.entity.projectile.ThrowableItemProjectile;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.HitResult;
-
 
 public class RockProjectileEntity extends ThrowableItemProjectile {
     public RockProjectileEntity(EntityType<? extends ThrowableItemProjectile> entityType, Level world) {
@@ -48,14 +50,34 @@ public class RockProjectileEntity extends ThrowableItemProjectile {
     protected void onHit(HitResult hitResult) {
         super.onHit(hitResult);
         if (!this.level().isClientSide) {
-            if (Math.random() < 0.8) EntityHelper.dropItem(this, Hcs.ROCK.get());
-            else EntityHelper.dropItem(this, Hcs.SHARP_ROCK.get());
+            boolean isHardBlock = false;
+
+            // Check if the projectile hit a block
+            if (hitResult.getType() == HitResult.Type.BLOCK) {
+                BlockHitResult blockHitResult = (BlockHitResult) hitResult;
+                BlockState blockState = this.level().getBlockState(blockHitResult.getBlockPos());
+                float hardness = blockState.getDestroySpeed(this.level(), blockHitResult.getBlockPos());
+
+                // Determines if the block is considered "hard"
+                // Hardness >= 1.5F (e.g., Stone) or == -1.0F (Unbreakable blocks like Bedrock)
+                if ((hardness >= 1.5F && !blockState.is(BlockTags.MINEABLE_WITH_AXE)) || hardness == -1.0F) {
+                    isHardBlock = true;
+                }
+            }
+
+            // Always drop a sharp rock if hitting a hard block
+            if (isHardBlock) {
+                EntityHelper.dropItem(this, Hcs.SHARP_ROCK.get());
+            } else {
+                if (Math.random() < 0.85) EntityHelper.dropItem(this, Hcs.ROCK.get());
+                else EntityHelper.dropItem(this, Hcs.SHARP_ROCK.get());
+            }
+
             this.playSound(SoundEvents.STONE_HIT, 2.0F, 1.0F);
             this.level().broadcastEntityEvent(this, (byte) 3);
             this.discard();
         }
     }
-
 
     @Override
     public void handleEntityEvent(byte id) {//Particles rendering needs client world

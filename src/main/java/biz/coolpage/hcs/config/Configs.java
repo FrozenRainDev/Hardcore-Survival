@@ -29,7 +29,9 @@ public enum Configs {
     SLOW_HEAL("hcsSlowHealing"),
     BURN("hcsBurningTimeLimits"),
     HOSTILE_ZOMBIE("hcsZombieExtraHostility"),
-    HOSTILE_COW("hcsCowKicking");
+    HOSTILE_COW("hcsCowKicking"),
+    NO_JUMP_PLACEMENT("hcsNoJumpPlacement"),
+    SLOW_PLANT_GROWTH("hcsSlowPlantGrowth");
 
     // The field 'ruleName' must be declared here to resolve the symbol in HcsServerConfig
     public final String ruleName;
