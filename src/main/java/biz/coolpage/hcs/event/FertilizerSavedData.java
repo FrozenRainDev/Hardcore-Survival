@@ -1,4 +1,4 @@
-package biz.coolpage.hcs.event;
+package biz.coolpage.hcs.world;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
@@ -8,7 +8,6 @@ import net.minecraft.nbt.Tag;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.saveddata.SavedData;
-import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashSet;
@@ -16,11 +15,10 @@ import java.util.Set;
 
 public class FertilizerSavedData extends SavedData {
     private static final String DATA_NAME = "hcs_fertilizer_data";
-    // Stores the positions of fertilized farmland
+    // Stores the positions of fertilized plants
     private final Set<BlockPos> fertilizedPositions = new HashSet<>();
 
-    @Contract("null -> fail")
-    public static @NotNull FertilizerSavedData get(Level level) {
+    public static FertilizerSavedData get(Level level) {
         if (!(level instanceof ServerLevel serverLevel)) {
             throw new IllegalArgumentException("FertilizerSavedData can only be accessed on the server!");
         }
