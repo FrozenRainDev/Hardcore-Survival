@@ -19,39 +19,29 @@ import org.jetbrains.annotations.NotNull;
 
 @Mod.EventBusSubscriber(modid = Hcs.MOD_ID, bus = Mod.EventBusSubscriber.Bus.FORGE)
 public class CropGrowthEventHandler {
-
-    /**
-     * Replaces the Mixins for CropBlock, SweetBerryBushBlock, and Cave Vines (Glow Berries) randomTick.
-     */
+    // Slow down the growth rate of crops
     @SubscribeEvent
     public static void onCropGrow(BlockEvent.CropGrowEvent.@NotNull Pre event) {
         Block block = event.getState().getBlock();
-
-        // Ensure we are targeting CropBlocks, SweetBerry bushes, and Cave Vines
-        if (block instanceof CropBlock || block instanceof SweetBerryBushBlock || block instanceof CaveVines) {
-            // Slow down growing speed
-            if (Math.random() > 0.2) {
-                event.setResult(Event.Result.DENY);
-            }
+        double rateMultiplier = 1.0;
+        if (block instanceof CropBlock) rateMultiplier = 0.06;
+        else if (block instanceof SweetBerryBushBlock || block instanceof CaveVines) rateMultiplier = 0.015;
+        if (rateMultiplier != 1.0 && Math.random() > rateMultiplier) {
+            event.setResult(Event.Result.DENY);
         }
     }
 
-    /**
-     * Replaces the CropBlock#performBonemeal Mixin.
-     * Retains original boundary conditions for crops.
-     */
+    // Bone meal cannot be used repeatedly
     @SubscribeEvent
     public static void onBonemeal(@NotNull BonemealEvent event) {
         Level level = event.getLevel();
         BlockPos pos = event.getPos();
         BlockState stateDown = level.getBlockState(pos.below());
 
-        // Check boundary condition to target only CropBlocks
         if (event.getBlock().getBlock() instanceof CropBlock) {
             if (stateDown.is(Blocks.FARMLAND)
                     && stateDown.getValues().containsKey(WorldHelper.FERTILIZER_FREE)
                     && !stateDown.getValue(WorldHelper.FERTILIZER_FREE)) {
-
                 event.setCanceled(true);
             }
         }

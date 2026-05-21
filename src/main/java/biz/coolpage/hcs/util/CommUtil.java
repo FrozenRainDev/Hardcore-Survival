@@ -25,9 +25,9 @@ public class CommUtil {
     }
 
     @Contract(pure = true)
-    public static @NotNull String retain5(double val) {
+    public static @NotNull String retain4(double val) {
         // Retain five decimal places
-        return String.format("%.5f", val);
+        return String.format("%.4f", val);
     }
 
     /*

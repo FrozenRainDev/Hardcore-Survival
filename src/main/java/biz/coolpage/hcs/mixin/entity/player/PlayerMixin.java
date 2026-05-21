@@ -568,8 +568,11 @@ public abstract class PlayerMixin extends LivingEntity implements StatAccessor {
         this.staminaManager.setLastVecPos(this.position());
         this.sanityManager.updateDifference();
         this.oxygenManager.setOxygenLackLevel(oxyLackLvl);
+
+        // FIX: Change increaseAirSupply to decreaseAirSupply to correctly drop oxygen level in deep caves
         if (this.oxygenManager.getFinalOxygenLackLevel() >= 3 && (this.level().getGameTime() % 20 == 0 || this.getAirSupply() < 0))
-            this.setAirSupply(this.increaseAirSupply(this.getAirSupply()));
+            this.setAirSupply(this.decreaseAirSupply(this.getAirSupply()));
+
         if (this.getAirSupply() < -20 && this.level().getGameTime() % 15 == 0)
             this.hurt(((IDamageSources) this.level().damageSources()).oxygenDeficiency(), 1.0F);
 
@@ -631,8 +634,6 @@ public abstract class PlayerMixin extends LivingEntity implements StatAccessor {
         boolean isBurningDamage = EntityHelper.IS_BURNING_DAMAGE.test(source);
         if (!source.is(DamageTypeTags.BYPASSES_ARMOR))
             feelingAmount = ArmorHelper.getDamageLeftWithReducedArmor(toPlayer(this), amount);
-
-        // 修正为 Shadow 的 Mojang 映射方法
         feelingAmount = this.getDamageAfterMagicAbsorb(source, feelingAmount);
 
         if (isBurningDamage) feelingAmount *= 2;

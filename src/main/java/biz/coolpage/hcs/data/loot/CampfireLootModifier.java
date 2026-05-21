@@ -1,6 +1,5 @@
 package biz.coolpage.hcs.data.loot;
 
-import biz.coolpage.hcs.Hcs; // Imported as requested
 import com.google.common.base.Suppliers;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;

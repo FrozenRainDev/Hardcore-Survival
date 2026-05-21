@@ -100,6 +100,7 @@ public class ItemMixin {
     @Inject(method = "getFoodProperties", at = @At("RETURN"), cancellable = true)
     public void getFoodProperties(CallbackInfoReturnable<FoodProperties> cir) {
         Item item = ((Item) (Object) this);
+//        System.out.println("[HCS] getFoodProperties hit: " + item);
         if (item == Items.BEETROOT_SEEDS || item == Items.MELON_SEEDS || item == Items.PUMPKIN_SEEDS || item == Items.WHEAT_SEEDS || item == Items.TORCHFLOWER_SEEDS)
             cir.setReturnValue(SEEDS);
         else if (item == Items.WHEAT) cir.setReturnValue(WHEAT);

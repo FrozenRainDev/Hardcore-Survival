@@ -21,7 +21,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
-import static biz.coolpage.hcs.util.CommUtil.retain5;
+import static biz.coolpage.hcs.util.CommUtil.retain4;
 
 // Register the event to the Forge Event Bus on the Physical Client side
 @Mod.EventBusSubscriber(modid = Hcs.MOD_ID, value = Dist.CLIENT, bus = Mod.EventBusSubscriber.Bus.FORGE)
@@ -71,24 +71,24 @@ public class DebugHudEventHandler {
         list.add(ChatFormatting.AQUA + "Stamina: " + ChatFormatting.WHITE + staminaManager.get() + ChatFormatting.AQUA + "  Sanity: " + ChatFormatting.WHITE + sanityManager.get() + ", diff=" + sanityManager.getDifference());
 
         // Temperature logic kept exactly as original
-        list.add(ChatFormatting.RED + "Temp: " + ChatFormatting.WHITE + "biome=" + biome.getBaseTemperature() +
-                ", env=[real:" + retain5(TemperatureHelper.getTemp(player)) +
-                ", feel:" + retain5(TemperatureHelper.getFeelingTemp(player, TemperatureHelper.getTemp(player), biomeName, player.level().getBrightness(LightLayer.SKY, player.blockPosition()))) + "]" +
-                ", val=" + retain5(temperatureManager.get()) + ", satu=" + retain5(temperatureManager.getSaturation()) + ", trend=" + temperatureManager.getTrendType());
+        list.add(ChatFormatting.RED + "Temperature: " + ChatFormatting.WHITE + "biome=" + biome.getBaseTemperature() +
+                ", env=[real:" + retain4(TemperatureHelper.getTemp(player)) +
+                ", feel:" + retain4(TemperatureHelper.getFeelingTemp(player, TemperatureHelper.getTemp(player), biomeName, player.level().getBrightness(LightLayer.SKY, player.blockPosition()))) + "]" +
+                ", val=" + retain4(temperatureManager.get()) + ", satu=" + retain4(temperatureManager.getSaturation()) + ", trend=" + temperatureManager.getTrendType());
 
         list.add(ChatFormatting.GREEN + "Nutrition: " + ChatFormatting.WHITE + "veg=" + nutritionManager.getVegetable());
         list.add(ChatFormatting.GRAY + "Oxygen: " + ChatFormatting.WHITE + "lack=" + oxygenManager.getOxygenLackLevel() + ", gen=" + oxygenManager.getOxygenGenLevel());
 
-        list.add(ChatFormatting.DARK_RED + "Injury: " + ChatFormatting.WHITE + "pain[real=" + retain5(injuryManager.getRealPain()) +
-                ", raw=" + retain5(injuryManager.getRawPain()) + ", alle=" + retain5(injuryManager.getPainkillerAlleviation()) +
-                "], bleeding=" + retain5(injuryManager.getBleeding()) + ", fracture=" + retain5(injuryManager.getFracture()));
+        list.add(ChatFormatting.DARK_RED + "Injury: " + ChatFormatting.WHITE + "pain[real=" + retain4(injuryManager.getRealPain()) +
+                ", raw=" + retain4(injuryManager.getRawPain()) + ", alle=" + retain4(injuryManager.getPainkillerAlleviation()) +
+                "], bleeding=" + retain4(injuryManager.getBleeding()) + ", fracture=" + retain4(injuryManager.getFracture()));
 
         list.add(ChatFormatting.BLUE + "Wetness: " + ChatFormatting.WHITE + ((StatAccessor) player).getWetnessManager().get());
 
-        list.add(ChatFormatting.LIGHT_PURPLE + "Mood: " + ChatFormatting.WHITE + "panic=[raw=" + retain5(moodManager.getRawPanic()) +
-                ", real=" + retain5(moodManager.getRealPanic()) + ", alle=" + retain5(moodManager.getPanicAlleCache()) +
-                "], happy=" + retain5(moodManager.getHappiness()));
+        list.add(ChatFormatting.LIGHT_PURPLE + "Mood: " + ChatFormatting.WHITE + "panic=[raw=" + retain4(moodManager.getRawPanic()) +
+                ", real=" + retain4(moodManager.getRealPanic()) + ", alle=" + retain4(moodManager.getPanicAlleCache()) +
+                "], happy=" + retain4(moodManager.getHappiness()));
 
-        list.add(ChatFormatting.DARK_GREEN + "Disease: " + ChatFormatting.WHITE + "parasite=" + retain5(diseaseManager.getParasite()) + ", cold=" + retain5(diseaseManager.getCold()));
+        list.add(ChatFormatting.DARK_GREEN + "Disease: " + ChatFormatting.WHITE + "parasite=" + retain4(diseaseManager.getParasite()) + ", cold=" + retain4(diseaseManager.getCold()));
     }
 }

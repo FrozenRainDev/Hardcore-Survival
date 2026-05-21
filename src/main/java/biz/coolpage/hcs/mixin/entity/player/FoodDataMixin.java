@@ -79,7 +79,7 @@ public abstract class FoodDataMixin {
                 }
             }
             boolean bl = player.level().getGameRules().getBoolean(GameRules.RULE_NATURAL_REGENERATION);
-            // 修正点：player.canFoodHeal() -> player.isHurt()
+            // Fix: player.canFoodHeal() -> player.isHurt()
             if (bl && this.saturationLevel >= 0.0F && player.isHurt() && this.foodLevel >= 19 && thirst >= 0.8 && !player.hasEffect(HcsEffects.BLEEDING.get())) {
                 if (!malnutrition || Math.random() < 0.5) ++this.tickTimer;
                 if (this.tickTimer >= 10) {

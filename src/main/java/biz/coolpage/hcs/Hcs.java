@@ -291,10 +291,6 @@ public final class Hcs {
     public static final RegistryObject<Codec<? extends IGlobalLootModifier>> GRAVEL_DROP_MODIFIER = LOOT_MODIFIERS.register("gravel_drop", () -> GravelDropModifier.CODEC);
     @SuppressWarnings("unused")
     public static final RegistryObject<Codec<CampfireLootModifier>> CAMPFIRE_MODIFIER = LOOT_MODIFIERS.register("campfire_modifier", CampfireLootModifier.CODEC);
-    @SuppressWarnings("unused") // Registering the modifier for the mineshaft chest
-    public static final RegistryObject<Codec<MineshaftChestModifier>> MINESHAFT_CHEST_MODIFIER = LOOT_MODIFIERS.register("mineshaft_chest_modifier", MineshaftChestModifier.CODEC);
-    @SuppressWarnings("unused")
-    public static final RegistryObject<Codec<RemoveItemsModifier>> REMOVE_ITEM_MODIFIER = LOOT_MODIFIERS.register("remove_item_modifier", RemoveItemsModifier.CODEC);
 
     // --- Recipe Serializers ---
     public static final RegistryObject<RecipeSerializer<?>>

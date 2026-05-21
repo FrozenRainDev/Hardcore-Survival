@@ -17,6 +17,8 @@ import net.minecraftforge.common.loot.LootModifier;
 import net.minecraftforge.registries.ForgeRegistries;
 import org.jetbrains.annotations.NotNull;
 
+// Failed to prevent tool and metal ingot generation in abandoned minecarts by using LootModifier, so mixin is selected
+// Zombies: hcsurvival$cancelZombieMetalDrops; Abandoned Minecarts: AbstractMinecartContainerMixin
 public class GravelDropModifier extends LootModifier {
 
     // Codec for Forge registry serialization
