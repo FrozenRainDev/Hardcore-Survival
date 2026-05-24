@@ -11,7 +11,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 public class BreakDoorGoalMixin {
     @Inject(method = "canUse", at = @At("HEAD"), cancellable = true)
     public void canUse(@NotNull CallbackInfoReturnable<Boolean> cir) {
-        //This goal is disabled, because it conflicts with BreakBlockGoal
+        // This goal is disabled, because it conflicts with customized BreakBlockGoal
         cir.setReturnValue(false);
     }
 }

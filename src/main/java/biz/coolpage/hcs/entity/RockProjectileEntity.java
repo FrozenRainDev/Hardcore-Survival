@@ -80,7 +80,7 @@ public class RockProjectileEntity extends ThrowableItemProjectile {
     }
 
     @Override
-    public void handleEntityEvent(byte id) {//Particles rendering needs client world
+    public void handleEntityEvent(byte id) { // Particles rendering needs client world
         if (id == 3)
             for (int i = 0; i < 8; ++i)
                 this.level().addParticle(new ItemParticleOption(ParticleTypes.ITEM, new ItemStack(Hcs.ROCK.get())), this.getX(), this.getY(), this.getZ(), 0.0D, 0.0D, 0.0D);

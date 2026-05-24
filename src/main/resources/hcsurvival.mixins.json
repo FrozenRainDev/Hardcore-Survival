@@ -79,6 +79,7 @@
     "structure.JigsawPlacementMixin",
     "structure.JigsawPlacementMixin$PlacerMixin",
     "structure.RuinedPortalPieceMixin",
+    "world.OreFeatureMixin",
     "world.ServerChunkCacheMixin"
   ],
   "client": [

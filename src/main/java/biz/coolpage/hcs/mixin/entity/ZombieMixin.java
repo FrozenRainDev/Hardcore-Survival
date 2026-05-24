@@ -3,8 +3,11 @@ package biz.coolpage.hcs.mixin.entity;
 import biz.coolpage.hcs.config.Configs;
 import biz.coolpage.hcs.entity.goal.AdvancedAvoidSunlightGoal;
 import biz.coolpage.hcs.entity.goal.BreakBlockGoal;
+import biz.coolpage.hcs.entity.navigation.BreakableGroundPathNavigation;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
+import net.minecraft.world.entity.ai.navigation.PathNavigation;
 import net.minecraft.world.entity.animal.Animal;
 import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.monster.Zombie;
@@ -28,11 +31,21 @@ public abstract class ZombieMixin extends Monster { // ZombieEntityMixin
     @Shadow
     public abstract boolean isSunSensitive();
 
+    // todo recover this
+//    @Inject(method = "<init>*", at = @At("TAIL"))
+//    private void hcs$replaceNavigation(EntityType<? extends Zombie> entityType, Level level, CallbackInfo ci) {
+//        Mob zombie = this;
+//        // Replace with a navigator that supports wall-penetration pathfinding
+//        zombie.navigation = new BreakableGroundPathNavigation(zombie, level);
+//    }
+
     // Using "protected" will crash even the original method is "protected"
     @Inject(method = "addBehaviourGoals", at = @At("TAIL"))
     public void addBehaviourGoals(CallbackInfo ci) {
         // Zombies will break blocks when its path is obstructed
-        this.targetSelector.addGoal(1, new BreakBlockGoal(this));
+
+        // todo del break block goal temporarily
+//        this.targetSelector.addGoal(1, new BreakBlockGoal(this));
         if (this.isSunSensitive()) this.targetSelector.addGoal(1, new AdvancedAvoidSunlightGoal(this));
         // Add animal target for adult zombies
         // Prioritize player(s) within 8 blocks in **TrackTargetGoalMixin/shouldContinue()**

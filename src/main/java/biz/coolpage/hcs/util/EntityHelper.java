@@ -55,6 +55,7 @@ import java.util.function.Predicate;
 import static biz.coolpage.hcs.util.CommUtil.applyNullable;
 
 public class EntityHelper {
+    @Deprecated
     public static final double[][] FIND_NEAREST_BLOCKS = {{0, -1, 0}, {0, 1, 0}, {0, 2, 0}, {-1, 0, 0}, {-1, 1, 0}, {1, 0, 0}, {1, 1, 0}, {0, 0, 1}, {0, 1, 1}, {0, 0, -1}, {0, 1, -1}};
     public static double ZOMBIE_SENSING_RANGE = 40.0;
     public static final float HOLDING_BLOCK_REACHING_RANGE_ADDITION = 1.0F;

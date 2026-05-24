@@ -283,7 +283,7 @@ public class RotHelper {
             modifier.append(Component.translatable("tip.hcsurvival.food.spoiled").append(getSubProgress(ratio)).withStyle(ChatFormatting.RED));
         } else {
             // Level 0 (Rotten) - 腐烂状态保持满格符号以表示该状态已达到极致
-            modifier.append(Component.translatable("tip.hcsurvival.food.rotten").append("■■■").withStyle(ChatFormatting.DARK_RED));
+            modifier.append(Component.translatable("tip.hcsurvival.food.rotten").withStyle(ChatFormatting.DARK_RED));
             if (getPackageType(stack.getItem()) == 1)
                 modifier.append(Component.translatable("tip.hcsurvival.food.pour").withStyle(ChatFormatting.GRAY));
             return modifier;

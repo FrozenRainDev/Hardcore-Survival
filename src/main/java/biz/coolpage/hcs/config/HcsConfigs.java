@@ -32,7 +32,8 @@ public class HcsConfigs {
         SPEC = BUILDER.build();
     }
 
-    // Suppress the deprecation warning as this is the standard method for 1.20.1
+    // Suppress the deprecation warning because this is the standard method for 1.20.1
+    @SuppressWarnings("removal")
     public static void register() {
         // Register the server config using the MOD_ID
         //noinspection removal

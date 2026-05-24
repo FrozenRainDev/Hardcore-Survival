@@ -16,9 +16,6 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.inventory.EffectRenderingInventoryScreen;
-import net.minecraft.locale.Language;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.server.level.ServerPlayer;
@@ -477,30 +474,6 @@ public class HcsEffects {
         };
     }
 
-    private static @NotNull String getEffectBaseKey(@NotNull MobEffect effect) {
-        ResourceLocation id = ForgeRegistries.MOB_EFFECTS.getKey(effect);
-        if (id != null && Hcs.MOD_ID.equals(id.getNamespace()))
-            return "effect." + Hcs.MOD_ID + "." + id.getPath();
-        return effect.getDescriptionId();
-    }
-
-    private static @Nullable MutableComponent getEffectDescriptionText(@NotNull String nameKey, @NotNull String baseKey) {
-        Language language = Language.getInstance();
-        String descriptionKey = nameKey + ".description";
-
-        // Try level-specific description first, then fallback to the base description.
-        if (!language.has(descriptionKey)) {
-            String baseDescriptionKey = baseKey + ".description";
-            if (!descriptionKey.equals(baseDescriptionKey) && language.has(baseDescriptionKey))
-                descriptionKey = baseDescriptionKey;
-        }
-
-        if (!language.has(descriptionKey)) return null;
-
-        // Read raw translated text directly to avoid false fallback caused by translatable parsing.
-        return Component.literal(language.getOrDefault(descriptionKey).replace("%%", "%"));
-    }
-
     private static void removeTempAttributes(AttributeMap attributes, @NotNull Multimap<Attribute, AttributeModifier> customAttributeModifiers) {
         for (Map.Entry<Attribute, AttributeModifier> entry : customAttributeModifiers.entries()) {
             AttributeInstance entityAttributeInstance = attributes.getInstance(entry.getKey());
@@ -551,59 +524,80 @@ public class HcsEffects {
                 @Override
                 public boolean renderInventoryText(MobEffectInstance instance, EffectRenderingInventoryScreen<?> screen, GuiGraphics guiGraphics, int x, int y, int blitOffset) {
                     MobEffect effect = instance.getEffect();
-                    String baseKey = getEffectBaseKey(effect);
+                    String baseKey = effect.getDescriptionId();
 
+                    // 检查并获取特定等级的动态名称 (例如 "重伤" injury.3)
                     String nameKey = baseKey;
                     if (IS_EFFECT_NAME_VARIABLE.test(effect)) {
                         nameKey = getEffectVarName(baseKey, instance.getAmplifier());
                     }
 
+                    // --- 渲染标题文本 --- (坐标 x + 28, y + 6)
                     MutableComponent nameText = Component.translatable(nameKey);
                     if (!IS_EFFECT_NAME_VARIABLE.test(effect) && instance.getAmplifier() > 0 && instance.getAmplifier() <= 9) {
                         nameText.append(Component.literal(" ")).append(Component.translatable("enchantment.level." + (instance.getAmplifier() + 1)));
                     }
                     guiGraphics.drawString(Minecraft.getInstance().font, nameText, x + 28, y + 6, 0xFFFFFF);
 
-                    MutableComponent description = getEffectDescriptionText(nameKey, baseKey);
+                    // --- 渲染描述文本 --- (坐标 x + 28, y + 16)
+                    String descriptionKey = nameKey + ".description";
+                    MutableComponent description = Component.translatable(descriptionKey);
 
-                    if (description != null) {
+                    if (!description.getString().equals(descriptionKey)) {
                         var font = Minecraft.getInstance().font;
-                        int maxWidth = 88;
+                        int maxWidth = 88; // 原版黑框留给文字的物理宽度
                         int textWidth = font.width(description);
 
                         if (textWidth > maxWidth) {
-                            // Enable scissor to limit the visible area for marquee text.
+                            // 【文字过长，开启跑马灯滚动模式】
+                            // 开启裁剪(Scissor)遮罩，限制渲染区域，超出 maxWidth 的部分直接切掉不显示
                             guiGraphics.enableScissor(x + 28, y + 16, x + 28 + maxWidth, y + 16 + 10);
 
+                            // 利用系统时间计算滚动偏移量
                             long time = Util.getMillis();
-                            int pauseDuration = 1500;
-                            int speed = 30;
+                            int pauseDuration = 1500; // 头尾停顿时间 (毫秒)
+                            int speed = 30; // 滚动速度，每 30 毫秒移动 1 像素 (越小越快)
 
-                            int maxScroll = textWidth - maxWidth;
-                            int cycleTime = pauseDuration * 2 + maxScroll * speed;
+                            int maxScroll = textWidth - maxWidth; // 需要滚动的总距离
+                            int cycleTime = pauseDuration * 2 + maxScroll * speed; // 一个完整循环所需的总时间
                             long currentCycle = time % cycleTime;
 
                             int offset = 0;
                             if (currentCycle > pauseDuration) {
                                 if (currentCycle < pauseDuration + maxScroll * speed) {
+                                    // 处于滚动阶段
                                     offset = (int) ((currentCycle - pauseDuration) / speed);
                                 } else {
+                                    // 处于末尾停顿阶段
                                     offset = maxScroll;
                                 }
                             }
 
+                            // 绘制带有负数偏移量的文字，实现向左移动的视觉效果
                             guiGraphics.drawString(font, description, x + 28 - offset, y + 16, 8355711, false);
 
-                            // Disable scissor immediately to avoid affecting subsequent rendering.
+                            // ★ 必须关闭裁剪遮罩，否则会影响整个游戏后续的画面渲染！
                             guiGraphics.disableScissor();
                         } else {
+                            // 【文字较短，无需滚动，正常渲染】
                             guiGraphics.drawString(font, description, x + 28, y + 16, 8355711, false);
                         }
                     } else {
-                        guiGraphics.drawString(Minecraft.getInstance().font, getDurationText(instance), x + 28, y + 16, 8355711);
+                        // --- 没有描述文本，回退显示时间 (例如：恒温) ---
+                        int ticks = instance.getDuration();
+                        String durationText;
+                        if (instance.isInfiniteDuration()) {
+                            durationText = "**:**";
+                        } else {
+                            int seconds = ticks / 20;
+                            int minutes = seconds / 60;
+                            seconds %= 60;
+                            durationText = String.format("%02d:%02d", minutes, seconds);
+                        }
+                        guiGraphics.drawString(Minecraft.getInstance().font, durationText, x + 28, y + 16, 8355711);
                     }
 
-                    // Return true to fully replace vanilla duration text rendering.
+                    // 返回 true 彻底接管原版持续时间的渲染逻辑
                     return true;
                 }
 
