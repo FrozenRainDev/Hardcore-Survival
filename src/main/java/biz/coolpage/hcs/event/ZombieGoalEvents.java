@@ -1,7 +1,7 @@
 package biz.coolpage.hcs.event;
 
 import biz.coolpage.hcs.Hcs;
-import biz.coolpage.hcs.entity.goal.ZombieBreakBlockGoal;
+//import biz.coolpage.hcs.entity.goal.ZombieBreakBlockGoal;
 import net.minecraft.world.entity.ai.goal.BreakDoorGoal;
 import net.minecraft.world.entity.ai.goal.WrappedGoal;
 import net.minecraft.world.entity.monster.Zombie;
@@ -41,7 +41,7 @@ public class ZombieGoalEvents {
 //
 //        // Add the custom goal with the same priority (1) as the vanilla BreakDoorGoal
 //        if (replaced) {
-            zombie.goalSelector.addGoal(1, new ZombieBreakBlockGoal(zombie));
+//            zombie.goalSelector.addGoal(1, new ZombieBreakBlockGoal(zombie));
 //        }
     }
 }

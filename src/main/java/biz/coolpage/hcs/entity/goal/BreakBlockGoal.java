@@ -2,8 +2,8 @@ package biz.coolpage.hcs.entity.goal;
 
 import biz.coolpage.hcs.config.Configs;
 import biz.coolpage.hcs.config.HcsDifficulty;
+import biz.coolpage.hcs.status.accessor.ILookControl;
 import biz.coolpage.hcs.util.DigRestrictHelper;
-import biz.coolpage.hcs.util.EntityHelper;
 import biz.coolpage.hcs.util.WorldHelper;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
@@ -19,7 +19,6 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.LevelEvent;
-import net.minecraft.world.level.block.TorchBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.NotNull;
 
@@ -53,7 +52,7 @@ public class BreakBlockGoal extends Goal {
         if (world instanceof ServerLevel serverWorld && !Configs.isEnabled(serverWorld, Configs.HOSTILE_ZOMBIE))
             return false;
 
-        // 设置 Y 轴遍历优先级：1 (上半身/面对高度) -> 0 (脚底) -> 2 (头顶) -> -1 (脚下)
+        // Set Y-axis traversal priority: 1 (upper body/facing height) -> 0 (sole of foot) -> 2 (top of head) -> -1 (below feet)
         int[] yOffsets = {1, 0, 2, -1};
 
         for (int yOffset : yOffsets) {
@@ -64,10 +63,10 @@ public class BreakBlockGoal extends Goal {
 
             for (int xOffset = -1; xOffset <= 1; xOffset++) {
                 for (int zOffset = -1; zOffset <= 1; zOffset++) {
-                    // 仅检查十字方向（前后左右），跳过对角线方块。这与你之前硬编码的数组行为保持一致
+                    // Check only the cardinal directions (forward, backward, left, right), skipping diagonal blocks. This is consistent with your previously hardcoded array behavior.
                     if (Math.abs(xOffset) + Math.abs(zOffset) > 1) continue;
 
-                    // 忽略僵尸自身所在的坐标空间 (0, 0, 0) 和 (0, 1, 0)
+                    // Ignore the coordinate space occupied by the zombie itself (0, 0, 0) and (0, 1, 0)
                     if (xOffset == 0 && zOffset == 0 && (yOffset == 0 || yOffset == 1)) continue;
 
                     // Choose a pos to break
@@ -89,7 +88,7 @@ public class BreakBlockGoal extends Goal {
                     if (pendingBreakState.getCollisionShape(this.mob.level(), pendingBreakPos).isEmpty()) continue;
 
                     // Determine whether to start
-                    // 注意：如果你结合了之前修复的寻路逻辑，可以将此处的 isDone() 替换为 isDone() || this.mob.horizontalCollision
+                    // Note: If you have integrated the previously fixed pathfinding logic, you can replace isDone() here with isDone() || this.mob.horizontalCollision
                     if (canBreakBlock(pendingBreakState) && this.mob.getNavigation().isDone()) {
 //                        System.out.println("Breaking block " + pendingBreakPos);
                         this.breakPos = pendingBreakPos;
@@ -106,12 +105,24 @@ public class BreakBlockGoal extends Goal {
     public void start() {
         this.shouldStop = false;
         this.breakProgress = 0;
+
+        // 核心修复1：在开始挖掘时一次性彻底停止寻路，而不是在 tick 中反复调用，解决断续行走/抽搐问题
+        this.mob.getNavigation().stop();
+
+        // Lock the LookControl when digging starts
+        if (this.mob.getLookControl() instanceof ILookControl ext) {
+            ext.hcs$setLookLock(true);
+        }
     }
 
     @Override
     public void stop() {
         super.stop();
         this.mob.level().destroyBlockProgress(this.mob.getId(), this.breakPos, -1);
+        // Unlock the LookControl when digging is interrupted or finished
+        if (this.mob.getLookControl() instanceof ILookControl ext) {
+            ext.hcs$setLookLock(false);
+        }
     }
 
     @Override
@@ -122,17 +133,47 @@ public class BreakBlockGoal extends Goal {
 
     @Override
     public boolean canContinueToUse() {
-//         System.out.println("state=" + this.breakState + "\tshouldStop=" + this.shouldStop + "\t breakProgress=" + this.breakProgress + "\t max=" + this.getMaxProgress() + "\t canBreak=" + this.canBreakBlock(this.breakState) + "\t withinDistance=" + this.breakPos.closerToCenterThan(this.mob.position(), 5) + "\tTimeSinceLastAttack=" + (this.mob.tickCount - this.mob.getLastHurtByMobTimestamp()));
+//         System.out.println("..."); // 省略你的调试代码
         if (this.mob.getLastHurtByMob() != null) this.hcsLastAttacker = this.mob.getLastHurtByMob();
         if (this.hcsLastAttacker != null && !this.hcsLastAttacker.isAlive()) this.hcsLastAttacker = null;
         if (this.mob.level() instanceof ServerLevel serverWorld && !Configs.isEnabled(serverWorld, Configs.HOSTILE_ZOMBIE))
             return false;
-        return !this.shouldStop
+
+        // 核心修复2：获取当前世界实时的方块状态，防止玩家开门或方块被破坏后僵尸还在对着空气挖
+        BlockState currentState = this.mob.level().getBlockState(this.breakPos);
+
+        // 检测门/活板门是否已被玩家打开，或者方块碰撞体积是否已为空
+        boolean isOpened = currentState.hasProperty(net.minecraft.world.level.block.state.properties.BlockStateProperties.OPEN)
+                && currentState.getValue(net.minecraft.world.level.block.state.properties.BlockStateProperties.OPEN);
+        if (isOpened || currentState.getCollisionShape(this.mob.level(), this.breakPos).isEmpty()) {
+            return false;
+        }
+
+        // 核心修复3：持续利用点积运算校验目标方向。如果玩家绕行离开了方块后方，僵尸应放弃挖掘并重新追击
+        boolean isTargetStillValid = false;
+        LivingEntity target = this.mob.getTarget();
+        if (target != null) {
+            double vecXToTarget = target.getX() - this.mob.getX();
+            double vecZToTarget = target.getZ() - this.mob.getZ();
+            double vecXToBlock = this.breakPos.getX() + 0.5D - this.mob.getX();
+            double vecZToBlock = this.breakPos.getZ() + 0.5D - this.mob.getZ();
+            // 只要 >= 0，说明目标大体上还在挖掘方向的前方
+            isTargetStillValid = (vecXToTarget * vecXToBlock + vecZToTarget * vecZToBlock >= 0);
+        }
+
+        boolean canContinue = !this.shouldStop
                 && this.breakProgress <= this.getMaxProgress()
-                && canBreakBlock(this.breakState)
+                && canBreakBlock(currentState) // 传入实时状态
+                && isTargetStillValid          // 玩家是否还在方块后面
                 && this.breakPos.closerToCenterThan(this.mob.position(), 2.5)
-                && (this.hcsLastAttacker == null /*wasRecentlyAttacked*/
-                || (this.mob.tickCount - this.mob.getLastHurtByMobTimestamp()) > 20); // .getTimeSinceLastAttack()
+                && (this.hcsLastAttacker == null || (this.mob.tickCount - this.mob.getLastHurtByMobTimestamp()) > 20);
+
+        // 同步最新的状态给 tick() 使用（例如更新挖掘粒子和耗时计算）
+        if (canContinue) {
+            this.breakState = currentState;
+        }
+
+        return canContinue;
     }
 
     public int getMaxProgress() {
@@ -158,16 +199,19 @@ public class BreakBlockGoal extends Goal {
             this.mob.level().levelEvent(LevelEvent.PARTICLES_DESTROY_BLOCK, this.breakPos, Block.getId(this.breakState));
             this.prevBreakStage = breakStage;
         }
-        // Stop the current navigation when digging persists
-//        this.mob.getNavigation().stop();
-        // Keep the zombie's sight always locked on the center of the block being mined
-//        this.mob.getLookControl().setLookAt(
-//                this.breakPos.getX() + 0.5D,
-//                this.breakPos.getY() + 0.5D,
-//                this.breakPos.getZ() + 0.5D,
-//                10.0F, // Maximum horizontal head rotation speed
-//                (float) this.mob.getMaxHeadXRot() // Maximum vertical head rotation speed
-//        );
+
+        // （已删除）此处移除了原有在 tick 里对 this.mob.getNavigation().stop() 的调用
+
+        // Use forced look to bypass our own mixin lock
+        if (this.mob.getLookControl() instanceof ILookControl ctrl) {
+            ctrl.hcs$forceLookAt(
+                    this.breakPos.getX() + 0.5D,
+                    this.breakPos.getY() + 0.5D,
+                    this.breakPos.getZ() + 0.5D,
+                    10.0F, // Maximum horizontal head rotation speed
+                    (float) this.mob.getMaxHeadXRot() // Maximum vertical head rotation speed
+            );
+        }
 
         // Reach the target, successfully break the block
         if (this.breakProgress >= this.getMaxProgress()) {

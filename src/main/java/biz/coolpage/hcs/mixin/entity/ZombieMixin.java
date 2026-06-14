@@ -45,14 +45,13 @@ public abstract class ZombieMixin extends Monster { // ZombieEntityMixin
         // Zombies will break blocks when its path is obstructed
 
         // todo del break block goal temporarily
-//        this.targetSelector.addGoal(1, new BreakBlockGoal(this));
+        this.targetSelector.addGoal(1, new BreakBlockGoal(this));
         if (this.isSunSensitive()) this.targetSelector.addGoal(1, new AdvancedAvoidSunlightGoal(this));
         // Add animal target for adult zombies
         // Prioritize player(s) within 8 blocks in **TrackTargetGoalMixin/shouldContinue()**
         this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, Animal.class, false) {
             @Override
             public boolean canUse() {
-                if (this.mob == null) return false;
                 if (this.mob.isBaby() || this.mob.getVehicle() instanceof Animal) return false;
                 if (this.mob.level() instanceof ServerLevel serverWorld)
                     return super.canUse() && Configs.isEnabled(serverWorld, Configs.HOSTILE_ZOMBIE);
@@ -61,7 +60,7 @@ public abstract class ZombieMixin extends Monster { // ZombieEntityMixin
 
             @Override
             public boolean canContinueToUse() {
-                if (this.mob != null && this.mob.level() instanceof ServerLevel serverWorld)
+                if (this.mob.level() instanceof ServerLevel serverWorld)
                     return super.canContinueToUse() && Configs.isEnabled(serverWorld, Configs.HOSTILE_ZOMBIE);
                 return super.canContinueToUse();
             }

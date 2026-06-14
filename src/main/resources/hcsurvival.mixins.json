@@ -34,6 +34,7 @@
     "entity.WitherSkeletonMixin",
     "entity.ZombieMixin",
     "entity.ZombifiedPiglinMixin",
+    "entity.ai.LookControlMixin",
     "entity.damage.DamageSourcesMixin",
     "entity.dragon.AreaEffectCloudEntityMixin",
     "entity.dragon.ChargingPlayerPhaseMixin",

@@ -23,7 +23,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(Mob.class)
 @SuppressWarnings("ConstantValue")
-public abstract class MobMixin extends LivingEntity { // MobEntityMixin
+public abstract class MobMixin extends LivingEntity {
     @Shadow
     public abstract @Nullable LivingEntity getTarget();
 
@@ -56,4 +56,6 @@ public abstract class MobMixin extends LivingEntity { // MobEntityMixin
         if ((Object) this instanceof Zombie zombie && zombie.isBaby()) return amount / 2.0F;
         return amount;
     }
+
+
 }
