@@ -58,6 +58,9 @@ public class Client {
 
         // BlockEntityRendererFactories -> event.registerBlockEntityRenderer
         event.registerBlockEntityRenderer(Hcs.DRYING_RACK_BLOCK_ENTITY.get(), DryingRackBlockEntityRenderer::new);
+
+        // Register standard 2D item renderer for the spear entity
+        event.registerEntityRenderer(Hcs.THROWN_SPEAR.get(), SpearEntityRenderer::new);
     }
 
     // That's so sad :( , ALWAYS needs to call me, LOL

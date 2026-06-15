@@ -11,6 +11,7 @@
     "block.BlockMixin",
     "block.CampfireBlockMixin",
     "block.ChestBlockMixin",
+    "block.CobwebBlockMixin",
     "block.ExperienceDroppingBlockMixin",
     "block.FarmlandBlockMixin",
     "block.HopperBlockMixin",

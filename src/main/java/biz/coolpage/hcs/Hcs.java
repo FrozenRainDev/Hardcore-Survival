@@ -127,11 +127,10 @@ public final class Hcs {
             PUMPKIN_SLICE = ITEMS.register("pumpkin_slice", () -> new Item(new Item.Properties().food(new FoodProperties.Builder().nutrition(1).saturationMod(0f).build()))),
             POTHERB = ITEMS.register("potherb", () -> new Item(new Item.Properties().food(new FoodProperties.Builder().nutrition(0).saturationMod(1f).build()))),
             STONE_KNIFE = ITEMS.register("stone_knife", () -> new KnifeItem(HcsTiers.STONE_WEAPON, 1, 1.6F - 4.0F, new Item.Properties().stacksTo(1))),
-            STONE_SPEAR = ITEMS.register("stone_spear", () -> new SwordItem(HcsTiers.STONE_WEAPON, 2, 1.6F - 4.0F, new Item.Properties().stacksTo(1))),
+            STONE_SPEAR = ITEMS.register("stone_spear", () -> new SpearItem(HcsTiers.STONE_WEAPON, 2, 1.6F - 4.0F, new Item.Properties().stacksTo(1))),
             STONE_CONE = ITEMS.register("stone_cone", () -> new ShovelItem(HcsTiers.STONE_CONE, 1.0F, 1.6F - 4.0F, new Item.Properties().stacksTo(1))),
             FLINT_KNIFE = ITEMS.register("flint_knife", () -> new KnifeItem(HcsTiers.FLINT_WEAPON, 2, 1.6F - 4.0F, new Item.Properties().stacksTo(1))),
-            FLINT_SPEAR = ITEMS.register("flint_spear", () -> new SwordItem(HcsTiers.FLINT_WEAPON, 3, 1.6F - 4.0F, new Item.Properties().stacksTo(1))),
-            FLINT_CONE = ITEMS.register("flint_cone", () -> new ShovelItem(HcsTiers.FLINT_CONE, 1.5F, 1.6F - 4.0F, new Item.Properties().stacksTo(1))),
+            FLINT_SPEAR = ITEMS.register("flint_spear", () -> new SpearItem(HcsTiers.FLINT_WEAPON, 3, 1.6F - 4.0F, new Item.Properties().stacksTo(1))),FLINT_CONE = ITEMS.register("flint_cone", () -> new ShovelItem(HcsTiers.FLINT_CONE, 1.5F, 1.6F - 4.0F, new Item.Properties().stacksTo(1))),
             FLINT_HATCHET = ITEMS.register("flint_hatchet", () -> new AxeItem(HcsTiers.FLINT_HATCHET, 6.0F, -3.1F, new Item.Properties())),
             RAW_COPPER_POWDER = ITEMS.register("raw_copper_powder", () -> new Item(new Item.Properties())),
             COPPER_SWORD = ITEMS.register("copper_sword", () -> new SwordItem(HcsTiers.COPPER, 5, 1.4F - 4.0F, new Item.Properties().stacksTo(1))),
@@ -274,6 +273,7 @@ public final class Hcs {
     // --- Entity Types ---
     public static final RegistryObject<EntityType<RockProjectileEntity>> ROCK_PROJECTILE_ENTITY = ENTITIES.register("rock_projectile_entity", () -> EntityType.Builder.<RockProjectileEntity>of(RockProjectileEntity::new, MobCategory.MISC).sized(0.25F, 0.25F).build("rock_projectile_entity"));
     public static final RegistryObject<EntityType<FlintProjectileEntity>> FLINT_PROJECTILE_ENTITY = ENTITIES.register("flint_projectile_entity", () -> EntityType.Builder.<FlintProjectileEntity>of(FlintProjectileEntity::new, MobCategory.MISC).sized(0.25F, 0.25F).build("flint_projectile_entity"));
+    public static final RegistryObject<EntityType<ThrownSpearEntity>> THROWN_SPEAR = ENTITIES.register("thrown_spear", () -> EntityType.Builder.<ThrownSpearEntity>of(ThrownSpearEntity::new, MobCategory.MISC).sized(0.5F, 0.5F).clientTrackingRange(4).updateInterval(20).build("thrown_spear"));
 
     // --- Block Entities ---
     @SuppressWarnings("DataFlowIssue")

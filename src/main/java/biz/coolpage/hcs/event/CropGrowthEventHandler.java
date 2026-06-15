@@ -59,7 +59,7 @@ public class CropGrowthEventHandler {
             if (block instanceof CropBlock) {
                 rateMultiplier = 0.06;
             } else if (block instanceof SweetBerryBushBlock || block instanceof CaveVines) {
-                rateMultiplier = 0.01;
+                rateMultiplier = 0.007;
             } else {
                 rateMultiplier = 0.05; // Default fallback for stems, saplings, etc.
             }
