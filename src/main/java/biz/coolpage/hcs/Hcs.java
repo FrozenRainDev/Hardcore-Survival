@@ -110,149 +110,149 @@ public final class Hcs {
 
 
     // --- Items ---
-    public static final RegistryObject<Item>
-            FIBER_STRING = ITEMS.register("fiber_string", () -> new Item(new Item.Properties())),
-            GRASS_FIBER = ITEMS.register("grass_fiber", () -> new Item(new Item.Properties())),
-            ROASTED_SEEDS = ITEMS.register("roasted_seeds", () -> new Item(new Item.Properties().food(new FoodProperties.Builder().nutrition(0).saturationMod(0f).fast().build()))),
-            ROCK = ITEMS.register("rock", () -> new RockItem(new Item.Properties())),
-            SHARP_ROCK = ITEMS.register("sharp_rock", () -> new Item(new Item.Properties())),
-            SHARP_FLINT = ITEMS.register("sharp_flint", () -> new Item(new Item.Properties())),
-            FIREWOOD = ITEMS.register("firewood", () -> new Item(new Item.Properties())),
-            FRIED_EGG = ITEMS.register("fried_egg", () -> new Item(new Item.Properties().food(new FoodProperties.Builder().nutrition(3).saturationMod(2f).build()))),
-            EXTINGUISHED_CAMPFIRE = ITEMS.register("extinguished_campfire", () -> new HCSCampfireItem(Blocks.CAMPFIRE.defaultBlockState().setValue(BlockStateProperties.LIT, false).setValue(CombustionHelper.COMBUST_LUMINANCE, 15))),
-            FIRE_BOW = ITEMS.register("fire_bow", () -> new FireBowItem(new Item.Properties().stacksTo(1).durability(96), 1)),
-            FIRE_PLOUGH = ITEMS.register("fire_plough", () -> new FireBowItem(new Item.Properties().stacksTo(1).durability(64), 3)),
-            TINDER = ITEMS.register("tinder", () -> new Item(new Item.Properties())),
-            WORM = ITEMS.register("worm", () -> new EffectiveFoodItem(new Item.Properties().food(new FoodProperties.Builder().nutrition(1).saturationMod(1.0f).effect(() -> new MobEffectInstance(MobEffects.CONFUSION, 200), 1).build()), 0.0F, -0.08)),
-            PUMPKIN_SLICE = ITEMS.register("pumpkin_slice", () -> new Item(new Item.Properties().food(new FoodProperties.Builder().nutrition(1).saturationMod(0f).build()))),
-            POTHERB = ITEMS.register("potherb", () -> new Item(new Item.Properties().food(new FoodProperties.Builder().nutrition(0).saturationMod(1f).build()))),
-            STONE_KNIFE = ITEMS.register("stone_knife", () -> new KnifeItem(HcsTiers.STONE_WEAPON, 1, 1.6F - 4.0F, new Item.Properties().stacksTo(1))),
-            STONE_SPEAR = ITEMS.register("stone_spear", () -> new SpearItem(HcsTiers.STONE_WEAPON, 2, 1.6F - 4.0F, new Item.Properties().stacksTo(1))),
-            STONE_CONE = ITEMS.register("stone_cone", () -> new ShovelItem(HcsTiers.STONE_CONE, 1.0F, 1.6F - 4.0F, new Item.Properties().stacksTo(1))),
-            FLINT_KNIFE = ITEMS.register("flint_knife", () -> new KnifeItem(HcsTiers.FLINT_WEAPON, 2, 1.6F - 4.0F, new Item.Properties().stacksTo(1))),
-            FLINT_SPEAR = ITEMS.register("flint_spear", () -> new SpearItem(HcsTiers.FLINT_WEAPON, 3, 1.6F - 4.0F, new Item.Properties().stacksTo(1))),FLINT_CONE = ITEMS.register("flint_cone", () -> new ShovelItem(HcsTiers.FLINT_CONE, 1.5F, 1.6F - 4.0F, new Item.Properties().stacksTo(1))),
-            FLINT_HATCHET = ITEMS.register("flint_hatchet", () -> new AxeItem(HcsTiers.FLINT_HATCHET, 6.0F, -3.1F, new Item.Properties())),
-            RAW_COPPER_POWDER = ITEMS.register("raw_copper_powder", () -> new Item(new Item.Properties())),
-            COPPER_SWORD = ITEMS.register("copper_sword", () -> new SwordItem(HcsTiers.COPPER, 5, 1.4F - 4.0F, new Item.Properties().stacksTo(1))),
-            COPPER_AXE = ITEMS.register("copper_axe", () -> new AxeItem(HcsTiers.COPPER, 7, 0.8F - 4.0F, new Item.Properties().stacksTo(1))),
-            COPPER_PICKAXE = ITEMS.register("copper_pickaxe", () -> new PickaxeItem(HcsTiers.COPPER, 3, 1.1F - 4.0F, new Item.Properties().stacksTo(1))),
-            COPPER_HOE = ITEMS.register("copper_hoe", () -> new HoeItem(HcsTiers.COPPER, 0, 2.5F - 4.0F, new Item.Properties().stacksTo(1))),
-            COPPER_SHOVEL = ITEMS.register("copper_shovel", () -> new ShovelItem(HcsTiers.COPPER, 3, 1.0F - 4.0F, new Item.Properties().stacksTo(1))),
-            COPPER_HELMET = ITEMS.register("copper_helmet", () -> new ArmorItem(HcsArmorMaterials.COPPER, ArmorItem.Type.HELMET, new Item.Properties())),
-            COPPER_CHESTPLATE = ITEMS.register("copper_chestplate", () -> new ArmorItem(HcsArmorMaterials.COPPER, ArmorItem.Type.CHESTPLATE, new Item.Properties())),
-            COPPER_LEGGINGS = ITEMS.register("copper_leggings", () -> new ArmorItem(HcsArmorMaterials.COPPER, ArmorItem.Type.LEGGINGS, new Item.Properties())),
-            COPPER_BOOTS = ITEMS.register("copper_boots", () -> new ArmorItem(HcsArmorMaterials.COPPER, ArmorItem.Type.BOOTS, new Item.Properties())),
-            SPIDER_GLAND = ITEMS.register("spider_gland", () -> new SalveItem(8, 0.5)),
-            SELAGINELLA = ITEMS.register("selaginella", () -> new SalveItem(20, 1.5) {
-                @Override
-                public @NotNull ItemStack finishUsingItem(@NotNull ItemStack stack, @NotNull Level world, @NotNull LivingEntity user) {
-                    if (user instanceof ServerPlayer player) {
-                        ((StatAccessor) player).getStatusManager().setSoulImpairedStat(0);
-                        ((StatAccessor) player).getInjuryManager().applyPainkiller();
-                    }
-                    return super.finishUsingItem(stack, world, user);
-                }
-            }),
-            RAW_MEAT = ITEMS.register("raw_meat", () -> new Item(new Item.Properties().food(new FoodProperties.Builder().nutrition(2).saturationMod(1f).meat().build()))),
-            COOKED_MEAT = ITEMS.register("cooked_meat", () -> new Item(new Item.Properties().food(new FoodProperties.Builder().nutrition(5).saturationMod(3f).meat().build()))),
-            CACTUS_FLESH = ITEMS.register("cactus_flesh", () -> new Item(new Item.Properties().food(new FoodProperties.Builder().nutrition(1).saturationMod(1f).effect(() -> new MobEffectInstance(MobEffects.POISON, 160), 1).effect(() -> new MobEffectInstance(HcsEffects.DIARRHEA.get(), 300), 1).build()))),
-            COOKED_CACTUS_FLESH = ITEMS.register("cooked_cactus_flesh", () -> new Item(new Item.Properties().food(new FoodProperties.Builder().nutrition(2).saturationMod(2f).effect(() -> new MobEffectInstance(MobEffects.POISON, 80), 1).build()))),
-            CACTUS_JUICE = ITEMS.register("cactus_juice", () -> new BottleItem(new Item.Properties().stacksTo(16), new MobEffectInstance(MobEffects.POISON, 160))),
-            PURIFIED_WATER_BOTTLE = ITEMS.register("purified_water_bottle", () -> new BottleItem(new Item.Properties().stacksTo(16))),
-            SALTWATER_BOTTLE = ITEMS.register("saltwater_bottle", () -> new BottleItem(new Item.Properties().stacksTo(16), new MobEffectInstance(HcsEffects.THIRST.get(), 1200, 0, false, false, true))),
-            ROASTED_WORM = ITEMS.register("roasted_worm", () -> new EffectiveFoodItem(new Item.Properties().food(new FoodProperties.Builder().nutrition(2).saturationMod(1.0f).effect(() -> new MobEffectInstance(MobEffects.CONFUSION, 60), 1).build()), 0.0F, -0.01)),
-            ANIMAL_VISCERA = ITEMS.register("animal_viscera", () -> new Item(new Item.Properties().food(new FoodProperties.Builder().nutrition(3).saturationMod(2.0f).effect(() -> new MobEffectInstance(MobEffects.CONFUSION, 40), 1).meat().build()))),
-            COOKED_ANIMAL_VISCERA = ITEMS.register("cooked_animal_viscera", () -> new Item(new Item.Properties().food(new FoodProperties.Builder().nutrition(8).saturationMod(4F).meat().build()))),
-            SHARP_BROKEN_BONE = ITEMS.register("sharp_broken_bone", () -> new ShovelItem(HcsTiers.SHARP_BROKEN_BONE, 3F, 1.6F - 4.0F, new Item.Properties().stacksTo(1))),
-            BAMBOO_SHOOT = ITEMS.register("bamboo_shoot", () -> new Item(new Item.Properties().food(new FoodProperties.Builder().nutrition(1).saturationMod(1f).build()))),
-            COOKED_BAMBOO_SHOOT = ITEMS.register("cooked_bamboo_shoot", () -> new Item(new Item.Properties().food(new FoodProperties.Builder().nutrition(2).saturationMod(1f).build()))),
-            COOKED_CARROT = ITEMS.register("cooked_carrot", () -> new Item(new Item.Properties().food(new FoodProperties.Builder().nutrition(4).saturationMod(2f).build()))),
-            COOKED_PUMPKIN_SLICE = ITEMS.register("cooked_pumpkin_slice", () -> new Item(new Item.Properties().food(new FoodProperties.Builder().nutrition(2).saturationMod(0f).build()))),
-            COOKED_SWEET_BERRIES = ITEMS.register("cooked_sweet_berries", () -> new Item(new Item.Properties().food(new FoodProperties.Builder().nutrition(1).saturationMod(1f).build()))),
-            BERRY_BUSH = ITEMS.register("berry_bush", () -> new ItemNameBlockItem(Blocks.SWEET_BERRY_BUSH, new Item.Properties())),
-            PETALS_SALAD = ITEMS.register("petals_salad", () -> new BowlOfFoodItem(new Item.Properties().food(new FoodProperties.Builder().nutrition(0).saturationMod(0f).build()))),
-            ORANGE = ITEMS.register("orange", () -> new Item(new Item.Properties().food(new FoodProperties.Builder().nutrition(4).saturationMod(3f).build()))),
-            ROT = ITEMS.register("rot", () -> new Item(new Item.Properties().food(new FoodProperties.Builder().nutrition(0).saturationMod(0.0f).build()))),
-            ICEBOX_ITEM = ITEMS.register("icebox", () -> new BlockItem(ICEBOX.get(), new Item.Properties())),
-            DRYING_RACK_ITEM = ITEMS.register("drying_rack", () -> new BlockItem(DRYING_RACK.get(), new Item.Properties())),
-            SHORT_STICK = ITEMS.register("short_stick", () -> new Item(new Item.Properties())),
-            JERKY = ITEMS.register("jerky", () -> new EffectiveFoodItem(new Item.Properties().food(new FoodProperties.Builder().nutrition(8).saturationMod(8.0F).meat().build()), 3.0F, 0.15)),
-            SMALL_JERKY = ITEMS.register("small_jerky", () -> new EffectiveFoodItem(new Item.Properties().food(new FoodProperties.Builder().nutrition(5).saturationMod(5.0F).meat().build()), 1.5F, 0.08)),
-            RAW_JERKY = ITEMS.register("raw_jerky", () -> new EffectiveFoodItem(new Item.Properties().food(new FoodProperties.Builder().nutrition(4).saturationMod(4.0F).meat().build()), 1.5F, 0.0)),
-            RAW_SMALL_JERKY = ITEMS.register("raw_small_jerky", () -> new EffectiveFoodItem(new Item.Properties().food(new FoodProperties.Builder().nutrition(3).saturationMod(3.0F).meat().build()), 1.0F, 0.0)),
-            SPIKED_CLUB = ITEMS.register("spiked_club", () -> new SwordItem(Tiers.WOOD, 4, -2.4f, new Item.Properties())),
-            COLD_WATER_BOTTLE = ITEMS.register("cold_water_bottle", () -> new BottleItem(new Item.Properties().stacksTo(16)) {
-                @Override
-                public @NotNull ItemStack finishUsingItem(@NotNull ItemStack stack, @NotNull Level world, @NotNull LivingEntity user) {
-                    if (user instanceof ServerPlayer player) {
-                        TemperatureManager tm = ((StatAccessor) player).getTemperatureManager();
-                        if (tm.get() > 0.4) tm.add(-0.3);
-                        player.addEffect(new MobEffectInstance(HcsEffects.DIARRHEA.get(), 600, 0, false, false, true));
-                    }
-                    return super.finishUsingItem(stack, world, user);
-                }
-            }),
-            WATER_BAG = ITEMS.register("water_bag", WaterBagItem::new),
-            WOOLEN_HOOD = ITEMS.register("woolen_hood", () -> new ArmorItem(HcsArmorMaterials.WOOL, ArmorItem.Type.HELMET, new Item.Properties())),
-            WOOLEN_COAT = ITEMS.register("woolen_coat", () -> new ArmorItem(HcsArmorMaterials.WOOL, ArmorItem.Type.CHESTPLATE, new Item.Properties())),
-            WOOLEN_TROUSERS = ITEMS.register("woolen_trousers", () -> new ArmorItem(HcsArmorMaterials.WOOL, ArmorItem.Type.LEGGINGS, new Item.Properties())),
-            WOOLEN_BOOTS = ITEMS.register("woolen_boots", () -> new ArmorItem(HcsArmorMaterials.WOOL, ArmorItem.Type.BOOTS, new Item.Properties())),
-            COOKED_KELP = ITEMS.register("cooked_kelp", () -> new Item(new Item.Properties().food(new FoodProperties.Builder().nutrition(1).saturationMod(1.0F).build()))),
-            BARK = ITEMS.register("bark", () -> new Item(new Item.Properties().food(new FoodProperties.Builder().nutrition(0).saturationMod(0.0F).build()))),
-            WILLOW_BARK = ITEMS.register("willow_bark", () -> new Item(new Item.Properties().food(new FoodProperties.Builder().nutrition(0).saturationMod(0.0F).build()))),
-            FEARLESSNESS_HERB = ITEMS.register("fearlessness_herb", () -> new Item(new Item.Properties().food(new FoodProperties.Builder().nutrition(0).saturationMod(0.0F).build()))),
-            BANDAGE = ITEMS.register("bandage", () -> new BandageItem(2.0, 40, 200)),
-            IMPROVISED_BANDAGE = ITEMS.register("improvised_bandage", () -> new BandageItem(0.8, 60, 120)),
-            SPLINT = ITEMS.register("splint", () -> new BandageItem(0.5, 140) {
-                @Override
-                public @NotNull ItemStack finishUsingItem(@NotNull ItemStack stack, @NotNull Level world, @NotNull LivingEntity user) {
-                    if (user instanceof ServerPlayer player)
-                        ((StatAccessor) player).getInjuryManager().setFracture(0.0);
-                    return super.finishUsingItem(stack, world, user);
-                }
-            }),
-            GINGER = ITEMS.register("ginger", () -> new Item(new Item.Properties().food(new FoodProperties.Builder().nutrition(1).saturationMod(1.0F).build()))),
-            WOODEN_HELMET = ITEMS.register("wooden_helmet", () -> new ArmorItem(HcsArmorMaterials.WOOD, ArmorItem.Type.HELMET, new Item.Properties())),
-            WOODEN_CHESTPLATE = ITEMS.register("wooden_chestplate", () -> new ArmorItem(HcsArmorMaterials.WOOD, ArmorItem.Type.CHESTPLATE, new Item.Properties())),
-            WOODEN_LEGGINGS = ITEMS.register("wooden_leggings", () -> new ArmorItem(HcsArmorMaterials.WOOD, ArmorItem.Type.LEGGINGS, new Item.Properties())),
-            WOODEN_BOOTS = ITEMS.register("wooden_boots", () -> new ArmorItem(HcsArmorMaterials.WOOD, ArmorItem.Type.BOOTS, new Item.Properties())),
-            IMPROVISED_SHIELD = ITEMS.register("improvised_shield", () -> new ShieldItem(new Item.Properties().durability(48)) {
-                @Contract(pure = true)
-                @Override
-                public @NotNull String getDescriptionId(@NotNull ItemStack stack) {
-                    return "item.hcsurvival.improvised_shield";
-                }
-            }),
-            BAT_WINGS = ITEMS.register("bat_wings", () -> new EffectiveFoodItem(new Item.Properties().food(new FoodProperties.Builder().nutrition(1).saturationMod(1.0f).effect(() -> new MobEffectInstance(MobEffects.CONFUSION, 200), 1).effect(() -> new MobEffectInstance(HcsEffects.DIARRHEA.get(), 200), 0.7F).build()), 0.0F, -0.06)),
-            ROASTED_BAT_WINGS = ITEMS.register("roasted_bat_wings", () -> new EffectiveFoodItem(new Item.Properties().food(new FoodProperties.Builder().nutrition(1).saturationMod(1.0f).effect(() -> new MobEffectInstance(MobEffects.CONFUSION, 60), 1).build()), 0.0F, -0.01)),
-            HEALING_SALVE = ITEMS.register("healing_salve", () -> new SalveItem(14, 1.5, 20) {
-                @Override
-                public @NotNull ItemStack finishUsingItem(@NotNull ItemStack stack, @NotNull Level world, @NotNull LivingEntity user) {
-                    if (user instanceof ServerPlayer player) EntityHelper.dropItem(player, Items.BOWL);
-                    return super.finishUsingItem(stack, world, user);
-                }
-            }),
-            ASHES = ITEMS.register("ashes", () -> new SalveItem(0, 0.2, 50)),
-            CRUDE_TORCH_ITEM = ITEMS.register("crude_torch", () -> new StandingAndWallBlockItem(CRUDE_TORCH_BLOCK.get(), WALL_CRUDE_TORCH_BLOCK.get(), new Item.Properties(), Direction.DOWN) {
-                @Override
-                public @NotNull InteractionResult useOn(@NotNull UseOnContext context) {
-                    InteractionResult performed = CombustionHelper.preLitHoldingTorch(context);
-                    return performed == null ? super.useOn(context) : performed;
-                }
-            }),
-            BURNING_CRUDE_TORCH_ITEM = ITEMS.register("burning_crude_torch", BurningCrudeTorchItem::new),
-            UNLIT_TORCH_ITEM = ITEMS.register("unlit_torch", () -> new StandingAndWallBlockItem(UNLIT_TORCH_BLOCK.get(), WALL_UNLIT_TORCH_BLOCK.get(), new Item.Properties(), Direction.DOWN) {
-                @Override
-                public @NotNull InteractionResult useOn(@NotNull UseOnContext context) {
-                    InteractionResult performed = CombustionHelper.preLitHoldingTorch(context);
-                    return performed == null ? super.useOn(context) : performed;
-                }
-            }),
-            GLOWSTONE_TORCH_ITEM = ITEMS.register("glowstone_torch", () -> new StandingAndWallBlockItem(GLOWSTONE_TORCH_BLOCK.get(), WALL_GLOWSTONE_TORCH_BLOCK.get(), new Item.Properties(), Direction.DOWN)),
-            BOOSTER_SHOT = ITEMS.register("booster_shot", BoosterShotItem::new),
-            SMOLDERING_CAMPFIRE = ITEMS.register("smoldering_campfire", () -> new HCSCampfireItem(SMOLDERING_CAMPFIRE_BLOCK.get().defaultBlockState())),
-            BURNT_CAMPFIRE = ITEMS.register("burnt_campfire", () -> new HCSCampfireItem(BURNT_CAMPFIRE_BLOCK.get().defaultBlockState())),
-            GARLAND = ITEMS.register("garland", () -> new ArmorItem(HcsArmorMaterials.GARLAND, ArmorItem.Type.HELMET, new Item.Properties()));
+    public static final RegistryObject<Item> FIBER_STRING = ITEMS.register("fiber_string", () -> new Item(new Item.Properties()));
+    public static final RegistryObject<Item> GRASS_FIBER = ITEMS.register("grass_fiber", () -> new Item(new Item.Properties()));
+    public static final RegistryObject<Item> ROASTED_SEEDS = ITEMS.register("roasted_seeds", () -> new Item(new Item.Properties().food(new FoodProperties.Builder().nutrition(0).saturationMod(0f).fast().build())));
+    public static final RegistryObject<Item> ROCK = ITEMS.register("rock", () -> new RockItem(new Item.Properties()));
+    public static final RegistryObject<Item> SHARP_ROCK = ITEMS.register("sharp_rock", () -> new Item(new Item.Properties()));
+    public static final RegistryObject<Item> SHARP_FLINT = ITEMS.register("sharp_flint", () -> new Item(new Item.Properties()));
+    public static final RegistryObject<Item> FIREWOOD = ITEMS.register("firewood", () -> new Item(new Item.Properties()));
+    public static final RegistryObject<Item> FRIED_EGG = ITEMS.register("fried_egg", () -> new Item(new Item.Properties().food(new FoodProperties.Builder().nutrition(3).saturationMod(2f).build())));
+    public static final RegistryObject<Item> EXTINGUISHED_CAMPFIRE = ITEMS.register("extinguished_campfire", () -> new HCSCampfireItem(Blocks.CAMPFIRE.defaultBlockState().setValue(BlockStateProperties.LIT, false).setValue(CombustionHelper.COMBUST_LUMINANCE, 15)));
+    public static final RegistryObject<Item> FIRE_BOW = ITEMS.register("fire_bow", () -> new FireBowItem(new Item.Properties().stacksTo(1).durability(96), 1));
+    public static final RegistryObject<Item> FIRE_PLOUGH = ITEMS.register("fire_plough", () -> new FireBowItem(new Item.Properties().stacksTo(1).durability(64), 3));
+    public static final RegistryObject<Item> TINDER = ITEMS.register("tinder", () -> new Item(new Item.Properties()));
+    public static final RegistryObject<Item> WORM = ITEMS.register("worm", () -> new EffectiveFoodItem(new Item.Properties().food(new FoodProperties.Builder().nutrition(1).saturationMod(1.0f).effect(() -> new MobEffectInstance(MobEffects.CONFUSION, 200), 1).build()), 0.0F, -0.08));
+    public static final RegistryObject<Item> PUMPKIN_SLICE = ITEMS.register("pumpkin_slice", () -> new Item(new Item.Properties().food(new FoodProperties.Builder().nutrition(1).saturationMod(0f).build())));
+    public static final RegistryObject<Item> POTHERB = ITEMS.register("potherb", () -> new Item(new Item.Properties().food(new FoodProperties.Builder().nutrition(0).saturationMod(1f).build())));
+    public static final RegistryObject<Item> STONE_KNIFE = ITEMS.register("stone_knife", () -> new KnifeItem(HcsTiers.STONE_WEAPON, 1, 1.6F - 4.0F, new Item.Properties().stacksTo(1)));
+    public static final RegistryObject<SpearItem> STONE_SPEAR = ITEMS.register("stone_spear", () -> new SpearItem(HcsTiers.STONE_WEAPON, 2, 4F, 1.6F - 4.0F, new Item.Properties().stacksTo(1)));
+    public static final RegistryObject<Item> STONE_CONE = ITEMS.register("stone_cone", () -> new ShovelItem(HcsTiers.STONE_CONE, 1.0F, 1.6F - 4.0F, new Item.Properties().stacksTo(1)));
+    public static final RegistryObject<Item> FLINT_KNIFE = ITEMS.register("flint_knife", () -> new KnifeItem(HcsTiers.FLINT_WEAPON, 2, 1.6F - 4.0F, new Item.Properties().stacksTo(1)));
+    public static final RegistryObject<SpearItem> FLINT_SPEAR = ITEMS.register("flint_spear", () -> new SpearItem(HcsTiers.FLINT_WEAPON, 3, 5F, 1.6F - 4.0F, new Item.Properties().stacksTo(1)));
+    public static final RegistryObject<Item> FLINT_CONE = ITEMS.register("flint_cone", () -> new ShovelItem(HcsTiers.FLINT_CONE, 1.5F, 1.6F - 4.0F, new Item.Properties().stacksTo(1)));
+    public static final RegistryObject<Item> FLINT_HATCHET = ITEMS.register("flint_hatchet", () -> new AxeItem(HcsTiers.FLINT_HATCHET, 6.0F, -3.1F, new Item.Properties()));
+    public static final RegistryObject<Item> RAW_COPPER_POWDER = ITEMS.register("raw_copper_powder", () -> new Item(new Item.Properties()));
+    public static final RegistryObject<Item> COPPER_SWORD = ITEMS.register("copper_sword", () -> new SwordItem(HcsTiers.COPPER, 5, 1.4F - 4.0F, new Item.Properties().stacksTo(1)));
+    public static final RegistryObject<Item> COPPER_AXE = ITEMS.register("copper_axe", () -> new AxeItem(HcsTiers.COPPER, 7, 0.8F - 4.0F, new Item.Properties().stacksTo(1)));
+    public static final RegistryObject<Item> COPPER_PICKAXE = ITEMS.register("copper_pickaxe", () -> new PickaxeItem(HcsTiers.COPPER, 3, 1.1F - 4.0F, new Item.Properties().stacksTo(1)));
+    public static final RegistryObject<Item> COPPER_HOE = ITEMS.register("copper_hoe", () -> new HoeItem(HcsTiers.COPPER, 0, 2.5F - 4.0F, new Item.Properties().stacksTo(1)));
+    public static final RegistryObject<Item> COPPER_SHOVEL = ITEMS.register("copper_shovel", () -> new ShovelItem(HcsTiers.COPPER, 3, 1.0F - 4.0F, new Item.Properties().stacksTo(1)));
+    public static final RegistryObject<Item> COPPER_HELMET = ITEMS.register("copper_helmet", () -> new ArmorItem(HcsArmorMaterials.COPPER, ArmorItem.Type.HELMET, new Item.Properties()));
+    public static final RegistryObject<Item> COPPER_CHESTPLATE = ITEMS.register("copper_chestplate", () -> new ArmorItem(HcsArmorMaterials.COPPER, ArmorItem.Type.CHESTPLATE, new Item.Properties()));
+    public static final RegistryObject<Item> COPPER_LEGGINGS = ITEMS.register("copper_leggings", () -> new ArmorItem(HcsArmorMaterials.COPPER, ArmorItem.Type.LEGGINGS, new Item.Properties()));
+    public static final RegistryObject<Item> COPPER_BOOTS = ITEMS.register("copper_boots", () -> new ArmorItem(HcsArmorMaterials.COPPER, ArmorItem.Type.BOOTS, new Item.Properties()));
+    public static final RegistryObject<Item> SPIDER_GLAND = ITEMS.register("spider_gland", () -> new SalveItem(8, 0.5));
+    public static final RegistryObject<Item> SELAGINELLA = ITEMS.register("selaginella", () -> new SalveItem(20, 1.5) {
+        @Override
+        public @NotNull ItemStack finishUsingItem(@NotNull ItemStack stack, @NotNull Level world, @NotNull LivingEntity user) {
+            if (user instanceof ServerPlayer player) {
+                ((StatAccessor) player).getStatusManager().setSoulImpairedStat(0);
+                ((StatAccessor) player).getInjuryManager().applyPainkiller();
+            }
+            return super.finishUsingItem(stack, world, user);
+        }
+    });
+    public static final RegistryObject<Item> RAW_MEAT = ITEMS.register("raw_meat", () -> new Item(new Item.Properties().food(new FoodProperties.Builder().nutrition(2).saturationMod(1f).meat().build())));
+    public static final RegistryObject<Item> COOKED_MEAT = ITEMS.register("cooked_meat", () -> new Item(new Item.Properties().food(new FoodProperties.Builder().nutrition(5).saturationMod(3f).meat().build())));
+    public static final RegistryObject<Item> CACTUS_FLESH = ITEMS.register("cactus_flesh", () -> new Item(new Item.Properties().food(new FoodProperties.Builder().nutrition(1).saturationMod(1f).effect(() -> new MobEffectInstance(MobEffects.POISON, 160), 1).effect(() -> new MobEffectInstance(HcsEffects.DIARRHEA.get(), 300), 1).build())));
+    public static final RegistryObject<Item> COOKED_CACTUS_FLESH = ITEMS.register("cooked_cactus_flesh", () -> new Item(new Item.Properties().food(new FoodProperties.Builder().nutrition(2).saturationMod(2f).effect(() -> new MobEffectInstance(MobEffects.POISON, 80), 1).build())));
+    public static final RegistryObject<Item> CACTUS_JUICE = ITEMS.register("cactus_juice", () -> new BottleItem(new Item.Properties().stacksTo(16), new MobEffectInstance(MobEffects.POISON, 160)));
+    public static final RegistryObject<Item> PURIFIED_WATER_BOTTLE = ITEMS.register("purified_water_bottle", () -> new BottleItem(new Item.Properties().stacksTo(16)));
+    public static final RegistryObject<Item> SALTWATER_BOTTLE = ITEMS.register("saltwater_bottle", () -> new BottleItem(new Item.Properties().stacksTo(16), new MobEffectInstance(HcsEffects.THIRST.get(), 1200, 0, false, false, true)));
+    public static final RegistryObject<Item> ROASTED_WORM = ITEMS.register("roasted_worm", () -> new EffectiveFoodItem(new Item.Properties().food(new FoodProperties.Builder().nutrition(2).saturationMod(1.0f).effect(() -> new MobEffectInstance(MobEffects.CONFUSION, 60), 1).build()), 0.0F, -0.01));
+    public static final RegistryObject<Item> ANIMAL_VISCERA = ITEMS.register("animal_viscera", () -> new Item(new Item.Properties().food(new FoodProperties.Builder().nutrition(3).saturationMod(2.0f).effect(() -> new MobEffectInstance(MobEffects.CONFUSION, 40), 1).meat().build())));
+    public static final RegistryObject<Item> COOKED_ANIMAL_VISCERA = ITEMS.register("cooked_animal_viscera", () -> new Item(new Item.Properties().food(new FoodProperties.Builder().nutrition(8).saturationMod(4F).meat().build())));
+    public static final RegistryObject<Item> SHARP_BROKEN_BONE = ITEMS.register("sharp_broken_bone", () -> new ShovelItem(HcsTiers.SHARP_BROKEN_BONE, 3F, 1.6F - 4.0F, new Item.Properties().stacksTo(1)));
+    public static final RegistryObject<Item> BAMBOO_SHOOT = ITEMS.register("bamboo_shoot", () -> new Item(new Item.Properties().food(new FoodProperties.Builder().nutrition(1).saturationMod(1f).build())));
+    public static final RegistryObject<Item> COOKED_BAMBOO_SHOOT = ITEMS.register("cooked_bamboo_shoot", () -> new Item(new Item.Properties().food(new FoodProperties.Builder().nutrition(2).saturationMod(1f).build())));
+    public static final RegistryObject<Item> COOKED_CARROT = ITEMS.register("cooked_carrot", () -> new Item(new Item.Properties().food(new FoodProperties.Builder().nutrition(4).saturationMod(2f).build())));
+    public static final RegistryObject<Item> COOKED_PUMPKIN_SLICE = ITEMS.register("cooked_pumpkin_slice", () -> new Item(new Item.Properties().food(new FoodProperties.Builder().nutrition(2).saturationMod(0f).build())));
+    public static final RegistryObject<Item> COOKED_SWEET_BERRIES = ITEMS.register("cooked_sweet_berries", () -> new Item(new Item.Properties().food(new FoodProperties.Builder().nutrition(1).saturationMod(1f).build())));
+    public static final RegistryObject<Item> BERRY_BUSH = ITEMS.register("berry_bush", () -> new ItemNameBlockItem(Blocks.SWEET_BERRY_BUSH, new Item.Properties()));
+    public static final RegistryObject<Item> PETALS_SALAD = ITEMS.register("petals_salad", () -> new BowlOfFoodItem(new Item.Properties().food(new FoodProperties.Builder().nutrition(0).saturationMod(0f).build())));
+    public static final RegistryObject<Item> ORANGE = ITEMS.register("orange", () -> new Item(new Item.Properties().food(new FoodProperties.Builder().nutrition(4).saturationMod(3f).build())));
+    public static final RegistryObject<Item> ROT = ITEMS.register("rot", () -> new Item(new Item.Properties().food(new FoodProperties.Builder().nutrition(0).saturationMod(0.0f).build())));
+    public static final RegistryObject<Item> ICEBOX_ITEM = ITEMS.register("icebox", () -> new BlockItem(ICEBOX.get(), new Item.Properties()));
+    public static final RegistryObject<Item> DRYING_RACK_ITEM = ITEMS.register("drying_rack", () -> new BlockItem(DRYING_RACK.get(), new Item.Properties()));
+    public static final RegistryObject<Item> SHORT_STICK = ITEMS.register("short_stick", () -> new Item(new Item.Properties()));
+    public static final RegistryObject<Item> JERKY = ITEMS.register("jerky", () -> new EffectiveFoodItem(new Item.Properties().food(new FoodProperties.Builder().nutrition(8).saturationMod(8.0F).meat().build()), 3.0F, 0.15));
+    public static final RegistryObject<Item> SMALL_JERKY = ITEMS.register("small_jerky", () -> new EffectiveFoodItem(new Item.Properties().food(new FoodProperties.Builder().nutrition(5).saturationMod(5.0F).meat().build()), 1.5F, 0.08));
+    public static final RegistryObject<Item> RAW_JERKY = ITEMS.register("raw_jerky", () -> new EffectiveFoodItem(new Item.Properties().food(new FoodProperties.Builder().nutrition(4).saturationMod(4.0F).meat().build()), 1.5F, 0.0));
+    public static final RegistryObject<Item> RAW_SMALL_JERKY = ITEMS.register("raw_small_jerky", () -> new EffectiveFoodItem(new Item.Properties().food(new FoodProperties.Builder().nutrition(3).saturationMod(3.0F).meat().build()), 1.0F, 0.0));
+    public static final RegistryObject<Item> SPIKED_CLUB = ITEMS.register("spiked_club", () -> new SwordItem(Tiers.WOOD, 4, -2.4f, new Item.Properties()));
+    public static final RegistryObject<Item> COLD_WATER_BOTTLE = ITEMS.register("cold_water_bottle", () -> new BottleItem(new Item.Properties().stacksTo(16)) {
+        @Override
+        public @NotNull ItemStack finishUsingItem(@NotNull ItemStack stack, @NotNull Level world, @NotNull LivingEntity user) {
+            if (user instanceof ServerPlayer player) {
+                TemperatureManager tm = ((StatAccessor) player).getTemperatureManager();
+                if (tm.get() > 0.4) tm.add(-0.3);
+                player.addEffect(new MobEffectInstance(HcsEffects.DIARRHEA.get(), 600, 0, false, false, true));
+            }
+            return super.finishUsingItem(stack, world, user);
+        }
+    });
+    public static final RegistryObject<Item> WATER_BAG = ITEMS.register("water_bag", WaterBagItem::new);
+    public static final RegistryObject<Item> WOOLEN_HOOD = ITEMS.register("woolen_hood", () -> new ArmorItem(HcsArmorMaterials.WOOL, ArmorItem.Type.HELMET, new Item.Properties()));
+    public static final RegistryObject<Item> WOOLEN_COAT = ITEMS.register("woolen_coat", () -> new ArmorItem(HcsArmorMaterials.WOOL, ArmorItem.Type.CHESTPLATE, new Item.Properties()));
+    public static final RegistryObject<Item> WOOLEN_TROUSERS = ITEMS.register("woolen_trousers", () -> new ArmorItem(HcsArmorMaterials.WOOL, ArmorItem.Type.LEGGINGS, new Item.Properties()));
+    public static final RegistryObject<Item> WOOLEN_BOOTS = ITEMS.register("woolen_boots", () -> new ArmorItem(HcsArmorMaterials.WOOL, ArmorItem.Type.BOOTS, new Item.Properties()));
+    public static final RegistryObject<Item> COOKED_KELP = ITEMS.register("cooked_kelp", () -> new Item(new Item.Properties().food(new FoodProperties.Builder().nutrition(1).saturationMod(1.0F).build())));
+    public static final RegistryObject<Item> BARK = ITEMS.register("bark", () -> new Item(new Item.Properties().food(new FoodProperties.Builder().nutrition(0).saturationMod(0.0F).build())));
+    public static final RegistryObject<Item> WILLOW_BARK = ITEMS.register("willow_bark", () -> new Item(new Item.Properties().food(new FoodProperties.Builder().nutrition(0).saturationMod(0.0F).build())));
+    public static final RegistryObject<Item> FEARLESSNESS_HERB = ITEMS.register("fearlessness_herb", () -> new Item(new Item.Properties().food(new FoodProperties.Builder().nutrition(0).saturationMod(0.0F).build())));
+    public static final RegistryObject<Item> BANDAGE = ITEMS.register("bandage", () -> new BandageItem(2.0, 40, 200));
+    public static final RegistryObject<Item> IMPROVISED_BANDAGE = ITEMS.register("improvised_bandage", () -> new BandageItem(0.8, 60, 120));
+    public static final RegistryObject<Item> SPLINT = ITEMS.register("splint", () -> new BandageItem(0.5, 140) {
+        @Override
+        public @NotNull ItemStack finishUsingItem(@NotNull ItemStack stack, @NotNull Level world, @NotNull LivingEntity user) {
+            if (user instanceof ServerPlayer player)
+                ((StatAccessor) player).getInjuryManager().setFracture(0.0);
+            return super.finishUsingItem(stack, world, user);
+        }
+    });
+    public static final RegistryObject<Item> GINGER = ITEMS.register("ginger", () -> new Item(new Item.Properties().food(new FoodProperties.Builder().nutrition(1).saturationMod(1.0F).build())));
+    public static final RegistryObject<Item> WOODEN_HELMET = ITEMS.register("wooden_helmet", () -> new ArmorItem(HcsArmorMaterials.WOOD, ArmorItem.Type.HELMET, new Item.Properties()));
+    public static final RegistryObject<Item> WOODEN_CHESTPLATE = ITEMS.register("wooden_chestplate", () -> new ArmorItem(HcsArmorMaterials.WOOD, ArmorItem.Type.CHESTPLATE, new Item.Properties()));
+    public static final RegistryObject<Item> WOODEN_LEGGINGS = ITEMS.register("wooden_leggings", () -> new ArmorItem(HcsArmorMaterials.WOOD, ArmorItem.Type.LEGGINGS, new Item.Properties()));
+    public static final RegistryObject<Item> WOODEN_BOOTS = ITEMS.register("wooden_boots", () -> new ArmorItem(HcsArmorMaterials.WOOD, ArmorItem.Type.BOOTS, new Item.Properties()));
+    public static final RegistryObject<Item> IMPROVISED_SHIELD = ITEMS.register("improvised_shield", () -> new ShieldItem(new Item.Properties().durability(48)) {
+        @Contract(pure = true)
+        @Override
+        public @NotNull String getDescriptionId(@NotNull ItemStack stack) {
+            return "item.hcsurvival.improvised_shield";
+        }
+    });
+    public static final RegistryObject<Item> BAT_WINGS = ITEMS.register("bat_wings", () -> new EffectiveFoodItem(new Item.Properties().food(new FoodProperties.Builder().nutrition(1).saturationMod(1.0f).effect(() -> new MobEffectInstance(MobEffects.CONFUSION, 200), 1).effect(() -> new MobEffectInstance(HcsEffects.DIARRHEA.get(), 200), 0.7F).build()), 0.0F, -0.06));
+    public static final RegistryObject<Item> ROASTED_BAT_WINGS = ITEMS.register("roasted_bat_wings", () -> new EffectiveFoodItem(new Item.Properties().food(new FoodProperties.Builder().nutrition(1).saturationMod(1.0f).effect(() -> new MobEffectInstance(MobEffects.CONFUSION, 60), 1).build()), 0.0F, -0.01));
+    public static final RegistryObject<Item> HEALING_SALVE = ITEMS.register("healing_salve", () -> new SalveItem(14, 1.5, 20) {
+        @Override
+        public @NotNull ItemStack finishUsingItem(@NotNull ItemStack stack, @NotNull Level world, @NotNull LivingEntity user) {
+            if (user instanceof ServerPlayer player) EntityHelper.dropItem(player, Items.BOWL);
+            return super.finishUsingItem(stack, world, user);
+        }
+    });
+    public static final RegistryObject<Item> ASHES = ITEMS.register("ashes", () -> new SalveItem(0, 0.2, 50));
+    public static final RegistryObject<Item> CRUDE_TORCH_ITEM = ITEMS.register("crude_torch", () -> new StandingAndWallBlockItem(CRUDE_TORCH_BLOCK.get(), WALL_CRUDE_TORCH_BLOCK.get(), new Item.Properties(), Direction.DOWN) {
+        @Override
+        public @NotNull InteractionResult useOn(@NotNull UseOnContext context) {
+            InteractionResult performed = CombustionHelper.preLitHoldingTorch(context);
+            return performed == null ? super.useOn(context) : performed;
+        }
+    });
+    public static final RegistryObject<Item> BURNING_CRUDE_TORCH_ITEM = ITEMS.register("burning_crude_torch", BurningCrudeTorchItem::new);
+    public static final RegistryObject<Item> UNLIT_TORCH_ITEM = ITEMS.register("unlit_torch", () -> new StandingAndWallBlockItem(UNLIT_TORCH_BLOCK.get(), WALL_UNLIT_TORCH_BLOCK.get(), new Item.Properties(), Direction.DOWN) {
+        @Override
+        public @NotNull InteractionResult useOn(@NotNull UseOnContext context) {
+            InteractionResult performed = CombustionHelper.preLitHoldingTorch(context);
+            return performed == null ? super.useOn(context) : performed;
+        }
+    });
+    public static final RegistryObject<Item> GLOWSTONE_TORCH_ITEM = ITEMS.register("glowstone_torch", () -> new StandingAndWallBlockItem(GLOWSTONE_TORCH_BLOCK.get(), WALL_GLOWSTONE_TORCH_BLOCK.get(), new Item.Properties(), Direction.DOWN));
+    public static final RegistryObject<Item> BOOSTER_SHOT = ITEMS.register("booster_shot", BoosterShotItem::new);
+    public static final RegistryObject<Item> SMOLDERING_CAMPFIRE = ITEMS.register("smoldering_campfire", () -> new HCSCampfireItem(SMOLDERING_CAMPFIRE_BLOCK.get().defaultBlockState()));
+    public static final RegistryObject<Item> BURNT_CAMPFIRE = ITEMS.register("burnt_campfire", () -> new HCSCampfireItem(BURNT_CAMPFIRE_BLOCK.get().defaultBlockState()));
+    public static final RegistryObject<Item> GARLAND = ITEMS.register("garland", () -> new ArmorItem(HcsArmorMaterials.GARLAND, ArmorItem.Type.HELMET, new Item.Properties()));
 
     // --- Potions ---
     public static final RegistryObject<Potion>

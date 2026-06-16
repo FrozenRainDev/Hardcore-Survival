@@ -16,6 +16,7 @@ import net.minecraft.world.entity.projectile.ThrowableItemProjectile;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.EntityHitResult;
@@ -57,10 +58,15 @@ public class RockProjectileEntity extends ThrowableItemProjectile {
                 BlockHitResult blockHitResult = (BlockHitResult) hitResult;
                 BlockState blockState = this.level().getBlockState(blockHitResult.getBlockPos());
                 float hardness = blockState.getDestroySpeed(this.level(), blockHitResult.getBlockPos());
+                boolean isMinedBySword = blockState.is(Blocks.COBWEB) || blockState.is(BlockTags.LEAVES) || blockState.is(Blocks.BAMBOO);
 
                 // Determines if the block is considered "hard"
                 // Hardness >= 1.5F (e.g., Stone) or == -1.0F (Unbreakable blocks like Bedrock)
-                if ((hardness >= 1.5F && !blockState.is(BlockTags.MINEABLE_WITH_AXE)) || hardness == -1.0F) {
+                if ((hardness >= 1.5F
+                        && !blockState.is(BlockTags.MINEABLE_WITH_AXE)
+                        && !blockState.is(BlockTags.MINEABLE_WITH_SHOVEL)
+                        && !isMinedBySword)
+                        || hardness == -1.0F) {
                     isHardBlock = true;
                 }
             }

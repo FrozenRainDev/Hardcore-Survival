@@ -291,7 +291,9 @@ public class EntityHelper {
         else if (item instanceof ShovelItem || item instanceof PickaxeItem ||
                 item instanceof AxeItem || item instanceof HoeItem)
             dist += 2.0F;
-        else if (name.contains("spear") || item instanceof TridentItem || item instanceof SwordItem)
+        else if (name.contains("spear") || name.contains("javelin") || item instanceof TridentItem)
+            dist += 3.25F;
+        else if (item instanceof SwordItem)
             dist += 2.5F;
         else if (mainHandStack.isEnchantable() && item != Items.BOOK && !(item instanceof ArmorItem))
             dist += 1.5F;

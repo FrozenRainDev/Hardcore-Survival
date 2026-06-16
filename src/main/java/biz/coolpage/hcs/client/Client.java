@@ -1,6 +1,8 @@
 package biz.coolpage.hcs.client;
 
 import biz.coolpage.hcs.Hcs; // 按照要求 Reg 改为 Hcs
+import biz.coolpage.hcs.client.model.SpearModel;
+import biz.coolpage.hcs.client.renderer.SpearEntityRenderer;
 import biz.coolpage.hcs.util.HcsFactory;
 import net.minecraft.client.renderer.ItemBlockRenderTypes;
 import net.minecraft.client.renderer.RenderType;
@@ -19,10 +21,10 @@ import org.jetbrains.annotations.NotNull;
 public class Client {
 
     @SubscribeEvent
-    public static void onClientSetup(FMLClientSetupEvent event) {
-        // 部分注册逻辑需要放在 enqueueWork 中确保线程安全
+    public static void onClientSetup(@NotNull FMLClientSetupEvent event) {
+        // Certain registration logic needs to be placed within enqueueWork to ensure thread safety.
         event.enqueueWork(() -> {
-            // 假设这两个类在 Forge 版中已转换
+            // Assuming these two classes have been converted in the Forge version
             ClientS2C.init();
             ClientPlayConnectionEvent.init();
 
@@ -44,13 +46,18 @@ public class Client {
             );
 
             // ModelPredicateProviderRegistry -> ItemProperties
-            ItemProperties.register(Hcs.IMPROVISED_SHIELD.get(), HcsFactory.createPathResourceLocation("blocking"), // todo check prev:new ResourceLocation("blocking")
+            ItemProperties.register(Hcs.IMPROVISED_SHIELD.get(), HcsFactory.createResourceLocationWithPrefix("blocking"), // todo check prev:new ResourceLocation("blocking")
                     (stack, world, entity, seed) -> entity != null && entity.isUsingItem() && entity.getUseItem() == stack ? 1.0F : 0.0F);
+
+            ItemProperties.register(Hcs.STONE_SPEAR.get(), HcsFactory.createResourceLocationWithPrefix("throwing"), (stack, level, entity, seed) -> entity != null && entity.isUsingItem() && entity.getUseItem() == stack ? 1.0F : 0.0F);
+
+            ItemProperties.register(Hcs.FLINT_SPEAR.get(), HcsFactory.createResourceLocationWithPrefix("throwing"), (stack, level, entity, seed) -> entity != null && entity.isUsingItem() && entity.getUseItem() == stack ? 1.0F : 0.0F);
+
         });
     }
 
     @SubscribeEvent
-    public static void registerRenderers(EntityRenderersEvent.RegisterRenderers event) {
+    public static void registerRenderers(EntityRenderersEvent.@NotNull RegisterRenderers event) {
         // EntityRendererRegistry -> event.registerEntityRenderer
         // FlyingItemEntityRenderer (Fabric) -> ThrownItemRenderer (Mojang/Forge)
         event.registerEntityRenderer(Hcs.ROCK_PROJECTILE_ENTITY.get(), ThrownItemRenderer::new);
@@ -61,6 +68,11 @@ public class Client {
 
         // Register standard 2D item renderer for the spear entity
         event.registerEntityRenderer(Hcs.THROWN_SPEAR.get(), SpearEntityRenderer::new);
+    }
+
+    @SubscribeEvent
+    public static void registerLayerDefinitions(EntityRenderersEvent.@NotNull RegisterLayerDefinitions event) {
+        event.registerLayerDefinition(SpearModel.LAYER_LOCATION, SpearModel::createBodyLayer);
     }
 
     // That's so sad :( , ALWAYS needs to call me, LOL

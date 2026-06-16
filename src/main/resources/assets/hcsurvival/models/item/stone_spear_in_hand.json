@@ -1,0 +1,6 @@
+{
+  "parent": "hcsurvival:item/spear_in_hand",
+  "textures": {
+    "particle": "hcsurvival:item/stone_spear"
+  }
+}

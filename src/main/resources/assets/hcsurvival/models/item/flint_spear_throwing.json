@@ -1,0 +1,6 @@
+{
+  "parent": "hcsurvival:item/spear_throwing",
+  "textures": {
+    "particle": "hcsurvival:item/flint_spear"
+  }
+}
