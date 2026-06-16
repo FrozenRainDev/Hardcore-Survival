@@ -20,7 +20,7 @@ import java.util.List;
 public final class HcsTiers { // HcsArmorMaterials
     public static final Tier COPPER = TierSortingRegistry.registerTier(
             // params: absolute mining level; durability; miningSpeedMultiplier
-            new ForgeTier(2 /* absolute mining level */, 48, 4.0F, 0.0F, 10,
+            new ForgeTier(2 /* absolute mining level */, 96, 4.0F, 0.0F, 10,
                     BlockTags.NEEDS_IRON_TOOL, () -> Ingredient.of(Items.COPPER_INGOT)),
             HcsFactory.createResourceLocation("copper"),
             List.of(Tiers.IRON)/* Putting STONE will cause the copper pickaxe to fail to drop ores when mining. */
@@ -33,13 +33,13 @@ public final class HcsTiers { // HcsArmorMaterials
             List.of(Tiers.STONE), List.of(Tiers.IRON)),
 
     FLINT_CONE = TierSortingRegistry.registerTier(
-            new ForgeTier(0, 12, 0.48F, 0.0F, 0,
+            new ForgeTier(0, 32, 0.48F, 0.0F, 0,
                     BlockTags.NEEDS_STONE_TOOL, () -> Ingredient.of(Items.FLINT)),
             HcsFactory.createResourceLocation("flint_cone"),
             List.of(Tiers.WOOD), List.of(Tiers.STONE)),
 
     FLINT_WEAPON = TierSortingRegistry.registerTier(
-            new ForgeTier(0, 24, 0.0F, 0.0F, 0,
+            new ForgeTier(0, 48, 0.0F, 0.0F, 0,
                     BlockTags.NEEDS_STONE_TOOL, () -> Ingredient.of(Items.FLINT)),
             HcsFactory.createResourceLocation("flint_weapon"),
             List.of(Tiers.WOOD), List.of(Tiers.STONE)),
@@ -57,7 +57,7 @@ public final class HcsTiers { // HcsArmorMaterials
             List.of(Tiers.WOOD), List.of(Tiers.STONE)),
 
     STONE_WEAPON = TierSortingRegistry.registerTier(
-            new ForgeTier(0, 16, 0.0F, 0.0F, 0,
+            new ForgeTier(0, 12, 0.0F, 0.0F, 0,
                     BlockTags.NEEDS_STONE_TOOL, () -> Ingredient.of(Hcs.ROCK.get())),
             HcsFactory.createResourceLocation("stone_weapon"),
             List.of(Tiers.WOOD), List.of(Tiers.STONE));

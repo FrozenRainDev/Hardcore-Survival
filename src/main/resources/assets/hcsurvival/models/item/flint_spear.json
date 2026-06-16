@@ -1,6 +1,33 @@
 {
-  "parent": "minecraft:item/generated",
+  "__comment__": "Main model loader for flint spear",
+  "loader": "forge:separate_transforms",
   "textures": {
-    "layer0": "hcsurvival:item/flint_spear"
+    "particle": "hcsurvival:item/flint_spear"
+  },
+  "gui_light": "front",
+  "overrides": [
+    {
+      "predicate": {
+        "throwing": 1
+      },
+      "model": "hcsurvival:item/flint_spear_throwing"
+    }
+  ],
+  "base": {
+    "parent": "hcsurvival:item/flint_spear_in_hand"
+  },
+  "perspectives": {
+    "none": {
+      "parent": "hcsurvival:item/flint_spear_gui"
+    },
+    "fixed": {
+      "parent": "hcsurvival:item/flint_spear_gui"
+    },
+    "ground": {
+      "parent": "hcsurvival:item/flint_spear_gui"
+    },
+    "gui": {
+      "parent": "hcsurvival:item/flint_spear_gui"
+    }
   }
 }

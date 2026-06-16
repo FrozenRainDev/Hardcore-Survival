@@ -3,6 +3,8 @@ package biz.coolpage.hcs.item;
 import biz.coolpage.hcs.entity.ThrownSpearEntity;
 import com.google.common.collect.ImmutableMultimap;
 import com.google.common.collect.Multimap;
+import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
+import net.minecraft.core.BlockPos;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.stats.Stats;
@@ -17,16 +19,29 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Tier;
 import net.minecraft.world.item.TridentItem;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraftforge.client.extensions.common.IClientItemExtensions;
+import net.minecraftforge.common.ToolAction;
+import net.minecraftforge.common.ToolActions;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.function.Consumer;
+
+// Import your custom sound registry here, for example:
+// import biz.coolpage.hcs.registry.HcsSounds;
 
 public class SpearItem extends TridentItem {
     private final Multimap<Attribute, AttributeModifier> defaultModifiers;
+    // Added thrown damage parameter based on TFC's implementation
+    private final float thrownDamage;
 
-    public SpearItem(Tier tier, float attackDamageModifier, float attackSpeedModifier, Properties properties) {
-        // 关键修复：手动将 Tier 的耐久度应用到物品属性上
+    public SpearItem(@NotNull Tier tier, float attackDamageModifier, float thrownDamage, float attackSpeedModifier, @NotNull Properties properties) {
+        // Crucial fix: Manually apply Tier's durability to item properties
         super(properties.defaultDurability(tier.getUses()));
 
-        // 动态计算该材质的伤害
+        this.thrownDamage = thrownDamage;
+
+        // Dynamically calculate damage for this material
         float attackDamage = attackDamageModifier + tier.getAttackDamageBonus();
         ImmutableMultimap.Builder<Attribute, AttributeModifier> builder = ImmutableMultimap.builder();
         builder.put(Attributes.ATTACK_DAMAGE, new AttributeModifier(BASE_ATTACK_DAMAGE_UUID, "Tool modifier", attackDamage, AttributeModifier.Operation.ADDITION));
@@ -36,8 +51,41 @@ public class SpearItem extends TridentItem {
 
     @Override
     public @NotNull Multimap<Attribute, AttributeModifier> getDefaultAttributeModifiers(@NotNull EquipmentSlot slot) {
-        // 应用自定义的近战伤害和攻速
+        // Apply custom melee damage and attack speed
         return slot == EquipmentSlot.MAINHAND ? this.defaultModifiers : super.getDefaultAttributeModifiers(slot);
+    }
+
+    // Prevents players from breaking blocks with the spear in survival mode
+    @Override
+    public boolean canAttackBlock(@NotNull BlockState state, @NotNull Level level, @NotNull BlockPos pos, @NotNull Player player) {
+        return !player.isCreative();
+    }
+
+    // Explicitly disables sword sweep logic for the spear
+    @Override
+    public boolean canPerformAction(@NotNull ItemStack stack, @NotNull ToolAction toolAction) {
+        return super.canPerformAction(stack, toolAction) && toolAction != ToolActions.SWORD_SWEEP;
+    }
+
+    // 在 SpearItem.java 内部添加：
+    @Override
+    public void initializeClient(@NotNull Consumer<IClientItemExtensions> consumer) {
+        consumer.accept(new IClientItemExtensions() {
+            private BlockEntityWithoutLevelRenderer renderer;
+
+            @Override
+            public BlockEntityWithoutLevelRenderer getCustomRenderer() {
+                // 单例延迟加载，节省性能
+                if (this.renderer == null) {
+                    this.renderer = new biz.coolpage.hcs.client.renderer.SpearItemRenderer();
+                }
+                return this.renderer;
+            }
+        });
+    }
+
+    public float getThrownDamage() {
+        return this.thrownDamage;
     }
 
     @Override
@@ -48,16 +96,21 @@ public class SpearItem extends TridentItem {
                 if (!level.isClientSide) {
                     stack.hurtAndBreak(1, player, (p) -> p.broadcastBreakEvent(entityLiving.getUsedItemHand()));
 
-                    // 生成自定义的投掷长矛实体
+                    // Spawn custom thrown spear entity
                     ThrownSpearEntity spearEntity = new ThrownSpearEntity(level, player, stack);
-                    spearEntity.shootFromRotation(player, player.getXRot(), player.getYRot(), 0.0F, 2.5F, 1.0F);
+
+                    // Modify the 5th parameter (Velocity) from previous 2.5F to reduce throwing distance
+                    spearEntity.shootFromRotation(player, player.getXRot(), player.getYRot(), 0.0F, 1.8F, 1.0F);
 
                     if (player.getAbilities().instabuild) {
                         spearEntity.pickup = AbstractArrow.Pickup.CREATIVE_ONLY;
                     }
 
                     level.addFreshEntity(spearEntity);
-                    level.playSound(null, spearEntity, SoundEvents.TRIDENT_THROW, SoundSource.PLAYERS, 1.0F, 1.0F);
+
+                    // Replace SoundEvents.TRIDENT_THROW with your custom sound event
+                    // Example: HcsSounds.SPEAR_THROW.get()
+                    level.playSound(null, spearEntity, SoundEvents.ARROW_SHOOT, SoundSource.PLAYERS, 1.0F, 1.0F);
 
                     if (!player.getAbilities().instabuild) {
                         player.getInventory().removeItem(stack);
