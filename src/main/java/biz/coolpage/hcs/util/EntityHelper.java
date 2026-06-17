@@ -57,7 +57,7 @@ import static biz.coolpage.hcs.util.CommUtil.applyNullable;
 public class EntityHelper {
     @Deprecated
     public static final double[][] FIND_NEAREST_BLOCKS = {{0, -1, 0}, {0, 1, 0}, {0, 2, 0}, {-1, 0, 0}, {-1, 1, 0}, {1, 0, 0}, {1, 1, 0}, {0, 0, 1}, {0, 1, 1}, {0, 0, -1}, {0, 1, -1}};
-    public static double ZOMBIE_SENSING_RANGE = 40.0;
+    public static final double ZOMBIE_SENSING_RANGE = 40.0;
     public static final float HOLDING_BLOCK_REACHING_RANGE_ADDITION = 1.0F;
 
     // Note: DamageTypes need to be adjusted according to the actual damage type tags
@@ -87,7 +87,9 @@ public class EntityHelper {
         if (player == null) return false;
         ItemStack stack = player.getMainHandItem();
         if (stack == null || stack.isEmpty()) return true;
-        return !(stack.getItem() instanceof TieredItem) &&
+        Item item = stack.getItem();
+        return !(item instanceof TieredItem) &&
+                !(item instanceof Vanishable) &&
                 !stack.is(Items.STICK) &&
                 !stack.is(Items.BONE) &&
                 !stack.is(Items.FLINT);

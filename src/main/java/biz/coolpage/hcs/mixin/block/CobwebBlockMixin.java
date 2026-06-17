@@ -3,12 +3,12 @@ package biz.coolpage.hcs.mixin.block;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.projectile.Projectile;
 import net.minecraft.world.level.BlockGetter;
+import net.minecraft.world.level.block.Block; // Newly added import
 import net.minecraft.world.level.block.WebBlock;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.EntityCollisionContext;
-import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
@@ -23,8 +23,9 @@ public abstract class CobwebBlockMixin {
         if ((Object) this instanceof WebBlock) {
             // Verify if the collision context contains an entity, and if that entity is a Projectile
             if (context instanceof EntityCollisionContext entityContext && entityContext.getEntity() instanceof Projectile) {
-                // Return a full block collision shape so the projectile hits it like a normal solid block
-                cir.setReturnValue(Shapes.block());
+                // Return a slightly smaller block collision shape so the projectile hits it
+                // and its center falls strictly inside the web block coordinates, preventing bouncing.
+                cir.setReturnValue(Block.box(0.1, 0.1, 0.1, 15.9, 15.9, 15.9));
             }
         }
     }

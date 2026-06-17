@@ -21,17 +21,10 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.LevelEvent;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
-import net.minecraft.world.level.pathfinder.Path;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.NotNull;
-import net.minecraft.world.level.ClipContext;
-import net.minecraft.world.phys.BlockHitResult;
-import net.minecraft.world.phys.HitResult;
 
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.EnumSet;
-import java.util.List;
+import java.util.*;
 
 public class BreakBlockGoal extends Goal {
     protected final Mob mob;
@@ -60,29 +53,28 @@ public class BreakBlockGoal extends Goal {
         LivingEntity target = this.mob.getTarget();
         Level world = this.mob.level();
         if (target == null || !world.getGameRules().getBoolean(GameRules.RULE_MOBGRIEFING)) return false;
-        if (world instanceof ServerLevel serverWorld && !Configs.isEnabled(serverWorld, Configs.HOSTILE_ZOMBIE)) return false;
+        if (world instanceof ServerLevel serverWorld && !Configs.isEnabled(serverWorld, Configs.HOSTILE_ZOMBIE))
+            return false;
 
-        // Core optimization: Trigger local radar scanning only when the zombie finishes pathfinding or hits a wall, avoiding heavy CPU usage per tick
+        // 只有当僵尸当前没有有效路径或撞墙时，才触发扫描
         if (!this.mob.getNavigation().isDone() && !this.mob.horizontalCollision) return false;
 
-        int radius = 3; // Expand search radius to find breakthroughs within a 7x7 area
+        int radius = 3;
         List<BlockPos> candidates = new ArrayList<>();
+        List<BlockState> states = new ArrayList<>();
         int[] yOffsets = {1, 0, 2, -1};
 
+        // 1. 收集范围内所有方向正确的候选方块（移除射线检测，允许收集拐角后的方块）
         for (int yOffset : yOffsets) {
-            // Should not dig downward when not above target
             if (yOffset == -1 && this.mob.getY() <= target.getY()) continue;
-            // Should not dig upward when not under target
             if (yOffset == 2 && this.mob.getY() >= target.getY()) continue;
 
             for (int xOffset = -radius; xOffset <= radius; xOffset++) {
                 for (int zOffset = -radius; zOffset <= radius; zOffset++) {
-                    // Ignore the coordinate space occupied by the zombie itself
                     if (xOffset == 0 && zOffset == 0 && (yOffset == 0 || yOffset == 1)) continue;
 
                     BlockPos pendingPos = BlockPos.containing(this.mob.getX() + xOffset, this.mob.getY() + yOffset, this.mob.getZ() + zOffset);
 
-                    // 2D dot product: Ensure the block is generally in the direction of the target
                     double vecXToTarget = target.getX() - this.mob.getX();
                     double vecZToTarget = target.getZ() - this.mob.getZ();
                     double vecXToBlock = pendingPos.getX() + 0.5D - this.mob.getX();
@@ -90,60 +82,66 @@ public class BreakBlockGoal extends Goal {
                     if (vecXToTarget * vecXToBlock + vecZToTarget * vecZToBlock < 0) continue;
 
                     BlockState pendingState = world.getBlockState(pendingPos);
-                    // Avoid redundant destroying if the block has no collision shape
                     if (pendingState.getCollisionShape(world, pendingPos).isEmpty()) continue;
-
-                    // Core fix: Raycast (Line of Sight) check to prevent mining through walls
-                    Vec3 eyePos = this.mob.getEyePosition();
-                    Vec3 blockCenter = Vec3.atCenterOf(pendingPos);
-                    BlockHitResult hitResult = world.clip(new ClipContext(
-                            eyePos,
-                            blockCenter,
-                            ClipContext.Block.COLLIDER,
-                            ClipContext.Fluid.NONE,
-                            this.mob
-                    ));
-
-                    // If the ray hits a block before reaching the pending block, it means another block is blocking the way
-                    if (hitResult.getType() == HitResult.Type.BLOCK && !hitResult.getBlockPos().equals(pendingPos)) {
-                        continue;
-                    }
 
                     if (canBreakBlock(pendingState)) {
                         candidates.add(pendingPos);
+                        states.add(pendingState);
                     }
                 }
             }
         }
 
+        System.out.println("candidates are: " + Arrays.toString(candidates.toArray()));
+        System.out.println("states are: " + Arrays.toString(states.toArray()));
         if (candidates.isEmpty()) return false;
 
-        // Weight sorting: Score = distance to zombie + distance to target * 1.5
-        // Prioritize blocks that can significantly reduce the distance to the target
-        candidates.sort(Comparator.comparingDouble(pos -> {
-            double distToZombie = pos.distToCenterSqr(this.mob.position());
-            double distToTarget = pos.distToCenterSqr(target.position());
-            return distToZombie + distToTarget * 1.5;
-        }));
 
-        // Try to pick the best valid candidate block
+        // 2. 权重排序（离僵尸越近、离玩家越近的方块越优先）
+        candidates.sort(Comparator.comparingDouble(pos -> pos.distToCenterSqr(target.position())));
+
+        // 3. 核心修复：基于路径终点的“连通性（无阻挡）”检测
         for (int i = 0; i < Math.min(candidates.size(), 5); i++) {
             BlockPos candidate = candidates.get(i);
 
-            // Scenario A: Block is right in front, enter digging phase immediately
-            if (candidate.closerToCenterThan(this.mob.position(), 2.5)) {
-                this.breakPos = candidate;
-                this.breakState = world.getBlockState(candidate);
-                this.isWalkingToBreak = false;
-                return true;
+            // 尝试生成到该方块的路径
+            net.minecraft.world.level.pathfinder.Path path = this.mob.getNavigation().createPath(candidate, 1);
+            boolean isAccessible = false;
+
+            if (path != null && path.getNodeCount() > 0) {
+                // 获取路径能到达的最后一个物理节点
+                BlockPos endPos = path.getNode(path.getNodeCount() - 1).asBlockPos();
+
+                // 计算终点与候选方块的三轴距离
+                int dx = Math.abs(endPos.getX() - candidate.getX());
+                int dy = Math.abs(endPos.getY() - candidate.getY());
+                int dz = Math.abs(endPos.getZ() - candidate.getZ());
+
+                // 如果终点紧挨着方块（水平距离<=1），说明对于僵尸的路径来说周围没有阻挡！
+                if (dx <= 1 && dy <= 2 && dz <= 1) {
+                    isAccessible = true;
+                }
             }
 
-            // Scenario B: Block is further away, check if there's a valid path to reach it
-            Path path = this.mob.getNavigation().createPath(candidate, 1);
-            if (path != null) {
+            // 兜底逻辑：如果僵尸由于距离太近导致寻路引擎返回 null，直接判断它自身的物理位置是否挨着方块
+            int mdx = Math.abs(this.mob.blockPosition().getX() - candidate.getX());
+            int mdy = Math.abs(this.mob.blockPosition().getY() - candidate.getY());
+            int mdz = Math.abs(this.mob.blockPosition().getZ() - candidate.getZ());
+            if (mdx <= 1 && mdy <= 2 && mdz <= 1) {
+                isAccessible = true;
+            }
+
+            // 只要方块是可及的，就选定它
+            if (isAccessible) {
                 this.breakPos = candidate;
                 this.breakState = world.getBlockState(candidate);
-                this.isWalkingToBreak = true; // Mark as Phase 1: Approaching
+
+                // 如果已经在此方块的攻击范围内，直接进入挖掘阶段；否则进入寻路接近阶段
+                if (candidate.closerToCenterThan(this.mob.position(), 2.5)) {
+                    this.isWalkingToBreak = false;
+                } else {
+                    this.isWalkingToBreak = true;
+                }
                 return true;
             }
         }
@@ -191,7 +189,8 @@ public class BreakBlockGoal extends Goal {
     public boolean canContinueToUse() {
         if (this.mob.getLastHurtByMob() != null) this.hcsLastAttacker = this.mob.getLastHurtByMob();
         if (this.hcsLastAttacker != null && !this.hcsLastAttacker.isAlive()) this.hcsLastAttacker = null;
-        if (this.mob.level() instanceof ServerLevel serverWorld && !Configs.isEnabled(serverWorld, Configs.HOSTILE_ZOMBIE)) return false;
+        if (this.mob.level() instanceof ServerLevel serverWorld && !Configs.isEnabled(serverWorld, Configs.HOSTILE_ZOMBIE))
+            return false;
 
         // Fetch the real-time block state to prevent digging air when doors are opened or blocks are destroyed
         BlockState currentState = this.mob.level().getBlockState(this.breakPos);
@@ -203,8 +202,9 @@ public class BreakBlockGoal extends Goal {
                 && canBreakBlock(currentState)
                 && (this.hcsLastAttacker == null || (this.mob.tickCount - this.mob.getLastHurtByMobTimestamp()) > 20);
 
-        // Relax distance constraint if in pathfinding phase (allow up to 8 blocks away), otherwise strictly within 2.5 blocks
-        double allowedDistance = this.isWalkingToBreak ? 8.0 : 2.5;
+        // Fix 1: Relax distance constraint in Phase 2 to 3.5 blocks.
+        // This prevents the goal from aborting if the collision engine pushes the zombie slightly away from the block.
+        double allowedDistance = this.isWalkingToBreak ? 8.0 : 3.5;
         canContinue = canContinue && this.breakPos.closerToCenterThan(this.mob.position(), allowedDistance);
 
         if (canContinue) {
@@ -214,7 +214,10 @@ public class BreakBlockGoal extends Goal {
     }
 
     public int getMaxProgress() {
-        return (int) (HcsDifficulty.chooseVal(this.mob.level(), 4000.0F, 2000.0F, 1000.0F) * this.breakState.getDestroySpeed(this.mob.level(), this.breakPos) * ((this.mob.getMainHandItem().getItem() instanceof ShovelItem) ? 0.2F : 1.0F));
+        int progress = (int) (HcsDifficulty.chooseVal(this.mob.level(), 4000.0F, 2000.0F, 1000.0F) * this.breakState.getDestroySpeed(this.mob.level(), this.breakPos) * ((this.mob.getMainHandItem().getItem() instanceof ShovelItem) ? 0.2F : 1.0F));
+        // Fix 2: Ensure it takes at least 20 ticks (1 second) to mine any block.
+        // Prevents an infinite loop of instant-breaking failing due to event cancellations.
+        return Math.max(progress, 20);
     }
 
     public boolean canBreakBlock(@NotNull BlockState state) {
@@ -226,21 +229,25 @@ public class BreakBlockGoal extends Goal {
 
     @Override
     public void tick() {
-        //        if (this.offsetX * (float) ((double) this.breakPos.getX() + 0.5 - this.mob.getX()) + this.offsetZ * (float) ((double) this.breakPos.getZ() + 0.5 - this.mob.getZ()) < 0.0f)
-//            this.shouldStop = true; // digging pos too distant for mob
         // ========== Phase 1: Walking towards the target block ==========
         if (this.isWalkingToBreak) {
-            if (this.breakPos.closerToCenterThan(this.mob.position(), 2.0)) {
+            System.out.println(this.breakPos + " " + this.breakPos.closerToCenterThan(this.mob.position(), 2.5) + " timer " + this.walkStuckTimer);
+            // Fix 3: Change the distance threshold to 2.5 to match canUse() and eliminate the dead zone
+            if (this.breakPos.closerToCenterThan(this.mob.position(), 2.5)) {
                 // Successfully reached the block, seamlessly switch to Phase 2 (digging)
                 this.isWalkingToBreak = false;
                 this.mob.getNavigation().stop();
                 if (this.mob.getLookControl() instanceof ILookControl ext) {
                     ext.hcs$setLookLock(true);
                 }
+            } else if (this.mob.getNavigation().isDone()) {
+                // The navigation has stopped (path finished), but the zombie is STILL outside the 2.5 reach.
+                this.shouldStop = true;
+                return;
             } else {
-                // Anti-stuck check: If the zombie is stuck in place for 10 ticks, terminate the goal
+                // Anti-stuck check: every 40 ticks
                 this.walkStuckTimer++;
-                if (this.walkStuckTimer % 10 == 0) {
+                if (this.walkStuckTimer % 40 == 0) {
                     if (this.mob.position().distanceToSqr(this.lastPos) < 0.05) {
                         this.shouldStop = true;
                     }
@@ -267,8 +274,8 @@ public class BreakBlockGoal extends Goal {
                     this.breakPos.getX() + 0.5D,
                     this.breakPos.getY() + 0.5D,
                     this.breakPos.getZ() + 0.5D,
-                    10.0F, // Maximum horizontal head rotation speed
-                    (float) this.mob.getMaxHeadXRot() // Maximum vertical head rotation speed
+                    10.0F,
+                    (float) this.mob.getMaxHeadXRot()
             );
         }
 

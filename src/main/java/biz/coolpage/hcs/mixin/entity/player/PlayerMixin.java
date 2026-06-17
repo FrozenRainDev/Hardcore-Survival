@@ -651,9 +651,4 @@ public abstract class PlayerMixin extends LivingEntity implements StatAccessor {
             this.addEffect(new MobEffectInstance(MobEffects.POISON, 3 * 20, 0));
         }
     }
-
-    @Inject(method = "canEat", at = @At("RETURN"), cancellable = true)
-    public void canEat(@NotNull CallbackInfoReturnable<Boolean> cir) {
-        cir.setReturnValue(cir.getReturnValue() && !this.hasEffect(HcsEffects.BLEEDING.get()) && EntityHelper.getEffectAmplifier(this, HcsEffects.PARASITE_INFECTION.get()) <= 1);
-    }
 }

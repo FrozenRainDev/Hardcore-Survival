@@ -176,4 +176,9 @@ public class ThrownSpearEntity extends ThrownTrident {
             super.handleEntityEvent(pId);
         }
     }
+
+    @Override
+    protected float getWaterInertia() {
+        return 0.5F;
+    }
 }
