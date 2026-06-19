@@ -126,10 +126,10 @@ public final class Hcs {
     public static final RegistryObject<Item> PUMPKIN_SLICE = ITEMS.register("pumpkin_slice", () -> new Item(new Item.Properties().food(new FoodProperties.Builder().nutrition(1).saturationMod(0f).build())));
     public static final RegistryObject<Item> POTHERB = ITEMS.register("potherb", () -> new Item(new Item.Properties().food(new FoodProperties.Builder().nutrition(0).saturationMod(1f).build())));
     public static final RegistryObject<Item> STONE_KNIFE = ITEMS.register("stone_knife", () -> new KnifeItem(HcsTiers.STONE_WEAPON, 1, 1.6F - 4.0F, new Item.Properties().stacksTo(1)));
-    public static final RegistryObject<SpearItem> STONE_SPEAR = ITEMS.register("stone_spear", () -> new SpearItem(HcsTiers.STONE_WEAPON, 3, 5F, 1.1F - 4.0F, new Item.Properties().stacksTo(1)));
+    public static final RegistryObject<SpearItem> STONE_SPEAR = ITEMS.register("stone_spear", () -> new SpearItem(HcsTiers.STONE_WEAPON, 3, 5F, 1.0F - 4.0F, new Item.Properties().stacksTo(1)));
     public static final RegistryObject<Item> STONE_CONE = ITEMS.register("stone_cone", () -> new ShovelItem(HcsTiers.STONE_CONE, 1.0F, 1.6F - 4.0F, new Item.Properties().stacksTo(1)));
     public static final RegistryObject<Item> FLINT_KNIFE = ITEMS.register("flint_knife", () -> new KnifeItem(HcsTiers.FLINT_WEAPON, 2, 1.6F - 4.0F, new Item.Properties().stacksTo(1)));
-    public static final RegistryObject<SpearItem> FLINT_SPEAR = ITEMS.register("flint_spear", () -> new SpearItem(HcsTiers.FLINT_WEAPON, 4, 6F, 1.1F - 4.0F, new Item.Properties().stacksTo(1)));
+    public static final RegistryObject<SpearItem> FLINT_SPEAR = ITEMS.register("flint_spear", () -> new SpearItem(HcsTiers.FLINT_WEAPON, 4, 6F, 1.0F - 4.0F, new Item.Properties().stacksTo(1)));
     public static final RegistryObject<Item> FLINT_CONE = ITEMS.register("flint_cone", () -> new ShovelItem(HcsTiers.FLINT_CONE, 1.5F, 1.6F - 4.0F, new Item.Properties().stacksTo(1)));
     public static final RegistryObject<Item> FLINT_HATCHET = ITEMS.register("flint_hatchet", () -> new AxeItem(HcsTiers.FLINT_HATCHET, 6.0F, -3.1F, new Item.Properties()));
     public static final RegistryObject<Item> RAW_COPPER_POWDER = ITEMS.register("raw_copper_powder", () -> new Item(new Item.Properties()));
