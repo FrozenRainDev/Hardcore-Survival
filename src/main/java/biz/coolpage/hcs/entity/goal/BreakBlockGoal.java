@@ -1,99 +1,128 @@
 package biz.coolpage.hcs.entity.goal;
 
+import biz.coolpage.hcs.config.Configs;
+import biz.coolpage.hcs.config.HcsDifficulty;
+import biz.coolpage.hcs.status.accessor.ILookControl;
+import biz.coolpage.hcs.util.DigRestrictHelper;
+import biz.coolpage.hcs.util.WorldHelper;
 import net.minecraft.core.BlockPos;
-import net.minecraft.sounds.SoundSource;
-import net.minecraft.util.Mth;
-import net.minecraft.world.InteractionHand;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.tags.BlockTags;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.ai.goal.Goal;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.block.Rotation;
-import net.minecraft.world.level.block.SoundType;
+import net.minecraft.world.entity.ai.util.GoalUtils;
+import net.minecraft.world.item.PickaxeItem;
+import net.minecraft.world.item.ShovelItem;
+import net.minecraft.world.level.GameRules;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.LevelEvent;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.pathfinder.Node;
-import net.minecraft.world.level.pathfinder.Path;
-import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.EnumSet; // Added import for EnumSet
 
 public class BreakBlockGoal extends Goal {
-    protected final Mob living;
-    private LivingEntity target;
-    private BlockPos markedLoc;
-    private BlockPos entityPos;
-    private int digTimer;
+    protected final Mob mob;
+    private LivingEntity hcsLastAttacker;
+    protected BlockPos breakPos = BlockPos.ZERO;
+    protected BlockState breakState = Blocks.AIR.defaultBlockState();
+    protected boolean shouldStop;
+    //    private float offsetX, offsetZ;
+    protected int breakProgress = -1, prevBreakStage = -1;
 
-    // Replaced Config.CommonConfig cooldowns with standard constants
-    private int cooldown = 60;
-    private final int breakerCooldown = 20;
-
-    private final List<BlockPos> breakAOE = new ArrayList<>();
-    private int breakIndex;
-
-    private final int digHeight;
-
-    public BreakBlockGoal(@NotNull Mob living) {
-        this.living = living;
-        int digWidth = living.getBbWidth() < 1 ? 0 : Mth.ceil(living.getBbWidth());
-        this.digHeight = (int) living.getBbHeight() + 1;
-        for (int i = this.digHeight; i >= 0; i--)
-            this.breakAOE.add(new BlockPos(0, i, 0));
-        //north = neg z
-        for (int z = digWidth + 1; z >= -digWidth; z--)
-            for (int y = this.digHeight; y >= 0; y--) {
-                for (int x = 0; x <= digWidth; x++) {
-                    if (z != 0) {
-                        this.breakAOE.add(new BlockPos(x, y, z));
-                        if (x != 0)
-                            this.breakAOE.add(new BlockPos(-x, y, z));
-                    }
-                }
-            }
+    public BreakBlockGoal(Mob mob) {
+        this.mob = mob;
+        if (!GoalUtils.hasGroundPathNavigation(mob)) {
+            throw new IllegalArgumentException("Unsupported mob type for BreakBlockGoal");
+        }
+        // Take over both movement and view controls simultaneously
+        this.setFlags(EnumSet.of(Goal.Flag.MOVE, Goal.Flag.LOOK));
     }
 
     @Override
     public boolean canUse() {
-        this.target = this.living.getTarget();
-        if (this.entityPos == null) {
-            this.entityPos = this.living.blockPosition();
-            this.cooldown = this.breakerCooldown;
-        }
-        if (--this.cooldown <= 0) {
-            if (!this.entityPos.equals(this.living.blockPosition())) {
-                this.entityPos = null;
-                this.cooldown = this.breakerCooldown;
-                return false;
-            } else if (this.target != null && this.living.distanceTo(this.target) > 1D) {
-                BlockPos blockPos = this.getDiggingLocation();
-                if (blockPos == null)
-                    return false;
-                this.cooldown = this.breakerCooldown;
-                this.markedLoc = blockPos;
-                this.entityPos = this.living.blockPosition();
-                return true;
+        // Choose a block to break
+        LivingEntity target = this.mob.getTarget();
+        Level world = this.mob.level();
+        if (target == null || !this.mob.level().getGameRules().getBoolean(GameRules.RULE_MOBGRIEFING))
+            return false;
+        if (world instanceof ServerLevel serverWorld && !Configs.isEnabled(serverWorld, Configs.HOSTILE_ZOMBIE))
+            return false;
+
+        // Set Y-axis traversal priority: 1 (upper body/facing height) -> 0 (sole of foot) -> 2 (top of head) -> -1 (below feet)
+        int[] yOffsets = {1, 0, 2, -1};
+
+        for (int yOffset : yOffsets) {
+            // Should not dig downward when not above target
+            if (yOffset == -1 && this.mob.getY() <= target.getY()) continue;
+            // Should not dig upward when not under target
+            if (yOffset == 2 && this.mob.getY() >= target.getY()) continue;
+
+            for (int xOffset = -1; xOffset <= 1; xOffset++) {
+                for (int zOffset = -1; zOffset <= 1; zOffset++) {
+                    // Check only the cardinal directions (forward, backward, left, right), skipping diagonal blocks. This is consistent with your previously hardcoded array behavior.
+                    if (Math.abs(xOffset) + Math.abs(zOffset) > 1) continue;
+
+                    // Ignore the coordinate space occupied by the zombie itself (0, 0, 0) and (0, 1, 0)
+                    if (xOffset == 0 && zOffset == 0 && (yOffset == 0 || yOffset == 1)) continue;
+
+                    // Choose a pos to break
+                    BlockPos pendingBreakPos = BlockPos.containing(this.mob.getX() + xOffset, this.mob.getY() + yOffset, this.mob.getZ() + zOffset);
+
+                    // Cannot mine blocks that are in the direction opposite to the player's approach
+                    double vecXToTarget = target.getX() - this.mob.getX();
+                    double vecZToTarget = target.getZ() - this.mob.getZ();
+                    double vecXToBlock = pendingBreakPos.getX() + 0.5D - this.mob.getX();
+                    double vecZToBlock = pendingBreakPos.getZ() + 0.5D - this.mob.getZ();
+
+                    // Using 2D dot product(cosine): if < 0, the block is in the opposite direction of the target
+                    if (vecXToTarget * vecXToBlock + vecZToTarget * vecZToBlock < 0) {
+                        continue;
+                    }
+
+                    BlockState pendingBreakState = this.mob.level().getBlockState(pendingBreakPos);
+                    // Avoid redundant destroying if the block has no collision shape (can be walked through)
+                    if (pendingBreakState.getCollisionShape(this.mob.level(), pendingBreakPos).isEmpty()) continue;
+
+                    // Determine whether to start
+                    // Note: If you have integrated the previously fixed pathfinding logic, you can replace isDone() here with isDone() || this.mob.horizontalCollision
+                    if (canBreakBlock(pendingBreakState) && this.mob.getNavigation().isDone()) {
+//                        System.out.println("Breaking block " + pendingBreakPos);
+                        this.breakPos = pendingBreakPos;
+                        this.breakState = pendingBreakState;
+                        return true;
+                    }
+                }
             }
         }
         return false;
     }
 
     @Override
-    public boolean canContinueToUse() {
-        return this.target != null && this.target.isAlive() && this.living.isAlive() && this.markedLoc != null && this.nearSameSpace(this.entityPos, this.living.blockPosition()) && this.living.distanceTo(this.target) > 1D;
-    }
+    public void start() {
+        this.shouldStop = false;
+        this.breakProgress = 0;
 
-    private boolean nearSameSpace(BlockPos pos1, BlockPos pos2) {
-        return pos1 != null && pos2 != null && pos1.getX() == pos2.getX() && pos1.getZ() == pos2.getZ() && Math.abs(pos1.getY() - pos2.getY()) <= 1;
+        // 核心修复1：在开始挖掘时一次性彻底停止寻路，而不是在 tick 中反复调用，解决断续行走/抽搐问题
+        this.mob.getNavigation().stop();
+
+        // Lock the LookControl when digging starts
+        if (this.mob.getLookControl() instanceof ILookControl ext) {
+            ext.hcs$setLookLock(true);
+        }
     }
 
     @Override
     public void stop() {
-        this.breakIndex = 0;
-        if (this.markedLoc != null)
-            this.living.level().destroyBlockProgress(this.living.getId(), this.markedLoc, -1);
-        this.markedLoc = null;
+        super.stop();
+        this.mob.level().destroyBlockProgress(this.mob.getId(), this.breakPos, -1);
+        // Unlock the LookControl when digging is interrupted or finished
+        if (this.mob.getLookControl() instanceof ILookControl ext) {
+            ext.hcs$setLookLock(false);
+        }
     }
 
     @Override
@@ -102,131 +131,91 @@ public class BreakBlockGoal extends Goal {
     }
 
     @Override
-    public void tick() {
-        if (this.markedLoc == null || this.living.level().getBlockState(this.markedLoc).getCollisionShape(this.living.level(), this.markedLoc).isEmpty()) {
-            this.digTimer = 0;
-            return;
-        }
+    public boolean canContinueToUse() {
+//         System.out.println("..."); // 省略你的调试代码
+        if (this.mob.getLastHurtByMob() != null) this.hcsLastAttacker = this.mob.getLastHurtByMob();
+        if (this.hcsLastAttacker != null && !this.hcsLastAttacker.isAlive()) this.hcsLastAttacker = null;
+        if (this.mob.level() instanceof ServerLevel serverWorld && !Configs.isEnabled(serverWorld, Configs.HOSTILE_ZOMBIE))
+            return false;
 
-        BlockState state = this.living.level().getBlockState(this.markedLoc);
+        // 核心修复2：获取当前世界实时的方块状态，防止玩家开门或方块被破坏后僵尸还在对着空气挖
+        BlockState currentState = this.mob.level().getBlockState(this.breakPos);
 
-        // Replaced Utils.getBlockStrength with vanilla block destroy speed logic
-        float hardness = state.getDestroySpeed(this.living.level(), this.markedLoc);
-        float str = hardness <= 0.0F ? (hardness == -1.0F ? 0.0F : 1.0F) : (1.0F / hardness) / 100.0F * (this.digTimer * this.breakSpeedMod() + 1);
-
-        if (str >= 1F) {
-            this.digTimer = 0;
-            this.cooldown *= 0.5;
-            ItemStack item = this.living.getMainHandItem();
-            ItemStack itemOff = this.living.getOffhandItem();
-
-            // Removed BlockRestorationData, simplified harvest check
-            boolean canHarvest = this.canHarvestItem(state, item) || this.canHarvestItem(state, itemOff);
-
-            this.living.level().destroyBlock(this.markedLoc, canHarvest);
-            this.living.level().destroyBlockProgress(this.living.getId(), this.markedLoc, -1);
-            this.markedLoc = null;
-
-            if (!this.aboveTarget()) {
-                this.living.setSpeed(0);
-                this.living.getNavigation().stop();
-                this.living.getNavigation().moveTo(this.living.getNavigation().createPath(this.target, 0), 1D);
-            } else {
-                this.living.getNavigation().stop();
-            }
-        } else {
-            this.digTimer++;
-            if (this.digTimer % 5 == 0) {
-                // Replaced CrossPlatformStuff with Forge/Vanilla sound fetcher
-                SoundType sound = state.getSoundType(this.living.level(), this.markedLoc, this.living);
-                this.living.level().playSound(null, this.markedLoc.getX() + 0.5, this.markedLoc.getY() + 0.5, this.markedLoc.getZ() + 0.5, sound.getBreakSound(), SoundSource.BLOCKS, 2F, 0.5F);
-
-                this.living.swing(InteractionHand.MAIN_HAND);
-                this.living.getLookControl().setLookAt(this.markedLoc.getX(), this.markedLoc.getY(), this.markedLoc.getZ(), 0.0F, 0.0F);
-                this.living.level().destroyBlockProgress(this.living.getId(), this.markedLoc, (int) (str * 10) - 1);
-            }
-        }
-    }
-
-    private float breakSpeedMod() {
-        // Simplified: removed Config and DifficultyFetcher variables. Defaulting to 1.0F.
-        return 1.0F;
-    }
-
-    public BlockPos getDiggingLocation() {
-        ItemStack item = this.living.getMainHandItem();
-        ItemStack itemOff = this.living.getOffhandItem();
-        BlockPos pos = this.living.blockPosition();
-        BlockState state;
-
-        if (this.living.getTarget() != null) {
-            Vec3 target = this.living.getTarget().position();
-            if (this.aboveTarget() && Math.abs(target.x - pos.getX()) <= 1 && Math.abs(target.z - pos.getZ()) <= 1) {
-                pos = this.living.blockPosition().below();
-                state = this.living.level().getBlockState(pos);
-                if (this.canBreak(this.living, state, pos, item, itemOff)) {
-                    this.breakIndex = 0;
-                    return pos;
-                }
-            }
-        }
-
-        Rotation rot = getDigDirection(this.living);
-        BlockPos offset = this.breakAOE.get(this.breakIndex);
-        offset = new BlockPos(offset.getX(), this.aboveTarget() ? (-(this.digHeight - offset.getY())) : offset.getY(), offset.getZ());
-        pos = pos.offset(offset.rotate(rot));
-        state = this.living.level().getBlockState(pos);
-
-        if (this.canBreak(this.living, state, pos, item, itemOff)) {
-            this.breakIndex = 0;
-            return pos;
-        }
-
-        this.breakIndex++;
-        if (this.breakIndex == this.breakAOE.size())
-            this.breakIndex = 0;
-        return null;
-    }
-
-    private boolean canBreak(@NotNull LivingEntity entity, @NotNull BlockState state, BlockPos pos, ItemStack item, ItemStack itemOff) {
-        // Replaced Config.CommonConfig.breakableBlocks check with Vanilla unbreakability check
-        if (state.getDestroySpeed(entity.level(), pos) == -1.0F) {
+        // 检测门/活板门是否已被玩家打开，或者方块碰撞体积是否已为空
+        boolean isOpened = currentState.hasProperty(net.minecraft.world.level.block.state.properties.BlockStateProperties.OPEN)
+                && currentState.getValue(net.minecraft.world.level.block.state.properties.BlockStateProperties.OPEN);
+        if (isOpened || currentState.getCollisionShape(this.mob.level(), this.breakPos).isEmpty()) {
             return false;
         }
-        return this.canHarvestItem(state, item) || this.canHarvestItem(state, itemOff);
-    }
 
-    // Helper method to replace Utils.canHarvest
-    private boolean canHarvestItem(@NotNull BlockState state, ItemStack item) {
-        return !state.requiresCorrectToolForDrops() || item.isCorrectToolForDrops(state);
-    }
-
-    private boolean aboveTarget() {
-        return this.target.getY() < this.living.getY() + 1.1;
-    }
-
-    public static Rotation getDigDirection(@NotNull Mob mob) {
-        Path path = mob.getNavigation().getPath();
-        if (path != null) {
-            Node point = path.getNextNodeIndex() < path.getNodeCount() ? path.getNextNode() : null;
-            if (point != null) {
-                Vec3 dir = new Vec3(point.x + 0.5, mob.position().y, point.z + 0.5).subtract(mob.position());
-                if (Math.abs(dir.x) < Math.abs(dir.z)) {
-                    if (dir.z >= 0)
-                        return Rotation.NONE;
-                    return Rotation.CLOCKWISE_180;
-                } else {
-                    if (dir.x > 0)
-                        return Rotation.COUNTERCLOCKWISE_90;
-                    return Rotation.CLOCKWISE_90;
-                }
-            }
+        // 核心修复3：持续利用点积运算校验目标方向。如果玩家绕行离开了方块后方，僵尸应放弃挖掘并重新追击
+        boolean isTargetStillValid = false;
+        LivingEntity target = this.mob.getTarget();
+        if (target != null) {
+            double vecXToTarget = target.getX() - this.mob.getX();
+            double vecZToTarget = target.getZ() - this.mob.getZ();
+            double vecXToBlock = this.breakPos.getX() + 0.5D - this.mob.getX();
+            double vecZToBlock = this.breakPos.getZ() + 0.5D - this.mob.getZ();
+            // 只要 >= 0，说明目标大体上还在挖掘方向的前方
+            isTargetStillValid = (vecXToTarget * vecXToBlock + vecZToTarget * vecZToBlock >= 0);
         }
-        return switch (mob.getDirection()) {
-            case SOUTH -> Rotation.CLOCKWISE_180;
-            case EAST -> Rotation.CLOCKWISE_90;
-            case WEST -> Rotation.COUNTERCLOCKWISE_90;
-            default -> Rotation.NONE;
-        };
+
+        boolean canContinue = !this.shouldStop
+                && this.breakProgress <= this.getMaxProgress()
+                && canBreakBlock(currentState) // 传入实时状态
+                && isTargetStillValid          // 玩家是否还在方块后面
+                && this.breakPos.closerToCenterThan(this.mob.position(), 2.5)
+                && (this.hcsLastAttacker == null || (this.mob.tickCount - this.mob.getLastHurtByMobTimestamp()) > 20);
+
+        // 同步最新的状态给 tick() 使用（例如更新挖掘粒子和耗时计算）
+        if (canContinue) {
+            this.breakState = currentState;
+        }
+
+        return canContinue;
+    }
+
+    public int getMaxProgress() {
+        return (int) (HcsDifficulty.chooseVal(this.mob.level(), 4000.0F, 2000.0F, 1000.0F) * this.breakState.getDestroySpeed(this.mob.level(), this.breakPos) * ((this.mob.getMainHandItem().getItem() instanceof ShovelItem) ? 0.2F : 1.0F));
+    }
+
+    public boolean canBreakBlock(@NotNull BlockState state) {
+        if (state.isAir()) return false;
+        if (state.is(BlockTags.WOODEN_DOORS)) return true;
+        boolean stoneConstraint = state.getDestroySpeed(this.mob.level(), this.breakPos) < Blocks.STONE.defaultDestroyTime() || this.mob.getMainHandItem().getItem() instanceof PickaxeItem;
+        return DigRestrictHelper.canBreak(this.mob.getMainHandItem().getItem(), state) && stoneConstraint;
+    }
+
+    @Override
+    public void tick() {
+        ++this.breakProgress;
+//        if (this.offsetX * (float) ((double) this.breakPos.getX() + 0.5 - this.mob.getX()) + this.offsetZ * (float) ((double) this.breakPos.getZ() + 0.5 - this.mob.getZ()) < 0.0f)
+//            this.shouldStop = true; // digging pos too distant for mob
+        if (this.breakProgress % 40 == 0 && !this.mob.swinging) this.mob.swing(this.mob.getUsedItemHand());
+        int breakStage = (int) ((float) this.breakProgress / (float) this.getMaxProgress() * 10.0f);
+        if (breakStage != this.prevBreakStage) {
+            this.mob.level().destroyBlockProgress(this.mob.getId(), this.breakPos, breakStage);
+            this.mob.level().levelEvent(LevelEvent.PARTICLES_DESTROY_BLOCK, this.breakPos, Block.getId(this.breakState));
+            this.prevBreakStage = breakStage;
+        }
+
+        // （已删除）此处移除了原有在 tick 里对 this.mob.getNavigation().stop() 的调用
+
+        // Use forced look to bypass our own mixin lock
+        if (this.mob.getLookControl() instanceof ILookControl ctrl) {
+            ctrl.hcs$forceLookAt(
+                    this.breakPos.getX() + 0.5D,
+                    this.breakPos.getY() + 0.5D,
+                    this.breakPos.getZ() + 0.5D,
+                    10.0F, // Maximum horizontal head rotation speed
+                    (float) this.mob.getMaxHeadXRot() // Maximum vertical head rotation speed
+            );
+        }
+
+        // Reach the target, successfully break the block
+        if (this.breakProgress >= this.getMaxProgress()) {
+            this.mob.level().destroyBlock(this.breakPos, true, this.mob);
+            WorldHelper.checkBlockGravity(this.mob.level(), this.breakPos);
+        }
     }
 }
