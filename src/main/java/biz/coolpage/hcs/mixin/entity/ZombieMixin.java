@@ -28,20 +28,9 @@ public abstract class ZombieMixin extends Monster { // ZombieEntityMixin
     @Shadow
     public abstract boolean isSunSensitive();
 
-    // todo recover this
-//    @Inject(method = "<init>*", at = @At("TAIL"))
-//    private void hcs$replaceNavigation(EntityType<? extends Zombie> entityType, Level level, CallbackInfo ci) {
-//        Mob zombie = this;
-//        // Replace with a navigator that supports wall-penetration pathfinding
-//        zombie.navigation = new BreakableGroundPathNavigation(zombie, level);
-//    }
-
     // Using "protected" will crash even the original method is "protected"
     @Inject(method = "addBehaviourGoals", at = @At("TAIL"))
     public void addBehaviourGoals(CallbackInfo ci) {
-        // Zombies will break blocks when its path is obstructed
-
-        // todo del break block goal temporarily
         this.targetSelector.addGoal(1, new BreakBlockGoal(this));
         if (this.isSunSensitive()) this.targetSelector.addGoal(1, new AdvancedAvoidSunlightGoal(this));
         // Add animal target for adult zombies

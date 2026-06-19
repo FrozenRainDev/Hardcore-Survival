@@ -22,7 +22,7 @@ import net.minecraft.world.level.block.LevelEvent;
 import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.EnumSet; // Added import for EnumSet
+import java.util.EnumSet;
 
 public class BreakBlockGoal extends Goal {
     protected final Mob mob;
@@ -63,7 +63,7 @@ public class BreakBlockGoal extends Goal {
 
             for (int xOffset = -1; xOffset <= 1; xOffset++) {
                 for (int zOffset = -1; zOffset <= 1; zOffset++) {
-                    // Check only the cardinal directions (forward, backward, left, right), skipping diagonal blocks. This is consistent with your previously hardcoded array behavior.
+                    // Check only the cardinal directions (forward, backward, left, right), skipping diagonal blocks.
                     if (Math.abs(xOffset) + Math.abs(zOffset) > 1) continue;
 
                     // Ignore the coordinate space occupied by the zombie itself (0, 0, 0) and (0, 1, 0)
@@ -78,8 +78,20 @@ public class BreakBlockGoal extends Goal {
                     double vecXToBlock = pendingBreakPos.getX() + 0.5D - this.mob.getX();
                     double vecZToBlock = pendingBreakPos.getZ() + 0.5D - this.mob.getZ();
 
-                    // Using 2D dot product(cosine): if < 0, the block is in the opposite direction of the target
-                    if (vecXToTarget * vecXToBlock + vecZToTarget * vecZToBlock < 0) {
+                    // Normalize vectors to accurately calculate the cosine of the angle and relax the strict angle limit
+                    double targetDist = Math.sqrt(vecXToTarget * vecXToTarget + vecZToTarget * vecZToTarget);
+                    if (targetDist > 0.001) {
+                        vecXToTarget /= targetDist;
+                        vecZToTarget /= targetDist;
+                    }
+                    double blockDist = Math.sqrt(vecXToBlock * vecXToBlock + vecZToBlock * vecZToBlock);
+                    if (blockDist > 0.001) {
+                        vecXToBlock /= blockDist;
+                        vecZToBlock /= blockDist;
+                    }
+
+                    // Using 2D dot product (cosine): if < -0.2, the block is largely in the opposite direction of the target
+                    if (vecXToTarget * vecXToBlock + vecZToTarget * vecZToBlock < -0.2) {
                         continue;
                     }
 
@@ -88,8 +100,9 @@ public class BreakBlockGoal extends Goal {
                     if (pendingBreakState.getCollisionShape(this.mob.level(), pendingBreakPos).isEmpty()) continue;
 
                     // Determine whether to start
-                    // Note: If you have integrated the previously fixed pathfinding logic, you can replace isDone() here with isDone() || this.mob.horizontalCollision
-                    if (canBreakBlock(pendingBreakState) && this.mob.getNavigation().isDone()) {
+                    // FIX: Added `this.mob.horizontalCollision` so the zombie starts mining immediately upon hitting a wall,
+                    // instead of waiting to slide to the absolute closest point to the player.
+                    if (canBreakBlock(pendingBreakState) && (this.mob.getNavigation().isDone() || this.mob.horizontalCollision)) {
 //                        System.out.println("Breaking block " + pendingBreakPos);
                         this.breakPos = pendingBreakPos;
                         this.breakState = pendingBreakState;
@@ -148,23 +161,37 @@ public class BreakBlockGoal extends Goal {
             return false;
         }
 
-        // 核心修复3：持续利用点积运算校验目标方向。如果玩家绕行离开了方块后方，僵尸应放弃挖掘并重新追击
+        // Core Fix 3: Normalize vectors and relax the angle check.
+        // If the player moves slightly laterally, the zombie will no longer abruptly abandon mining.
         boolean isTargetStillValid = false;
         LivingEntity target = this.mob.getTarget();
-        if (target != null) {
+        if (target != null && target.isAlive()) {
             double vecXToTarget = target.getX() - this.mob.getX();
             double vecZToTarget = target.getZ() - this.mob.getZ();
             double vecXToBlock = this.breakPos.getX() + 0.5D - this.mob.getX();
             double vecZToBlock = this.breakPos.getZ() + 0.5D - this.mob.getZ();
-            // 只要 >= 0，说明目标大体上还在挖掘方向的前方
-            isTargetStillValid = (vecXToTarget * vecXToBlock + vecZToTarget * vecZToBlock >= 0);
+
+            // Normalize vectors to prevent small distances from making the dot product overly sensitive
+            double targetDist = Math.sqrt(vecXToTarget * vecXToTarget + vecZToTarget * vecZToTarget);
+            if (targetDist > 0.001) {
+                vecXToTarget /= targetDist;
+                vecZToTarget /= targetDist;
+            }
+            double blockDist = Math.sqrt(vecXToBlock * vecXToBlock + vecZToBlock * vecZToBlock);
+            if (blockDist > 0.001) {
+                vecXToBlock /= blockDist;
+                vecZToBlock /= blockDist;
+            }
+
+            // As long as the angle is not excessively wide (e.g., >= -0.5 allows approx 120 degrees tolerance), keep mining
+            isTargetStillValid = (vecXToTarget * vecXToBlock + vecZToTarget * vecZToBlock >= -0.5);
         }
 
         boolean canContinue = !this.shouldStop
                 && this.breakProgress <= this.getMaxProgress()
                 && canBreakBlock(currentState) // 传入实时状态
-                && isTargetStillValid          // 玩家是否还在方块后面
-                && this.breakPos.closerToCenterThan(this.mob.position(), 2.5)
+                && isTargetStillValid          // 玩家是否还在方块后面/没完全绕后
+                && this.breakPos.closerToCenterThan(this.mob.position(), 3.5) // Relax distance limit (2.5 is too easily interrupted)
                 && (this.hcsLastAttacker == null || (this.mob.tickCount - this.mob.getLastHurtByMobTimestamp()) > 20);
 
         // 同步最新的状态给 tick() 使用（例如更新挖掘粒子和耗时计算）
