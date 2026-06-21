@@ -31,7 +31,7 @@ public abstract class ZombieMixin extends Monster { // ZombieEntityMixin
     // Using "protected" will crash even the original method is "protected"
     @Inject(method = "addBehaviourGoals", at = @At("TAIL"))
     public void addBehaviourGoals(CallbackInfo ci) {
-        this.targetSelector.addGoal(1, new BreakBlockGoal(this));
+        this.targetSelector.addGoal(0, new BreakBlockGoal(this));
         if (this.isSunSensitive()) this.targetSelector.addGoal(1, new AdvancedAvoidSunlightGoal(this));
         // Add animal target for adult zombies
         // Prioritize player(s) within 8 blocks in **TrackTargetGoalMixin/shouldContinue()**
