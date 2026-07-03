@@ -1,9 +1,6 @@
 package biz.coolpage.hcs;
 
-import biz.coolpage.hcs.block.BurntCampfireBlock;
-import biz.coolpage.hcs.block.DryingRackBlock;
-import biz.coolpage.hcs.block.IceboxBlock;
-import biz.coolpage.hcs.block.SmolderingCampfireBlock;
+import biz.coolpage.hcs.block.*;
 import biz.coolpage.hcs.block.torches.*;
 import biz.coolpage.hcs.config.HcsConfigs;
 import biz.coolpage.hcs.config.HcsDifficulty;
@@ -51,6 +48,7 @@ import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.material.MapColor;
+import net.minecraft.world.level.material.PushReaction;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.brewing.BrewingRecipeRegistry;
 import net.minecraftforge.common.loot.IGlobalLootModifier;
@@ -107,7 +105,28 @@ public final class Hcs {
     public static final RegistryObject<WallGlowstoneTorchBlock> WALL_GLOWSTONE_TORCH_BLOCK = BLOCKS.register("wall_glowstone_torch", () -> new WallGlowstoneTorchBlock(BlockBehaviour.Properties.copy(Blocks.WALL_TORCH).noCollission().instabreak().lightLevel(state -> 14).sound(SoundType.WOOD).dropsLike(GLOWSTONE_TORCH_BLOCK.get())));
     public static final RegistryObject<Block> SMOLDERING_CAMPFIRE_BLOCK = BLOCKS.register("smoldering_campfire", SmolderingCampfireBlock::new);
     public static final RegistryObject<Block> BURNT_CAMPFIRE_BLOCK = BLOCKS.register("burnt_campfire", BurntCampfireBlock::new);
-
+    public static final RegistryObject<Block> STICK_BLOCK = BLOCKS.register("stick_block",
+            () -> new GroundPickableBlock(BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.WOOD)
+                    .noCollission()
+                    .instabreak()
+                    .sound(SoundType.WOOD)
+                    .pushReaction(PushReaction.DESTROY)
+                    .randomTicks(),
+                    () -> new ItemStack(Items.STICK)
+            )
+    );
+    public static final RegistryObject<Block> ROCK_BLOCK = BLOCKS.register("rock_block",
+            () -> new GroundPickableBlock(BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.STONE)
+                    .noCollission()
+                    .instabreak()
+                    .sound(SoundType.STONE)
+                    .pushReaction(PushReaction.DESTROY)
+                    .randomTicks(),
+                    () -> new ItemStack(Hcs.ROCK.get())
+            )
+    );
 
     // --- Items ---
     public static final RegistryObject<Item> FIBER_STRING = ITEMS.register("fiber_string", () -> new Item(new Item.Properties()));
@@ -253,7 +272,6 @@ public final class Hcs {
     public static final RegistryObject<Item> SMOLDERING_CAMPFIRE = ITEMS.register("smoldering_campfire", () -> new HCSCampfireItem(SMOLDERING_CAMPFIRE_BLOCK.get().defaultBlockState()));
     public static final RegistryObject<Item> BURNT_CAMPFIRE = ITEMS.register("burnt_campfire", () -> new HCSCampfireItem(BURNT_CAMPFIRE_BLOCK.get().defaultBlockState()));
     public static final RegistryObject<Item> GARLAND = ITEMS.register("garland", () -> new ArmorItem(HcsArmorMaterials.GARLAND, ArmorItem.Type.HELMET, new Item.Properties()));
-
     // --- Potions ---
     public static final RegistryObject<Potion>
             IRONSKIN_POTION = POTIONS.register("hcs_ironskin", () -> new Potion(new MobEffectInstance(HcsEffects.IRONSKIN.get(), 3600, 0))),

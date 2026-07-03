@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "show_notification": true,
+  "ingredients": [
+    {
+      "item": "hcsurvival:rock"
+    },
+    {
+      "item": "hcsurvival:rock"
+    }
+  ],
+  "result": {
+    "item": "hcsurvival:sharp_rock",
+    "count": 2
+  }
+}

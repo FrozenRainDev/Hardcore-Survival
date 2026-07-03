@@ -12,8 +12,7 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.ai.goal.Goal;
 import net.minecraft.world.entity.ai.util.GoalUtils;
-import net.minecraft.world.item.PickaxeItem;
-import net.minecraft.world.item.ShovelItem;
+import net.minecraft.world.item.*;
 import net.minecraft.world.level.GameRules;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
@@ -24,7 +23,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.EnumSet;
 
-public class BreakBlockGoal extends Goal {
+public class ZombieBreakBlockGoal extends Goal {
     protected final Mob mob;
     private LivingEntity hcsLastAttacker;
     protected BlockPos breakPos = BlockPos.ZERO;
@@ -33,7 +32,7 @@ public class BreakBlockGoal extends Goal {
     //    private float offsetX, offsetZ;
     protected int breakProgress = -1, prevBreakStage = -1;
 
-    public BreakBlockGoal(Mob mob) {
+    public ZombieBreakBlockGoal(Mob mob) {
         this.mob = mob;
         if (!GoalUtils.hasGroundPathNavigation(mob)) {
             throw new IllegalArgumentException("Unsupported mob type for BreakBlockGoal");
@@ -169,7 +168,13 @@ public class BreakBlockGoal extends Goal {
     }
 
     public int getMaxProgress() {
-        return (int) (HcsDifficulty.chooseVal(this.mob.level(), 4000.0F, 2000.0F, 1000.0F) * this.breakState.getDestroySpeed(this.mob.level(), this.breakPos) * ((this.mob.getMainHandItem().getItem() instanceof ShovelItem) ? 0.2F : 1.0F));
+        float toolAcceleration = 1.0F;
+        Item item = this.mob.getMainHandItem().getItem();
+        if (item instanceof ShovelItem) toolAcceleration = 0.2F;
+        else if (item instanceof TieredItem) toolAcceleration = 0.4F;
+        return (int) (HcsDifficulty.chooseVal(this.mob.level(), 2400.0F, 1200.0F, 600.0F)
+                * this.breakState.getDestroySpeed(this.mob.level(), this.breakPos)
+                * toolAcceleration);
     }
 
     public boolean canBreakBlock(@NotNull BlockState state) {

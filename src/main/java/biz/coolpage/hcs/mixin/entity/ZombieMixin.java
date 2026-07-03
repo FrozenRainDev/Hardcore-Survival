@@ -2,7 +2,7 @@ package biz.coolpage.hcs.mixin.entity;
 
 import biz.coolpage.hcs.config.Configs;
 import biz.coolpage.hcs.entity.goal.AdvancedAvoidSunlightGoal;
-import biz.coolpage.hcs.entity.goal.BreakBlockGoal;
+import biz.coolpage.hcs.entity.goal.ZombieBreakBlockGoal;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
 import net.minecraft.world.entity.animal.Animal;
@@ -31,7 +31,7 @@ public abstract class ZombieMixin extends Monster { // ZombieEntityMixin
     // Using "protected" will crash even the original method is "protected"
     @Inject(method = "addBehaviourGoals", at = @At("TAIL"))
     public void addBehaviourGoals(CallbackInfo ci) {
-        this.targetSelector.addGoal(0, new BreakBlockGoal(this));
+        this.targetSelector.addGoal(0, new ZombieBreakBlockGoal(this));
         if (this.isSunSensitive()) this.targetSelector.addGoal(1, new AdvancedAvoidSunlightGoal(this));
         // Add animal target for adult zombies
         // Prioritize player(s) within 8 blocks in **TrackTargetGoalMixin/shouldContinue()**

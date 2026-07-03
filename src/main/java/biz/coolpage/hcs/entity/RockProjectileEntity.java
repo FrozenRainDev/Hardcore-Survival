@@ -75,7 +75,7 @@ public class RockProjectileEntity extends ThrowableItemProjectile {
             if (isHardBlock) {
                 EntityHelper.dropItem(this, Hcs.SHARP_ROCK.get());
             } else {
-                if (Math.random() < 0.85) EntityHelper.dropItem(this, Hcs.ROCK.get());
+                if (Math.random() < 0.92) EntityHelper.dropItem(this, Hcs.ROCK.get());
                 else EntityHelper.dropItem(this, Hcs.SHARP_ROCK.get());
             }
 

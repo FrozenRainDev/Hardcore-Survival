@@ -69,7 +69,7 @@ public class FlintProjectileEntity extends ThrowableItemProjectile {
             if (isHardBlock) {
                 EntityHelper.dropItem(this, Hcs.SHARP_FLINT.get());
             } else {
-                if (Math.random() < 0.85) EntityHelper.dropItem(this, Items.FLINT);
+                if (Math.random() < 0.95) EntityHelper.dropItem(this, Items.FLINT);
                 else EntityHelper.dropItem(this, Hcs.SHARP_FLINT.get());
             }
 

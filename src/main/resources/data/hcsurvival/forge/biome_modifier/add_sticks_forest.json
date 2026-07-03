@@ -1,0 +1,8 @@
+{
+  "type": "forge:add_features",
+  "biomes": "#hcsurvival:spawns_many_sticks",
+  "features": [
+    "hcsurvival:stick_forest"
+  ],
+  "step": "vegetal_decoration"
+}

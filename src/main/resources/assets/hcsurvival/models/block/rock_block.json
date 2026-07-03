@@ -1,0 +1,17 @@
+{
+  "render_type": "minecraft:cutout",
+  "textures": {
+    "particle": "hcsurvival:item/rock",
+    "texture": "hcsurvival:item/rock"
+  },
+  "elements": [
+    {
+      "from": [4, 0.1, 4],
+      "to": [12, 0.1, 12],
+      "faces": {
+        "up": { "uv": [0, 0, 16, 16], "texture": "#texture" },
+        "down": { "uv": [0, 16, 16, 0], "texture": "#texture" }
+      }
+    }
+  ]
+}

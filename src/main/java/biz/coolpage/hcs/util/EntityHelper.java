@@ -1,7 +1,5 @@
 package biz.coolpage.hcs.util;
 
-import biz.coolpage.hcs.Hcs;
-import biz.coolpage.hcs.item.KnifeItem;
 import biz.coolpage.hcs.status.HcsEffects;
 import biz.coolpage.hcs.status.accessor.StatAccessor;
 import biz.coolpage.hcs.status.manager.StatusManager;
@@ -15,7 +13,6 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.world.InteractionResult;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.damagesource.DamageTypes;
 import net.minecraft.world.effect.MobEffect;
@@ -30,16 +27,14 @@ import net.minecraft.world.entity.monster.Enemy;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.food.FoodData;
 import net.minecraft.world.item.*;
-import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.TorchBlock;
-import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.gameevent.GameEvent;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -290,18 +285,49 @@ public class EntityHelper {
         else if (item instanceof ProjectileWeaponItem ||
                 (item instanceof SwordItem swordItem && swordItem.getTier() == Tiers.WOOD))
             dist += 1.5F;
-        else if (item instanceof ShovelItem || item instanceof PickaxeItem ||
-                item instanceof AxeItem || item instanceof HoeItem)
+        else if (item instanceof AxeItem)
             dist += 2.0F;
+        else if (item instanceof ShovelItem || item instanceof PickaxeItem || item instanceof HoeItem||item instanceof SwordItem)
+            dist += 2.5F;
         else if (name.contains("spear") || name.contains("javelin") || item instanceof TridentItem)
             dist += 3.25F;
-        else if (item instanceof SwordItem)
-            dist += 2.5F;
         else if (mainHandStack.isEnchantable() && item != Items.BOOK && !(item instanceof ArmorItem))
             dist += 1.5F;
         if (IS_HOLDING_BLOCK.test(mainHandStack, offHandStack))
             distAddHoldingBlock += HOLDING_BLOCK_REACHING_RANGE_ADDITION;
         return Math.max(dist, distAddHoldingBlock);
+    }
+
+    /**
+     * Checks if the attacker has a valid line of sight to the target.
+     * Checks multiple points (eyes, center, feet) to allow diagonal/corner attacks
+     * while strictly preventing attacks through solid flat walls.
+     */
+    public static boolean canHitEntity(LivingEntity attacker, LivingEntity target) {
+        if (attacker == null || target == null) return false;
+        Level level = attacker.level();
+        Vec3 start = attacker.getEyePosition(1.0F);
+        // 1. Raycast: Attacker Eye -> Target Eye
+        Vec3 endEye = target.getEyePosition(1.0F);
+        if (isRaycastClear(level, attacker, start, endEye)) return true;
+        // 2. Raycast: Attacker Eye -> Target Center (Torso)
+        Vec3 endCenter = target.position().add(0, target.getBbHeight() * 0.5D, 0);
+        if (isRaycastClear(level, attacker, start, endCenter)) return true;
+        // 3. Raycast: Attacker Eye -> Target Feet
+        Vec3 endFeet = target.position().add(0, 0.1D, 0);
+        if (isRaycastClear(level, attacker, start, endFeet)) return true;
+        return false;
+    }
+
+    private static boolean isRaycastClear(@NotNull Level level, LivingEntity attacker, Vec3 start, Vec3 end) {
+        BlockHitResult result = level.clip(new ClipContext(
+                start,
+                end,
+                ClipContext.Block.COLLIDER, // Checks block collision shape
+                ClipContext.Fluid.NONE,
+                attacker // Ignores the attacker's own collision
+        ));
+        return result.getType() == HitResult.Type.MISS;
     }
 
     public static void addHcsDebuff(Object playerObj, MobEffect effect) {

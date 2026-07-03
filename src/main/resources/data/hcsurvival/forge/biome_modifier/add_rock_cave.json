@@ -1,0 +1,6 @@
+{
+  "type": "forge:add_features",
+  "biomes": "#minecraft:is_overworld",
+  "features": "hcsurvival:rock_cave",
+  "step": "underground_decoration"
+}
