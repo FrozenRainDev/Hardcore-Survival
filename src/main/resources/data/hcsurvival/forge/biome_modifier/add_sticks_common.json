@@ -1,6 +1,6 @@
 {
   "type": "forge:add_features",
-  "biomes": "#hcsurvival:spawns_common_sticks",
+  "biomes": "#minecraft:is_overworld",
   "features": [
     "hcsurvival:stick_common"
   ],
