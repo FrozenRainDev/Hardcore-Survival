@@ -1,6 +1,6 @@
 {
   "replace": false,
   "values": [
-    "#forge:is_lush"
+    "#minecraft:is_forest"
   ]
 }

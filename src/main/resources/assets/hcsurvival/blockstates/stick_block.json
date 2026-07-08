@@ -1,10 +1,10 @@
 {
   "variants": {
     "": [
-      { "model": "hcsurvival:block/rock_block" },
-      { "model": "hcsurvival:block/rock_block", "y": 90 },
-      { "model": "hcsurvival:block/rock_block", "y": 180 },
-      { "model": "hcsurvival:block/rock_block", "y": 270 }
+      { "model": "hcsurvival:block/stick_block" },
+      { "model": "hcsurvival:block/stick_block", "y": 90 },
+      { "model": "hcsurvival:block/stick_block", "y": 180 },
+      { "model": "hcsurvival:block/stick_block", "y": 270 }
     ]
   }
 }

@@ -21,18 +21,18 @@ public class HcsBiomeTagsProvider extends BiomeTagsProvider {
         super(output, lookupProvider, Hcs.MOD_ID, existingFileHelper);
     }
 
-    @Override
-    protected void addTags(HolderLookup.Provider provider) {
-        // Define a custom tag key under the mod namespace "hcsurvival"
-        TagKey<Biome> customTag = TagKey.create(
-                net.minecraft.core.registries.Registries.BIOME,
-                new ResourceLocation(Hcs.MOD_ID, "no_desert_biomes")
-        );
-
-        // Add broad biomes (e.g., Overworld) and strictly remove the desert tag
-        // This avoids complex and redundant biome enumerations
-        this.tag(customTag)
-                .addTag(BiomeTags.IS_OVERWORLD)
-                .remove(Tags.Biomes.IS_DESERT);
-    }
+//    @Override
+//    protected void addTags(HolderLookup.Provider provider) {
+//        // Define a custom tag key under the mod namespace "hcsurvival"
+//        TagKey<Biome> customTag = TagKey.create(
+//                net.minecraft.core.registries.Registries.BIOME,
+//                new ResourceLocation(Hcs.MOD_ID, "no_desert_biomes")
+//        );
+//
+//        // Add broad biomes (e.g., Overworld) and strictly remove the desert tag
+//        // This avoids complex and redundant biome enumerations
+//        this.tag(customTag)
+//                .addTag(BiomeTags.IS_OVERWORLD)
+//                .remove(Tags.Biomes.IS_DESERT);
+//    }
 }

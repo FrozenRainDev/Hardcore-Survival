@@ -52,8 +52,8 @@ public class GroundPickableBlock extends BushBlock {
                 || state.is(Blocks.SNOW)
                 || state.is(BlockTags.SAND)
                 || state.is(Blocks.TERRACOTTA)
-                || state.is(BlockTags.BASE_STONE_OVERWORLD);
-//                || state.is(Blocks.DEEPSLATE);
+                || state.is(BlockTags.BASE_STONE_OVERWORLD)
+                || state.is(Blocks.DEEPSLATE);
     }
 
     @Override

@@ -2,5 +2,5 @@
   "type": "forge:add_features",
   "biomes": "#minecraft:is_river",
   "features": "hcsurvival:river_rocks",
-  "step": "underground_decoration"
+  "step": "vegetal_decoration"
 }
