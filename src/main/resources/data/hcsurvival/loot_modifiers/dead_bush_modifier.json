@@ -1,0 +1,9 @@
+{
+  "type": "hcsurvival:dead_bush_modifier",
+  "conditions": [
+    {
+      "condition": "minecraft:block_state_property",
+      "block": "minecraft:dead_bush"
+    }
+  ]
+}

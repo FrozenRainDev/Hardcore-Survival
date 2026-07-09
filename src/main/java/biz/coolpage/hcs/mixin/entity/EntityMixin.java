@@ -1,5 +1,8 @@
 package biz.coolpage.hcs.mixin.entity;
 
+import biz.coolpage.hcs.block.GroundPickableBlock;
+import net.minecraft.core.BlockPos;
+import net.minecraft.tags.BlockTags;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.boss.enderdragon.EnderDragon;
@@ -10,8 +13,12 @@ import net.minecraft.world.entity.monster.WitherSkeleton;
 import net.minecraft.tags.DamageTypeTags;
 import net.minecraft.world.entity.monster.Zombie;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.*;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.common.Tags;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
@@ -19,7 +26,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(Entity.class)
 @SuppressWarnings("ConstantValue")
-public class EntityMixin {
+public abstract class EntityMixin {
     @Inject(method = "isInvulnerableTo", at = @At("RETURN"), cancellable = true)
     public void isInvulnerableTo(DamageSource damageSource, CallbackInfoReturnable<Boolean> cir) {
         Object ent = this;
@@ -45,6 +52,26 @@ public class EntityMixin {
                 // Cancel the drop by returning null (preventing the ItemEntity from being spawned)
                 cir.setReturnValue(null);
             }
+        }
+    }
+
+    @Shadow
+    public abstract Level level();
+
+    @Shadow
+    public abstract BlockPos blockPosition();
+
+    // Also see BlockBehaviourMixin
+    @Inject(method = "getBlockSpeedFactor", at = @At("RETURN"), cancellable = true)
+    private void hcs$applyVegetationSpeedFactor(CallbackInfoReturnable<Float> cir) {
+        BlockState state = this.level().getBlockState(this.blockPosition());
+        Block block = state.getBlock();
+        if (state.is(BlockTags.LEAVES)) {
+            cir.setReturnValue(0.02F);
+        }
+        if (!(block instanceof GroundPickableBlock)) {
+            if(block instanceof DoublePlantBlock) cir.setReturnValue(0.48F);
+           else if (block instanceof BushBlock) cir.setReturnValue(0.72F);
         }
     }
 }

@@ -4,6 +4,7 @@
     "hcsurvival:gravel_modifier",
     "hcsurvival:campfire_modifier_entry",
     "hcsurvival:mineshaft_remove_items",
-    "hcsurvival:zombie_remove_iron_ingot"
+    "hcsurvival:zombie_remove_iron_ingot",
+    "hcsurvival:dead_bush_modifier"
   ]
 }

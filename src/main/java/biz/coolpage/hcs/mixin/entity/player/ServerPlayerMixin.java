@@ -201,7 +201,7 @@ public abstract class ServerPlayerMixin extends Player {
             injuryManager.tick();
             sanityManager.tickEnemies(this);
 
-            final double bleeding = injuryManager.getBleeding() - 0.5;
+            final double bleeding = injuryManager.getBleeding() - 0.1;
             if (bleeding > 0.0)
                 EntityHelper.addHcsDebuff(this, HcsEffects.BLEEDING.get(), Mth.clamp((int) bleeding, 0, 3));
 

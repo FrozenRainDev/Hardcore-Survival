@@ -5,6 +5,7 @@ import biz.coolpage.hcs.block.torches.*;
 import biz.coolpage.hcs.config.HcsConfigs;
 import biz.coolpage.hcs.config.HcsDifficulty;
 import biz.coolpage.hcs.entity.*;
+import biz.coolpage.hcs.event.DeadBushLootModifier;
 import biz.coolpage.hcs.item.*;
 import biz.coolpage.hcs.item.BottleItem;
 import biz.coolpage.hcs.recipe.*;
@@ -309,6 +310,9 @@ public final class Hcs {
     public static final RegistryObject<Codec<? extends IGlobalLootModifier>> GRAVEL_DROP_MODIFIER = LOOT_MODIFIERS.register("gravel_drop", () -> GravelDropModifier.CODEC);
     @SuppressWarnings("unused")
     public static final RegistryObject<Codec<CampfireLootModifier>> CAMPFIRE_MODIFIER = LOOT_MODIFIERS.register("campfire_modifier", CampfireLootModifier.CODEC);
+    @SuppressWarnings("unused")
+    public static final RegistryObject<Codec<? extends IGlobalLootModifier>> DEAD_BUSH_MODIFIER =
+            LOOT_MODIFIERS.register("dead_bush_modifier", () -> DeadBushLootModifier.CODEC);
 
     // --- Recipe Serializers ---
     public static final RegistryObject<RecipeSerializer<?>>
