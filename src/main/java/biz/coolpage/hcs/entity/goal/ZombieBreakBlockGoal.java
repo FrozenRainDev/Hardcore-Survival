@@ -103,6 +103,9 @@ public class ZombieBreakBlockGoal extends Goal {
         // Core Fix 1: Completely halt pathfinding all at once when mining starts, instead of repeatedly calling it during ticks, resolving intermittent walking/jerking issues
         this.mob.getNavigation().stop();
 
+        // FIX: Clear MoveControl residual states to prevent the zombie from moving up slopes or continuing previous movements
+        this.mob.getMoveControl().setWantedPosition(this.mob.getX(), this.mob.getY(), this.mob.getZ(), 0.0D);
+
         // Lock the LookControl when digging starts
         if (this.mob.getLookControl() instanceof ILookControl ext) {
             ext.hcs$setLookLock(true);
@@ -186,6 +189,11 @@ public class ZombieBreakBlockGoal extends Goal {
 
     @Override
     public void tick() {
+        // FIX: Forcefully stop movement attributes every tick to prevent sliding or walking on slopes during mining
+        this.mob.setZza(0.0F);
+        this.mob.setXxa(0.0F);
+        this.mob.getMoveControl().setWantedPosition(this.mob.getX(), this.mob.getY(), this.mob.getZ(), 0.0D);
+
         ++this.breakProgress;
 //        if (this.offsetX * (float) ((double) this.breakPos.getX() + 0.5 - this.mob.getX()) + this.offsetZ * (float) ((double) this.breakPos.getZ() + 0.5 - this.mob.getZ()) < 0.0f)
 //            this.shouldStop = true; // digging pos too distant for mob

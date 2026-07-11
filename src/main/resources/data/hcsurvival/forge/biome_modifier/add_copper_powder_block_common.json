@@ -1,0 +1,8 @@
+{
+  "type": "forge:add_features",
+  "biomes": "#minecraft:is_overworld",
+  "step": "vegetal_decoration",
+  "features": [
+    "hcsurvival:copper_powder_common"
+  ]
+}

@@ -1,0 +1,10 @@
+{
+  "variants": {
+    "": [
+      { "model": "hcsurvival:block/flint_block" },
+      { "model": "hcsurvival:block/flint_block", "y": 90 },
+      { "model": "hcsurvival:block/flint_block", "y": 180 },
+      { "model": "hcsurvival:block/flint_block", "y": 270 }
+    ]
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "variants": {
+    "": [
+      { "model": "hcsurvival:block/copper_powder_block" },
+      { "model": "hcsurvival:block/copper_powder_block", "y": 90 },
+      { "model": "hcsurvival:block/copper_powder_block", "y": 180 },
+      { "model": "hcsurvival:block/copper_powder_block", "y": 270 }
+    ]
+  }
+}

@@ -16,17 +16,30 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.*;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.AABB;
 import net.minecraftforge.common.Tags;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.ModifyArg;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
-
 
 @Mixin(Entity.class)
 @SuppressWarnings("ConstantValue")
 public abstract class EntityMixin {
+
+    @Shadow
+    public abstract Level level();
+
+    @Shadow
+    public abstract BlockPos blockPosition();
+
+    // Shadow the bounding box method to check for collision intersections
+    @Shadow
+    public abstract AABB getBoundingBox();
+
     @Inject(method = "isInvulnerableTo", at = @At("RETURN"), cancellable = true)
     public void isInvulnerableTo(DamageSource damageSource, CallbackInfoReturnable<Boolean> cir) {
         Object ent = this;
@@ -55,23 +68,70 @@ public abstract class EntityMixin {
         }
     }
 
-    @Shadow
-    public abstract Level level();
+    // Helper method to check if any part of the entity's bounding box is touching leaves
+    @Unique
+    private boolean hcsurvival$isTouchingLeaves() {
+        // Deflate by 1.0E-6 to avoid floating point precision issues on block boundaries (Vanilla standard practice)
+        return this.level().getBlockStatesIfLoaded(this.getBoundingBox().deflate(1.0E-6))
+                .anyMatch(state -> state.is(BlockTags.LEAVES));
+    }
 
-    @Shadow
-    public abstract BlockPos blockPosition();
+    // Halve the velocity preservation (original is hardcoded to 1.0)
+    @ModifyArg(
+            method = "move",
+            at = @At(
+                    value = "INVOKE",
+                    target = "Lnet/minecraft/world/phys/Vec3;multiply(DDD)Lnet/minecraft/world/phys/Vec3;"
+            ),
+            index = 0
+    )
+    private double hcsurvival$modifyVerticalFrictionInLeavesX(double originalYFriction) {
+        if (this.hcsurvival$isTouchingLeaves()) {
+            return 0.5D;
+        }
+        return originalYFriction;
+    }
 
-    // Also see BlockBehaviourMixin
+    @ModifyArg(
+            method = "move",
+            at = @At(
+                    value = "INVOKE",
+                    target = "Lnet/minecraft/world/phys/Vec3;multiply(DDD)Lnet/minecraft/world/phys/Vec3;"
+            ),
+            index = 1
+    )
+    private double hcsurvival$modifyVerticalFrictionInLeavesY(double originalYFriction) {
+        if (this.hcsurvival$isTouchingLeaves()) {
+            return 0.5D;
+        }
+        return originalYFriction;
+    }
+
+    @ModifyArg(
+            method = "move",
+            at = @At(
+                    value = "INVOKE",
+                    target = "Lnet/minecraft/world/phys/Vec3;multiply(DDD)Lnet/minecraft/world/phys/Vec3;"
+            ),
+            index = 2
+    )
+    private double hcsurvival$modifyVerticalFrictionInLeavesZ(double originalYFriction) {
+        if (this.hcsurvival$isTouchingLeaves()) {
+            return 0.5D;
+        }
+        return originalYFriction;
+    }
+
+
+    // Handle the X and Z axis friction by halving the block speed factor
     @Inject(method = "getBlockSpeedFactor", at = @At("RETURN"), cancellable = true)
     private void hcs$applyVegetationSpeedFactor(CallbackInfoReturnable<Float> cir) {
+        // Check the block exactly at the feet for other vegetation types
         BlockState state = this.level().getBlockState(this.blockPosition());
         Block block = state.getBlock();
-        if (state.is(BlockTags.LEAVES)) {
-            cir.setReturnValue(0.02F);
-        }
         if (!(block instanceof GroundPickableBlock)) {
-            if(block instanceof DoublePlantBlock) cir.setReturnValue(0.48F);
-           else if (block instanceof BushBlock) cir.setReturnValue(0.72F);
+            if (block instanceof DoublePlantBlock) cir.setReturnValue(0.5F);
+            else if (block instanceof BushBlock) cir.setReturnValue(0.8F);
         }
     }
 }

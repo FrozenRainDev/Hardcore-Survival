@@ -1,6 +1,5 @@
 package biz.coolpage.hcs.block;
 
-import biz.coolpage.hcs.Hcs;
 import net.minecraft.core.BlockPos;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
@@ -38,16 +37,17 @@ public class GroundPickableBlock extends BushBlock {
     }
 
     @Override
-    public VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
+    public @NotNull VoxelShape getShape(@NotNull BlockState state, @NotNull BlockGetter level, @NotNull BlockPos pos, @NotNull CollisionContext context) {
         // Shift the hitbox to match the random visual offset
         Vec3 offset = state.getOffset(level, pos);
         return SHAPE.move(offset.x, offset.y, offset.z);
     }
 
     @Override
-    protected boolean mayPlaceOn(BlockState state, BlockGetter level, BlockPos pos) {
+    protected boolean mayPlaceOn(@NotNull BlockState state, @NotNull BlockGetter level, @NotNull BlockPos pos) {
         // Added back BASE_STONE_OVERWORLD so it can spawn in caves on stone/deepslate
         return state.is(BlockTags.DIRT)
+                || state.is(Blocks.GRAVEL)
                 || state.is(Blocks.SNOW_BLOCK)
                 || state.is(Blocks.SNOW)
                 || state.is(BlockTags.SAND)
@@ -57,7 +57,7 @@ public class GroundPickableBlock extends BushBlock {
     }
 
     @Override
-    public InteractionResult use(BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit) {
+    public InteractionResult use(BlockState state, @NotNull Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit) {
         // Pick up logic
         if (!level.isClientSide) {
             ItemStack drop = this.dropSupplier.get().copy();

@@ -146,7 +146,8 @@ public abstract class PlayerMixin extends LivingEntity implements StatAccessor {
     private static void quitReturnTeleport(@Nullable Entity entity) {
         if (toPlayer(entity) instanceof ServerPlayer player && player.hasEffect(HcsEffects.RETURN.get())) {
             StatusManager statusManager1 = ((StatAccessor) player).getStatusManager();
-            if (statusManager1.getReturnEffectAwaitTicks() > 0) EntityHelper.msgById(player, "tip.hcsurvival.return_failed");
+            if (statusManager1.getReturnEffectAwaitTicks() > 0)
+                EntityHelper.msgById(player, "tip.hcsurvival.return_failed");
             statusManager1.setReturnEffectAwaitTicks(0);
         }
     }
@@ -517,9 +518,9 @@ public abstract class PlayerMixin extends LivingEntity implements StatAccessor {
         BlockPos headPos = this.blockPosition().above();
         int skyBrightness = this.level().getBrightness(LightLayer.SKY, headPos);
         if (this.level().isDay() && skyBrightness >= 14) {
-            if ((this.getMainHandItem().is(ItemTags.FLOWERS) || this.getOffhandItem().is(ItemTags.FLOWERS)))
-                this.sanityManager.add(0.000009);
-            else for (var item : this.getArmorSlots()) {
+//            if ((this.getMainHandItem().is(ItemTags.FLOWERS) || this.getOffhandItem().is(ItemTags.FLOWERS)))
+//                this.sanityManager.add(0.000009);else
+            for (var item : this.getArmorSlots()) {
                 if (item.getItem() == Hcs.GARLAND.get()) {
                     this.sanityManager.add(0.000012);
                     break;
@@ -562,7 +563,8 @@ public abstract class PlayerMixin extends LivingEntity implements StatAccessor {
         }
         if (outOfDarkness) {
             this.statusManager.setInDarknessTicks(0);
-            if (this.statusManager.getLastInDarknessTicks() >= 60) EntityHelper.msgById(this, "tip.hcsurvival.dark.fade");
+            if (this.statusManager.getLastInDarknessTicks() >= 60)
+                EntityHelper.msgById(this, "tip.hcsurvival.dark.fade");
         }
         if (this.hasEffect(MobEffects.DAMAGE_BOOST)) this.staminaManager.reset();
         this.staminaManager.setLastVecPos(this.position());

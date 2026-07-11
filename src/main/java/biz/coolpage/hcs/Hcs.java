@@ -106,6 +106,7 @@ public final class Hcs {
     public static final RegistryObject<WallGlowstoneTorchBlock> WALL_GLOWSTONE_TORCH_BLOCK = BLOCKS.register("wall_glowstone_torch", () -> new WallGlowstoneTorchBlock(BlockBehaviour.Properties.copy(Blocks.WALL_TORCH).noCollission().instabreak().lightLevel(state -> 14).sound(SoundType.WOOD).dropsLike(GLOWSTONE_TORCH_BLOCK.get())));
     public static final RegistryObject<Block> SMOLDERING_CAMPFIRE_BLOCK = BLOCKS.register("smoldering_campfire", SmolderingCampfireBlock::new);
     public static final RegistryObject<Block> BURNT_CAMPFIRE_BLOCK = BLOCKS.register("burnt_campfire", BurntCampfireBlock::new);
+    @SuppressWarnings("unused")
     public static final RegistryObject<Block> STICK_BLOCK = BLOCKS.register("stick_block",
             () -> new GroundPickableBlock(BlockBehaviour.Properties.of()
                     .mapColor(MapColor.WOOD)
@@ -117,6 +118,7 @@ public final class Hcs {
                     () -> new ItemStack(Items.STICK)
             )
     );
+    @SuppressWarnings("unused")
     public static final RegistryObject<Block> ROCK_BLOCK = BLOCKS.register("rock_block",
             () -> new GroundPickableBlock(BlockBehaviour.Properties.of()
                     .mapColor(MapColor.STONE)
@@ -128,6 +130,19 @@ public final class Hcs {
                     () -> new ItemStack(Hcs.ROCK.get())
             )
     );
+    @SuppressWarnings("unused")
+    public static final RegistryObject<Block> FLINT_BLOCK = BLOCKS.register("flint_block",
+            () -> new GroundPickableBlock(BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.STONE)
+                    .noCollission()
+                    .instabreak()
+                    .sound(SoundType.STONE)
+                    .pushReaction(PushReaction.DESTROY)
+                    .randomTicks(),
+                    () -> new ItemStack(Items.FLINT)
+            )
+    );
+    // Search "COPPER_POWDER_BLOCK" after this
 
     // --- Items ---
     public static final RegistryObject<Item> FIBER_STRING = ITEMS.register("fiber_string", () -> new Item(new Item.Properties()));
@@ -273,6 +288,20 @@ public final class Hcs {
     public static final RegistryObject<Item> SMOLDERING_CAMPFIRE = ITEMS.register("smoldering_campfire", () -> new HCSCampfireItem(SMOLDERING_CAMPFIRE_BLOCK.get().defaultBlockState()));
     public static final RegistryObject<Item> BURNT_CAMPFIRE = ITEMS.register("burnt_campfire", () -> new HCSCampfireItem(BURNT_CAMPFIRE_BLOCK.get().defaultBlockState()));
     public static final RegistryObject<Item> GARLAND = ITEMS.register("garland", () -> new ArmorItem(HcsArmorMaterials.GARLAND, ArmorItem.Type.HELMET, new Item.Properties()));
+
+    @SuppressWarnings("unused")
+    public static final RegistryObject<Block> COPPER_POWDER_BLOCK = BLOCKS.register("copper_powder_block",
+            () -> new GroundPickableBlock(BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.STONE)
+                    .noCollission()
+                    .instabreak()
+                    .sound(SoundType.STONE)
+                    .pushReaction(PushReaction.DESTROY)
+                    .randomTicks(),
+                    () -> new ItemStack(RAW_COPPER_POWDER.get())
+            )
+    );
+
     // --- Potions ---
     public static final RegistryObject<Potion>
             IRONSKIN_POTION = POTIONS.register("hcs_ironskin", () -> new Potion(new MobEffectInstance(HcsEffects.IRONSKIN.get(), 3600, 0))),
