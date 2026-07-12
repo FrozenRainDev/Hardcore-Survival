@@ -38,7 +38,7 @@ public abstract class TargetGoalMixin {
     @Inject(at = @At("RETURN"), method = "getFollowDistance", cancellable = true)
     protected void getFollowDistance(@NotNull CallbackInfoReturnable<Double> cir) {
         if (mob instanceof Zombie)
-            cir.setReturnValue(Math.max(cir.getReturnValue(), EntityHelper.ZOMBIE_SENSING_RANGE));
+            cir.setReturnValue(Math.max(cir.getReturnValue(), EntityHelper.ZOMBIE_AND_SKELETON_SENSING_RANGE));
     }
 
     @Inject(at = @At("HEAD"), method = "canContinueToUse", cancellable = true)

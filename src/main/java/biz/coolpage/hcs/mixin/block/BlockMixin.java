@@ -85,7 +85,7 @@ public class BlockMixin {
     public void fallOn(Level world, @NotNull BlockState state, BlockPos pos, Entity entity, float fallDistance, CallbackInfo ci) {
         Block block = state.getBlock();
         float multiplier = 1.0F;
-        if (state.is(BlockTags.WOOL) || state.getBlock() instanceof LeavesBlock) multiplier = 0.5F;
+        if (state.is(BlockTags.WOOL) || state.getBlock() instanceof LeavesBlock) multiplier = 0.3F;
         else if (block instanceof GrassBlock) multiplier = 0.8F;
         else if (block instanceof SandBlock) multiplier = 0.7F;
         else if (block == Blocks.PODZOL || block == Blocks.MYCELIUM || block == Blocks.DIRT_PATH || block == Blocks.DIRT)

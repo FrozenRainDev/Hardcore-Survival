@@ -17,6 +17,7 @@ import net.minecraft.world.level.GameRules;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.LeavesBlock;
 import net.minecraft.world.level.block.LevelEvent;
 import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.NotNull;
@@ -32,6 +33,11 @@ public class ZombieBreakBlockGoal extends Goal {
     //    private float offsetX, offsetZ;
     protected int breakProgress = -1, prevBreakStage = -1;
 
+    // --- Added fields for 3 seconds (60 ticks) delay logic ---
+    protected int lastY = Integer.MIN_VALUE;
+    protected int lastYChangeTick = 0;
+    protected int conditionMetStartTick = -1;
+
     public ZombieBreakBlockGoal(Mob mob) {
         this.mob = mob;
         if (!GoalUtils.hasGroundPathNavigation(mob)) {
@@ -43,17 +49,42 @@ public class ZombieBreakBlockGoal extends Goal {
 
     @Override
     public boolean canUse() {
+        // Track vertical movement (Y-level changes)
+        int currentY = this.mob.getBlockY();
+        if (this.lastY == Integer.MIN_VALUE) {
+            this.lastY = currentY;
+            this.lastYChangeTick = this.mob.tickCount;
+        }
+        if (currentY != this.lastY) {
+            this.lastY = currentY;
+            this.lastYChangeTick = this.mob.tickCount;
+        }
+
+        // Condition 1: Must not have moved up/down in the last 3 seconds (60 ticks)
+        if (this.mob.tickCount - this.lastYChangeTick < 60) {
+            this.conditionMetStartTick = -1;
+            return false;
+        }
+
         // Choose a block to break
         LivingEntity target = this.mob.getTarget();
         Level world = this.mob.level();
-        if (target == null || !this.mob.level().getGameRules().getBoolean(GameRules.RULE_MOBGRIEFING))
+        if (target == null || !this.mob.level().getGameRules().getBoolean(GameRules.RULE_MOBGRIEFING)) {
+            this.conditionMetStartTick = -1;
             return false;
-        if (world instanceof ServerLevel serverWorld && !Configs.isEnabled(serverWorld, Configs.HOSTILE_ZOMBIE))
+        }
+        if (world instanceof ServerLevel serverWorld && !Configs.isEnabled(serverWorld, Configs.HOSTILE_ZOMBIE)) {
+            this.conditionMetStartTick = -1;
             return false;
+        }
 
         // Set Y-axis traversal priority: 1 (upper body/facing height) -> 0 (sole of foot) -> 2 (top of head) -> -1 (below feet)
         int[] yOffsets = {1, 0, 2, -1};
+        boolean foundValidBlock = false;
+        BlockPos foundPos = null;
+        BlockState foundState = null;
 
+        searchLoop:
         for (int yOffset : yOffsets) {
             // Should not dig downward when not above target
             if (yOffset == -1 && this.mob.getY() <= target.getY()) continue;
@@ -78,20 +109,40 @@ public class ZombieBreakBlockGoal extends Goal {
 
                     BlockState pendingBreakState = this.mob.level().getBlockState(pendingBreakPos);
                     // Avoid redundant destroying if the block has no collision shape (can be walked through)
-                    if (pendingBreakState.getCollisionShape(this.mob.level(), pendingBreakPos).isEmpty()) continue;
+                    if (pendingBreakState.getCollisionShape(this.mob.level(), pendingBreakPos).isEmpty()
+                            && (!(pendingBreakState.getBlock() instanceof LeavesBlock))) continue;
 
                     // Determine whether to start
                     // FIX: Added `this.mob.horizontalCollision` so the zombie starts mining immediately upon hitting a wall,
                     // instead of waiting to slide to the absolute closest point to the player.
                     if (canBreakBlock(pendingBreakState) && (this.mob.getNavigation().isDone() || this.mob.horizontalCollision)) {
-//                        System.out.println("Breaking block " + pendingBreakPos);
-                        this.breakPos = pendingBreakPos;
-                        this.breakState = pendingBreakState;
-                        return true;
+                        foundPos = pendingBreakPos;
+                        foundState = pendingBreakState;
+                        foundValidBlock = true;
+                        break searchLoop; // Break out of all loops once a valid block is found
                     }
                 }
             }
         }
+
+        // Condition 2: Target block found, now check if it has been continuously valid for 2 seconds
+        if (!foundValidBlock) {
+            this.conditionMetStartTick = -1;
+            return false;
+        }
+
+        if (this.conditionMetStartTick == -1) {
+            this.conditionMetStartTick = this.mob.tickCount;
+        }
+
+        // Check if 40 ticks (2 seconds) have passed since conditions were first met
+        if (this.mob.tickCount - this.conditionMetStartTick >= 40) {
+            this.breakPos = foundPos;
+            this.breakState = foundState;
+            this.conditionMetStartTick = -1; // Reset for future AI cycle
+            return true;
+        }
+
         return false;
     }
 
@@ -141,7 +192,7 @@ public class ZombieBreakBlockGoal extends Goal {
         // Check whether the door/hatch has been opened by a player, or whether the block collision volume is empty
         boolean isOpened = currentState.hasProperty(net.minecraft.world.level.block.state.properties.BlockStateProperties.OPEN)
                 && currentState.getValue(net.minecraft.world.level.block.state.properties.BlockStateProperties.OPEN);
-        if (isOpened || currentState.getCollisionShape(this.mob.level(), this.breakPos).isEmpty()) {
+        if (isOpened || (currentState.getCollisionShape(this.mob.level(), this.breakPos).isEmpty()&& (!(currentState.getBlock() instanceof LeavesBlock)))) {
             return false;
         }
 

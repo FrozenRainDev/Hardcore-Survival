@@ -1,6 +1,8 @@
 package biz.coolpage.hcs.mixin.entity;
 
 import biz.coolpage.hcs.block.GroundPickableBlock;
+import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
+import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import net.minecraft.core.BlockPos;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.world.damagesource.DamageSource;
@@ -17,6 +19,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.*;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
+import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.common.Tags;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -77,51 +80,33 @@ public abstract class EntityMixin {
     }
 
     // Halve the velocity preservation (original is hardcoded to 1.0)
-    @ModifyArg(
+    @WrapOperation(
             method = "move",
             at = @At(
                     value = "INVOKE",
                     target = "Lnet/minecraft/world/phys/Vec3;multiply(DDD)Lnet/minecraft/world/phys/Vec3;"
-            ),
-            index = 0
+            )
     )
-    private double hcsurvival$modifyVerticalFrictionInLeavesX(double originalYFriction) {
+    private Vec3 hcsurvival$modifyFrictionInLeaves(Vec3 instance, double x, double y, double z, Operation<Vec3> original) {
         if (this.hcsurvival$isTouchingLeaves()) {
-            return 0.5D;
-        }
-        return originalYFriction;
-    }
+            // Cast 'this' to Entity to access its current movement vector
+            Entity entity = (Entity) (Object) this;
 
-    @ModifyArg(
-            method = "move",
-            at = @At(
-                    value = "INVOKE",
-                    target = "Lnet/minecraft/world/phys/Vec3;multiply(DDD)Lnet/minecraft/world/phys/Vec3;"
-            ),
-            index = 1
-    )
-    private double hcsurvival$modifyVerticalFrictionInLeavesY(double originalYFriction) {
-        if (this.hcsurvival$isTouchingLeaves()) {
-            return 0.5D;
-        }
-        return originalYFriction;
-    }
+            // X and Z are always slowed down
+            double modifiedX = 0.3D;
+            double modifiedZ = 0.3D;
 
-    @ModifyArg(
-            method = "move",
-            at = @At(
-                    value = "INVOKE",
-                    target = "Lnet/minecraft/world/phys/Vec3;multiply(DDD)Lnet/minecraft/world/phys/Vec3;"
-            ),
-            index = 2
-    )
-    private double hcsurvival$modifyVerticalFrictionInLeavesZ(double originalYFriction) {
-        if (this.hcsurvival$isTouchingLeaves()) {
-            return 0.5D;
-        }
-        return originalYFriction;
-    }
+            // Check if the entity is moving downwards or is stationary
+            // If y > 0, it means the entity is moving upwards, so we skip the slowdown
+            double modifiedY = (entity.getDeltaMovement().y <= 0.0D) ? 0.65D : y;
 
+            // Call the original multiply method with our modified arguments
+            return original.call(instance, modifiedX, modifiedY, modifiedZ);
+        }
+
+        // If not touching leaves, proceed with the original arguments
+        return original.call(instance, x, y, z);
+    }
 
     // Handle the X and Z axis friction by halving the block speed factor
     @Inject(method = "getBlockSpeedFactor", at = @At("RETURN"), cancellable = true)
@@ -130,7 +115,7 @@ public abstract class EntityMixin {
         BlockState state = this.level().getBlockState(this.blockPosition());
         Block block = state.getBlock();
         if (!(block instanceof GroundPickableBlock)) {
-            if (block instanceof DoublePlantBlock) cir.setReturnValue(0.5F);
+            if (block instanceof DoublePlantBlock || block instanceof SugarCaneBlock) cir.setReturnValue(0.5F);
             else if (block instanceof BushBlock) cir.setReturnValue(0.8F);
         }
     }

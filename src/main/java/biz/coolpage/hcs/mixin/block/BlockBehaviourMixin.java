@@ -1,5 +1,6 @@
 package biz.coolpage.hcs.mixin.block;
 
+import com.llamalad7.mixinextras.injector.ModifyReturnValue;
 import net.minecraft.core.BlockPos;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.world.entity.Entity;
@@ -14,17 +15,18 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(BlockBehaviour.class)
 public abstract class BlockBehaviourMixin {
     // Also see EntityMixin
-    @Inject(method = "getCollisionShape", at = @At("HEAD"), cancellable = true)
-    private void hcs$removeLeavesCollision(@NotNull BlockState state, net.minecraft.world.level.BlockGetter level, BlockPos pos, CollisionContext context, CallbackInfoReturnable<VoxelShape> cir) {
+    @ModifyReturnValue(method = "getCollisionShape", at = @At("RETURN"))
+    private VoxelShape hcs$removeLeavesCollision(VoxelShape original, @NotNull BlockState state, net.minecraft.world.level.BlockGetter level, BlockPos pos, CollisionContext context) {
         // Remove collision volume for leaves
+        // Return empty shape if it's leaves, otherwise fallback to the original shape
         if (state.is(BlockTags.LEAVES)) {
-            cir.setReturnValue(Shapes.empty());
+            return Shapes.empty();
         }
+        return original;
     }
 
     @Inject(method = "entityInside", at = @At("HEAD"))

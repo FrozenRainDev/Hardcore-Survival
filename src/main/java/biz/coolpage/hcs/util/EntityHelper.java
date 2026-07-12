@@ -52,7 +52,7 @@ import static biz.coolpage.hcs.util.CommUtil.applyNullable;
 public class EntityHelper {
     @Deprecated
     public static final double[][] FIND_NEAREST_BLOCKS = {{0, -1, 0}, {0, 1, 0}, {0, 2, 0}, {-1, 0, 0}, {-1, 1, 0}, {1, 0, 0}, {1, 1, 0}, {0, 0, 1}, {0, 1, 1}, {0, 0, -1}, {0, 1, -1}};
-    public static final double ZOMBIE_SENSING_RANGE = 40.0;
+    public static final double ZOMBIE_AND_SKELETON_SENSING_RANGE = 48.0;
     public static final float HOLDING_BLOCK_REACHING_RANGE_ADDITION = 1.0F;
 
     // Note: DamageTypes need to be adjusted according to the actual damage type tags
@@ -117,6 +117,7 @@ public class EntityHelper {
                     (-2.72 / (1 + Math.pow(Math.E, (2000 - x) / 600.0)) + 2.74);
 
     // todo EntityDataAccessor 需要在实体类中注册 而不是mixin
+    @Deprecated
     public static final EntityDataAccessor<Long> MILKED_TIME = SynchedEntityData.defineId(Cow.class, EntityDataSerializers.LONG);
 
     public static void dropItem(@NotNull Entity entity, double x, double y, double z, Item item, int count) {
@@ -245,6 +246,7 @@ public class EntityHelper {
         target.playSound(null, x, y, z, SoundEvents.ENDERMAN_TELEPORT, SoundSource.PLAYERS, 1f, 1f);
     }
 
+    @Deprecated
     public static BlockPos getPosFacing(Entity entity, boolean isBackward) {
         if (entity == null) {
             // Reg.LOGGER.error("EntityHelper/getPosFacing;entity==null");
@@ -452,13 +454,13 @@ public class EntityHelper {
         return false;
     }
 
-    public static List<? extends Mob> getOthersEntitiesInRange(@NotNull LivingEntity entity,
-                                                               Class<? extends Mob> targetEntClass,
-                                                               double rangeMultiplier) {
+    public static @NotNull List<? extends Mob> getOthersEntitiesInRange(@NotNull LivingEntity entity,
+                                                                        Class<? extends Mob> targetEntClass,
+                                                                        double rangeMultiplier) {
         AABB box = AABB.ofSize(entity.position(),
-                ZOMBIE_SENSING_RANGE * rangeMultiplier * 2,
+                ZOMBIE_AND_SKELETON_SENSING_RANGE * rangeMultiplier * 2,
                 10.0 * rangeMultiplier * 2,
-                ZOMBIE_SENSING_RANGE * rangeMultiplier * 2);
+                ZOMBIE_AND_SKELETON_SENSING_RANGE * rangeMultiplier * 2);
         return entity.level().getEntitiesOfClass(targetEntClass, box,
                 EntitySelector.NO_SPECTATORS);
     }
