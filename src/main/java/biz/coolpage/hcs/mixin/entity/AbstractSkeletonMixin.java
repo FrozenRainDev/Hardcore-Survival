@@ -14,6 +14,7 @@ import org.spongepowered.asm.mixin.injection.At;
 
 import static biz.coolpage.hcs.util.EntityHelper.ZOMBIE_AND_SKELETON_SENSING_RANGE;
 
+// Also see RangedBowAttackGoal
 @Mixin(AbstractSkeleton.class)
 public class AbstractSkeletonMixin {
     // Modify the default attributes of the skeleton (e.g., Max Health)

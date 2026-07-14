@@ -180,7 +180,6 @@ public class ZombieBreakBlockGoal extends Goal {
 
     @Override
     public boolean canContinueToUse() {
-//         System.out.println("..."); // 省略你的调试代码
         if (this.mob.getLastHurtByMob() != null) this.hcsLastAttacker = this.mob.getLastHurtByMob();
         if (this.hcsLastAttacker != null && !this.hcsLastAttacker.isAlive()) this.hcsLastAttacker = null;
         if (this.mob.level() instanceof ServerLevel serverWorld && !Configs.isEnabled(serverWorld, Configs.HOSTILE_ZOMBIE))
