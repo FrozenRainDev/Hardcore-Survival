@@ -28,7 +28,7 @@ public class Client {
             ClientS2C.init();
             ClientPlayConnectionEvent.init();
 
-            // todo 在 1.20.1 中虽然建议在 JSON 中配置 render_type，但保留原代码逻辑
+            // todo In 1.20.1, although it is recommended to configure render_type in JSON, the original code logic is retained.
             initBlockRenderLayerMap(
                     Hcs.ICEBOX.get(),
                     Hcs.DRYING_RACK.get(),
@@ -42,7 +42,8 @@ public class Client {
                     Hcs.WALL_BURNT_TORCH_BLOCK.get(),
                     Hcs.GLOWSTONE_TORCH_BLOCK.get(),
                     Hcs.WALL_GLOWSTONE_TORCH_BLOCK.get(),
-                    Hcs.SMOLDERING_CAMPFIRE_BLOCK.get()
+                    Hcs.SMOLDERING_CAMPFIRE_BLOCK.get(),
+                    Hcs.STRAW_BED.get()
             );
 
             // ModelPredicateProviderRegistry -> ItemProperties

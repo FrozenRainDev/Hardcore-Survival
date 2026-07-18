@@ -14,6 +14,7 @@
   "block.hcsurvival.wall_glowstone_torch": "벽에 붙인 발광석 횃불",
   "block.hcsurvival.smoldering_campfire": "그을리는 모닥불",
   "block.hcsurvival.burnt_campfire": "다 타버린 모닥불",
+  "block.hcsurvival.straw_bed": "짚 침대",
   "death.attack.hcsurvival.dehydrate": "%1$s님이 갈증으로 죽었습니다",
   "death.attack.hcsurvival.heatstroke": "%1$s님이 열사병으로 죽었습니다",
   "death.attack.hcsurvival.oxygenDeficiency": "%1$s님이 산소 부족으로 죽었습니다",

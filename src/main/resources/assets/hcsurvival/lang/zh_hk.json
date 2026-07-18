@@ -14,6 +14,7 @@
   "block.hcsurvival.wall_glowstone_torch": "牆上的螢石火把",
   "block.hcsurvival.smoldering_campfire": "陰燃的營火",
   "block.hcsurvival.burnt_campfire": "燃盡的營火",
+  "block.hcsurvival.straw_bed": "乾草床",
   "death.attack.hcsurvival.dehydrate": "%1$s 渴死了",
   "death.attack.hcsurvival.heatstroke": "%1$s 中暑致死",
   "death.attack.hcsurvival.oxygenDeficiency": "%1$s 因缺氧而死",

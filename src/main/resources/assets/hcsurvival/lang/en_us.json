@@ -14,6 +14,7 @@
   "block.hcsurvival.wall_glowstone_torch": "Wall Glowstone Torch",
   "block.hcsurvival.smoldering_campfire": "Smoldering Campfire",
   "block.hcsurvival.burnt_campfire": "Burnt Campfire",
+  "block.hcsurvival.straw_bed": "Straw Bed",
   "death.attack.hcsurvival.dehydrate": "%1$s died of thirst",
   "death.attack.hcsurvival.heatstroke": "%1$s died of heatstroke",
   "death.attack.hcsurvival.oxygenDeficiency": "%1$s suffocated from oxygen deficiency",

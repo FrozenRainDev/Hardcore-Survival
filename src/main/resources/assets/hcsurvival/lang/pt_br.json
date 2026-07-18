@@ -14,6 +14,7 @@
   "block.hcsurvival.wall_glowstone_torch": "Tocha de parede de pedra luminosa",
   "block.hcsurvival.smoldering_campfire": "Fogueira em brasa",
   "block.hcsurvival.burnt_campfire": "Fogueira queimada",
+  "block.hcsurvival.straw_bed": "Cama de Palha",
   "death.attack.hcsurvival.dehydrate": "%1$s morreu de sede",
   "death.attack.hcsurvival.heatstroke": "%1$s morreu de insolação",
   "death.attack.hcsurvival.oxygenDeficiency": "%1$s morreu por falta de oxigênio",

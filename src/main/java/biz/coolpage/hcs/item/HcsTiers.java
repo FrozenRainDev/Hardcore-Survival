@@ -2,11 +2,15 @@ package biz.coolpage.hcs.item;
 
 import biz.coolpage.hcs.Hcs;
 import biz.coolpage.hcs.util.HcsFactory;
+import net.minecraft.core.registries.Registries;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.BlockTags;
+import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.Tier;
 import net.minecraft.world.item.Tiers;
 import net.minecraft.world.item.crafting.Ingredient;
+import net.minecraft.world.level.block.Block;
 import net.minecraftforge.common.ForgeTier;
 import net.minecraftforge.common.TierSortingRegistry;
 
@@ -18,13 +22,17 @@ import java.util.List;
 */
 
 public final class HcsTiers { // HcsArmorMaterials
+
+    // Create a custom tag for copper tools to prevent hijacking vanilla iron requirements
+    public static final TagKey<Block> NEEDS_COPPER_TOOL = TagKey.create(Registries.BLOCK, HcsFactory.createResourceLocation("needs_copper_tool"));
+
     public static final Tier COPPER = TierSortingRegistry.registerTier(
             // params: absolute mining level; durability; miningSpeedMultiplier
-            new ForgeTier(2 /* absolute mining level */, 96, 4.0F, 0.0F, 10,
-                    BlockTags.NEEDS_IRON_TOOL, () -> Ingredient.of(Items.COPPER_INGOT)),
+            new ForgeTier(1 /* absolute mining level */, 96, 4.0F, 0.0F, 10,
+                    NEEDS_COPPER_TOOL, () -> Ingredient.of(Items.COPPER_INGOT)),
             HcsFactory.createResourceLocation("copper"),
-            List.of(Tiers.IRON)/* Putting STONE will cause the copper pickaxe to fail to drop ores when mining. */
-            , List.of(Tiers.DIAMOND)),
+            List.of(Tiers.STONE)/* Putting STONE will no longer fail because we use a custom tag now. */
+            , List.of(Tiers.IRON)),
 
     FLINT_HATCHET = TierSortingRegistry.registerTier(
             new ForgeTier(0, 4, 0.24F, 0.0F, 0,

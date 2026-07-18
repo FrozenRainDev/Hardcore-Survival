@@ -1,0 +1,18 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "show_notification": true,
+  "key": {
+    "S": {
+      "item": "hcsurvival:grass_fiber"
+    }
+  },
+  "pattern": [
+    "SSS",
+    "SSS"
+  ],
+  "result": {
+    "item": "hcsurvival:straw_bed",
+    "count": 8
+  }
+}

@@ -22,7 +22,7 @@ public class ExtractWaterFromBambooRecipe extends CustomRecipe {
     }
 
     @Override
-    public boolean matches(@NotNull CraftingContainer inventory, Level world) {
+    public boolean matches(@NotNull CraftingContainer inventory, @NotNull Level world) {
         boolean b1 = false, b2 = false, b3 = false;
         int count = 0;
         for (int i = 0; i < inventory.getContainerSize(); ++i) {
@@ -39,7 +39,7 @@ public class ExtractWaterFromBambooRecipe extends CustomRecipe {
     }
 
     @Override
-    public ItemStack assemble(CraftingContainer craftingInventory, RegistryAccess dynamicRegistryManager) {
+    public @NotNull ItemStack assemble(@NotNull CraftingContainer craftingInventory, @NotNull RegistryAccess dynamicRegistryManager) {
         return Items.POTION.getDefaultInstance();
     }
 
@@ -49,7 +49,7 @@ public class ExtractWaterFromBambooRecipe extends CustomRecipe {
     }
 
     @Override
-    public NonNullList<ItemStack> getRemainingItems(@NotNull CraftingContainer inventory) {
+    public @NotNull NonNullList<ItemStack> getRemainingItems(@NotNull CraftingContainer inventory) {
         NonNullList<ItemStack> list = NonNullList.withSize(inventory.getContainerSize(), ItemStack.EMPTY);
         list.set(slotBamboo, new ItemStack(Hcs.WORM.get(), 1));
         return list;
@@ -57,7 +57,7 @@ public class ExtractWaterFromBambooRecipe extends CustomRecipe {
 
 
     @Override
-    public RecipeSerializer<?> getSerializer() {
+    public @NotNull RecipeSerializer<?> getSerializer() {
         return Hcs.EXTRACT_WATER_FROM_BAMBOO_RECIPE.get();
     }
 }

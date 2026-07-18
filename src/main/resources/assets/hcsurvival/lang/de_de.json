@@ -14,6 +14,7 @@
   "block.hcsurvival.wall_glowstone_torch": "Wand-Leuchtsteinfackel",
   "block.hcsurvival.smoldering_campfire": "Schwelendes Lagerfeuer",
   "block.hcsurvival.burnt_campfire": "Ausgebranntes Lagerfeuer",
+  "block.hcsurvival.straw_bed": "Strohbett",
   "death.attack.hcsurvival.dehydrate": "%1$s ist verdurstet",
   "death.attack.hcsurvival.heatstroke": "%1$s ist an einem Hitzschlag gestorben",
   "death.attack.hcsurvival.oxygenDeficiency": "%1$s ist an Sauerstoffmangel gestorben",

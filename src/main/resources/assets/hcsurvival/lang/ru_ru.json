@@ -14,6 +14,7 @@
   "block.hcsurvival.wall_glowstone_torch": "Настенный факел из светокамня",
   "block.hcsurvival.smoldering_campfire": "Тлеющий костёр",
   "block.hcsurvival.burnt_campfire": "Потухший костёр",
+  "block.hcsurvival.straw_bed": "Соломенная кровать",
   "death.attack.hcsurvival.dehydrate": "%1$s умер от жажды",
   "death.attack.hcsurvival.heatstroke": "%1$s умер от теплового удара",
   "death.attack.hcsurvival.oxygenDeficiency": "%1$s умер от нехватки кислорода",

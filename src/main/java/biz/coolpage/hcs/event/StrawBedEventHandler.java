@@ -1,7 +1,7 @@
 package biz.coolpage.hcs.event;
 
 import biz.coolpage.hcs.Hcs;
-import biz.coolpage.hcs.block.StrawBed;
+import biz.coolpage.hcs.block.StrawBedBlock;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.BedBlock;
@@ -27,7 +27,7 @@ public class StrawBedEventHandler {
             BlockState state = level.getBlockState(pos);
 
             // If the target block is our custom Straw Bed, cancel the spawn setting event
-            if (state.getBlock() instanceof StrawBed) {
+            if (state.getBlock() instanceof StrawBedBlock) {
                 event.setCanceled(true);
             }
         }
@@ -45,7 +45,7 @@ public class StrawBedEventHandler {
                 BlockState state = level.getBlockState(pos);
 
                 // Check if the player was sleeping in a Straw Bed
-                if (state.getBlock() instanceof StrawBed) {
+                if (state.getBlock() instanceof StrawBedBlock) {
 
                     // Destroy the primary part of the bed (false = do not drop item)
                     level.destroyBlock(pos, false);

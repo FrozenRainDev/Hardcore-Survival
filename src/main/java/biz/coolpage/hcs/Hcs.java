@@ -106,6 +106,8 @@ public final class Hcs {
     public static final RegistryObject<WallGlowstoneTorchBlock> WALL_GLOWSTONE_TORCH_BLOCK = BLOCKS.register("wall_glowstone_torch", () -> new WallGlowstoneTorchBlock(BlockBehaviour.Properties.copy(Blocks.WALL_TORCH).noCollission().instabreak().lightLevel(state -> 14).sound(SoundType.WOOD).dropsLike(GLOWSTONE_TORCH_BLOCK.get())));
     public static final RegistryObject<Block> SMOLDERING_CAMPFIRE_BLOCK = BLOCKS.register("smoldering_campfire", SmolderingCampfireBlock::new);
     public static final RegistryObject<Block> BURNT_CAMPFIRE_BLOCK = BLOCKS.register("burnt_campfire", BurntCampfireBlock::new);
+    public static final RegistryObject<StrawBedBlock> STRAW_BED = BLOCKS.register("straw_bed",
+            () -> new StrawBedBlock(net.minecraft.world.item.DyeColor.YELLOW, BlockBehaviour.Properties.copy(Blocks.YELLOW_BED)));
     @SuppressWarnings("unused")
     public static final RegistryObject<Block> STICK_BLOCK = BLOCKS.register("stick_block",
             () -> new GroundPickableBlock(BlockBehaviour.Properties.of()
@@ -146,6 +148,7 @@ public final class Hcs {
 
     // --- Items ---
     public static final RegistryObject<Item> FIBER_STRING = ITEMS.register("fiber_string", () -> new Item(new Item.Properties()));
+    public static final RegistryObject<Item> SINEW = ITEMS.register("sinew", () -> new Item(new Item.Properties()));
     public static final RegistryObject<Item> GRASS_FIBER = ITEMS.register("grass_fiber", () -> new Item(new Item.Properties()));
     public static final RegistryObject<Item> ROASTED_SEEDS = ITEMS.register("roasted_seeds", () -> new Item(new Item.Properties().food(new FoodProperties.Builder().nutrition(0).saturationMod(0f).fast().build())));
     public static final RegistryObject<Item> ROCK = ITEMS.register("rock", () -> new RockItem(new Item.Properties()));
@@ -288,6 +291,7 @@ public final class Hcs {
     public static final RegistryObject<Item> SMOLDERING_CAMPFIRE = ITEMS.register("smoldering_campfire", () -> new HCSCampfireItem(SMOLDERING_CAMPFIRE_BLOCK.get().defaultBlockState()));
     public static final RegistryObject<Item> BURNT_CAMPFIRE = ITEMS.register("burnt_campfire", () -> new HCSCampfireItem(BURNT_CAMPFIRE_BLOCK.get().defaultBlockState()));
     public static final RegistryObject<Item> GARLAND = ITEMS.register("garland", () -> new ArmorItem(HcsArmorMaterials.GARLAND, ArmorItem.Type.HELMET, new Item.Properties()));
+    public static final RegistryObject<Item> STRAW_BED_ITEM = ITEMS.register("straw_bed", () -> new BlockItem(STRAW_BED.get(), new Item.Properties()));
 
     @SuppressWarnings("unused")
     public static final RegistryObject<Block> COPPER_POWDER_BLOCK = BLOCKS.register("copper_powder_block",
@@ -370,6 +374,7 @@ public final class Hcs {
             .displayItems((parameters, output) -> {
                 output.accept(GRASS_FIBER.get());
                 output.accept(FIBER_STRING.get());
+                output.accept(SINEW.get());
                 output.accept(SHORT_STICK.get());
                 output.accept(TINDER.get());
                 output.accept(FIREWOOD.get());
@@ -468,6 +473,7 @@ public final class Hcs {
                 output.accept(BURNING_CRUDE_TORCH_ITEM.get());
                 output.accept(UNLIT_TORCH_ITEM.get());
                 output.accept(GLOWSTONE_TORCH_ITEM.get());
+                output.accept(STRAW_BED_ITEM.get());
             }).build());
 
     public Hcs(@NotNull FMLJavaModLoadingContext context) {
@@ -548,7 +554,7 @@ public final class Hcs {
     public void onFuelBurnTime(@NotNull FurnaceFuelBurnTimeEvent event) {
         Item item = event.getItemStack().getItem();
         if (item == GRASS_FIBER.get()) event.setBurnTime(50);
-        else if (item == FIBER_STRING.get()) event.setBurnTime(100);
+        else if (item == FIBER_STRING.get() || item == SINEW.get()) event.setBurnTime(100);
         else if (item == SHORT_STICK.get()) event.setBurnTime(80);
         else if (item == FIREWOOD.get()) event.setBurnTime(300);
         else if (item == TINDER.get()) event.setBurnTime(30);
@@ -567,7 +573,6 @@ public final class Hcs {
 
     private void onRegisterCommands(@NotNull RegisterCommandsEvent event) {
         var hcsCommand = Commands.literal("hcs");
-
         // /hcs village
         var villageCommand = Commands.literal("village").executes(context -> {
             context.getSource().sendSuccess(() -> Component.translatable(WorldHelper.shouldGenerateVillages() ? "tip.hcsurvival.can_gen_village" : "tip.hcsurvival.cant_gen_village"), false);
