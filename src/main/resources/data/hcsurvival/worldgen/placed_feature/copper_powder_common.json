@@ -1,7 +1,7 @@
 {
   "feature": "hcsurvival:copper_powder_patch",
   "placement": [
-    { "type": "minecraft:rarity_filter", "chance": 16 },
+    { "type": "minecraft:rarity_filter", "chance": 32 },
     { "type": "minecraft:in_square" },
     {
       "type": "minecraft:heightmap",

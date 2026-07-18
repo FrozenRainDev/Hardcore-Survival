@@ -12,7 +12,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(RangedBowAttackGoal.class)
 public abstract class RangedBowAttackGoalMixin {
-    @ Shadow @Final private Mob mob;
+    @Shadow @Final private Mob mob;
     @Shadow @Final private float attackRadiusSqr;
 
     // Inject right before the vanilla code checks if the mob is using the item.

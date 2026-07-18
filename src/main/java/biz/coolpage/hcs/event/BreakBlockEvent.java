@@ -70,7 +70,7 @@ public class BreakBlockEvent {
                     else if (rand < 0.012) dropItem(player, x, y, z, Hcs.WORM.get(), 1);
                     else if (rand < 0.02) dropItem(player, x, y, z, Hcs.POTHERB.get(), 1);
                     else if (rand < 0.35) {} //dropItem(player, x, y, z, Hcs.ROCK.get(), 1);
-                    else if (rand < 0.55) {} // dropItem(player, x, y, z, Hcs.GRASS_FIBER.get(), 1);
+                    else if (rand < 0.4) dropItem(player, x, y, z, Hcs.GRASS_FIBER.get(), 1);
                     else if (rand < 0.7) {} // dropItem(player, x, y, z, Items.STICK, 1);
                     else if (rand < 0.7009) dropItem(player, x, y, z, Hcs.SELAGINELLA.get(), 1);
                     else if (rand < 0.7083) dropItem(player, x, y, z, Hcs.GINGER.get(), 1);
@@ -81,7 +81,7 @@ public class BreakBlockEvent {
                     else if (rand < 0.012) dropItem(player, x, y, z, Hcs.WORM.get(), 2);
                     else if (rand < 0.02) dropItem(player, x, y, z, Hcs.POTHERB.get(), 2);
                     else if (rand < 0.35) {} // dropItem(player, x, y, z, Hcs.ROCK.get(), 2);
-                    else if (rand < 0.55) {} // dropItem(player, x, y, z, Hcs.GRASS_FIBER.get(), 2);
+                    else if (rand < 0.4) dropItem(player, x, y, z, Hcs.GRASS_FIBER.get(), 2);
                     else if (rand < 0.7) {} // dropItem(player, x, y, z, Items.STICK, 2);
                     else if (rand < 0.7009) dropItem(player, x, y, z, Hcs.SELAGINELLA.get(), 2);
                     else if (rand < 0.7083) dropItem(player, x, y, z, Hcs.GINGER.get(), 2);
