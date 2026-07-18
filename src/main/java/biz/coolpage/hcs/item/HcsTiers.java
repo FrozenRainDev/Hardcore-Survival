@@ -23,8 +23,13 @@ import java.util.List;
 
 public final class HcsTiers { // HcsArmorMaterials
 
-    // Create a custom tag for copper tools to prevent hijacking vanilla iron requirements
-    public static final TagKey<Block> NEEDS_COPPER_TOOL = TagKey.create(Registries.BLOCK, HcsFactory.createResourceLocation("needs_copper_tool"));
+    // Use custom tags for all custom tiers to prevent hijacking vanilla tiers' requirements 
+    // This ensures parallel tiers (like COPPER and FLINT_HATCHET) don't block each other's inherited mining abilities.
+    // https://share.gemini.google/JJqfCkyBhni4
+    public static final TagKey<Block> NEEDS_COPPER_TOOL = TagKey.create(Registries.BLOCK, HcsFactory.createResourceLocation( "needs_copper_tool"));
+    public static final TagKey<Block> NEEDS_FLINT_TOOL = TagKey.create(Registries.BLOCK, HcsFactory.createResourceLocation( "needs_flint_tool"));
+    public static final TagKey<Block> NEEDS_BONE_TOOL = TagKey.create(Registries.BLOCK, HcsFactory.createResourceLocation( "needs_bone_tool"));
+    public static final TagKey<Block> NEEDS_ROCK_TOOL = TagKey.create(Registries.BLOCK, HcsFactory.createResourceLocation( "needs_rock_tool"));
 
     public static final Tier COPPER = TierSortingRegistry.registerTier(
             // params: absolute mining level; durability; miningSpeedMultiplier
@@ -36,37 +41,37 @@ public final class HcsTiers { // HcsArmorMaterials
 
     FLINT_HATCHET = TierSortingRegistry.registerTier(
             new ForgeTier(0, 4, 0.24F, 0.0F, 0,
-                    BlockTags.NEEDS_STONE_TOOL, () -> Ingredient.of(Items.FLINT)),
+                    NEEDS_FLINT_TOOL, () -> Ingredient.of(Items.FLINT)),
             HcsFactory.createResourceLocation("flint"),
             List.of(Tiers.STONE), List.of(Tiers.IRON)),
 
     FLINT_CONE = TierSortingRegistry.registerTier(
             new ForgeTier(0, 32, 0.48F, 0.0F, 0,
-                    BlockTags.NEEDS_STONE_TOOL, () -> Ingredient.of(Items.FLINT)),
+                    NEEDS_FLINT_TOOL, () -> Ingredient.of(Items.FLINT)),
             HcsFactory.createResourceLocation("flint_cone"),
             List.of(Tiers.WOOD), List.of(Tiers.STONE)),
 
     FLINT_WEAPON = TierSortingRegistry.registerTier(
             new ForgeTier(0, 48, 0.0F, 0.0F, 0,
-                    BlockTags.NEEDS_STONE_TOOL, () -> Ingredient.of(Items.FLINT)),
+                    NEEDS_FLINT_TOOL, () -> Ingredient.of(Items.FLINT)),
             HcsFactory.createResourceLocation("flint_weapon"),
             List.of(Tiers.WOOD), List.of(Tiers.STONE)),
 
     SHARP_BROKEN_BONE = TierSortingRegistry.registerTier(
             new ForgeTier(0, 8, 0.36F, 0.0F, 0,
-                    BlockTags.NEEDS_STONE_TOOL, () -> Ingredient.of(Items.BONE)),
+                    NEEDS_BONE_TOOL, () -> Ingredient.of(Items.BONE)),
             HcsFactory.createResourceLocation("sharp_broken_bone"),
             List.of(Tiers.WOOD), List.of(Tiers.STONE)),
 
     STONE_CONE = TierSortingRegistry.registerTier(
             new ForgeTier(0, 8, 0.5F, 0.0F, 0,
-                    BlockTags.NEEDS_STONE_TOOL, () -> Ingredient.of(Hcs.ROCK.get())),
+                    NEEDS_ROCK_TOOL, () -> Ingredient.of(Hcs.ROCK.get())),
             HcsFactory.createResourceLocation("stone_cone"),
             List.of(Tiers.WOOD), List.of(Tiers.STONE)),
 
     STONE_WEAPON = TierSortingRegistry.registerTier(
             new ForgeTier(0, 12, 0.0F, 0.0F, 0,
-                    BlockTags.NEEDS_STONE_TOOL, () -> Ingredient.of(Hcs.ROCK.get())),
+                    NEEDS_ROCK_TOOL, () -> Ingredient.of(Hcs.ROCK.get())),
             HcsFactory.createResourceLocation("stone_weapon"),
             List.of(Tiers.WOOD), List.of(Tiers.STONE));
 }
