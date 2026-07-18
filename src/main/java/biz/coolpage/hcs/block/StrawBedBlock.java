@@ -6,12 +6,25 @@ import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.BedBlock;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.RenderShape;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.properties.BedPart;
+import net.minecraft.world.phys.shapes.CollisionContext;
+import net.minecraft.world.phys.shapes.Shapes;
+import net.minecraft.world.phys.shapes.VoxelShape;
 import org.jetbrains.annotations.NotNull;
 
 public class StrawBedBlock extends BedBlock {
+    // Migrated from Fabric: Converted dynamic horizontal rotation to static shape fields for vanilla Forge compatibility
+    // Block.column(16, 0, 4) is equivalent to Block.box(0, 0, 0, 16, 4, 16)
+    private static final VoxelShape BASE_SHAPE = Block.box(0.0D, 0.0D, 0.0D, 16.0D, 4.0D, 16.0D);
+    private static final VoxelShape PILLOW_NORTH = Shapes.or(BASE_SHAPE, Block.box(0.0D, 0.0D, 0.0D, 16.0D, 5.0D, 8.0D));
+    private static final VoxelShape PILLOW_SOUTH = Shapes.or(BASE_SHAPE, Block.box(0.0D, 0.0D, 8.0D, 16.0D, 5.0D, 16.0D));
+    private static final VoxelShape PILLOW_WEST = Shapes.or(BASE_SHAPE, Block.box(0.0D, 0.0D, 0.0D, 8.0D, 5.0D, 16.0D));
+    private static final VoxelShape PILLOW_EAST = Shapes.or(BASE_SHAPE, Block.box(8.0D, 0.0D, 0.0D, 16.0D, 5.0D, 16.0D));
+
     public StrawBedBlock(DyeColor pColor, BlockBehaviour.Properties pProperties) {
         super(pColor, pProperties);
     }
@@ -36,5 +49,20 @@ public class StrawBedBlock extends BedBlock {
         // Skip BedBlock's 0.5F multiplier, apply our own 0.7F
         // Reproduce vanilla Block.class fall damage logic directly
         pEntity.causeFallDamage(pFallDistance * 0.7F, 1.0F, pLevel.damageSources().fall());
+    }
+
+
+    @Override
+    public @NotNull VoxelShape getShape(@NotNull BlockState pState, @NotNull BlockGetter pLevel, @NotNull BlockPos pPos, @NotNull CollisionContext pContext) {
+        if (pState.getValue(PART) == BedPart.FOOT) {
+            return BASE_SHAPE;
+        }
+        return switch (pState.getValue(FACING)) {
+            case NORTH -> PILLOW_NORTH;
+            case SOUTH -> PILLOW_SOUTH;
+            case WEST -> PILLOW_WEST;
+            case EAST -> PILLOW_EAST;
+            default -> BASE_SHAPE;
+        };
     }
 }
