@@ -28,7 +28,7 @@ public abstract class LeavesBlockMixin extends Block {
 
     // Yarn decaying() typically corresponds to isRandomlyTicking or manual distance check in Mojang, and the logic structure is retained here.
     @Shadow
-    public abstract boolean isRandomlyTicking(BlockState state);
+    public abstract boolean isRandomlyTicking(@NotNull BlockState state);
 
     @Inject(method = "randomTick", at = @At("TAIL"))
     void randomTick(BlockState state, ServerLevel world, BlockPos pos, RandomSource random, CallbackInfo ci) {
