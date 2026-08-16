@@ -319,5 +319,7 @@
   "item.hcsurvival.ashes": "Cenizas",
   "item.hcsurvival.smoldering_campfire": "Hoguera humeante",
   "item.hcsurvival.burnt_campfire": "Hoguera consumida",
-  "item.hcsurvival.garland": "Guirnalda"
+  "item.hcsurvival.garland": "Guirnalda",
+  "item.hcsurvival.sinew": "Cordón de cuero",
+  "item.hcsurvival.leaves_reinforcer": "Reforzador de hojas"
 }

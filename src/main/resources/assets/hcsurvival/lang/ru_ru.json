@@ -319,5 +319,7 @@
   "item.hcsurvival.ashes": "Пепел",
   "item.hcsurvival.smoldering_campfire": "Тлеющий костёр",
   "item.hcsurvival.burnt_campfire": "Потухший костёр",
-  "item.hcsurvival.garland": "Гирлянда"
+  "item.hcsurvival.garland": "Гирлянда",
+  "item.hcsurvival.sinew": "Кожаный шнур",
+  "item.hcsurvival.leaves_reinforcer": "Укрепитель листвы"
 }

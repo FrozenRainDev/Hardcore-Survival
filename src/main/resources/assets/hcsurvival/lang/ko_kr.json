@@ -319,5 +319,7 @@
   "item.hcsurvival.ashes": "재",
   "item.hcsurvival.smoldering_campfire": "그을리는 모닥불",
   "item.hcsurvival.burnt_campfire": "다 타버린 모닥불",
-  "item.hcsurvival.garland": "화관"
+  "item.hcsurvival.garland": "화관",
+  "item.hcsurvival.sinew": "가죽끈",
+  "item.hcsurvival.leaves_reinforcer": "나뭇잎 강화기"
 }

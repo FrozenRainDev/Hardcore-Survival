@@ -292,6 +292,7 @@ public final class Hcs {
     public static final RegistryObject<Item> BURNT_CAMPFIRE = ITEMS.register("burnt_campfire", () -> new HCSCampfireItem(BURNT_CAMPFIRE_BLOCK.get().defaultBlockState()));
     public static final RegistryObject<Item> GARLAND = ITEMS.register("garland", () -> new ArmorItem(HcsArmorMaterials.GARLAND, ArmorItem.Type.HELMET, new Item.Properties()));
     public static final RegistryObject<Item> STRAW_BED_ITEM = ITEMS.register("straw_bed", () -> new BlockItem(STRAW_BED.get(), new Item.Properties()));
+    public static final RegistryObject<Item> LEAVES_REINFORCER = ITEMS.register("leaves_reinforcer", () -> new LeavesReinforcerItem(new Item.Properties()));
 
     @SuppressWarnings("unused")
     public static final RegistryObject<Block> COPPER_POWDER_BLOCK = BLOCKS.register("copper_powder_block",
@@ -474,6 +475,7 @@ public final class Hcs {
                 output.accept(UNLIT_TORCH_ITEM.get());
                 output.accept(GLOWSTONE_TORCH_ITEM.get());
                 output.accept(STRAW_BED_ITEM.get());
+                output.accept(LEAVES_REINFORCER.get());
             }).build());
 
     public Hcs(@NotNull FMLJavaModLoadingContext context) {
@@ -556,7 +558,8 @@ public final class Hcs {
         if (item == GRASS_FIBER.get()) event.setBurnTime(50);
         else if (item == FIBER_STRING.get() || item == SINEW.get()) event.setBurnTime(100);
         else if (item == SHORT_STICK.get()) event.setBurnTime(80);
-        else if (item == FIREWOOD.get()) event.setBurnTime(300);
+        else if (item == FIRE_PLOUGH.get()) event.setBurnTime(160);
+        else if (item == FIREWOOD.get() || item == LEAVES_REINFORCER.get()) event.setBurnTime(300);
         else if (item == TINDER.get()) event.setBurnTime(30);
         else if (item == ROT.get()) event.setBurnTime(100);
         else if (item == BARK.get()) event.setBurnTime(100);

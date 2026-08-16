@@ -319,5 +319,7 @@
   "item.hcsurvival.ashes": "Asche",
   "item.hcsurvival.smoldering_campfire": "Schwelendes Lagerfeuer",
   "item.hcsurvival.burnt_campfire": "Ausgebranntes Lagerfeuer",
-  "item.hcsurvival.garland": "Girlande"
+  "item.hcsurvival.garland": "Girlande",
+  "item.hcsurvival.sinew": "Lederband",
+  "item.hcsurvival.leaves_reinforcer": "Laubverstärker"
 }

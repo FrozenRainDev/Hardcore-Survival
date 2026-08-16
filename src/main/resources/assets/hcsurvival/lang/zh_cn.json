@@ -319,5 +319,7 @@
   "item.hcsurvival.ashes": "灰烬",
   "item.hcsurvival.smoldering_campfire": "阴燃的营火",
   "item.hcsurvival.burnt_campfire": "燃尽的营火",
-  "item.hcsurvival.garland": "花环"
+  "item.hcsurvival.garland": "花环",
+  "item.hcsurvival.sinew": "皮绳",
+  "item.hcsurvival.leaves_reinforcer": "树叶加固器"
 }

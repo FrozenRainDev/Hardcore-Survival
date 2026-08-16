@@ -319,5 +319,7 @@
   "item.hcsurvival.ashes": "灰",
   "item.hcsurvival.smoldering_campfire": "くすぶる焚き火",
   "item.hcsurvival.burnt_campfire": "燃え尽きた焚き火",
-  "item.hcsurvival.garland": "花冠"
+  "item.hcsurvival.garland": "花冠",
+  "item.hcsurvival.sinew": "革紐",
+  "item.hcsurvival.leaves_reinforcer": "葉の補強器"
 }

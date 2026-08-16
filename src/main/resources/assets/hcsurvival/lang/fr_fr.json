@@ -319,5 +319,7 @@
   "item.hcsurvival.ashes": "Cendres",
   "item.hcsurvival.smoldering_campfire": "Feu de camp couvant",
   "item.hcsurvival.burnt_campfire": "Feu de camp consumé",
-  "item.hcsurvival.garland": "Guirlande de fleurs"
+  "item.hcsurvival.garland": "Guirlande de fleurs",
+  "item.hcsurvival.sinew": "Corde de cuir",
+  "item.hcsurvival.leaves_reinforcer": "Renforceur de feuilles"
 }
