@@ -23,7 +23,7 @@ public class SensingMixin {
             return true;
         }
         if (this.mob instanceof Zombie) {
-            double sensingRange = EntityHelper.ZOMBIE_AND_SKELETON_SENSING_RANGE * HcsDifficulty.chooseVal(this.mob.level(), 1.0F, 1.0F, 2.0F);            // Grant "smell" capability through walls if within the custom range
+            double sensingRange = EntityHelper.MOB_BASE_SENSING_RANGE * HcsDifficulty.chooseVal(this.mob.level(), 1.0F, 1.0F, 2.0F);            // Grant "smell" capability through walls if within the custom range
             //noinspection RedundantIfStatement
             if (this.mob.distanceTo(entity) <= sensingRange) {
                 return true;

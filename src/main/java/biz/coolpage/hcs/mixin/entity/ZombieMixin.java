@@ -1,9 +1,10 @@
 package biz.coolpage.hcs.mixin.entity;
 
 import biz.coolpage.hcs.config.Configs;
-import biz.coolpage.hcs.entity.goal.AdvancedAvoidSunlightGoal;
 import biz.coolpage.hcs.entity.goal.ZombieBreakBlockGoal;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.ai.goal.FleeSunGoal;
+import net.minecraft.world.entity.ai.goal.RestrictSunGoal;
 import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
 import net.minecraft.world.entity.animal.Animal;
 import net.minecraft.world.entity.monster.Monster;
@@ -20,19 +21,22 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(Zombie.class)
 public abstract class ZombieMixin extends Monster { // ZombieEntityMixin
+    @Shadow
+    public abstract boolean isSunSensitive();
+
     // Also see MobVisibilityCacheMixin, BreakDoorGoalMixin and TrackTargetGoalMixin
     protected ZombieMixin(EntityType<? extends Monster> entityType, Level world) {
         super(entityType, world);
     }
 
-    @Shadow
-    public abstract boolean isSunSensitive();
-
     // Using "protected" will crash even the original method is "protected"
     @Inject(method = "addBehaviourGoals", at = @At("TAIL"))
     public void addBehaviourGoals(CallbackInfo ci) {
         this.targetSelector.addGoal(0, new ZombieBreakBlockGoal(this));
-        if (this.isSunSensitive()) this.targetSelector.addGoal(1, new AdvancedAvoidSunlightGoal(this));
+        if (this.isSunSensitive()) {
+            this.goalSelector.addGoal(0, new RestrictSunGoal(this));
+            this.goalSelector.addGoal(1, new FleeSunGoal(this, 1.5));
+        }
         // Add animal target for adult zombies
         // Prioritize player(s) within 8 blocks in **TrackTargetGoalMixin/shouldContinue()**
         this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, Animal.class, false) {

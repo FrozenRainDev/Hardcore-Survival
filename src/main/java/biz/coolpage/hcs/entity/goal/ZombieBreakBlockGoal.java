@@ -10,11 +10,14 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
+import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.ai.goal.Goal;
 import net.minecraft.world.entity.ai.util.GoalUtils;
+import net.minecraft.world.entity.monster.Zombie;
 import net.minecraft.world.item.*;
 import net.minecraft.world.level.GameRules;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.LightLayer;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.LeavesBlock;
@@ -62,6 +65,12 @@ public class ZombieBreakBlockGoal extends Goal {
 
         // Condition 1: Must not have moved up/down in the last 3 seconds (60 ticks)
         if (this.mob.tickCount - this.lastYChangeTick < 60) {
+            this.conditionMetStartTick = -1;
+            return false;
+        }
+
+        // Condition 1.5: Prevent breaking blocks when sheltering from the sun or avoiding daylight
+        if (this.isShelteringFromSun()) {
             this.conditionMetStartTick = -1;
             return false;
         }
@@ -185,6 +194,11 @@ public class ZombieBreakBlockGoal extends Goal {
         if (this.mob.level() instanceof ServerLevel serverWorld && !Configs.isEnabled(serverWorld, Configs.HOSTILE_ZOMBIE))
             return false;
 
+        // Stop mining if the zombie needs to shelter from the sun
+        if (this.isShelteringFromSun()) {
+            return false;
+        }
+
         // Core Fix 2: Retrieve the real-time block state of the current world to prevent zombies from continuing to dig at empty air after a door is opened or a block is destroyed
         BlockState currentState = this.mob.level().getBlockState(this.breakPos);
 
@@ -273,6 +287,32 @@ public class ZombieBreakBlockGoal extends Goal {
             this.mob.level().destroyBlock(this.breakPos, true, this.mob);
             WorldHelper.checkBlockGravity(this.mob.level(), this.breakPos);
         }
+    }
+
+    /**
+     * Check if the zombie is currently trying to take shelter from the sun.
+     * Returns true if it's daytime, the zombie burns in sunlight, has no helmet,
+     * and is at a location exposed to sky light or directly under the sky.
+     */
+    protected boolean isShelteringFromSun() {
+        Level level = this.mob.level();
+        // If it is not day or the mob is wearing a helmet, it doesn't need to shelter
+        if (!level.isDay() || !this.mob.getItemBySlot(EquipmentSlot.HEAD).isEmpty()) {
+            return false;
+        }
+
+        if (this.mob instanceof Zombie zombie) {
+            // Exclude zombies that do not burn in the sun (Husks, Zombified Piglins, etc.)
+            if (!zombie.isSunSensitive()) {
+                return false;
+            }
+
+            // If the zombie can see the sky or is in an area with high sky light,
+            // it means it's either burning or hiding just under a block (sheltering)
+            BlockPos pos = this.mob.blockPosition();
+            return level.canSeeSky(pos) || level.getBrightness(LightLayer.SKY, pos) > 0;
+        }
+        return false;
     }
 
     /**

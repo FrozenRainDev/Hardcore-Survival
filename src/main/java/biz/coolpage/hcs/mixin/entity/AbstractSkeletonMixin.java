@@ -1,5 +1,6 @@
 package biz.coolpage.hcs.mixin.entity;
 
+import biz.coolpage.hcs.util.EntityHelper;
 import com.llamalad7.mixinextras.injector.ModifyReturnValue;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
@@ -12,8 +13,6 @@ import org.jetbrains.annotations.NotNull;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 
-import static biz.coolpage.hcs.util.EntityHelper.ZOMBIE_AND_SKELETON_SENSING_RANGE;
-
 // Also see RangedBowAttackGoal
 @Mixin(AbstractSkeleton.class)
 public class AbstractSkeletonMixin {
@@ -23,7 +22,7 @@ public class AbstractSkeletonMixin {
     private static AttributeSupplier.@NotNull Builder hcs$modifyAttributes(AttributeSupplier.@NotNull Builder original) {
         // Set the skeleton's base max health to 4.0
         return original.add(Attributes.MAX_HEALTH, 4.0)
-                .add(Attributes.FOLLOW_RANGE, ZOMBIE_AND_SKELETON_SENSING_RANGE)
+                .add(Attributes.FOLLOW_RANGE, EntityHelper.MOB_BASE_SENSING_RANGE)
                 .add(Attributes.MOVEMENT_SPEED, 0.3D);
     }
 

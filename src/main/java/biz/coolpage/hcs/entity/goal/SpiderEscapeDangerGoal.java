@@ -7,7 +7,7 @@ import org.jetbrains.annotations.NotNull;
 public class SpiderEscapeDangerGoal extends PanicGoal {
 
     public SpiderEscapeDangerGoal(@NotNull PathfinderMob mob) {
-        super(mob, 1.15);
+        super(mob, 1.2);
     }
 
     private int escapeCountdown = 150; //(0, 150]: can escape; [-150, 0]: revenge again temporary after escaping
