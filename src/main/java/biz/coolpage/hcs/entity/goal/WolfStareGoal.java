@@ -8,6 +8,7 @@ import net.minecraft.world.entity.animal.Wolf;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.phys.AABB;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
@@ -53,7 +54,8 @@ public class WolfStareGoal extends NearestAttackableTargetGoal<Player> {
         this.staringPlayerPredicate = TargetingConditions.forCombat().range(this.getFollowDistance()).selector(this.angerPredicate);
     }
 
-    private boolean shouldAnger(Player player) {
+    @SuppressWarnings("deprecation")
+    private boolean shouldAnger(@NotNull Player player) {
         boolean hasBone = player.getMainHandItem().is(Items.BONE)
                 || player.getOffhandItem().is(Items.BONE);
 
