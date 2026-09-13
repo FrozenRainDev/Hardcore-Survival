@@ -52,7 +52,7 @@ import static biz.coolpage.hcs.util.CommUtil.applyNullable;
 public class EntityHelper {
     @Deprecated
     public static final double[][] FIND_NEAREST_BLOCKS = {{0, -1, 0}, {0, 1, 0}, {0, 2, 0}, {-1, 0, 0}, {-1, 1, 0}, {1, 0, 0}, {1, 1, 0}, {0, 0, 1}, {0, 1, 1}, {0, 0, -1}, {0, 1, -1}};
-    public static final double ZOMBIE_AND_SKELETON_SENSING_RANGE = 48.0;
+    public static final double MOB_BASE_SENSING_RANGE = 32.0;
     public static final float HOLDING_BLOCK_REACHING_RANGE_ADDITION = 1.0F;
 
     // Note: DamageTypes need to be adjusted according to the actual damage type tags
@@ -458,9 +458,9 @@ public class EntityHelper {
                                                                         Class<? extends Mob> targetEntClass,
                                                                         double rangeMultiplier) {
         AABB box = AABB.ofSize(entity.position(),
-                ZOMBIE_AND_SKELETON_SENSING_RANGE * rangeMultiplier * 2,
+                MOB_BASE_SENSING_RANGE * rangeMultiplier * 2,
                 10.0 * rangeMultiplier * 2,
-                ZOMBIE_AND_SKELETON_SENSING_RANGE * rangeMultiplier * 2);
+                MOB_BASE_SENSING_RANGE * rangeMultiplier * 2);
         return entity.level().getEntitiesOfClass(targetEntClass, box,
                 EntitySelector.NO_SPECTATORS);
     }
@@ -501,7 +501,7 @@ public class EntityHelper {
         return flag.get();
     }
 
-    public static void kickedAndFly(@NotNull Mob attacker, @NotNull LivingEntity victim, float damage) {
+    public static void kickAndFly(@NotNull Mob attacker, @NotNull LivingEntity victim, float damage) {
         Vec3 vec1 = victim.getDeltaMovement();
         Vec3 vec2 = new Vec3(victim.getX() - attacker.getX(), 0.0, victim.getZ() - attacker.getZ());
         if (vec2.lengthSqr() > 1.0E-7) vec2 = vec2.normalize().add(vec1.multiply(0.2, 0.2, 0.2));

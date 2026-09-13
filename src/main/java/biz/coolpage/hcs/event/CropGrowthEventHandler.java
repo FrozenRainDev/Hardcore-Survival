@@ -57,11 +57,11 @@ public class CropGrowthEventHandler {
         if (isApplicablePlant(block)) {
             // Apply different base rate multipliers based on plant type
             if (block instanceof CropBlock) {
-                rateMultiplier = 0.06;
+                rateMultiplier = 0.12;
             } else if (block instanceof SweetBerryBushBlock || block instanceof CaveVines) {
-                rateMultiplier = 0.007;
+                rateMultiplier = 0.05;
             } else {
-                rateMultiplier = 0.05; // Default fallback for stems, saplings, etc.
+                rateMultiplier = 0.1; // Default fallback for stems, saplings, etc.
             }
 
             if (event.getLevel() instanceof ServerLevel serverLevel) {

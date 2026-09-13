@@ -20,8 +20,9 @@ public class PreventJumpPlaceEvent {
         Player player = event.getEntity();
         if (!Configs.isEnabled(Configs.NO_JUMP_PLACEMENT)) return;
         ItemStack itemStack = event.getItemStack();
-        // Check if the player is holding a block and is not on the ground
-        if (EntityHelper.IS_SURVIVAL_LIKE.test(player) && itemStack.getItem() instanceof BlockItem && !player.onGround()) {
+        // Check if the player is holding a block, is not on the ground, and is not climbing
+        if (EntityHelper.IS_SURVIVAL_LIKE.test(player) && itemStack.getItem() instanceof BlockItem
+                && !player.onGround() && !player.onClimbable()) {
             // Cancel the placement event
             event.setCanceled(true);
         }

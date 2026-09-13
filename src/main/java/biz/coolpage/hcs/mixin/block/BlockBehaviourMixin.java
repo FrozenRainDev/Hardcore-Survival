@@ -16,6 +16,8 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
+import static biz.coolpage.hcs.item.LeavesReinforcerItem.REINFORCED_LEAVES;
+
 @Mixin(BlockBehaviour.class)
 public abstract class BlockBehaviourMixin {
     // Also see EntityMixin
@@ -24,6 +26,10 @@ public abstract class BlockBehaviourMixin {
         // Remove collision volume for leaves
         // Return empty shape if it's leaves, otherwise fallback to the original shape
         if (state.is(BlockTags.LEAVES)) {
+            // Keep the collision shape if the leaves are reinforced
+            if (state.hasProperty(REINFORCED_LEAVES) && state.getValue(REINFORCED_LEAVES)) {
+                return original;
+            }
             return Shapes.empty();
         }
         return original;
@@ -33,6 +39,11 @@ public abstract class BlockBehaviourMixin {
     private void hcs$leavesFallDamage(BlockState state, @NotNull Level level, BlockPos pos, Entity entity, CallbackInfo ci) {
         // Apply fall damage once when falling into leaves
         if (!level.isClientSide && state.is(BlockTags.LEAVES)) {
+            // Skip the damage calculation if the leaves act as a solid block
+            if (state.hasProperty(REINFORCED_LEAVES) && state.getValue(REINFORCED_LEAVES)) {
+                return;
+            }
+
             if (entity.fallDistance > 0.0F) {
                 // Cause fall damage using entity's current fall distance
                 entity.causeFallDamage(entity.fallDistance, 1.0F, level.damageSources().fall());

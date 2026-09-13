@@ -17,6 +17,7 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
+import org.jetbrains.annotations.NotNull;
 
 public class BurntCampfireBlock extends CampfireBlock {
     public BurntCampfireBlock() {
@@ -25,27 +26,27 @@ public class BurntCampfireBlock extends CampfireBlock {
     }
 
     @Override
-    protected Block asBlock() {
+    protected @NotNull Block asBlock() {
         return Hcs.BURNT_CAMPFIRE_BLOCK.get();
     }
 
     @Override
-    public Item asItem() {
+    public @NotNull Item asItem() {
         return Hcs.BURNT_CAMPFIRE.get();
     }
 
     @Override
-    public BlockEntity newBlockEntity(BlockPos pos, BlockState state) {
+    public BlockEntity newBlockEntity(@NotNull BlockPos pos, @NotNull BlockState state) {
         return new SmolderingOrBurntCampfireBlockEntity(pos, state);
     }
 
     @Override
-    public InteractionResult use(BlockState state, Level world, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit) {
+    public @NotNull InteractionResult use(@NotNull BlockState state, @NotNull Level world, @NotNull BlockPos pos, @NotNull Player player, @NotNull InteractionHand hand, @NotNull BlockHitResult hit) {
         return InteractionResult.FAIL;
     }
 
     @Override
-    public void animateTick(BlockState state, Level world, BlockPos pos, RandomSource random) {
+    public void animateTick(@NotNull BlockState state, @NotNull Level world, @NotNull BlockPos pos, @NotNull RandomSource random) {
         // Do nothing
     }
 

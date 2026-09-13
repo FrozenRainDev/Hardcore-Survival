@@ -27,7 +27,6 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 // Also see LootModifier
-@SuppressWarnings("CommentedOutCode")
 public class LootHelper {
 
     public static int getCropAge(@NotNull BlockState state) {
