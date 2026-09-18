@@ -2,6 +2,7 @@ package biz.coolpage.hcs.entity.goal;
 
 import biz.coolpage.hcs.config.Configs;
 import biz.coolpage.hcs.config.HcsDifficulty;
+import biz.coolpage.hcs.mixin.entity.ZombieAccessor;
 import biz.coolpage.hcs.status.accessor.ILookControl;
 import biz.coolpage.hcs.util.DigRestrictHelper;
 import biz.coolpage.hcs.util.WorldHelper;
@@ -303,7 +304,7 @@ public class ZombieBreakBlockGoal extends Goal {
 
         if (this.mob instanceof Zombie zombie) {
             // Exclude zombies that do not burn in the sun (Husks, Zombified Piglins, etc.)
-            if (!zombie.isSunSensitive()) {
+            if (!((ZombieAccessor) zombie).callIsSunSensitive()) {
                 return false;
             }
 

@@ -74,7 +74,7 @@ public abstract class CampfireBlockEntityMixin extends BlockEntity implements IC
     }
 
     @Inject(method = "cookTick", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/Containers;dropItemStack(Lnet/minecraft/world/level/Level;DDDLnet/minecraft/world/item/ItemStack;)V"), locals = LocalCapture.CAPTURE_FAILSOFT)
-    private static void litServerTickInjected2(Level world, BlockPos pos, @NotNull BlockState state, CampfireBlockEntity campfire, CallbackInfo ci, boolean bl, int i, ItemStack itemStack, Container inventory, ItemStack itemStack2) {
+    private static void litServerTickInjected2(Level world, BlockPos pos, @NotNull BlockState state, CampfireBlockEntity campfire, CallbackInfo ci, boolean bl, int i, ItemStack itemStack, int j, Container inventory, ItemStack itemStack2) {
         if (state.is(Blocks.SOUL_CAMPFIRE) && itemStack2.is(Hcs.WATER_BAG.get()))
             WaterBagItem.setStatus(itemStack2, -1);
     }

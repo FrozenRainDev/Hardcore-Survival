@@ -8,6 +8,7 @@ import biz.coolpage.hcs.entity.*;
 import biz.coolpage.hcs.event.DeadBushLootModifier;
 import biz.coolpage.hcs.item.*;
 import biz.coolpage.hcs.item.BottleItem;
+import biz.coolpage.hcs.mixin.block.ComposterBlockAccessor;
 import biz.coolpage.hcs.recipe.*;
 import biz.coolpage.hcs.data.loot.*;
 import biz.coolpage.hcs.status.HcsEffects;
@@ -43,7 +44,6 @@ import net.minecraft.world.level.GameRules;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
-import net.minecraft.world.level.block.ComposterBlock;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockBehaviour;
@@ -534,22 +534,22 @@ public final class Hcs {
     }
 
     private void registerCompostables() {
-        ComposterBlock.add(0.3F, BERRY_BUSH.get());
-        ComposterBlock.add(0.3F, ROASTED_SEEDS.get());
-        ComposterBlock.add(0.3F, POTHERB.get());
-        ComposterBlock.add(0.5F, PUMPKIN_SLICE.get());
-        ComposterBlock.add(0.5F, COOKED_PUMPKIN_SLICE.get());
-        ComposterBlock.add(0.5F, CACTUS_FLESH.get());
-        ComposterBlock.add(0.5F, COOKED_CACTUS_FLESH.get());
-        ComposterBlock.add(0.5F, BAMBOO_SHOOT.get());
-        ComposterBlock.add(0.5F, COOKED_BAMBOO_SHOOT.get());
-        ComposterBlock.add(0.5F, COOKED_CARROT.get());
-        ComposterBlock.add(0.5F, COOKED_SWEET_BERRIES.get());
-        ComposterBlock.add(0.65F, ORANGE.get());
-        ComposterBlock.add(1.0F, ROT.get());
-        ComposterBlock.add(0.5F, BARK.get());
-        ComposterBlock.add(0.5F, WILLOW_BARK.get());
-        ComposterBlock.add(0.5F, FEARLESSNESS_HERB.get());
+        ComposterBlockAccessor.callAdd(0.3F, BERRY_BUSH.get());
+        ComposterBlockAccessor.callAdd(0.3F, ROASTED_SEEDS.get());
+        ComposterBlockAccessor.callAdd(0.3F, POTHERB.get());
+        ComposterBlockAccessor.callAdd(0.5F, PUMPKIN_SLICE.get());
+        ComposterBlockAccessor.callAdd(0.5F, COOKED_PUMPKIN_SLICE.get());
+        ComposterBlockAccessor.callAdd(0.5F, CACTUS_FLESH.get());
+        ComposterBlockAccessor.callAdd(0.5F, COOKED_CACTUS_FLESH.get());
+        ComposterBlockAccessor.callAdd(0.5F, BAMBOO_SHOOT.get());
+        ComposterBlockAccessor.callAdd(0.5F, COOKED_BAMBOO_SHOOT.get());
+        ComposterBlockAccessor.callAdd(0.5F, COOKED_CARROT.get());
+        ComposterBlockAccessor.callAdd(0.5F, COOKED_SWEET_BERRIES.get());
+        ComposterBlockAccessor.callAdd(0.65F, ORANGE.get());
+        ComposterBlockAccessor.callAdd(1.0F, ROT.get());
+        ComposterBlockAccessor.callAdd(0.5F, BARK.get());
+        ComposterBlockAccessor.callAdd(0.5F, WILLOW_BARK.get());
+        ComposterBlockAccessor.callAdd(0.5F, FEARLESSNESS_HERB.get());
     }
 
     @SubscribeEvent

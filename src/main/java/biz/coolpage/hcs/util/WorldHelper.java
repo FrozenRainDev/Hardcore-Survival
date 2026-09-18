@@ -1,6 +1,7 @@
 package biz.coolpage.hcs.util;
 
 import biz.coolpage.hcs.Hcs;
+import biz.coolpage.hcs.mixin.block.FarmBlockAccessor;
 import biz.coolpage.hcs.status.HcsPersistentState;
 import net.minecraft.world.level.block.*;
 import net.minecraft.world.entity.item.FallingBlockEntity;
@@ -139,7 +140,7 @@ public class WorldHelper {
     public static boolean enhancedIsWaterNearby(@Nullable Level world, BlockPos pos) {
         if (world != null && !world.isClientSide) {
             for (int i = 0; i < 5; ++i) {
-                if (FarmBlock.isNearWater(world, pos)) return true;
+                if (FarmBlockAccessor.callIsNearWater(world, pos)) return true;
                 pos = pos.below();
             }
         }

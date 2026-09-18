@@ -3,6 +3,7 @@ package biz.coolpage.hcs.client.gui;
 import biz.coolpage.hcs.Hcs;
 import biz.coolpage.hcs.config.Configs;
 import biz.coolpage.hcs.config.HcsDifficulty;
+import biz.coolpage.hcs.mixin.client.gui.GuiAccessor;
 import biz.coolpage.hcs.status.HcsEffects;
 import biz.coolpage.hcs.status.accessor.StatAccessor;
 import biz.coolpage.hcs.status.manager.SanityManager;
@@ -15,7 +16,6 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
-import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
@@ -131,7 +131,7 @@ public final class HcsGuiOverlays {
         // (u, v) is the coordinate of texture
         RenderSystem.setShaderTexture(0, HCS_ICONS_TEXTURE);
         ctx.blit(HCS_ICONS_TEXTURE, x, y, 0, u, v, width, height, 256, 256);
-        RenderSystem.setShaderTexture(0, Gui.GUI_ICONS_LOCATION);
+        RenderSystem.setShaderTexture(0, GuiAccessor.getGuiIconsLocation());
     }
 
     @Deprecated
@@ -270,7 +270,7 @@ public final class HcsGuiOverlays {
         if (temp >= 1.0F && player.hasEffect(HcsEffects.HEATSTROKE.get())) {
             this.renderTextureOverlay(context, HEATSTROKE_BLUR, tempOpacity, screenWidth, screenHeight);
         } else if (temp <= 0.0F && player.getTicksFrozen() <= 0 && player.hasEffect(HcsEffects.HYPOTHERMIA.get())) {
-            this.renderTextureOverlay(context, Gui.POWDER_SNOW_OUTLINE_LOCATION, tempOpacity, screenWidth, screenHeight);
+            this.renderTextureOverlay(context, GuiAccessor.getPowderSnowOutlineLocation(), tempOpacity, screenWidth, screenHeight);
         }
 
         int inDarkTicks = statusManager.getInDarknessTicks();
@@ -380,9 +380,9 @@ public final class HcsGuiOverlays {
                 float f = minecraft.player.getJumpRidingScale();
                 int j = (int) (f * 183.0F);
                 int k = screenHeight - 32 + 3;
-                ctx.blit(Gui.GUI_ICONS_LOCATION, renderExperienceBarX, k, 0, 84, 182, 5);
+                ctx.blit(GuiAccessor.getGuiIconsLocation(), renderExperienceBarX, k, 0, 84, 182, 5);
                 if (j > 0) {
-                    ctx.blit(Gui.GUI_ICONS_LOCATION, renderExperienceBarX, k, 0, 89, j, 5);
+                    ctx.blit(GuiAccessor.getGuiIconsLocation(), renderExperienceBarX, k, 0, 89, j, 5);
                 }
             } else {
                 int l;
@@ -391,9 +391,9 @@ public final class HcsGuiOverlays {
                 if (i > 0) {
                     k = (int) (minecraft.player.experienceProgress * 183.0F);
                     l = screenHeight - 32 + 3;
-                    ctx.blit(Gui.GUI_ICONS_LOCATION, renderExperienceBarX, l, 0, 64, 182, 5);
+                    ctx.blit(GuiAccessor.getGuiIconsLocation(), renderExperienceBarX, l, 0, 64, 182, 5);
                     if (k > 0) {
-                        ctx.blit(Gui.GUI_ICONS_LOCATION, renderExperienceBarX, l, 0, 69, k, 5);
+                        ctx.blit(GuiAccessor.getGuiIconsLocation(), renderExperienceBarX, l, 0, 69, k, 5);
                     }
                 }
                 if (minecraft.player.experienceLevel > 0) {
