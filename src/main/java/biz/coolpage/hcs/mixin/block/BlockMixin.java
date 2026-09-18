@@ -1,6 +1,7 @@
 package biz.coolpage.hcs.mixin.block;
 
 import biz.coolpage.hcs.item.BurningCrudeTorchItem;
+import biz.coolpage.hcs.mixin.entity.LivingEntityAccessor;
 import biz.coolpage.hcs.status.accessor.ICampfireBlockEntity;
 import biz.coolpage.hcs.status.accessor.StatAccessor;
 import biz.coolpage.hcs.status.manager.InjuryManager;
@@ -99,7 +100,7 @@ public class BlockMixin {
             if (fallDistance > 3.0F) {
                 float exaggeratedFallDistance = (float) Math.pow(fallDistance, 1.2); //Gain more falling damage than before
                 entity.causeFallDamage(multiplier < 1 ? exaggeratedFallDistance - 2 : exaggeratedFallDistance, multiplier, entity.damageSources().fall());
-                if (entity instanceof ServerPlayer player && EntityHelper.IS_SURVIVAL_LIKE.test(player) && fallDistance > 9.0F && (player.calculateFallDamage(exaggeratedFallDistance, multiplier) / player.getMaxHealth()) > 0.5F) {
+                if (entity instanceof ServerPlayer player && EntityHelper.IS_SURVIVAL_LIKE.test(player) && fallDistance > 9.0F && (((LivingEntityAccessor) player).callCalculateFallDamage(exaggeratedFallDistance, multiplier) / player.getMaxHealth()) > 0.5F) {
                     AtomicBoolean hasFF = new AtomicBoolean(false);
                     player.getArmorSlots().forEach(armorStack -> hasFF.set(hasFF.get() || EnchantmentHelper.getItemEnchantmentLevel(Enchantments.FALL_PROTECTION, CommUtil.optElse(armorStack, ItemStack.EMPTY)) > 0));
                     if (!hasFF.get()) { // If player does NOT wear armor with feather falling enchantment, then apply fracture effect

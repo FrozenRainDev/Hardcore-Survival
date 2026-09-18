@@ -1,6 +1,7 @@
 package biz.coolpage.hcs.util;
 
 import biz.coolpage.hcs.Hcs; // Reg -> Hcs
+import biz.coolpage.hcs.mixin.block.StemBlockAccessor;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel; // ServerWorld -> ServerLevel
 import net.minecraft.tags.BlockTags;
@@ -58,7 +59,7 @@ public class LootHelper {
             hasModified = true;
         } else if (block instanceof StemBlock stemBlock) {
             crop = stemBlock;
-            seedItem = stemBlock.seedSupplier.get(); // pickBlockItem -> seedSupplier
+            seedItem = ((StemBlockAccessor) stemBlock).getSeedSupplier().get(); // pickBlockItem -> seedSupplier
             hasModified = true;
         }
         if (hasModified) {

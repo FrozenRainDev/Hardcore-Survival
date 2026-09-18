@@ -41,6 +41,7 @@ package biz.coolpage.hcs.util;
 
 import biz.coolpage.hcs.Hcs;
 import biz.coolpage.hcs.block.torches.BurningCrudeTorchBlock;
+import biz.coolpage.hcs.mixin.world.BiomeAccessor;
 import biz.coolpage.hcs.status.HcsEffects;
 import biz.coolpage.hcs.status.accessor.StatAccessor;
 import biz.coolpage.hcs.status.manager.OxygenManager;
@@ -88,7 +89,8 @@ public abstract class TemperatureHelper implements LevelReader {
             }
             Biome biome = biomeEntry.value();
             String biomeName = getBiomeName(biomeEntry);
-            float biomeTemp = biome.getTemperature(pos);
+            // Biome is final, so the cast has to be routed through Object before reaching the accessor interface
+            float biomeTemp = ((BiomeAccessor) (Object) biome).callGetTemperature(pos);
             temp = transferToApparentTemp(biomeTemp);
             if (world.dimension() == Level.OVERWORLD) {
                 float dailyTempAmplitude = getBasicDailyTempAmplitude(biomeName, biome.getModifiedClimateSettings().downfall());

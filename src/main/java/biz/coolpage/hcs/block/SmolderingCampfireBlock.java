@@ -2,6 +2,7 @@ package biz.coolpage.hcs.block;
 
 import biz.coolpage.hcs.Hcs;
 import biz.coolpage.hcs.entity.SmolderingOrBurntCampfireBlockEntity;
+import biz.coolpage.hcs.mixin.block.BlocksAccessor;
 import biz.coolpage.hcs.util.CombustionHelper;
 import net.minecraft.core.BlockPos;
 import net.minecraft.sounds.SoundEvents;
@@ -32,7 +33,7 @@ import org.jetbrains.annotations.NotNull;
 
 public class SmolderingCampfireBlock extends CampfireBlock {
     public SmolderingCampfireBlock() {
-        super(true, 1, BlockBehaviour.Properties.copy(Blocks.CAMPFIRE).lightLevel(Blocks.litBlockEmission(5)));
+        super(true, 1, BlockBehaviour.Properties.copy(Blocks.CAMPFIRE).lightLevel(BlocksAccessor.callLitBlockEmission(5)));
         this.registerDefaultState(this.stateDefinition.any().setValue(BlockStateProperties.WATERLOGGED, false).setValue(BlockStateProperties.LIT, true));
     }
 

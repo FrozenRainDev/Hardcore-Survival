@@ -46,7 +46,12 @@ minecraft {
     // See https://docs.gradle.org/current/dsl/org.gradle.language.jvm.tasks.ProcessResources.html
     copyIdeResources = true
 
-    accessTransformer = file('src/main/resources/META-INF/accesstransformer.cfg')
+    // NOTE: Access Transformer intentionally DISABLED.
+    // All former AT members are accessed via Mixin @Accessor / @Invoker
+    // (see biz.coolpage.hcs.mixin.***Accessor). A comment-only AT file still makes
+    // the AT parser report "Invalid access transformer line" and can hard-fail
+    // :compileJava, so the file is deleted and this wiring stays OFF.
+    // accessTransformer = file('src/main/resources/META-INF/accesstransformer.cfg')
 
     // When true, this property will add the folder name of all declared run configurations to generated IDE run configurations.
     // The folder name can be set on a run configuration using the "folderName" property.

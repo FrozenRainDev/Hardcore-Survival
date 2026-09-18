@@ -2,6 +2,7 @@ package biz.coolpage.hcs.entity;
 
 import biz.coolpage.hcs.Hcs;
 import biz.coolpage.hcs.item.SpearItem;
+import biz.coolpage.hcs.mixin.entity.ThrownTridentAccessor;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ItemParticleOption;
 import net.minecraft.core.particles.ParticleTypes;
@@ -115,7 +116,7 @@ public class ThrownSpearEntity extends ThrownTrident {
         Entity owner = this.getOwner();
         DamageSource damageSource = this.damageSources().trident(this, owner == null ? this : owner);
 
-        this.dealtDamage = true;
+        ((ThrownTridentAccessor) this).setDealtDamage(true);
         SoundEvent soundEvent = SoundEvents.ARROW_HIT;
 
         if (hitEntity.hurt(damageSource, damage)) {

@@ -2,6 +2,7 @@ package biz.coolpage.hcs.block;
 
 import biz.coolpage.hcs.Hcs;
 import biz.coolpage.hcs.entity.SmolderingOrBurntCampfireBlockEntity;
+import biz.coolpage.hcs.mixin.block.BlocksAccessor;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.util.RandomSource;
@@ -21,7 +22,7 @@ import org.jetbrains.annotations.NotNull;
 
 public class BurntCampfireBlock extends CampfireBlock {
     public BurntCampfireBlock() {
-        super(false, 0, BlockBehaviour.Properties.copy(Blocks.CAMPFIRE).lightLevel(Blocks.litBlockEmission(0)));
+        super(false, 0, BlockBehaviour.Properties.copy(Blocks.CAMPFIRE).lightLevel(BlocksAccessor.callLitBlockEmission(0)));
         this.registerDefaultState(this.stateDefinition.any().setValue(LIT, false).setValue(SIGNAL_FIRE, false).setValue(WATERLOGGED, false).setValue(FACING, Direction.NORTH));
     }
 

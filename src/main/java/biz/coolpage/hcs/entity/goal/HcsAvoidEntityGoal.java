@@ -1,5 +1,6 @@
 package biz.coolpage.hcs.entity.goal;
 
+import biz.coolpage.hcs.mixin.entity.goal.AvoidEntityGoalAccessor;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.PathfinderMob;
 import net.minecraft.world.entity.ai.goal.AvoidEntityGoal;
@@ -13,7 +14,7 @@ public class HcsAvoidEntityGoal<T extends LivingEntity> extends AvoidEntityGoal<
 
     @Override
     public boolean canUse() {
-        this.toAvoid = this.mob.level().getNearestEntity(this.mob.level().getEntitiesOfClass(this.avoidClass, this.mob.getBoundingBox().inflate(this.maxDist, this.maxDist / 2, this.maxDist), (p_148078_) -> true), this.avoidEntityTargeting, this.mob, this.mob.getX(), this.mob.getY(), this.mob.getZ());
+        this.toAvoid = this.mob.level().getNearestEntity(this.mob.level().getEntitiesOfClass(this.avoidClass, this.mob.getBoundingBox().inflate(this.maxDist, this.maxDist / 2, this.maxDist), (p_148078_) -> true), ((AvoidEntityGoalAccessor) this).getAvoidEntityTargeting(), this.mob, this.mob.getX(), this.mob.getY(), this.mob.getZ());
         if (this.toAvoid != null) {
             Vec3 fromPlayer = this.mob.position().subtract(this.toAvoid.position()).normalize(); // vector from player to this.mob
 
@@ -122,7 +123,7 @@ public class HcsAvoidEntityGoal<T extends LivingEntity> extends AvoidEntityGoal<
         if (this.mob.isInWater()) {
             // significantly increase the navigation speed modifier to counteract fluid drag
             // you can tweak the 2.5D multiplier based on how fast you want them to swim
-            this.mob.getNavigation().setSpeedModifier(this.sprintSpeedModifier * 5D);
+            this.mob.getNavigation().setSpeedModifier(((AvoidEntityGoalAccessor) this).getSprintSpeedModifier() * 5D);
 
             // OPTIONAL: if adjusting the speed modifier is still too slow due to entity's base attributes,
             // you can uncomment the code below to directly apply a physical push in the direction it's looking.
